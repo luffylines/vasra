@@ -8,3 +8,20 @@
 /* Use the supplied standalone SK logo; staff entry is intentionally unlisted. */
 .site-header .sk-logo{width:44px;height:44px;background:white;border-radius:12px;padding:4px;display:flex;align-items:center;justify-content:center}.site-header .sk-logo img{position:static;width:100%;height:100%;max-width:100%;object-fit:contain}.officer-create{display:flex;gap:16px;align-items:flex-end;background:white;padding:20px;border:1px solid var(--line);border-radius:12px;margin:20px 0}.officer-create label{flex:1;margin:0}.officer-create button{margin:0}.credential-note{background:#fff8e8;border:1px solid #eddaad;padding:20px;border-radius:12px;font-size:12px}.credential-note code{font-size:14px;overflow-wrap:anywhere}.credential-note .secondary{display:block;margin-top:15px}@media(max-width:650px){.officer-create{flex-direction:column;align-items:stretch}.site-header .sk-logo{width:38px;height:38px}}
 .duty-info h2>span{font-size:inherit;color:inherit;font-weight:inherit}.day-switch button>span{font-size:12px}.day-switch button small{font-size:9px}.day-switch button.selected>span{color:#fff}.duty-info h2 small{font-size:12px}.office-line{font-size:12px}.office-line span{font-size:11px}.service-chips span{font-size:10px}.page-heading p{font-size:13px}.resolution summary{font-size:11px}@media(max-width:600px){.day-switch button>span{font-size:9px}.day-switch button small{font-size:8px}.page-heading p{font-size:12px}.resolution summary{font-size:10px}}
+
+
+/* Duty photo modal and Philippine-time office schedule */
+.duty-poster{border:0;width:100%;font:inherit;text-align:inherit;cursor:zoom-in}
+.schedule-pill.is-open{background:#e7f6ee;color:#14633d;border:1px solid #b9e5cb}
+.schedule-pill.is-open>span:first-child{background:#22985b}
+.schedule-pill.is-closed{background:#fff0ee;color:#973d31;border:1px solid #f0c6c0}
+.schedule-pill.is-closed>span:first-child{background:#d55a46}
+.day-switch button.today:not(.selected){outline:2px solid #b5c7e8;outline-offset:2px}
+.day-switch button i[hidden]{display:none!important}
+.poster-viewer{position:fixed;inset:0;margin:auto;padding:44px 18px 14px;max-width:min(94vw,900px);max-height:94vh;width:max-content;border:0;border-radius:18px;background:#101827;color:white;overflow:auto;text-align:center;box-shadow:0 30px 100px #0008}
+.poster-viewer::backdrop{background:rgba(9,19,40,.8);backdrop-filter:blur(6px)}
+.poster-viewer img{display:block;max-width:100%;max-height:calc(94vh - 110px);object-fit:contain;margin:auto;border-radius:8px}
+.poster-viewer p{font-size:12px;margin:10px 0 0;color:#d6e0f6}
+.poster-close{position:absolute;right:10px;top:7px;width:36px;height:36px;border:0;border-radius:50%;background:#ffffff24;color:white;cursor:pointer;font-size:27px;line-height:1}
+.poster-close:hover{background:#ffffff44}
+@media(max-width:600px){.poster-viewer{width:95vw;padding:45px 9px 12px}.poster-viewer img{max-height:calc(90vh - 110px)}}
