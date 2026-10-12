@@ -42,3 +42,50 @@
 .day-switch button.today.selected>span,.day-switch button.today.selected small{color:white}
 .day-switch button.today i{display:block!important;width:7px;height:7px;right:9px;top:8px;background:#22c55e}
 .day-switch button.today.selected i{background:#bbf7d0}
+
+
+/* Public SK transparency & monthly reports */
+.transparency-main{max-width:1500px}
+.trans-hero{border-radius:18px;background:linear-gradient(125deg,#142b53,#284e88);color:white;padding:42px 48px;margin:8px 0 24px}
+.trans-hero .eyebrow{color:#bcd5ff;letter-spacing:1.6px;font-size:10px}
+.trans-hero h1{font-size:clamp(30px,3vw,47px);line-height:1.15;letter-spacing:-1.3px;margin:16px 0}
+.trans-hero h1 em{font-style:normal;color:#a7c4ff}
+.trans-hero p{color:#dbe5f6;line-height:1.7;font-size:14px;max-width:710px}
+.trans-section{border:1px solid #e0e6ef;background:#fff;border-radius:16px;padding:30px;margin:0 0 22px}
+.trans-section .eyebrow{font-size:10px;letter-spacing:1.3px;color:#7186a9;font-weight:700}
+.trans-section h2{font-size:27px;letter-spacing:-.7px;margin:9px 0 13px;color:#162b4e}
+.trans-section h3{font-size:17px;color:#1d3154;margin:26px 0 14px}
+.trans-section p{font-size:14px;line-height:1.85;color:#61718b}
+.trans-legal a{color:#2452ac;text-decoration:underline;text-underline-offset:3px}
+.trans-sectionhead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.trans-sectionhead p{margin-top:0}
+.trans-picker{color:#5d6f8c;font-weight:650;font-size:12px;display:flex;gap:10px;align-items:center;white-space:nowrap}
+.trans-picker select{padding:10px 14px;background:#f9fbff;border:1px solid #d5e0f0;border-radius:9px;font:inherit;color:#203658;min-width:130px}
+.trans-roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:18px}
+.trans-person{padding:22px 15px;border:1px solid #e1e8f1;border-radius:12px;text-align:center;background:#f9fbff;display:flex;flex-direction:column;align-items:center;gap:6px}
+.trans-avatar{display:grid;place-items:center;width:50px;height:50px;border-radius:50%;background:#dce8ff;color:#204780;font-weight:800;font-size:21px}
+.trans-person strong{color:#1d3353;font-size:14px;overflow-wrap:anywhere}
+.trans-person small{color:#6e7f96}
+.trans-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:16px 0 18px}
+.trans-stats article{padding:22px;border:1px solid #dfe8f3;border-radius:12px;background:#f7faff;display:flex;flex-direction:column;gap:9px}
+.trans-stats article span{color:#526788;font-size:12px;font-weight:600}
+.trans-stats article strong{font-size:clamp(18px,2vw,26px);overflow-wrap:anywhere;color:#1b3d73}
+.trans-stats article small{font-size:11px;color:#7184a2;line-height:1.55}
+.trans-note{padding:15px 18px;border:1px solid #e0e7f2;border-radius:10px;color:#60718b;background:#fafcff;font-size:12px;line-height:1.6}
+.trans-report-list{display:flex;flex-direction:column;gap:10px;margin-top:15px}
+.trans-report{padding:18px 20px;background:#fafcff;border:1px solid #e1e8f3;border-radius:11px}
+.trans-report-top,.trans-spending{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.trans-report strong{font-size:14px;color:#18375f}
+.trans-report-top span,.trans-report small{font-size:11px;color:#7889a3}
+.trans-report p{white-space:pre-wrap;margin:12px 0;line-height:1.65}
+.trans-meta{font-size:12px;color:#667992}
+.trans-spending small{display:block;margin-top:5px}
+.trans-empty{background:#f8fbff;border:1px dashed #cfdaea;border-radius:12px;color:#7586a0;padding:28px;text-align:center;font-size:13px;line-height:1.7}
+.trans-editform{padding:20px;border:1px solid #dce6f3;background:#fff;border-radius:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:16px 0}
+.trans-editform label{font-size:12px;color:#4c6385;display:flex;flex-direction:column;gap:6px}
+.trans-editform input,.trans-editform select,.trans-editform textarea{width:100%;padding:12px;border:1px solid #d7e0ed;border-radius:8px;font:inherit;font-size:13px;color:#203353;background:#fff}
+.trans-editform label.wide{grid-column:1/-1}
+.trans-editform label.checkline{flex-direction:row;align-items:center;gap:9px}
+.trans-editform .checkline input{width:auto}
+.trans-editform button{justify-self:start;align-self:end}
+@media(max-width:800px){.trans-hero{padding:29px 23px}.trans-section{padding:23px 19px}.trans-stats{grid-template-columns:1fr}.trans-sectionhead{flex-direction:column}.trans-editform{grid-template-columns:1fr}.trans-report-top,.trans-spending{align-items:flex-start}}
