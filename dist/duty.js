@@ -37,7 +37,7 @@ function updateSchedule(){
   });
   const open=now.hour>=9 && now.hour<18;
   const label=$('#office-status-label'),pill=$('#office-status');
-  label.textContent=open?'Scheduled: 9 AM–6 PM · Open hours':'Scheduled: Closed now · 9 AM–6 PM';
+  label.textContent=open?'Open hours · 9:00 AM–6:00 PM':'Closed now · Opens at 9:00 AM';
   pill.classList.toggle('is-open',open);
   pill.classList.toggle('is-closed',!open);
   pill.title='Oras ayon sa Philippine Time. Hindi pa kasama ang manual SK closure updates.';
