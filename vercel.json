@@ -18,6 +18,10 @@
     {
       "source": "/contacts",
       "destination": "/contacts.html"
+    },
+    {
+      "source": "/transparency",
+      "destination": "/transparency.html"
     }
   ],
   "redirects": [
@@ -34,6 +38,11 @@
     {
       "source": "/contacts.html",
       "destination": "/contacts",
+      "permanent": true
+    },
+    {
+      "source": "/transparency.html",
+      "destination": "/transparency",
       "permanent": true
     }
   ]
