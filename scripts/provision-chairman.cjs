@@ -13,8 +13,8 @@ async function main() {
   const response = await db.rpc('provision', { email: EMAIL, password: hashed });
   if (response?.error) throw new Error('Provisioning rejected: ' + response.error);
   if (response?.email !== EMAIL || response?.role !== 'chairman') throw new Error('Unexpected provisioning response; verify on Supabase.');
-  process.stdout.write('Chairman: ' + EMAIL + '\\n');
-  process.stdout.write('One-time temporary password: ' + temporary + '\\n');
-  process.stdout.write('Save it privately now. Change it on first login. Do not share or commit it.\\n');
+  process.stdout.write('Chairman: ' + EMAIL + '\n');
+  process.stdout.write('One-time temporary password: ' + temporary + '\n');
+  process.stdout.write('Save it privately now. Change it on first login. Do not share or commit it.\n');
 }
 main().catch(err => { console.error('Could not provision chairman:', err.message); process.exitCode = 1; });
