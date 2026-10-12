@@ -89,3 +89,6 @@
 .trans-editform .checkline input{width:auto}
 .trans-editform button{justify-self:start;align-self:end}
 @media(max-width:800px){.trans-hero{padding:29px 23px}.trans-section{padding:23px 19px}.trans-stats{grid-template-columns:1fr}.trans-sectionhead{flex-direction:column}.trans-editform{grid-template-columns:1fr}.trans-report-top,.trans-spending{align-items:flex-start}}
+
+.trans-editform [hidden]{display:none!important}
+.trans-report-list .secondary{margin-top:7px}
