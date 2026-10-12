@@ -5,13 +5,13 @@ const pw='Test-strong-password-2026';const chair=crypto.randomUUID();db.prepare(
 await call('/api/manage/projects','GET',undefined,'',401);
 await call('/api/register','POST',{name:'Attacker',email:'attack@example.test',password:pw,role:'chairman'},'',403);
 await call('/api/register','POST',{name:'Youth',email:'youth@example.test',password:pw},'',403,'https://evil.example');
-const youth=await call('/api/register','POST',{name:'Youth',email:'youth@example.test',password:pw},'',201);assert.equal(youth.body.user.role,'youth');
-await call('/api/manage/projects','POST',{},youth.cookie,403);await call('/api/audit','GET',undefined,youth.cookie,403);await call('/api/users','GET',undefined,youth.cookie,403);
+await call('/api/register','POST',{name:'Youth',email:'youth@example.test',password:pw},'',403);const legacyId=crypto.randomUUID();db.prepare('INSERT INTO users VALUES(?,?,?,?,?,?,?)').run(legacyId,'Legacy youth','youth@example.test',await passwordHash(pw),'youth',0,new Date().toISOString());await call('/api/login','POST',{email:'youth@example.test',password:pw},'',401);const youth={cookie:''};
+await call('/api/manage/projects','POST',{},youth.cookie,401);await call('/api/audit','GET',undefined,youth.cookie,401);await call('/api/users','GET',undefined,youth.cookie,401);
 let chairLogin=await call('/api/login','POST',{email:'chair@example.test',password:pw});await call('/api/users','GET',undefined,chairLogin.cookie,403);
 const oldCookie=chairLogin.cookie;chairLogin=await call('/api/password','POST',{current:pw,password:pw+'new'},chairLogin.cookie);assert.equal((await call('/api/me','GET',undefined,oldCookie)).body.user,null);
-const officer=await call('/api/register','POST',{name:'Officer',email:'officer@example.test',password:pw},'',201);
-await call('/api/users/'+officer.body.user.id+'/role','PUT',{role:'sk'},chairLogin.cookie);assert.equal((await call('/api/me','GET',undefined,officer.cookie)).body.user,null);
-const sk=await call('/api/login','POST',{email:'officer@example.test',password:pw});assert.equal(sk.body.user.role,'sk');await call('/api/users','GET',undefined,sk.cookie,403);
+const officer=await call('/api/users','POST',{name:'Officer',email:'officer@example.test'},chairLogin.cookie,201);assert.equal(officer.body.user.role,'sk');
+await call('/api/users/'+officer.body.user.id+'/role','PUT',{role:'sk'},chairLogin.cookie);
+let sk=await call('/api/login','POST',{email:'officer@example.test',password:officer.body.temporaryPassword});await call('/api/manage/projects','GET',undefined,sk.cookie,403);sk=await call('/api/password','POST',{current:officer.body.temporaryPassword,password:pw},sk.cookie);assert.equal(sk.body.user.role,'sk');await call('/api/users','POST',{name:'Escalation',email:'no@example.test'},sk.cookie,403);await call('/api/users','GET',undefined,sk.cookie,403);
 await call('/api/uploads','POST',{mime:'image/png',data:Buffer.from('not image').toString('base64')},sk.cookie,400);
 const image=await call('/api/uploads','POST',{mime:'image/png',data:fs.readFileSync(path.join(__dirname,'dist/icon-192.png')).toString('base64')},sk.cookie,201);
 let project={title:'Test education project',category:'Education',description:'A real test',scope:'Details',status:'Pinaplano',progress:0,published:false,image_id:image.body.id};let saved=await call('/api/manage/projects','POST',project,sk.cookie,201);const id=saved.body.project.id;assert.equal(saved.body.project.created_by,officer.body.user.id);
@@ -24,4 +24,3 @@ await call('/api/users/'+officer.body.user.id+'/role','PUT',{role:'youth'},chair
 await call('/api/logout','POST',{},chairLogin.cookie);assert.equal((await call('/api/me','GET',undefined,chairLogin.cookie)).body.user,null);
 const {DatabaseSync}=require('node:sqlite');const reopened=new DatabaseSync(path.join(process.env.DATA_DIR,'vasra.sqlite'));assert.equal(reopened.prepare('SELECT count(*) AS n FROM projects').get().n,1);reopened.close();console.log(checks+' API checks passed; database persistence and immutable audit verified.');
 }finally{await new Promise(r=>server.close(r));db.close();assert(path.resolve(process.env.DATA_DIR).startsWith(path.resolve(os.tmpdir())+path.sep+'vasra-test-'));fs.rmSync(process.env.DATA_DIR,{recursive:true,force:true});}});
-

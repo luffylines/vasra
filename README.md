@@ -1,36 +1,60 @@
-# SK Vasra portal
+# SK Vasra community portal
 
-## Run on this computer
+A responsive web/PWA portal with separate Projects, SK Duty, and Contacts pages. The public pages do not show a login link or registration controls. SK Duty opens directly at `/duty.html`, with seven day selectors, officer details, services, and the corresponding original poster. Old `/#duty` and `/#contacts` links redirect to the dedicated pages.
 
-Double-click `Start-SK-Vasra.cmd`, then open http://127.0.0.1:4173. Keep the server window open while using the portal. Alternatively run `node server.cjs`. Requires Node.js 24 or later; no npm packages are needed. Opening index.html directly shows contact content but does not provide working accounts or projects.
+## Run locally
 
-## Chairman account
+Use Node.js 24 or later. No npm packages are required.
 
-The local chairman account is `christianaring6@gmail.com`. Its first-login instructions are in `data/chairman-first-login.txt` on this computer only. Change the temporary password at first login and delete the note afterward. Credentials and the database are deliberately excluded from the ZIP.
+```sh
+node server.cjs
+```
 
-On a fresh computer, run `node setup-chairman.cjs YOUR_EMAIL` once before allowing registration. It refuses to overwrite an existing chairman or existing email. Then follow the first-login note. The database and uploaded images live in `data/vasra.sqlite`. Back up the whole data folder while the server is stopped; it contains personal data and must never be publicly served or committed.
+Open http://127.0.0.1:4173. On Windows, double-click `Start-SK-Vasra.cmd`. Keep the server running while using the portal. Opening HTML files directly will not provide project APIs or account features.
 
-## Roles and workflow
+## Staff access
 
-- Kabataan: register with name, email, and password; access their dashboard, published projects, duty schedule, and contacts.
-- SK Officer: register normally, then the chairman assigns SK Officer in Mga account. Log in again after the role change. Create projects, upload PNG/JPG/WebP images (up to 5 MB), edit, save drafts, and publish/unpublish.
-- SK Chairman: the SK project tools plus account role management and a paginated activity log. Project records show the creator and last editor. The log stores actor, timestamp, and before/after changes and cannot be edited/deleted through the API. The database owner can still control the underlying database.
+Open `/account.html` directly for the unlisted staff login. Hiding the link is only a navigation choice: the server independently restricts login and all management APIs to authorized SK officers and chairman. Public registration is disabled. Legacy youth accounts cannot log in; their sessions are rejected.
 
-Use the Publish checkbox to make a project visible to everyone. Drafts and their images require SK or chairman access. All SK officers can edit projects. Concurrent stale edits return a conflict instead of overwriting newer work. No demo projects are mixed with actual published records.
+On a fresh installation, provision the chairman once:
 
-## Included content
+```sh
+node setup-chairman.cjs chairman@example.com
+```
 
-Facebook: https://www.facebook.com/skbrgyvasra
-Email: skbrgyvasraqc@gmail.com
-Office: 40 Forestry St, Barangay Vasra, District 1, Quezon City
-Duty: Monday–Sunday, 9:00 AM–6:00 PM. Officer names, services, resolution text, and all eight posters came from the supplied material. Poster links open the original images.
+Read `data/chairman-first-login.txt` locally, change the temporary password at first login, then delete that note. Do not commit or share the note. The setup command refuses to overwrite an existing chairman or email.
+
+The chairman creates SK accounts in **Mga account**, providing the officer's name and email. A random temporary password appears once for private handoff. The officer must change it before accessing the dashboard. The chairman can disable/re-enable SK access; changing a role revokes that account's sessions. Officers cannot create accounts or grant roles.
+
+## Project workflow
+
+SK officers and chairman can create projects, upload JPG/PNG/WebP images (up to 5 MB), save drafts, publish/unpublish, and edit projects. All SK officers may edit projects. Public visitors only see published projects and their images. Stale edits return a conflict instead of overwriting newer work.
+
+The chairman can view creator/last-editor names and a paginated activity log with timestamps and before/after changes. Audit records cannot be edited or deleted through the application. Temporary passwords and password hashes are not written to the audit log. A server/database administrator still controls the underlying database.
+
+## Storage and security
+
+Database, sessions, account details, and uploaded images reside in `data/vasra.sqlite`, outside `dist`. Back up the entire data directory while the server is stopped. The `data` directory is ignored by Git and excluded from release ZIPs. Passwords use salted scrypt; sessions use random HttpOnly SameSite cookies. The service worker does not cache private APIs or the staff page. Mutating requests validate their origin, and login attempts are rate limited.
 
 ## Verification
 
-Run `node test.cjs` (direct invocation avoids this environment's test-worker spawn restriction). It uses a separate temporary database and checks registration, role escalation prevention, CSRF origin validation, forced password change, session revocation, role assignment, private drafts/images, uploads, publication, concurrent edit conflicts, authorship, audit immutability, logout, and database persistence. Browser QA also covered chairman project creation and audit display, and the separate youth dashboard.
+```sh
+node test.cjs
+```
 
-## Online deployment and limitations
+Tests run against a separate temporary database and cover disabled registration and youth login, role escalation prevention, origin validation, staff provisioning, forced password changes, session revocation, drafts/private images, uploads, publication, stale edit conflicts, authorship, audit immutability, logout, and persistence. Direct test invocation avoids the restricted environment's child-process test-worker limitation.
 
-This version runs locally. It is not deployed. The earlier Sites source helper failed, and the old static hosting manifest does not deploy this Node/SQLite backend. Do not publish only dist and expect login to work. Online deployment needs a Node.js 24 server with persistent disk, an HTTPS reverse proxy, and PUBLIC_ORIGIN set to the exact public HTTPS origin. Set HOST and PORT as required by that host. The database must stay outside the public directory. Use one server instance with this SQLite implementation. Native APK/EXE installers are not included; the portal remains a PWA.
+## Hosting
 
-Passwords use salted scrypt, sessions use random HttpOnly SameSite cookies, authorization is enforced server-side, and private API responses are not cached by the service worker. Registration/login attempts are rate limited per connecting IP. Email ownership verification, email password reset, and production email delivery are not yet configured. Account recovery currently requires the server administrator; do not collect real youth registrations publicly until the hosting, privacy process, and recovery workflow are ready.
+Pushing to GitHub does not deploy the website. This version requires a Node.js 24 host with persistent disk and an HTTPS reverse proxy; set `PUBLIC_ORIGIN` to the exact public HTTPS origin and `HOST`/`PORT` as required by the host. Use one server instance for this SQLite implementation. The retained `.openai/hosting.json` belongs to the earlier static prototype and cannot deploy the backend. Do not use GitHub Pages or publish only `dist` for the complete application.
+
+Email verification and email-based password recovery are not configured. Account recovery currently requires the server administrator. Native APK/EXE installers are not included; installation remains via a supporting browser/PWA.
+
+## Supplied content
+
+Facebook: https://www.facebook.com/skbrgyvasra
+Email: skbrgyvasraqc@gmail.com
+Address: 40 Forestry St, Barangay Vasra, District 1, Quezon City
+Office: Monday–Sunday, 9:00 AM–6:00 PM
+
+The supplied SK branding, duty posters, names, services, and resolution text are preserved. Schedule selection uses the Asia/Manila timezone.
