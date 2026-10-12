@@ -1,0 +1,27 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),crypto=require('node:crypto');
+process.env.DATA_DIR=fs.mkdtempSync(path.join(os.tmpdir(),'vasra-test-'));const {server,db,passwordHash}=require('./server.cjs');
+test('Accounts, roles, projects, uploads, audit and persistence',async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;let checks=0;async function call(route,method='GET',payload,jar='',status=200,origin=base){const r=await fetch(base+route,{method,headers:{'Content-Type':'application/json',Origin:origin,Cookie:jar},body:payload===undefined?undefined:JSON.stringify(payload)});let b;try{b=await r.json()}catch{}assert.equal(r.status,status,route+': '+JSON.stringify(b));checks++;return {body:b,cookie:r.headers.get('set-cookie')?.split(';')[0]||jar};}try{
+const pw='Test-strong-password-2026';const chair=crypto.randomUUID();db.prepare('INSERT INTO users VALUES(?,?,?,?,?,?,?)').run(chair,'Test Chairman','chair@example.test',await passwordHash(pw),'chairman',1,new Date().toISOString());
+await call('/api/manage/projects','GET',undefined,'',401);
+await call('/api/register','POST',{name:'Attacker',email:'attack@example.test',password:pw,role:'chairman'},'',403);
+await call('/api/register','POST',{name:'Youth',email:'youth@example.test',password:pw},'',403,'https://evil.example');
+const youth=await call('/api/register','POST',{name:'Youth',email:'youth@example.test',password:pw},'',201);assert.equal(youth.body.user.role,'youth');
+await call('/api/manage/projects','POST',{},youth.cookie,403);await call('/api/audit','GET',undefined,youth.cookie,403);await call('/api/users','GET',undefined,youth.cookie,403);
+let chairLogin=await call('/api/login','POST',{email:'chair@example.test',password:pw});await call('/api/users','GET',undefined,chairLogin.cookie,403);
+const oldCookie=chairLogin.cookie;chairLogin=await call('/api/password','POST',{current:pw,password:pw+'new'},chairLogin.cookie);assert.equal((await call('/api/me','GET',undefined,oldCookie)).body.user,null);
+const officer=await call('/api/register','POST',{name:'Officer',email:'officer@example.test',password:pw},'',201);
+await call('/api/users/'+officer.body.user.id+'/role','PUT',{role:'sk'},chairLogin.cookie);assert.equal((await call('/api/me','GET',undefined,officer.cookie)).body.user,null);
+const sk=await call('/api/login','POST',{email:'officer@example.test',password:pw});assert.equal(sk.body.user.role,'sk');await call('/api/users','GET',undefined,sk.cookie,403);
+await call('/api/uploads','POST',{mime:'image/png',data:Buffer.from('not image').toString('base64')},sk.cookie,400);
+const image=await call('/api/uploads','POST',{mime:'image/png',data:fs.readFileSync(path.join(__dirname,'dist/icon-192.png')).toString('base64')},sk.cookie,201);
+let project={title:'Test education project',category:'Education',description:'A real test',scope:'Details',status:'Pinaplano',progress:0,published:false,image_id:image.body.id};let saved=await call('/api/manage/projects','POST',project,sk.cookie,201);const id=saved.body.project.id;assert.equal(saved.body.project.created_by,officer.body.user.id);
+assert.equal((await call('/api/projects')).body.projects.length,0);await call('/api/images/'+image.body.id,'GET',undefined,'',404);
+project={...project,published:true,version:1};saved=await call('/api/manage/projects/'+id,'PUT',project,chairLogin.cookie);assert.equal(saved.body.project.creator_name,'Officer');assert.equal(saved.body.project.editor_name,'Test Chairman');
+await call('/api/manage/projects/'+id,'PUT',project,sk.cookie,409);
+const pub=(await call('/api/projects')).body.projects;assert.equal(pub.length,1);assert.equal(pub[0].creator_name,undefined);assert.equal((await fetch(base+'/api/images/'+image.body.id)).status,200);
+const log=(await call('/api/audit','GET',undefined,chairLogin.cookie)).body.events;assert(log.some(e=>e.action==='project_updated'&&e.actor_name==='Test Chairman'));assert(log.some(e=>e.action==='project_created'&&e.actor_name==='Officer'));assert.throws(()=>db.prepare("DELETE FROM audit").run(),/immutable/);
+await call('/api/users/'+officer.body.user.id+'/role','PUT',{role:'youth'},chairLogin.cookie);await call('/api/manage/projects','GET',undefined,sk.cookie,401);
+await call('/api/logout','POST',{},chairLogin.cookie);assert.equal((await call('/api/me','GET',undefined,chairLogin.cookie)).body.user,null);
+const {DatabaseSync}=require('node:sqlite');const reopened=new DatabaseSync(path.join(process.env.DATA_DIR,'vasra.sqlite'));assert.equal(reopened.prepare('SELECT count(*) AS n FROM projects').get().n,1);reopened.close();console.log(checks+' API checks passed; database persistence and immutable audit verified.');
+}finally{await new Promise(r=>server.close(r));db.close();assert(path.resolve(process.env.DATA_DIR).startsWith(path.resolve(os.tmpdir())+path.sep+'vasra-test-'));fs.rmSync(process.env.DATA_DIR,{recursive:true,force:true});}});
+
