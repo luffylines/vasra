@@ -25,3 +25,11 @@
 .poster-close{position:absolute;right:10px;top:7px;width:36px;height:36px;border:0;border-radius:50%;background:#ffffff24;color:white;cursor:pointer;font-size:27px;line-height:1}
 .poster-close:hover{background:#ffffff44}
 @media(max-width:600px){.poster-viewer{width:95vw;padding:45px 9px 12px}.poster-viewer img{max-height:calc(90vh - 110px)}}
+
+
+/* Fix: only the indicator dot is 7px; status text must keep natural width. */
+.page-heading{min-width:0}
+#office-status.schedule-pill{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:flex-start;gap:10px;max-width:100%;min-width:205px;padding:11px 15px;font-size:12px;font-weight:700;line-height:1.35;white-space:normal}
+#office-status.schedule-pill>span:first-child{display:block;flex:0 0 8px;width:8px;height:8px;border-radius:50%}
+#office-status.schedule-pill>#office-status-label{display:inline;flex:1 1 auto;width:auto;height:auto;background:transparent!important;border:0;border-radius:0;font-size:12px;line-height:1.45;white-space:normal}
+@media(max-width:850px){.page-heading{flex-wrap:wrap}#office-status.schedule-pill{margin:12px 0 0;min-width:0}}
