@@ -26,7 +26,9 @@ async function loadTransparency(){
   $('#project-spending').innerHTML=map.size?Array.from(map.values()).map(p=>'<article class="trans-report trans-spending"><div><strong>'+esc(p.name)+'</strong><small>'+p.count+' monthly update(s)</small></div><strong>'+(p.known?money(p.value):'Expense not reported')+'</strong></article>').join(''):'<div class="trans-empty">No published project records for '+year+' yet.</div>';
   const labels={chairman:'SK Chairperson',kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'};
   const roster=Array.isArray(data.officials)?data.officials:[];
-  $('#officials-grid').innerHTML=roster.length?roster.map(o=>'<article class="trans-person"><span class="trans-avatar">'+esc(String(o.name).trim().charAt(0).toUpperCase())+'</span><strong>'+esc(o.name)+'</strong><small>'+esc(labels[o.position]||'SK Officer')+'</small></article>').join(''):'<div class="trans-empty">Official directory is being prepared. Names will appear after the Chairman publishes them.</div>';
+  const groups=[['chairman','SK Chairperson'],['treasurer','SK Treasurer'],['secretary','SK Secretary'],['kagawad','SK Kagawad']];
+  const card=o=>'<article class="trans-person"><span class="trans-avatar">'+esc(String(o.name).trim().charAt(0).toUpperCase())+'</span><strong>'+esc(o.name)+'</strong><small>'+esc(labels[o.position]||'SK Officer')+'</small></article>';
+  $('#officials-grid').innerHTML=roster.length?groups.map(group=>{const members=roster.filter(o=>o.position===group[0]);return members.length?'<div class="trans-org-group"><h3>'+group[1]+'</h3><div class="trans-roster">'+members.map(card).join('')+'</div></div>':''}).join(''):'<div class="trans-empty">Official directory is being prepared. Names will appear after the Chairman publishes them.</div>';
   renderMonths();
  }catch(e){$('#annual-budget').textContent='Unavailable';$('#annual-expense').textContent='Unavailable';$('#annual-projects').textContent='—';$('#project-spending').textContent='Unable to load transparency data: '+e.message;$('#monthly-reports').textContent='Please retry later.';$('#officials-grid').textContent='SK directory temporarily unavailable.'}
 }
