@@ -1,6 +1,7 @@
 const days=[{day:'Lunes',short:'MON',file:'monday',names:['Gel Bergonio'],roles:['SK Kagawad']},{day:'Martes',short:'TUE',file:'tuesday',names:['Ernest Bragais','Kristine De Ocampo'],roles:['SK Treasurer','SK Secretary']},{day:'Miyerkules',short:'WED',file:'wednesday',names:['Sherwin Estanislao'],roles:['SK Kagawad']},{day:'Huwebes',short:'THU',file:'thursday',names:['Rembert Natividad'],roles:['SK Kagawad']},{day:'Biyernes',short:'FRI',file:'friday',names:['Arvin Capiral'],roles:['SK Chairman']},{day:'Sabado',short:'SAT',file:'saturday',names:['Kath Irag'],roles:['SK Kagawad']},{day:'Linggo',short:'SUN',file:'sunday',names:['Roland Reyes'],roles:['SK Kagawad']}];
 const MANILA='Asia/Manila';
-let selected=-1, manualSelection=false, observedDate='';
+let selected=-1, manualSelection=false, observedDate='', dutyOverride='auto', overrideDate='';
+async function refreshDutyOverride(){try{const r=await fetch('./api/duty-status',{cache:'no-store'});if(!r.ok)throw Error('status unavailable');const data=await r.json();dutyOverride=data.mode==='closed'?'closed':'auto';overrideDate=data.date||'';}catch{dutyOverride='unknown';overrideDate='';}updateSchedule();}
 function manilaNow(){
   const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:MANILA,weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
   return {short:parts.weekday.toUpperCase(),date:parts.year+'-'+parts.month+'-'+parts.day,hour:Number(parts.hour),minute:Number(parts.minute)};
@@ -35,13 +36,17 @@ function updateSchedule(){
     marker.hidden=i!==today;
     el.classList.toggle('today',i===today);
   });
-  const open=now.hour>=9 && now.hour<18;
+  const hoursOpen=now.hour>=9 && now.hour<18;
+  const manualClosed=overrideDate===now.date&&dutyOverride==='closed';
+  const open=hoursOpen&&!manualClosed;
   const label=$('#office-status-label'),pill=$('#office-status');
-  label.textContent=open?'Scheduled open · 9 AM–6 PM':'Scheduled closed · 9 AM opening';
+  label.textContent=manualClosed&&hoursOpen?'Closed by SK on duty':open?(dutyOverride==='unknown'?'Scheduled open · Status unverified':'Open · 9 AM–6 PM'):(now.hour>=18?'Closed · Office hours ended':'Closed · Opens 9 AM');
   pill.classList.toggle('is-open',open);
   pill.classList.toggle('is-closed',!open);
-  pill.title='Automatic schedule sa Philippine Time; hindi pa ito kumpirmasyon na bukas ang opisina. Pending ang staff-reported status.';
+  pill.title='Philippine Time · 9 AM–6 PM. Manual SK closure takes priority during opening hours.';
 }
 updateSchedule();
 setInterval(updateSchedule,30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateSchedule()});
+
+refreshDutyOverride();setInterval(refreshDutyOverride,30000);
