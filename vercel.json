@@ -6,6 +6,35 @@
     {
       "source": "/api/:path*",
       "destination": "/api/index?__path=:path*"
+    },
+    {
+      "source": "/account",
+      "destination": "/account.html"
+    },
+    {
+      "source": "/duty",
+      "destination": "/duty.html"
+    },
+    {
+      "source": "/contacts",
+      "destination": "/contacts.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/account.html",
+      "destination": "/account",
+      "permanent": true
+    },
+    {
+      "source": "/duty.html",
+      "destination": "/duty",
+      "permanent": true
+    },
+    {
+      "source": "/contacts.html",
+      "destination": "/contacts",
+      "permanent": true
     }
   ]
 }
