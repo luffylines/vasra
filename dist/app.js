@@ -1,5 +1,30 @@
 let projects=[],filter='Lahat';
 function render(){const q=$('#search').value.toLocaleLowerCase();const found=projects.filter(p=>(filter==='Lahat'||p.status===filter)&&`${p.title} ${p.category} ${p.description}`.toLocaleLowerCase().includes(q));$('#count').textContent=`${found.length} proyekto`;$('#grid').innerHTML=found.map(p=>`<article class="card"><div class="cover" style="background:#e5eafb"><span class="badge">${esc(p.status)}</span>${p.image_id?`<img class="project-photo" src="./api/images/${encodeURIComponent(p.image_id)}" alt="${esc(p.title)}" loading="lazy">`:'<span class="project-placeholder">SK VASRA</span>'}</div><div class="cardbody"><div class="category">${esc(p.category)}</div><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><div class="progresslabel"><span>Progreso</span><b>${p.progress}%</b></div><div class="track"><div style="width:${p.progress}%"></div></div><div class="cardbottom"><span>SK Vasra</span><button data-id="${esc(p.id)}">Detalye ↗</button></div></div></article>`).join('')||'<div class="empty">Wala pang inilathalang proyekto o walang tugma sa iyong paghahanap.</div>';$('#stat-all').textContent=projects.length;$('#stat-active').textContent=projects.filter(p=>p.status==='Isinasagawa').length;$('#stat-done').textContent=projects.filter(p=>p.status==='Natapos').length;$('#stat-planned').textContent=projects.filter(p=>p.status==='Pinaplano').length;}
 $('#search').addEventListener('input',render);document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('selected',x===b);x.setAttribute('aria-pressed',String(x===b))});render()}));
-$('#grid').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b)return;const p=projects.find(x=>x.id===b.dataset.id);$('#detailbody').innerHTML=`<div class="eyebrow">${esc(p.category)}</div><h2>${esc(p.title)}</h2>${p.image_id?`<img class="detail-photo" src="./api/images/${encodeURIComponent(p.image_id)}" alt="${esc(p.title)}">`:''}<p><b>${esc(p.status)}</b> · ${p.progress}%</p><p>${esc(p.description)}</p><h3>Saklaw ng proyekto</h3><p class="preserve">${esc(p.scope)}</p><p class="muted">Huling na-update: ${dateText(p.updated)}</p>`;$('#detail').showModal()});
+let detailProjectId=null;
+const moneyLabel=v=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(Number(v));
+const thisManilaYear=Number(new Intl.DateTimeFormat('en-US',{year:'numeric',timeZone:'Asia/Manila'}).format(new Date()));
+function detailMonthLabel(s){return new Intl.DateTimeFormat('en-PH',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(String(s).slice(0,10)+'T12:00:00Z'))}
+async function loadProjectHistory(){
+ const year=Number($('#detail-year').value),month=$('#detail-month').value,pid=detailProjectId;
+ $('#detail-monthly').innerHTML='<div class="trans-empty">Loading published monthly reports...</div>';
+ try{
+  const b=await api('./api/transparency?year='+year);
+  if(pid!==detailProjectId||!$('#detail').open)return;
+  const reports=(b.updates||[]).filter(r=>r.project_id===pid&&(month==='all'||String(r.month).slice(5,7)===month));
+  $('#detail-monthly').innerHTML=reports.length?reports.map(r=>'<article class="trans-report"><div class="trans-report-top"><strong>'+esc(detailMonthLabel(r.month))+'</strong><span>Published</span></div><p>'+esc(r.summary)+'</p><div class="trans-meta">Reported expense: <b>'+(r.expense===null?'Not reported':moneyLabel(r.expense))+'</b></div></article>').join(''):'<div class="trans-empty">No published monthly updates for this project and period yet.</div>';
+ }catch(e){if(pid===detailProjectId)$('#detail-monthly').textContent='Unable to load monthly updates: '+e.message}
+}
+$('#grid').addEventListener('click',e=>{
+ const button=e.target.closest('[data-id]');if(!button)return;
+ const p=projects.find(x=>x.id===button.dataset.id);if(!p)return;
+ detailProjectId=p.id;
+ let years='';
+ for(let y=thisManilaYear+1;y>=2020;y--)years+='<option value="'+y+'"'+(y===thisManilaYear?' selected':'')+'>'+y+'</option>';
+ let months='<option value="all">All months</option>';
+ for(let m=1;m<=12;m++){let value=String(m).padStart(2,'0');months+='<option value="'+value+'">'+new Intl.DateTimeFormat('en-PH',{month:'long',timeZone:'UTC'}).format(new Date(Date.UTC(2025,m-1,1)))+'</option>'}
+ $('#detailbody').innerHTML='<div class="eyebrow">'+esc(p.category)+'</div><h2>'+esc(p.title)+'</h2>'+(p.image_id?'<img class="detail-photo" src="./api/images/'+encodeURIComponent(p.image_id)+'" alt="'+esc(p.title)+'">':'')+'<p><b>'+esc(p.status)+'</b> · '+p.progress+'%</p><p>'+esc(p.description)+'</p><h3>Project scope</h3><p class="preserve">'+esc(p.scope)+'</p><p class="muted">Last updated: '+dateText(p.updated)+'</p><h3>Monthly Project Updates</h3><div class="trans-sectionhead"><label class="trans-picker">Year <select id="detail-year">'+years+'</select></label><label class="trans-picker">Month <select id="detail-month">'+months+'</select></label></div><div id="detail-monthly" class="trans-report-list"></div><p class="muted"><a href="./transparency">View annual SK transparency ↗</a></p>';
+ $('#detail').showModal();loadProjectHistory();
+});
+$('#detail').addEventListener('change',e=>{if(e.target.id==='detail-year'||e.target.id==='detail-month')loadProjectHistory()});
 document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('dialog').close());let installPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e});async function install(){if(installPrompt){await installPrompt.prompt();installPrompt=null}else $('#installhelp').showModal()}$('#install').onclick=install;$('#install2').onclick=install;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===filter)));render();api('./api/projects').then(b=>{projects=b.projects;render()}).catch(e=>{$('#count').textContent='Hindi ma-load ang mga proyekto.';$('#grid').innerHTML=`<div class="empty">${esc(e.message)}</div>`});if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
