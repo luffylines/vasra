@@ -30,3 +30,71 @@ async function setDutyMode(mode){const buttons=['#duty-set-closed','#duty-set-au
 $('#duty-set-closed').onclick=()=>setDutyMode('closed');
 $('#duty-set-auto').onclick=()=>setDutyMode('auto');
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&user)updateDutyControls()});
+
+
+/* Annual finance, monthly accomplishments and official-directory editors */
+let transparencyCache=null;
+const transMoney=v=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(Number(v));
+const transYearNow=()=>Number(new Intl.DateTimeFormat('en-US',{year:'numeric',timeZone:'Asia/Manila'}).format(new Date()));
+const transMonthNow=()=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{year:'numeric',month:'2-digit',timeZone:'Asia/Manila'}).formatToParts(new Date()).map(p=>[p.type,p.value]));return p.year+'-'+p.month};
+const canEditFinance=()=>user&&(user.role==='chairman'||user.position==='treasurer');
+function fillMonthlyProjects(){
+ const select=$('#trans-month-project');
+ const current=select.value;
+ select.innerHTML=managed.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.title)+(p.published?'':' (draft)')+'</option>').join('');
+ if(managed.some(p=>p.id===current))select.value=current;
+}
+async function loadTransparencyEditor(tab){
+ const budget=$('#budget-form'),monthly=$('#monthly-form');
+ if(!budget.elements.year.value)budget.elements.year.value=String(transYearNow());
+ if(!monthly.elements.month.value)monthly.elements.month.value=transMonthNow();
+ if(tab==='monthly'&&!managed.length)await loadProjects();
+ fillMonthlyProjects();
+ const year=tab==='budget'?Number(budget.elements.year.value):tab==='monthly'?Number(monthly.elements.month.value.slice(0,4)):transYearNow();
+ const d=await api('./api/transparency/manage?year='+year);
+ transparencyCache=d;
+ if(tab==='budget'){
+  budget.elements.amount.value=d.budget?.amount??'';
+  budget.elements.reference.value=d.budget?.reference??'';
+  budget.elements.published.checked=!!d.budget?.published;
+  $('#budget-summary').textContent=d.budget?'Saved '+year+' annual budget: '+transMoney(d.budget.amount)+(d.budget.published?' · Published':' · Draft'):'No approved annual budget has been entered for '+year+'.';
+ }
+ if(tab==='monthly'){
+  $('#monthly-manage-list').innerHTML=d.updates.length?d.updates.map(m=>'<article class="trans-report trans-spending"><div><strong>'+esc(m.title)+'</strong><small>'+esc(m.month)+' · '+(m.published?'Published':'Draft')+' · '+esc(m.summary)+'</small></div><div><strong>'+(m.expense===null?'Expense not reported':transMoney(m.expense))+'</strong><button type="button" class="secondary" data-month-id="'+esc(m.id)+'">Edit</button></div></article>').join(''):'<div class="trans-empty">No monthly updates saved for '+year+' yet.</div>';
+ }
+ if(tab==='roster'){
+  $('#roster-list').innerHTML=d.officials.length?d.officials.map(o=>'<article class="trans-report trans-spending"><div><strong>'+esc(o.name)+'</strong><small>'+esc(o.position)+' · '+(o.published?'Public':'Draft')+'</small></div><button class="secondary" type="button" data-official-id="'+esc(o.id)+'">Edit</button></article>').join(''):'<div class="trans-empty">No SK officials in the directory yet.</div>';
+ }
+}
+$('#budget-form').elements.year.onchange=()=>{if(!$('#panel-budget').hidden)loadTransparencyEditor('budget').catch(e=>message(e.message,true))};
+$('#monthly-form').elements.month.onchange=()=>{if(!$('#panel-monthly').hidden)loadTransparencyEditor('monthly').catch(e=>message(e.message,true))};
+$('#budget-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
+ if(!canEditFinance())throw Error('Only the SK Chairman or Treasurer can manage finances.');
+ const f=e.target.elements;
+ await api('./api/transparency/budget',{method:'POST',body:JSON.stringify({year:Number(f.year.value),amount:f.amount.value,reference:f.reference.value,published:f.published.checked})});
+ message('Annual SK budget saved.');await loadTransparencyEditor('budget');
+})};
+$('#monthly-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
+ const f=e.target.elements;
+ if(!f.project_id.value)throw Error('Create a project before adding monthly updates.');
+ await api('./api/transparency/month',{method:'POST',body:JSON.stringify({project_id:f.project_id.value,month:f.month.value+'-01',summary:f.summary.value,expense:canEditFinance()?(f.expense.value||null):null,published:canEditFinance()&&f.published.checked})});
+ message('Monthly accomplishment saved.');await loadTransparencyEditor('monthly');
+})};
+$('#monthly-manage-list').onclick=e=>{
+ const btn=e.target.closest('[data-month-id]');if(!btn||!transparencyCache)return;
+ const item=transparencyCache.updates.find(m=>m.id===btn.dataset.monthId);if(!item)return;
+ const f=$('#monthly-form').elements;f.project_id.value=item.project_id;f.month.value=String(item.month).slice(0,7);f.summary.value=item.summary;f.expense.value=item.expense??'';f.published.checked=!!item.published;
+ $('#monthly-form').scrollIntoView({behavior:'smooth',block:'center'});
+};
+$('#roster-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
+ if(user?.role!=='chairman')throw Error('Only the Chairman can manage the official directory.');
+ const f=e.target.elements;
+ await api('./api/transparency/official',{method:'POST',body:JSON.stringify({id:f.id.value||null,name:f.name.value,position:f.position.value,sort:Number(f.sort.value),published:f.published.checked})});
+ message('SK official directory updated.');e.target.reset();await loadTransparencyEditor('roster');
+})};
+$('#roster-list').onclick=e=>{
+ const btn=e.target.closest('[data-official-id]');if(!btn||!transparencyCache)return;
+ const item=transparencyCache.officials.find(o=>o.id===btn.dataset.officialId);if(!item)return;
+ const f=$('#roster-form').elements;f.id.value=item.id;f.name.value=item.name;f.position.value=item.position;f.sort.value=item.display_order;f.published.checked=!!item.published;
+ $('#roster-form').scrollIntoView({behavior:'smooth',block:'center'});
+};
