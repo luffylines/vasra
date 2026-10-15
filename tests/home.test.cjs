@@ -43,3 +43,12 @@ test('directory excludes drafts and unverified entries and only renders availabl
  assert.match(html,/Published/);assert.doesNotMatch(html,/Draft|Unverified|SK Chairperson/);assert.match(vm.runInContext('officerDirectory([])',c),/Wala pang available na verified officers/);
  assert.match(vm.runInContext('officerPortrait("Ernest Bragais")',c),/portrait-left/);assert.match(vm.runInContext('officerPortrait("Kristine De Ocampo")',c),/portrait-right/);
 });
+
+test('organization chart uses published roles and requires matching photo identity and role',()=>{
+ const c=vm.createContext({esc:v=>String(v).replaceAll('<','&lt;')});for(const file of ['duty-data.js','officers.js'])vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),c);
+ const html=vm.runInContext('officerChart([{name:"Chair",position:"chairman"},{name:"Ernest Bragais",position:"treasurer"},{name:"Draft",position:"kagawad",published:false}])',c);
+ assert.match(html,/org-lead/);assert.match(html,/org-members/);assert.match(html,/portrait-left/);assert.doesNotMatch(html,/Draft/);
+ assert.doesNotMatch(vm.runInContext('officerPortrait("Ernest Bragais","secretary")',c),/<img/);
+ assert.match(vm.runInContext('officerChart([{name:"Only",position:"secretary"}])',c),/Wala pang published SK Chairperson/);
+ const duty=fs.readFileSync(path.join(dist,'duty.html'),'utf8');assert.match(duty,/class="duty-poster"/);assert.match(duty,/id="day-poster"/);assert.doesNotMatch(duty,/officers.css|duty-officer-card/);
+});

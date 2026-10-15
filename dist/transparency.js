@@ -24,7 +24,7 @@ async function loadTransparency(){
   const map=new Map();
   for(const r of reports){if(!map.has(r.project_id))map.set(r.project_id,{name:r.title,value:0,known:0,count:0});const x=map.get(r.project_id);x.count++;if(r.expense!==null){x.value+=Number(r.expense);x.known++}}
   $('#project-spending').innerHTML=map.size?Array.from(map.values()).map(p=>'<article class="trans-report trans-spending"><div><strong>'+esc(p.name)+'</strong><small>'+p.count+' monthly update(s)</small></div><strong>'+(p.known?money(p.value):'Expense not reported')+'</strong></article>').join(''):'<div class="trans-empty">No published project records for '+year+' yet.</div>';
-  $('#officials-grid').innerHTML=officerDirectory(data.officials,true);$('#officials-grid').dataset.loaded='true';
+  $('#officials-grid').innerHTML=officerChart(data.officials);$('#officials-grid').dataset.loaded='true';
   renderMonths();
  }catch(e){
   $('#annual-budget').textContent='Hindi ma-load sa ngayon';$('#annual-expense').textContent='Hindi ma-load sa ngayon';$('#annual-projects').textContent='Hindi ma-load sa ngayon';

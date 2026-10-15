@@ -10,10 +10,12 @@ function selectDay(index){
   const d=days[index];
   document.querySelectorAll('[data-day]').forEach((b,i)=>{b.classList.toggle('selected',i===index);b.setAttribute('aria-pressed',String(i===index))});
   $('#day-kicker').textContent=d.day.toUpperCase()+' / OFFICER'+(d.names.length>1?'S':'')+' OF THE DAY';
-  $('#officer-name').innerHTML=d.names.map((name,i)=>'<article class="duty-officer-card">'+officerPortrait(name)+'<div><h3>'+esc(name)+'</h3><p>'+esc(d.roles[i])+'</p><small>'+esc(d.day)+' · 9:00 AM–6:00 PM</small><small>SK Vasra Office</small></div></article>').join('');
+  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(name)}<small>${esc(d.roles[i])}</small></span>`).join('');
   const src='./duty/'+d.file+'.jpg';
+  $('#day-poster').src=src;
+  $('#day-poster').alt=d.day+': '+d.names.join(' at ');
   $('#poster-full').src=src;
-  $('#poster-full').alt=d.day+': '+d.names.join(' at ');
+  $('#poster-full').alt=$('#day-poster').alt;
 }
 $('.day-switch').innerHTML=days.map((d,i)=>`<button type="button" data-day="${i}" aria-pressed="false"><small>${d.short}</small><span>${d.day}</span><i hidden aria-label="Ngayong araw"></i></button>`).join('');
 $('.day-switch').onclick=e=>{
