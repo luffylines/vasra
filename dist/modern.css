@@ -94,3 +94,6 @@
 .trans-report-list .secondary{margin-top:7px}
 
 .trans-org-group{margin-top:20px}.trans-org-group:first-child{margin-top:4px}.trans-org-group h3{font-size:13px;letter-spacing:.3px;color:#4d678e;margin:0 0 12px}.trans-org-group>.trans-roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,210px));gap:12px}#officials-grid{display:block}.trans-org-group{width:100%}
+
+/* Five public destinations wrap comfortably on narrow screens. */
+@media(max-width:600px){.site-header nav{flex-wrap:wrap}.site-header nav a{min-width:0;flex-basis:28%}}
