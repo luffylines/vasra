@@ -15,6 +15,7 @@ async function home(fail=false){
   return {mode:'auto'};
  }});
  vm.runInContext(fs.readFileSync(path.join(dist,'duty-data.js'),'utf8'),context);
+ vm.runInContext(fs.readFileSync(path.join(dist,'officers.js'),'utf8'),context);
  vm.runInContext(fs.readFileSync(path.join(dist,'home.js'),'utf8'),context);
  await new Promise(setImmediate);return $;
 }
@@ -24,7 +25,7 @@ test('homepage counts distinct reported projects, sums known expenses and escape
  assert.match($('#home-duty-officers').innerHTML,/NAKATAKDA NGAYON/);
 });
 test('homepage failures remain explicit without inventing financial or official records',async()=>{
- const $=await home(true);assert.equal($('#home-budget').textContent,'Unavailable');assert.equal($('#home-month-count').textContent,'Unavailable');assert.match($('#home-duty-status').textContent,/Status unverified|Closed/);assert.match($('#home-officials').innerHTML,/hindi available/);
+ const $=await home(true);assert.equal($('#home-budget').textContent,'Hindi ma-load sa ngayon');assert.equal($('#home-month-count').textContent,'Hindi ma-load sa ngayon');assert.match($('#home-duty-status').textContent,/Status unverified|Closed/);assert.match($('#home-officials').innerHTML,/Hindi ma-load/);
 });
 test('default home and inner pages retain a single complete navigation and valid local assets',()=>{
  for(const name of ['index.html','projects.html','duty.html','contacts.html','transparency.html','account.html']){
@@ -33,4 +34,12 @@ test('default home and inner pages retain a single complete navigation and valid
   for(const [,asset] of html.matchAll(/(?:src|href)="\.\/([^"?#]+\.(?:js|css))"/g))assert(fs.existsSync(path.join(dist,asset)),asset);
  }
  const html=fs.readFileSync(path.join(dist,'index.html'),'utf8');assert.match(html,/<title>Home/);assert(!html.includes('src="./app.js"'));assert.match(fs.readFileSync(path.join(dist,'projects.html'),'utf8'),/id="grid"/);
+});
+
+test('directory excludes drafts and unverified entries and only renders available roles',()=>{
+ const c=vm.createContext({esc:v=>String(v).replaceAll('<','&lt;')});
+ vm.runInContext(fs.readFileSync(path.join(dist,'duty-data.js'),'utf8'),c);vm.runInContext(fs.readFileSync(path.join(dist,'officers.js'),'utf8'),c);
+ const html=vm.runInContext('officerDirectory([{name:"Published",position:"secretary"},{name:"Draft",position:"chairman",published:false},{name:"Unverified",position:"kagawad",verified:false}],true)',c);
+ assert.match(html,/Published/);assert.doesNotMatch(html,/Draft|Unverified|SK Chairperson/);assert.match(vm.runInContext('officerDirectory([])',c),/Wala pang available na verified officers/);
+ assert.match(vm.runInContext('officerPortrait("Ernest Bragais")',c),/portrait-left/);assert.match(vm.runInContext('officerPortrait("Kristine De Ocampo")',c),/portrait-right/);
 });

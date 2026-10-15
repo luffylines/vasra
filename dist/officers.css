@@ -1,0 +1,18 @@
+.officer-portrait{display:block;position:relative;overflow:hidden;flex-shrink:0;width:96px;height:112px;border-radius:18px;background:#dce8f6;border:1px solid #cedced}
+.officer-portrait img{position:absolute;max-width:none!important;height:auto!important;object-fit:initial!important;border-radius:0!important;box-shadow:none!important}
+.portrait-single img{width:300%!important;left:-100%;top:-72%}
+.portrait-left img{width:333.333%!important;left:-50%;top:-79%}
+.portrait-right img{width:333.333%!important;left:-193%;top:-79%}
+.home-officer .officer-portrait{width:64px;height:75px;border-radius:12px}
+.trans-person .officer-portrait{margin-bottom:8px}
+.portal-refresh .duty-stage{grid-template-columns:minmax(0,1fr);min-height:0}
+.portal-refresh .duty-info{padding:30px}
+.duty-officer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin:23px 0}
+.duty-officer-card{display:flex;align-items:center;gap:22px;padding:24px;border:1px solid #dce6f4;background:linear-gradient(130deg,#f3f7fe,#fff);border-radius:18px;min-width:0}
+.duty-officer-card .officer-portrait{width:124px;height:145px}
+.duty-officer-card h3{font-size:22px;line-height:1.35;color:#23466f;margin:0 0 8px}
+.duty-officer-card p{font-size:13px;color:#597293;margin:0 0 12px}
+.duty-officer-card small{display:block;font-size:12px;line-height:1.8;color:#607998}
+.duty-poster-secondary{align-self:flex-start;border:1px solid #cad8ec;border-radius:9px;padding:11px 15px;background:#f5f8fd;color:#395e8c;font:inherit;font-size:12px;min-height:44px}
+.home-metrics .summary-empty{font-size:16px;line-height:1.5;letter-spacing:0}
+@media(max-width:600px){.portal-refresh .duty-info{padding:22px}.duty-officer-grid{grid-template-columns:minmax(0,1fr)}.duty-officer-card{padding:18px;gap:16px;align-items:flex-start}.duty-officer-card .officer-portrait{width:90px;height:106px}.duty-officer-card h3{font-size:19px}}

@@ -8,28 +8,29 @@ for(let m=1;m<=12;m++){const o=document.createElement('option');o.value=String(m
 let reports=[];
 function renderMonths(){
  const chosen=monthSelect.value,list=reports.filter(r=>chosen==='all'||String(r.month).slice(5,7)===chosen);
- $('#monthly-reports').innerHTML=list.length?list.map(r=>'<article class="trans-report"><div class="trans-report-top"><strong>'+esc(r.title)+'</strong><span>'+esc(monthLabel(r.month))+'</span></div><p>'+esc(r.summary)+'</p><div class="trans-meta">Reported expense: <b>'+(r.expense===null?'Not reported':money(r.expense))+'</b></div></article>').join(''):'<div class="trans-empty">No published monthly updates for this period yet.</div>';
+ $('#monthly-reports').innerHTML=list.length?list.map(r=>'<article class="trans-report"><div class="trans-report-top"><strong>'+esc(r.title)+'</strong><span>'+esc(monthLabel(r.month))+'</span></div><p>'+esc(r.summary)+'</p><div class="trans-meta">Reported expense: <b>'+(r.expense===null?'Not reported':money(r.expense))+'</b></div></article>').join(''):'<div class="trans-empty">Wala pang nai-publish na monthly update.</div>';
 }
 async function loadTransparency(){
  const year=Number(yearSelect.value);
  $('#finance-year').textContent=String(year);$('#annual-budget').textContent='Loading…';$('#annual-expense').textContent='Loading…';$('#annual-projects').textContent='…';
  try{
   const data=await api('./api/transparency?year='+year),b=data.budget;
-  $('#annual-budget').textContent=b?money(b.amount):'Not yet reported';
+  $('#annual-budget').textContent=b?money(b.amount):'Wala pang published budget figures.';
   $('#annual-source').textContent=b?(b.reference||'SK-published budget · reference not provided'):'Awaiting approved annual budget records';
   reports=Array.isArray(data.updates)?data.updates:[];
   const amounts=reports.filter(r=>r.expense!==null);
-  $('#annual-expense').textContent=amounts.length?money(amounts.reduce((sum,r)=>sum+Number(r.expense),0)):'Not yet reported';
-  $('#annual-projects').textContent=amounts.length?String(new Set(amounts.map(r=>r.project_id)).size):'Not yet reported';
+  $('#annual-expense').textContent=amounts.length?money(amounts.reduce((sum,r)=>sum+Number(r.expense),0)):'Wala pang nai-publish na ulat';
+  $('#annual-projects').textContent=amounts.length?String(new Set(amounts.map(r=>r.project_id)).size):'Wala pang nai-publish na ulat';
   const map=new Map();
   for(const r of reports){if(!map.has(r.project_id))map.set(r.project_id,{name:r.title,value:0,known:0,count:0});const x=map.get(r.project_id);x.count++;if(r.expense!==null){x.value+=Number(r.expense);x.known++}}
   $('#project-spending').innerHTML=map.size?Array.from(map.values()).map(p=>'<article class="trans-report trans-spending"><div><strong>'+esc(p.name)+'</strong><small>'+p.count+' monthly update(s)</small></div><strong>'+(p.known?money(p.value):'Expense not reported')+'</strong></article>').join(''):'<div class="trans-empty">No published project records for '+year+' yet.</div>';
-  const labels={chairman:'SK Chairperson',kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'};
-  const roster=Array.isArray(data.officials)?data.officials:[];
-  const groups=[['chairman','SK Chairperson'],['treasurer','SK Treasurer'],['secretary','SK Secretary'],['kagawad','SK Kagawad']];
-  const card=o=>'<article class="trans-person"><span class="trans-avatar">'+esc(String(o.name).trim().charAt(0).toUpperCase())+'</span><strong>'+esc(o.name)+'</strong><small>'+esc(labels[o.position]||'SK Officer')+'</small></article>';
-  $('#officials-grid').innerHTML=roster.length?groups.map(group=>{const members=roster.filter(o=>o.position===group[0]);return members.length?'<div class="trans-org-group"><h3>'+group[1]+'</h3><div class="trans-roster">'+members.map(card).join('')+'</div></div>':''}).join(''):'<div class="trans-empty">Official directory is being prepared. Names will appear after the Chairman publishes them.</div>';
+  $('#officials-grid').innerHTML=officerDirectory(data.officials,true);$('#officials-grid').dataset.loaded='true';
   renderMonths();
- }catch(e){$('#annual-budget').textContent='Unavailable';$('#annual-expense').textContent='Unavailable';$('#annual-projects').textContent='—';$('#project-spending').textContent='Unable to load transparency data: '+e.message;$('#monthly-reports').textContent='Please retry later.';$('#officials-grid').textContent='SK directory temporarily unavailable.'}
+ }catch(e){
+  $('#annual-budget').textContent='Hindi ma-load sa ngayon';$('#annual-expense').textContent='Hindi ma-load sa ngayon';$('#annual-projects').textContent='Hindi ma-load sa ngayon';
+  $('#annual-source').textContent='Pansamantalang hindi makonekta ang published reports. Subukan muli mamaya; walang ipinapakitang tantiya.';
+  $('#project-spending').textContent='Hindi ma-load ang published project records sa ngayon.';$('#monthly-reports').textContent='Hindi ma-load ang monthly updates sa ngayon. Subukan muli mamaya.';
+  if(!$('#officials-grid').dataset.loaded)$('#officials-grid').textContent='Hindi ma-load ang published officer directory sa ngayon. Subukan muli mamaya.';
+ }
 }
 yearSelect.onchange=loadTransparency;monthSelect.onchange=renderMonths;loadTransparency();
