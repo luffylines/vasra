@@ -52,3 +52,16 @@ test('organization chart uses published roles and requires matching photo identi
  assert.match(vm.runInContext('officerChart([{name:"Only",position:"secretary"}])',c),/Wala pang published SK Chairperson/);
  const duty=fs.readFileSync(path.join(dist,'duty.html'),'utf8');assert.match(duty,/class="duty-poster"/);assert.match(duty,/id="day-poster"/);assert.doesNotMatch(duty,/officers.css|duty-officer-card/);
 });
+
+test('Youth Leaders owns the chart route and navigation while Duty presentation stays unchanged',()=>{
+ const html=fs.readFileSync(path.join(dist,'youth-leaders.html'),'utf8');assert.match(html,/id="leaders-directory"/);assert.match(html,/href=".\/youth-leaders" aria-current="page"/);
+ for(const file of ['index.html','projects.html','duty.html','contacts.html','transparency.html','account.html','youth-leaders.html']){
+  const s=fs.readFileSync(path.join(dist,file),'utf8');const nav=s.slice(s.indexOf('<nav aria-label="Pangunahing navigation">'),s.indexOf('</nav>'));assert(nav.indexOf('SK Duty')<nav.indexOf('SK Youth Leaders'));assert(nav.indexOf('SK Youth Leaders')<nav.indexOf('Contacts'));
+ }
+ const trans=fs.readFileSync(path.join(dist,'transparency.html'),'utf8');assert.doesNotMatch(trans,/id="officials"|id="officials-grid"/);for(const id of ['about-sk','annual-budget','project-spending','monthly-reports'])assert(trans.includes('id="'+id+'"'));
+ const config=JSON.parse(fs.readFileSync(path.join(dist,'../vercel.json'),'utf8'));assert(config.rewrites.some(r=>r.source==='/youth-leaders'&&r.destination==='/youth-leaders.html'));
+});
+test('Youth Leaders provides retryable loading errors and published-record rendering',async()=>{
+ const nodes=new Map();const $=id=>{if(!nodes.has(id))nodes.set(id,{innerHTML:'',hidden:false,setAttribute(){}});return nodes.get(id)};let fail=true;
+ const c=vm.createContext({$,Intl,Date,api:async()=>{if(fail)throw Error('503');return {officials:[]}},officerChart:records=>records.length?'cards':'No published officers'});vm.runInContext(fs.readFileSync(path.join(dist,'youth-leaders.js'),'utf8'),c);await new Promise(setImmediate);assert.equal($('#leaders-retry').hidden,false);assert.match($('#leaders-directory').innerHTML,/Hindi ma-load/);fail=false;await $('#leaders-retry').onclick();assert.equal($('#leaders-retry').hidden,true);assert.equal($('#leaders-directory').innerHTML,'No published officers');
+});

@@ -31,5 +31,10 @@
 .org-members>li:before{content:'';position:absolute;top:0;left:50%;height:28px;border-left:2px solid var(--connector)}
 .org-members>li:nth-child(4n+1):after{content:'';position:absolute;left:-20px;top:-2px;width:20px;border-top:2px solid var(--connector)}
 .org-note{font-size:12px;color:#667d99;text-align:center}
+.org-card{transition:background .18s,border-color .18s,box-shadow .18s}
+.org-card:hover{background:#eef5ff;border-color:#a9c1e2;box-shadow:0 6px 16px #1d3c6510}
+#leaders-retry{margin-top:18px;min-height:44px}
+#leaders-directory .trans-empty a{text-decoration:underline;color:#285699}
+@media(prefers-reduced-motion:reduce){.org-card{transition:none}}
 @media(max-width:900px) and (min-width:601px){.org-members{grid-template-columns:repeat(2,minmax(0,1fr))}.org-members>li:nth-child(2n+1):after{content:'';position:absolute;left:-20px;top:-2px;width:20px;border-top:2px solid var(--connector)}}
 @media(max-width:600px){.org-lead{justify-content:flex-start;padding-left:32px;padding-bottom:24px}.org-lead:has(+.org-members):after{left:0;bottom:0;height:calc(50% + 24px);width:32px;border-top:2px solid var(--connector);border-radius:8px 0 0 0}.org-lead .org-card{width:100%}.org-members{display:flex;flex-direction:column;gap:0;padding-left:30px}.org-members>li{border-top:0;padding:0 0 18px}.org-members>li:before{left:-32px;top:40px;width:32px;height:0;border-left:0;border-top:2px solid var(--connector)}.org-members>li:after{display:none}.org-card{flex-direction:row;text-align:left;display:grid;grid-template-columns:64px minmax(0,1fr);gap:5px 14px;padding:16px}.org-card .officer-portrait,.org-card .trans-avatar{grid-row:1/3}.org-card .officer-portrait{width:64px;height:75px;margin:0}.org-card strong{align-self:end}.org-card small{grid-column:2;align-self:start}}
