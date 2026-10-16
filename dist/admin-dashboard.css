@@ -897,3 +897,42 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor input
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .close{
   color:#dceaff!important;
 }
+
+
+/* Dashboard-only SK Duty controller, shared between Chairman and today's officer. */
+#dashboard > #duty-controls{
+ display:block;
+ margin:0 0 24px;
+ padding:19px 22px;
+ background:#f0f6ff;
+ border:1px solid #cbdcf1;
+ border-radius:14px;
+ box-shadow:0 4px 15px rgba(19,58,102,.04);
+}
+#dashboard > #duty-controls[hidden]{display:none!important}
+#dashboard > #duty-controls > strong{
+ display:block;font-size:15px;font-weight:800;color:#224b7b;
+}
+#dashboard > #duty-controls > p{
+ color:#426186;font-size:12px;line-height:1.65;margin:9px 0 14px;
+}
+#dashboard > #duty-controls button{
+ min-height:40px;margin:0;padding:10px 14px;
+}
+#dashboard > #duty-controls button:disabled{
+ cursor:not-allowed;opacity:.6;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard > #duty-controls{
+ background:#192a42!important;border-color:#405978!important;color:#e9f1fd!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard > #duty-controls > strong{
+ color:#e9f1fd!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard > #duty-controls > p{
+ color:#b8cce4!important;
+}
+@media(max-width:650px){
+ #dashboard > #duty-controls{padding:16px}
+ #dashboard > #duty-controls > div{align-items:stretch}
+ #dashboard > #duty-controls button{flex:1 1 140px}
+}

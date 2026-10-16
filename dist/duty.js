@@ -39,10 +39,10 @@ function updateSchedule(){
   const manualClosed=overrideDate===now.date&&dutyOverride==='closed';
   const open=hoursOpen&&!manualClosed;
   const label=$('#office-status-label'),pill=$('#office-status');
-  label.textContent=manualClosed&&hoursOpen?'Closed by SK on duty':open?(dutyOverride==='unknown'?'Scheduled open · Status unverified':'Open · 9 AM–6 PM'):(now.hour>=18?'Closed · Office hours ended':'Closed · Opens 9 AM');
+  label.textContent=manualClosed?'Closed by SK on duty':open?(dutyOverride==='unknown'?'Scheduled open · 9 AM–6 PM':'Open · 9 AM–6 PM'):(now.hour>=18?'Closed · Office hours ended':'Closed · Opens 9 AM');
   pill.classList.toggle('is-open',open);
   pill.classList.toggle('is-closed',!open);
-  pill.title='Philippine Time · 9 AM–6 PM. Manual SK closure takes priority during opening hours.';
+  pill.title=dutyOverride==='unknown'?'Schedule only · 9 AM–6 PM Philippine Time. Live closure updates are temporarily unavailable.':'Philippine Time · 9 AM–6 PM. SK staff manual closure takes priority.';
 }
 updateSchedule();
 setInterval(updateSchedule,30000);
