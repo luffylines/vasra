@@ -115,40 +115,73 @@ $('#change-email-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
  e.target.reset();$('#settings-message').textContent='Verification link requested. Check your new email inbox (and spam folder) within 15 minutes.';success('Naipadala ang email verification request. Tingnan ang inbox ng bago mong email.');
 });};
 let recoveryReady=false;
+function recoveryFeedback(text='',kind='info'){
+ const box=$('#recovery-message');
+ box.textContent=String(text);
+ box.hidden=!text;
+ box.dataset.kind=kind;
+}
 async function checkRecoveryAvailability(){
  try{recoveryReady=(await api('./api/account/capabilities')).ready===true;}catch{recoveryReady=false;}
  $('#forgot-password-link').disabled=false;
  $('#forgot-password-link').textContent='Forgot password?';
- $('#recovery-request-form').querySelector('button[type="submit"]').disabled=!recoveryReady;
+ // Keep recovery actionable: the server validates configuration and returns safe errors.
+ // A failed network readiness probe must not leave Send reset link permanently disabled.
+ const submit=$('#recovery-send');
+ if(submit.getAttribute('aria-busy')!=='true')submit.disabled=false;
  $('#change-email-form').querySelector('button[type="submit"]').disabled=!recoveryReady;
  $('#email-setup-note').textContent=recoveryReady
   ? 'Verification links expire after 15 minutes.'
-  : 'Email verification and password recovery are awaiting secure server setup. Please contact the SK administrator.';
+  : 'Email verification and password recovery are temporarily unavailable. Please contact the SK administrator.';
+ if(recoveryMode==='request'&&!recoveryReady)
+  recoveryFeedback('Hindi pa makumpirma ang email service. Maaari mong subukan ang Send reset link; ipapakita ang status kung may problema.','info');
+ return recoveryReady;
 }
 $('#forgot-password-link').onclick=()=>showRecovery('request');
-$('#recovery-back').onclick=()=>{recoveryMode=null;recoveryToken=null;$('#recovery-message').textContent='';history.replaceState(null,'',location.pathname+location.search);showDashboard();};
+$('#recovery-back').onclick=()=>{
+ recoveryMode=null;recoveryToken=null;recoveryFeedback();
+ history.replaceState(null,'',location.pathname+location.search);
+ showDashboard();
+};
 function showRecovery(mode,token=null){
  recoveryMode=mode;recoveryToken=token;
  $('#recovery-section').hidden=false;$('#auth').hidden=true;$('#dashboard').hidden=true;$('#staff-nav').hidden=true;
  $('#recovery-request-form').hidden=mode==='reset';
  $('#recovery-reset-form').hidden=mode!=='reset';
  $('#recovery-heading').textContent=mode==='reset'?'Create a new password':'Reset your password';
- $('#recovery-description').textContent=mode==='reset'?'This secure reset link works only once and expires after 30 minutes.':'Ilagay ang account email para makatanggap ng reset link.';
- $('#recovery-message').textContent=mode==='request'&&!recoveryReady
-  ? 'Password recovery by email is temporarily unavailable. Please contact the SK Chairman to recover your account.'
-  : '';
- $('#recovery-section').scrollIntoView({block:'start'});
+ $('#recovery-description').textContent=mode==='reset'
+  ? 'Gumawa ng bagong password (12 characters pataas). Ang link na ito ay one-time at valid sa loob ng 30 minuto.'
+  : 'Ilagay ang email ng iyong SK account. Magpapadala kami ng one-time password reset link.';
+ recoveryFeedback();
+ if(mode==='request')checkRecoveryAvailability().then(()=>{});
+ $('#recovery-section').scrollIntoView({block:'center'});
 }
-$('#recovery-request-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
- await api('./api/account/reset/request',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});
- $('#recovery-message').textContent='Kung may SK account sa email na iyon, ipapadala ang recovery instructions. Check inbox at spam.';success('Natanggap ang password recovery request. Kung may naka-register na account, makakatanggap ito ng instructions.');
- e.target.reset();
-});};
+$('#recovery-request-form').onsubmit=async e=>{
+ e.preventDefault();
+ const form=e.currentTarget,button=$('#recovery-send');
+ if(button.disabled||!form.reportValidity())return;
+ const email=new FormData(form).get('email');
+ button.disabled=true;button.setAttribute('aria-busy','true');
+ button.querySelector('.recovery-submit-label').textContent='Sending secure link…';
+ recoveryFeedback('Preparing your secure reset request…','info');
+ try{
+  await api('./api/account/reset/request',{method:'POST',body:JSON.stringify({email})});
+  recoveryFeedback('Kung may authorized SK account sa email na iyon, ipapadala ang reset link. Tingnan ang inbox at spam folder. Valid ang link sa loob ng 30 minuto.','success');
+  success('Natanggap ang reset request. Tingnan ang inbox at spam folder kung nakarehistro ang email.');
+ }catch(err){
+  recoveryFeedback(err.message||'Hindi maipadala ang reset request. Subukan muli mamaya.','error');
+  message(err.message||'Hindi maipadala ang reset request.',true);
+ }finally{
+  button.disabled=false;button.setAttribute('aria-busy','false');
+  button.querySelector('.recovery-submit-label').textContent='Send reset link';
+ }
+};
 $('#recovery-reset-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
  const data=Object.fromEntries(new FormData(e.target));
  if(data.password!==data.confirm)throw Error('Hindi magkatugma ang bagong password.');
  await api('./api/account/reset/confirm',{method:'POST',body:JSON.stringify({token:recoveryToken,password:data.password})});
  user=null;recoveryMode=null;recoveryToken=null;history.replaceState(null,'',location.pathname+location.search);
+ recoveryFeedback();
  await showDashboard();success('Matagumpay ang password reset. Mag-login gamit ang bagong password.');
 });};
 async function verifyEmailFromLink(token){

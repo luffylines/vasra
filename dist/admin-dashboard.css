@@ -1279,3 +1279,73 @@ body.account-workspace[data-theme="dark"] #editor .project-upload-spinner{border
  #editor .project-upload-toast{top:max(10px,env(safe-area-inset-top));right:10px;width:min(310px,calc(100vw - 20px));padding:11px 12px;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){#editor .project-upload-spinner{animation:none;border-top-color:#235cb4}}
+
+
+/* Dedicated, compact and responsive SK Vasra password-recovery experience. */
+body.account-workspace #recovery-section.account-recovery{
+  width:min(940px,calc(100vw - 32px));max-width:940px;margin:clamp(22px,6vh,78px) auto 44px;
+  color:#152f54;
+}
+#recovery-section .recovery-layout{
+  display:grid;grid-template-columns:minmax(0, .95fr) minmax(0, 1fr);
+  background:#fff;border:1px solid #dce8f6;border-radius:24px;
+  min-height:550px;overflow:hidden;box-shadow:0 28px 72px rgba(25,52,92,.12);
+}
+#recovery-section .recovery-aside{
+  display:flex;flex-direction:column;justify-content:space-between;gap:34px;
+  min-width:0;padding:38px 36px 32px;color:#fff;
+  background:radial-gradient(circle at 100% 85%,rgba(125,182,248,.14),transparent 53%),
+    linear-gradient(150deg,#132c52 0%,#1a4475 62%,#285d98 100%);
+}
+#recovery-section .recovery-brand{display:flex;gap:12px;align-items:center;font-size:16px;font-weight:800;letter-spacing:.01em}
+#recovery-section .recovery-brand small{display:block;margin-top:4px;font-size:11px;font-weight:500;letter-spacing:.01em;color:#bbd8ff}
+#recovery-section .recovery-brand-logo{display:grid;place-items:center;border-radius:13px;background:#fff;width:45px;height:45px;overflow:hidden;flex:none}
+#recovery-section .recovery-brand-logo img{width:100%;height:100%;object-fit:contain}
+#recovery-section .recovery-aside-eyebrow{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:850;letter-spacing:.16em;color:#abd0ff}
+#recovery-section .recovery-dot{display:inline-block;width:7px;height:7px;flex:none;border-radius:50%;background:#70d5af}
+#recovery-section .recovery-aside-main h3{font-size:clamp(28px,2.8vw,37px);line-height:1.2;letter-spacing:-.04em;margin:20px 0;font-weight:800;color:#fff}
+#recovery-section .recovery-aside-main h3 em{font-style:normal;color:#95c3ff}
+#recovery-section .recovery-aside-main p{color:#d5e7ff;font-size:13px;line-height:1.85;max-width:310px}
+#recovery-section .recovery-trust{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+#recovery-section .recovery-trust span{border:1px solid rgba(186,219,255,.24);background:rgba(255,255,255,.075);border-radius:10px;padding:9px 11px;font-size:10px;font-weight:750;color:#e1efff}
+#recovery-section .recovery-aside-footer{display:flex;align-items:center;gap:8px;font-size:11px;color:#c5dcfa}
+#recovery-section .recovery-content{padding:clamp(28px,4vw,54px);display:flex;flex-direction:column;justify-content:center;min-width:0}
+#recovery-section .recovery-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#e9f2ff;color:#245ba3;margin-bottom:22px}
+#recovery-section .recovery-icon svg{width:24px;height:24px}
+#recovery-section .recovery-eyebrow{font-size:10px;font-weight:850;letter-spacing:.17em;color:#678ab8}
+#recovery-section .recovery-content h2{font-size:clamp(24px,2.5vw,33px);line-height:1.18;letter-spacing:-.035em;margin:11px 0;color:#163865}
+#recovery-section .recovery-content .recovery-description{font-size:13px;line-height:1.8;color:#607996;margin:0 0 26px}
+#recovery-section .recovery-content label{display:block;color:#365780;font-weight:800;font-size:12px;margin:16px 0 8px}
+#recovery-section .recovery-input-wrap{position:relative;display:flex;align-items:center}
+#recovery-section .recovery-input-wrap svg{position:absolute;left:15px;width:19px;height:19px;color:#7d96b7;pointer-events:none}
+#recovery-section .recovery-input-wrap input{padding:12px 14px 12px 45px;margin:0;width:100%;min-height:49px;border:1px solid #cbdcf0;border-radius:11px;background:#f8fbff;color:#132f54;font-size:14px}
+#recovery-section .recovery-content .password-field{display:flex;position:relative;width:100%}
+#recovery-section .recovery-content .password-field input{width:100%;min-height:49px;border:1px solid #cbdcf0;background:#f8fbff;border-radius:11px;color:#132f54}
+#recovery-section .recovery-content input:focus-visible{outline:3px solid #c9ddff;outline-offset:1px;border-color:#2c64b0;background:#fff}
+#recovery-section .recovery-content .recovery-submit{display:flex;align-items:center;justify-content:center;gap:11px;background:#2457ae;color:#fff;font-size:13px;font-weight:850;min-height:49px;width:100%;border:0;border-radius:11px;margin:20px 0 0;cursor:pointer;box-shadow:0 7px 14px rgba(30,83,165,.13)}
+#recovery-section .recovery-submit svg{width:17px;height:17px}
+#recovery-section .recovery-submit:hover:not(:disabled){background:#1d4c9a;transform:translateY(-1px)}
+#recovery-section .recovery-submit:disabled{cursor:wait;opacity:.7}
+#recovery-section .recovery-submit[aria-busy="true"]{pointer-events:none}
+#recovery-section .recovery-inline-status{border:1px solid #b9d8f0;border-radius:11px;background:#eff7ff;padding:12px 14px;font-size:12px;line-height:1.6;color:#1a5184;margin-top:16px}
+#recovery-section .recovery-inline-status[hidden]{display:none!important}
+#recovery-section .recovery-inline-status[data-kind="error"]{border-color:#f3c6ce;background:#fff3f4;color:#a82b3e}
+#recovery-section .recovery-inline-status[data-kind="success"]{border-color:#b6e1d1;background:#effaf5;color:#1b7757}
+#recovery-section .recovery-divider{height:1px;background:#e2ebf5;margin:25px 0 14px}
+#recovery-section .recovery-back{display:inline-flex;gap:8px;align-items:center;justify-content:center;border:1px solid #d8e4f4;background:#fff;color:#2c5c9c;border-radius:10px;min-height:43px;font-size:12px;font-weight:750;width:100%;cursor:pointer}
+#recovery-section .recovery-back svg{width:16px;height:16px}
+#recovery-section .recovery-back:hover{background:#f2f7ff}
+#recovery-section .recovery-security-note{display:flex;align-items:center;justify-content:center;gap:7px;font-size:10px;line-height:1.6;color:#7288a3;text-align:center;margin:17px 0 0}
+#recovery-section .recovery-security-note svg{width:14px;height:14px;flex:none}
+@media(max-width:760px){
+ body.account-workspace #recovery-section.account-recovery{width:min(460px,calc(100vw - 28px));margin:clamp(15px,5vh,42px) auto 30px}
+ #recovery-section .recovery-layout{grid-template-columns:1fr;min-height:0;border-radius:20px}
+ #recovery-section .recovery-aside{display:none}
+ #recovery-section .recovery-content{padding:clamp(24px,5vw,36px);min-height:0}
+ #recovery-section .recovery-icon{width:45px;height:45px;margin-bottom:18px}
+}
+@media(max-width:390px){
+ body.account-workspace #recovery-section.account-recovery{width:calc(100vw - 20px)}
+ #recovery-section .recovery-content{padding:24px 18px}
+}
+@media(prefers-reduced-motion:reduce){#recovery-section .recovery-submit:hover{transform:none}}
