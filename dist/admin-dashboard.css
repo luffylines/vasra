@@ -1010,3 +1010,42 @@ body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor .edit
  #editor .editor-footer{flex-direction:column;align-items:stretch}
  #editor .editor-footer button{width:100%}
 }
+
+
+/* Chairman-only edit/delete actions and safe permanent-delete confirmation. */
+#managed-projects .project-row-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;flex-shrink:0}
+#managed-projects .project-delete-trigger{
+ display:inline-flex;align-items:center;gap:7px;justify-content:center;
+ min-height:38px;padding:9px 13px;font-weight:750;font-size:12px;
+ background:#fff5f5;border:1px solid #eac2c3;color:#a73138;border-radius:10px;
+ cursor:pointer;
+}
+#managed-projects .project-delete-trigger:hover{background:#fee5e5;border-color:#d76f72}
+#delete-project-dialog{
+ width:min(470px,calc(100vw - 28px));max-width:470px;max-height:90dvh;overflow:auto;
+ padding:30px 32px;background:#fff;color:#1d3554;
+ border:1px solid #e5d9db;border-radius:20px;box-shadow:0 25px 80px #101c3560;
+}
+#delete-project-dialog::backdrop{background:#15243b99;backdrop-filter:blur(4px)}
+#delete-project-dialog .delete-project-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:#fce8e9;color:#a52d34;font-weight:900;font-size:25px;margin-bottom:16px}
+#delete-project-dialog h2{font-size:22px;letter-spacing:-.5px;margin:0 0 12px;color:inherit}
+#delete-project-dialog p{font-size:13px;line-height:1.65;color:#516781}
+#delete-project-dialog .delete-project-warning{padding:12px 14px;background:#fff5ee;border:1px solid #f0dcc9;border-radius:10px;color:#814f2e}
+#delete-project-dialog label{display:block;font-size:12px;font-weight:700;margin:18px 0 8px;color:inherit}
+#delete-project-dialog #delete-project-input{width:100%;min-height:43px;padding:11px;border:1px solid #cbdaef;background:#f9fbff;border-radius:9px;color:inherit}
+#delete-project-dialog #delete-project-error{color:#af2b39;min-height:0}
+#delete-project-dialog .delete-project-actions{display:flex;justify-content:flex-end;gap:11px;margin-top:15px}
+#delete-project-dialog .project-delete-confirm{border:1px solid #b62f3a;border-radius:9px;color:white;background:#bd3441;padding:10px 17px;font-weight:750;cursor:pointer}
+#delete-project-dialog .project-delete-confirm:hover{background:#9f2530}
+#delete-project-dialog .project-delete-confirm:disabled{opacity:.45;cursor:not-allowed}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-delete-trigger{background:#432635;color:#ffd5d9;border-color:#965060}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog{background:#192a42;color:#ecf4ff;border-color:#4a6181}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog p{color:#c8d8f0}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog .delete-project-warning{background:#423126;color:#ffe3c8;border-color:#72523b}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog #delete-project-input{background:#111f33;color:#ecf4ff;border-color:#577497}
+@media(max-width:650px){
+ #managed-projects .manage-row{align-items:flex-start;flex-direction:column}
+ #managed-projects .project-row-actions{width:100%;justify-content:flex-end}
+ #delete-project-dialog{padding:24px 20px}
+ #delete-project-dialog .delete-project-actions{flex-wrap:wrap}
+}

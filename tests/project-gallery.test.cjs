@@ -11,9 +11,9 @@ const editor=fs.readFileSync(path.join(dist,'account.js'),'utf8');
 const html=fs.readFileSync(path.join(dist,'account.html'),'utf8');
 const migration=fs.readFileSync(path.join(__dirname,'../supabase/migrations/20261016192000_gallery_preflight.sql'),'utf8');
 
-test('new/edit project modal allows a maximum of eight photos with previews and cover changes',()=>{
+test('new/edit project modal allows a maximum of twelve photos with previews and cover changes',()=>{
  assert.match(html,/id="editor-files"[^>]+multiple/);
- assert.match(editor,/editorPhotos\.length>8|files\.length\+editorPhotos\.length>8/);
+ assert.match(editor,/editorPhotos\.length>12|files\.length\+editorPhotos\.length>12/);
  assert.match(editor,/file\.size>5242880/);
  assert.match(editor,/URL\.createObjectURL\(file\)/);
  assert.match(editor,/URL\.revokeObjectURL\(/);
@@ -28,7 +28,7 @@ test('gallery is secured and is validated before project save',()=>{
  assert.match(backend,/gallery_set/);
  assert(backend.indexOf('gallery_verify')<backend.indexOf("const project=await rpc('save_project',p)"));
  assert.match(backend,/gallery_image/);
- assert.match(backend,/ids\.length>8/);
+ assert.match(backend,/ids\.length>12/);
  assert.match(migration,/i\.owner<>actor\.id/);
  assert.match(migration,/p\.published OR actor\.id IS NOT NULL/);
  assert.match(migration,/requested_count>8/);
@@ -45,4 +45,27 @@ test('public projects display first photo only; details have the complete galler
  assert.match(publicApp,/detail-cover-image/);
  assert.match(backend,/gallery_public/);
  assert.match(backend,/gallery_manage/);
+});
+
+test('Chairman can edit, with delete button gated to role and typed confirmation',()=>{
+ assert.match(editor,/user\?\.role==='chairman'/);
+ assert.match(editor,/data-delete/);
+ assert.match(editor,/data-edit/);
+ assert.match(editor,/pendingDeleteProject/);
+ assert.match(editor,/delete-project-input/);
+ assert.match(editor,/method:'DELETE'/);
+ assert.match(html,/id="delete-project-dialog"/);
+ assert.match(html,/id="delete-project-button"[^>]*disabled/);
+ assert.match(backend,/user\(\['chairman'\]\)/);
+ assert.match(backend,/project_delete/);
+});
+test('Project delete is blocked for monthly financial reports',()=>{
+ const sql=fs.readFileSync(path.join(__dirname,'../supabase/migrations/20261016194500_gallery_twelve_chairman_delete.sql'),'utf8');
+ assert.match(sql,/actor\.role='chairman'|u\.role='chairman'/);
+ assert.match(sql,/vasra\.monthly_updates/);
+ assert.match(sql,/reason','monthly_reports'/);
+ assert.match(sql,/'project_deleted'/);
+ assert.match(sql,/version<>/);
+ assert.match(sql,/position BETWEEN 0 AND 11/);
+ assert.match(sql,/requested_count>12/);
 });

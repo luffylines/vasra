@@ -59,9 +59,22 @@
 <label>Details / Scope<textarea name="scope" required maxlength="5000" rows="4" placeholder="Layunin, benepisyaryo, lugar, at mga aktibidad..."></textarea></label>
 <label>Progreso (%)<input name="progress" type="number" min="0" max="100" step="1" value="0" required></label>
 <div class="editor-section-title"><span class="editor-section-number">02</span><strong>Project photo gallery</strong></div>
-<p class="editor-gallery-help">Hanggang <b>8 photos</b> (JPG, PNG o WebP, maximum 5 MB bawat isa). <b>Ang unang larawan ang cover</b> sa Mga proyekto; makikita ang lahat sa See More.</p>
-<label class="editor-upload-zone"><span class="editor-upload-icon" aria-hidden="true">＋</span><strong>Magdagdag ng mga larawan</strong><small>Click to choose photos · Maximum 8 images</small><input id="editor-files" name="image" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
+<p class="editor-gallery-help">Hanggang <b>12 photos</b> (JPG, PNG o WebP, maximum 5 MB bawat isa). <b>Ang unang larawan ang cover</b> sa Mga proyekto; makikita ang lahat sa See More.</p>
+<label class="editor-upload-zone"><span class="editor-upload-icon" aria-hidden="true">＋</span><strong>Magdagdag ng mga larawan</strong><small>Click to choose photos · Maximum 12 images</small><input id="editor-files" name="image" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
 <div id="current-image" class="editor-image-grid" aria-live="polite"></div>
 <div class="editor-publish"><label class="check-label"><input name="published" type="checkbox"><span>Publish for everyone<small>Makikita ang proyekto sa public website.</small></span></label></div>
 <div class="editor-footer"><span>Ang detalye at gallery ay isi-save sa SK VASRA.</span><button class="primary" type="submit" id="save-project">Save Project →</button></div>
-</form></dialog><script src="./common.js"></script><script src="./shell.js"></script><script src="./duty-data.js"></script><script src="./account.js"></script><script>document.addEventListener("click",function(e){const b=e.target.closest(".password-toggle");if(!b)return;const input=b.parentElement.querySelector("input");const visible=input.type==="text";input.type=visible?"password":"text";b.textContent=visible?"Show":"Hide";b.setAttribute("aria-label",visible?"Show password":"Hide password");b.setAttribute("aria-pressed",String(!visible));});</script></body></html>
+</form></dialog>
+<dialog id="delete-project-dialog" class="delete-project-dialog" aria-labelledby="delete-project-heading">
+  <div class="delete-project-mark" aria-hidden="true">!</div>
+  <h2 id="delete-project-heading">I-delete ang proyekto?</h2>
+  <p>Permanenteng mawawala ang proyektong <strong id="delete-project-title"></strong> sa SK VASRA at sa public website. Hindi ito maaaring i-undo.</p>
+  <p class="delete-project-warning">Para maprotektahan ang pondo at financial history, hindi maaaring i-delete ang mga proyektong may naka-link na monthly reports.</p>
+  <label for="delete-project-input">Para kumpirmahin, i-type ang <strong id="delete-project-confirm-name"></strong>:</label>
+  <input id="delete-project-input" type="text" autocomplete="off" spellcheck="false" placeholder="I-type ang pangalan ng proyekto">
+  <p id="delete-project-error" role="alert"></p>
+  <div class="delete-project-actions">
+    <button type="button" id="delete-project-cancel" class="secondary">Cancel</button>
+    <button type="button" id="delete-project-button" class="project-delete-confirm" disabled>Delete Project</button>
+  </div>
+</dialog><script src="./common.js"></script><script src="./shell.js"></script><script src="./duty-data.js"></script><script src="./account.js"></script><script>document.addEventListener("click",function(e){const b=e.target.closest(".password-toggle");if(!b)return;const input=b.parentElement.querySelector("input");const visible=input.type==="text";input.type=visible?"password":"text";b.textContent=visible?"Show":"Hide";b.setAttribute("aria-label",visible?"Show password":"Hide password");b.setAttribute("aria-pressed",String(!visible));});</script></body></html>

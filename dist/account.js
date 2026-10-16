@@ -152,7 +152,7 @@ async function selectTab(name){const tabs=['overview','projects','monthly','budg
  document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
-async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p></div><button class="secondary" data-edit="${esc(p.id)}">I-edit ↗</button></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
+async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p></div><div class="project-row-actions"><button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
 function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
 
 let editorPhotos=[];
@@ -182,15 +182,52 @@ function openEditor(project=null){
  $('#editor').showModal();
 }
 $('#new-project').onclick=()=>openEditor();
+let pendingDeleteProject=null;
+function openDeleteProject(p){
+ if(!p||user?.role!=='chairman')return;
+ pendingDeleteProject={id:p.id,version:p.version,title:p.title};
+ $('#delete-project-title').textContent=p.title;
+ $('#delete-project-confirm-name').textContent=p.title;
+ $('#delete-project-input').value='';
+ $('#delete-project-button').disabled=true;
+ $('#delete-project-error').textContent='';
+ $('#delete-project-dialog').showModal();
+}
 $('#managed-projects').onclick=e=>{
- const button=e.target.closest('[data-edit]');
- if(button)openEditor(managed.find(p=>p.id===button.dataset.edit));
+ const deleteButton=e.target.closest('[data-delete]');
+ if(deleteButton){openDeleteProject(managed.find(p=>p.id===deleteButton.dataset.delete));return;}
+ const editButton=e.target.closest('[data-edit]');
+ if(editButton)openEditor(managed.find(p=>p.id===editButton.dataset.edit));
+};
+$('#delete-project-input').addEventListener('input',e=>{
+ $('#delete-project-button').disabled=!pendingDeleteProject||
+   e.target.value.trim()!==pendingDeleteProject.title;
+});
+$('#delete-project-cancel').onclick=()=>$('#delete-project-dialog').close();
+$('#delete-project-dialog').addEventListener('close',()=>{pendingDeleteProject=null;});
+$('#delete-project-button').onclick=async()=>{
+ const p=pendingDeleteProject;
+ if(!p||user?.role!=='chairman'||$('#delete-project-input').value.trim()!==p.title)return;
+ const button=$('#delete-project-button');
+ button.disabled=true;$('#delete-project-error').textContent='Deleting project…';
+ try{
+  await api('./api/manage/projects/'+encodeURIComponent(p.id),{
+    method:'DELETE',body:JSON.stringify({version:p.version})
+  });
+  $('#delete-project-dialog').close();
+  success('Matagumpay na na-delete ang proyekto: '+p.title);
+  await loadProjects();
+ }catch(error){
+  $('#delete-project-error').textContent=error.message;
+  message(error.message,true);
+  button.disabled=false;
+ }
 };
 $('.close').onclick=()=>$('#editor').close();
 $('#editor').addEventListener('close',clearProjectPreviews);
 $('#editor-files').addEventListener('change',e=>{
  const input=e.target,files=[...(input.files||[])];input.value='';
- if(files.length+editorPhotos.length>8){message('Maximum 8 photos per project.',true);return;}
+ if(files.length+editorPhotos.length>12){message('Maximum 12 photos per project.',true);return;}
  for(const file of files){
    if(file.size<1||file.size>5242880||!['image/png','image/jpeg','image/webp'].includes(file.type)){
      message('JPG, PNG o WebP lamang, hanggang 5 MB bawat larawan.',true);continue;
