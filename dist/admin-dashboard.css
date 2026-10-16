@@ -1,0 +1,43 @@
+/* SK Vasra staff control center — scoped to the account page only. */
+.account-main{max-width:1400px!important;padding-bottom:80px}
+#dashboard .dashboard-head{background:linear-gradient(117deg,#142b52 0%,#24558a 100%);padding:32px 36px;border-radius:20px;margin:16px 0 24px;box-shadow:0 12px 30px rgba(13,43,86,.10);align-items:center}
+#dashboard .dashboard-head .eyebrow{color:#a7d7ff;letter-spacing:1.6px}
+#dashboard .dashboard-head h1{color:#fff;font-size:clamp(25px,2.3vw,35px);margin:10px 0;letter-spacing:-1.1px}
+#dashboard .dashboard-head p{color:#d5e5fc;margin:0;line-height:1.65;max-width:660px}
+#dashboard #change-password{background:#ffffff1b;border-color:#ffffff55;color:#fff;margin:0;white-space:nowrap}
+#dashboard #change-password:hover{background:#ffffff2f}
+.account-actions{display:flex;justify-content:flex-end;margin-top:10px}
+.account-actions #logout{margin:0}
+#message.message.error{background:#fff7f6;border:1px solid #f6cbc6;color:#983e35;border-radius:10px;padding:12px 16px;font-size:13px;margin:16px 0}
+#message.message:not(.error){background:#edf7f4;border:1px solid #cce4da;border-radius:10px;padding:12px 16px;margin:16px 0}
+.chairman-overview{margin:0 0 28px}
+.admin-section-head{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+.admin-section-head .eyebrow{color:#6886ad}
+.admin-section-head h2{font-size:23px;margin:6px 0 4px;color:#17365e}
+.admin-section-head p{color:#6c7e97;font-size:12px;margin:0}
+.admin-tag{font-size:10px;border-radius:22px;background:#e7f0fc;border:1px solid #cfdff3;color:#315787;padding:9px 13px;font-weight:700;letter-spacing:.7px}
+.admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.admin-metric{display:flex;flex-direction:column;gap:8px;min-width:0;background:#fff;border:1px solid #dce6f2;border-radius:16px;padding:20px 22px;box-shadow:0 4px 15px rgba(25,54,93,.035)}
+.admin-metric span{font-size:10px;letter-spacing:1.1px;font-weight:800;color:#6b83a7}
+.admin-metric strong{color:#193e6b;font-size:32px;font-weight:800;font-family:Manrope,sans-serif;line-height:1.25;overflow-wrap:anywhere}
+.admin-metric #admin-office{font-size:19px;letter-spacing:-.5px;min-height:40px;display:flex;align-items:center}
+.admin-metric small{font-size:11px;color:#74839b;line-height:1.5}
+.admin-quick-wrap{background:#fff;border:1px solid #dce6f2;border-radius:16px;margin-top:18px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.admin-quick-wrap h3{font-size:17px;color:#1c3e6b;margin:0 0 7px}
+.admin-quick-wrap p{color:#70839b;font-size:12px;line-height:1.55;margin:0}
+.admin-quick-actions{display:flex;flex-wrap:wrap;gap:8px}
+.admin-quick-actions button{border:1px solid #cdddef;background:#f6f9fe;color:#24518a;border-radius:10px;padding:12px 13px;min-height:44px;font-weight:700;font-size:12px}
+.admin-quick-actions button:hover{background:#eaf2ff;border-color:#afcbea}
+.admin-quick-actions button span{margin-left:8px}
+#staff-content{scroll-margin-top:32px}
+#staff-content .panel-heading{margin:12px 0 20px}
+#staff-content .panel-heading h2{font-size:24px;color:#193b69}
+#staff-content #duty-controls{border:1px solid #d3e2f4;background:#f4f8ff;padding:16px 18px;border-radius:14px;margin:0 0 20px}
+#staff-content #duty-controls strong{display:block;font-size:14px;color:#1f4776}
+#staff-content #duty-controls p{font-size:12px;margin:8px 0 10px;line-height:1.6}
+#staff-content #duty-controls button{margin:0;min-height:40px;padding:10px 14px}
+#staff-content #managed-projects .empty{background:#fff;border:1px dashed #cbd9ea;border-radius:14px}
+#staff-content .manage-row{box-shadow:0 4px 12px rgba(25,54,93,.025);border-radius:14px}
+@media(max-width:1100px){.admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-quick-wrap{flex-direction:column;align-items:stretch}}
+@media(max-width:650px){#dashboard .dashboard-head{padding:24px 20px;flex-direction:column;align-items:flex-start}#dashboard .dashboard-head h1{font-size:27px}#dashboard .dashboard-head #change-password{margin-top:10px}.admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.admin-metric{padding:15px}.admin-metric strong{font-size:26px}.admin-metric #admin-office{font-size:15px}.admin-section-head{align-items:flex-start;flex-direction:column}.admin-tag{display:none}.admin-quick-wrap{padding:16px}.admin-quick-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.admin-quick-actions button{font-size:11px;text-align:left;padding:11px}}
+@media(max-width:380px){.admin-metrics,.admin-quick-actions{grid-template-columns:minmax(0,1fr)}}
