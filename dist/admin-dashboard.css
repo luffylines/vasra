@@ -1235,3 +1235,7 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #proj
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publication-mode,
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-datetime{background:#12243b;border-color:#526f93;color:#fff;color-scheme:dark}
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-datetime-wrap{background:#1a3655;border-color:#496a90}
+
+/* Make expired publication dates unmistakable before the user saves. */
+#editor #project-publish-preview.publication-time-error{color:#b62929;font-weight:800}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-preview.publication-time-error{color:#ffacac}

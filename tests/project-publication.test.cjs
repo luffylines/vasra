@@ -54,3 +54,33 @@ test('database prevents early public project and gallery exposure',()=>{
  assert.match(migration,/gallery image privacy guard/);
  assert.match(migration,/payload->>'publication_mode'='keep'/);
 });
+
+test('picker suggests a future Philippine time and warns before saving if time already passed',()=>{
+ const start=staffJs.indexOf('const phtLocalInput='),end=staffJs.indexOf('let editorPhotos=[]',start);
+ assert(start>=0&&end>start);
+ const now=Date.parse('2026-10-16T14:09:00Z'); // 10:09 PM Philippine Time
+ class FixedDate extends Date {static now(){return now;}}
+ const elements={
+  '#project-publication-mode':{value:'draft',events:{},addEventListener(n,fn){this.events[n]=fn;}},
+  '#project-publish-datetime':{value:'',events:{},addEventListener(n,fn){this.events[n]=fn;}},
+  '#project-publish-datetime-wrap':{hidden:true},
+  '#project-publish-preview':{textContent:'',classList:{flags:new Set(),add(n){this.flags.add(n)},remove(n){this.flags.delete(n)}}}
+ };
+ const $=selector=>elements[selector];
+ const controller=new Function('$','Date','editing','phPublicationDate',staffJs.slice(start,end)+
+  ';return {updatePublicationFields,nextSchedulePHInput,scheduledDateIso};')($,FixedDate,null,x=>x);
+ assert.equal(controller.nextSchedulePHInput(),'2026-10-16T22:25');
+ elements['#project-publication-mode'].value='schedule';
+ elements['#project-publication-mode'].events.change();
+ assert.equal(elements['#project-publish-datetime'].value,'2026-10-16T22:25');
+ assert.equal(elements['#project-publish-datetime'].required,true);
+ assert.equal(elements['#project-publish-datetime'].min,'2026-10-16T22:10');
+ elements['#project-publish-datetime'].value='2026-10-16T22:08';
+ elements['#project-publish-datetime'].events.input();
+ assert.match(elements['#project-publish-preview'].textContent,/Lumipas na/);
+ assert(elements['#project-publish-preview'].classList.flags.has('publication-time-error'));
+ elements['#project-publish-datetime'].value='2026-10-16T22:30';
+ elements['#project-publish-datetime'].events.input();
+ assert.match(elements['#project-publish-preview'].textContent,/Scheduled for/);
+ assert(!elements['#project-publish-preview'].classList.flags.has('publication-time-error'));
+});

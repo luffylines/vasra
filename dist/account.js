@@ -178,20 +178,41 @@ function scheduledDateIso(raw){
  if(!Number.isFinite(parsed.getTime())||phtLocalInput(parsed.toISOString())!==raw)return null;
  return parsed.toISOString();
 }
+// datetime-local has no timezone: all displayed values are explicitly in Philippine Time.
+function nextSchedulePHInput(){
+ const fiveMinutes=5*60*1000;
+ return phtLocalInput(new Date(Math.ceil((Date.now()+15*60*1000)/fiveMinutes)*fiveMinutes));
+}
 function updatePublicationFields(){
  const mode=$('#project-publication-mode').value,wrap=$('#project-publish-datetime-wrap'),info=$('#project-publish-preview');
+ const input=$('#project-publish-datetime');
+ // Refresh this bound every time the picker or form is used (not only on page load).
+ input.min=phtLocalInput(new Date(Math.ceil((Date.now()+60*1000)/(60*1000))*(60*1000)));
  wrap.hidden=mode!=='schedule';
- $('#project-publish-datetime').required=mode==='schedule';
+ input.required=mode==='schedule';
+ info.classList.remove('publication-time-error');
  if(mode==='draft')info.textContent='Draft — sa dashboard lang muna makikita.';
  else if(mode==='now')info.textContent='Publish Now — makikita agad sa public website pagkatapos ma-save.';
  else if(mode==='keep')info.textContent=editing?projectPublishStatus(editing)+' · Mananatili ang kasalukuyang publication schedule/petsa.':'';
  else{
-  const iso=scheduledDateIso($('#project-publish-datetime').value);
-  info.textContent=iso?'Scheduled for '+phPublicationDate(iso)+' PHT · Lalabas sa public site sa oras na ito.':'Piliin ang date at time sa Philippine Time.';
+  const iso=scheduledDateIso(input.value);
+  if(!iso)info.textContent='Pumili ng valid na petsa at oras sa Philippine Time.';
+  else if(Date.parse(iso)<=Date.now()+30000){
+    info.textContent='Lumipas na ang napiling oras. Pumili ng oras sa hinaharap (PH time), o gamitin ang Publish Now.';
+    info.classList.add('publication-time-error');
+  }else info.textContent='Scheduled for '+phPublicationDate(iso)+' PHT · Lalabas sa public site sa oras na ito.';
  }
 }
-$('#project-publication-mode').addEventListener('change',updatePublicationFields);
+$('#project-publication-mode').addEventListener('change',()=>{
+ if($('#project-publication-mode').value==='schedule'){
+   const input=$('#project-publish-datetime');
+   const iso=scheduledDateIso(input.value);
+   if(!iso||Date.parse(iso)<=Date.now()+30000)input.value=nextSchedulePHInput();
+ }
+ updatePublicationFields();
+});
 $('#project-publish-datetime').addEventListener('input',updatePublicationFields);
+$('#project-publish-datetime').addEventListener('focus',updatePublicationFields);
 
 let editorPhotos=[];
 function clearProjectPreviews(){for(const p of editorPhotos)if(p.url)URL.revokeObjectURL(p.url);editorPhotos=[];}
@@ -455,7 +476,8 @@ $('#project-form').onsubmit=async e=>{
    body.publish_at=null;
    if(mode==='schedule'){
      const iso=scheduledDateIso($('#project-publish-datetime').value);
-     if(!iso||Date.parse(iso)<=Date.now()+30000)throw Error('Pumili ng future date at oras sa Philippine Time para sa publication.');
+     if(!iso)throw Error('Hindi valid ang publication date at oras. Pumili ng petsa at oras sa Philippine Time.');
+     if(Date.parse(iso)<=Date.now()+30000)throw Error('Lumipas na ang napiling publication time. Pumili ng oras sa hinaharap (PH time), o gamitin ang Publish Now.');
      body.publish_at=iso;
    }
    body.version=editing?.version;
