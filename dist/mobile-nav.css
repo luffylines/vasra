@@ -81,3 +81,54 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .a
  body.account-workspace .account-top-right .location-tag{margin-right:1px}
  body.account-workspace .page-top .ph-live-clock{font-size:10px}
 }
+
+
+/* Shared responsive stability for all public pages and staff workspace.
+   Keep navigation as an off-canvas drawer; no horizontally clipped cards/forms. */
+@media(max-width:850px){
+ html{scroll-padding-top:78px}
+ body.mobile-menu-ready{max-width:100%;overflow-x:clip}
+ body.mobile-menu-ready .mobile-appbar{
+  padding:10px max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left));
+  min-height:66px;max-width:100%;box-sizing:border-box
+ }
+ body.mobile-menu-ready .mobile-appbar .mobile-brand{max-width:calc(100% - 65px);overflow:hidden;text-decoration:none}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand small{overflow:hidden;text-overflow:ellipsis}
+ body.mobile-menu-ready .portal-main{width:100%;min-width:0;box-sizing:border-box;max-width:100%;overflow-x:clip}
+ body.mobile-menu-ready .portal-main section,
+ body.mobile-menu-ready .portal-main article,
+ body.mobile-menu-ready .portal-main .home-panel,
+ body.mobile-menu-ready .portal-main .leaders-chart-section{min-width:0;max-width:100%;box-sizing:border-box}
+ body.mobile-menu-ready .portal-main :is(.grid,.home-columns,.home-shortcuts,.home-highlights,.home-metrics,.contact-grid,.duty-stage,.org-tier-grid)>*{min-width:0}
+ body.mobile-menu-ready .portal-main :is(img,video,canvas){max-width:100%}
+ body.mobile-menu-ready .page-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+ body.mobile-menu-ready .page-top>span:first-child{min-width:0;overflow-wrap:anywhere}
+ body.mobile-menu-ready .page-top .location-tag{flex:none;max-width:38%;justify-content:flex-end}
+ body.mobile-menu-ready .portal-footer{display:flex;flex-wrap:wrap;gap:8px 16px}
+ body.mobile-menu-ready .site-header{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+ body.mobile-menu-ready .sidebar-backdrop{touch-action:none}
+ body.account-workspace.mobile-menu-ready .account-main{min-width:0;max-width:100%;box-sizing:border-box}
+ body.account-workspace.mobile-menu-ready .account-main :is(input,select,textarea){max-width:100%;box-sizing:border-box}
+}
+@media(max-width:600px){
+ body.mobile-menu-ready .mobile-appbar{min-height:62px;gap:9px}
+ body.mobile-menu-ready .mobile-menu-toggle{flex:none}
+ body.mobile-menu-ready .portal-main{padding-right:15px;padding-left:15px}
+ body.mobile-menu-ready .portal-main .page-top{min-height:49px;height:auto;padding-block:12px;margin-bottom:15px}
+ body.mobile-menu-ready .portal-main .page-top .ph-live-clock{font-size:11px}
+ body.mobile-menu-ready .portal-main :is(.home-shortcuts,.home-highlights,.home-metrics,.home-officials,.contact-grid){min-width:0}
+ body.mobile-menu-ready .portal-main :is(.project-hero,.page-heading){max-width:100%}
+ body.mobile-menu-ready .portal-main :is(.project-hero h1,.page-heading h1){overflow-wrap:break-word}
+ body.mobile-menu-ready .portal-main :is(.contact-grid strong,.contact-grid a,.section-copy){overflow-wrap:anywhere}
+ body.account-workspace.mobile-menu-ready .account-main .settings-layout{grid-template-columns:minmax(0,1fr)}
+ body.account-workspace.mobile-menu-ready .account-main :is(.form-row,.settings-card,.panel,.form-panel){min-width:0;max-width:100%;box-sizing:border-box}
+ body.account-workspace.mobile-menu-ready .account-actions{justify-content:flex-end}
+}
+@media(max-width:370px){
+ body.mobile-menu-ready .mobile-appbar .mobile-brand{font-size:12px}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand img{width:35px;height:35px}
+ body.mobile-menu-ready .portal-main{padding-inline:11px}
+ body.mobile-menu-ready .page-top{font-size:9px}
+ body.mobile-menu-ready .page-top .ph-live-clock{font-size:10px}
+}

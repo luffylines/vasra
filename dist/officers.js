@@ -4,16 +4,40 @@ const officerRoles={chairman:'SK Chairperson',treasurer:'SK Treasurer',secretary
 function publishedOfficers(records){
  return (Array.isArray(records)?records:[]).filter(o=>o&&typeof o.name==='string'&&o.name.trim()&&officerRoles[o.position]&&o.published!==false&&o.verified!==false).slice().sort((a,b)=>Object.keys(officerRoles).indexOf(a.position)-Object.keys(officerRoles).indexOf(b.position));
 }
+// Portrait posters are cropped only inside the small portrait viewport.
+// A visible initials fallback remains when a poster cannot load (e.g. iOS network failure).
 function officerPortrait(name,position){
- const normalized=String(name).trim().toLocaleLowerCase();
+ const safeName=String(name||'').trim();
+ const initials=safeName.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toUpperCase()).join('');
+ const fallback='<span class="officer-portrait-fallback" aria-hidden="true">'+esc(initials||'?')+'</span>';
+ const normalized=safeName.toLocaleLowerCase();
+ if(typeof days==='undefined'||!Array.isArray(days))
+  return '<span class="officer-portrait portrait-fallback-only">'+fallback+'</span>';
  for(const d of days){const i=d.names.findIndex(n=>n.toLocaleLowerCase()===normalized);if(i<0)continue;
   const photoRoles={chairman:'SK Chairman',treasurer:'SK Treasurer',secretary:'SK Secretary',kagawad:'SK Kagawad'};
   if(position&&d.roles[i]!==photoRoles[position])continue;
-  // Crop the existing square poster in CSS, excluding headings and name banners.
   const crop=d.names.length>1?(i===0?'portrait-left':'portrait-right'):'portrait-single';
-  return '<span class="officer-portrait '+crop+'"><img src="./duty/'+d.file+'.jpg" alt="" loading="lazy"></span>';
+  // Eager loading is deliberate: dynamically inserted photos inside clipped cards
+  // can stay deferred on iOS Safari when loading=lazy.
+  return '<span class="officer-portrait '+crop+'">'+fallback+
+   '<img src="./duty/'+d.file+'.jpg" alt="Portrait of '+esc(safeName)+'" loading="eager" decoding="async"></span>';
  }
- return '<span class="trans-avatar" aria-hidden="true">'+esc(String(name).trim().charAt(0).toUpperCase())+'</span>';
+ return '<span class="officer-portrait portrait-fallback-only">'+fallback+'</span>';
+}
+
+// Image load/error events do not bubble. Capture them so dynamic roster cards
+// and cached mobile Safari images receive the same presentation state.
+if(typeof document!=='undefined'){
+ document.addEventListener('load',event=>{
+  const img=event.target;
+  if(img?.tagName==='IMG'&&img.parentElement?.classList.contains('officer-portrait'))
+   img.parentElement.classList.add('portrait-loaded');
+ },true);
+ document.addEventListener('error',event=>{
+  const img=event.target;
+  if(img?.tagName==='IMG'&&img.parentElement?.classList.contains('officer-portrait'))
+   img.parentElement.classList.add('portrait-error');
+ },true);
 }
 
 const dutyPositions={'SK Chairman':'chairman','SK Treasurer':'treasurer','SK Secretary':'secretary','SK Kagawad':'kagawad'};

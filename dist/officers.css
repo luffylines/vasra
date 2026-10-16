@@ -64,3 +64,16 @@
 }
 @media(max-width:385px){.org-tier-grid>.org-card{width:100%}.org-card{flex-direction:row;text-align:left;gap:14px}.org-person{text-align:left}}
 @media(prefers-reduced-motion:reduce){.org-card{transition:none}.org-card:hover{transform:none}}
+
+
+/* Reliable portrait loading and readable fallback across Safari, Chrome and Firefox. */
+.officer-portrait{isolation:isolate;display:grid;place-items:center;line-height:1;aspect-ratio:96/112}
+.officer-portrait-fallback{position:absolute;inset:0;z-index:0;display:grid;place-items:center;
+ background:linear-gradient(140deg,#e0ecfa,#cbdff4);color:#2b568c;
+ font-family:Manrope,system-ui,sans-serif;font-size:clamp(16px,2.5vw,23px);font-weight:800;letter-spacing:.02em}
+.officer-portrait img{z-index:1;opacity:0;pointer-events:none;transition:opacity .14s ease;
+ display:block;min-height:0;min-width:0}
+.officer-portrait.portrait-loaded:not(.portrait-error) img{opacity:1}
+.officer-portrait.portrait-error img{display:none}
+.officer-portrait.portrait-fallback-only{background:#e1ebf8}
+@media(prefers-reduced-motion:reduce){.officer-portrait img{transition:none}}
