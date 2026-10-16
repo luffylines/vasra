@@ -13,21 +13,31 @@ function syncWorkspaceMode(){
  if(mobileBrand)mobileBrand.setAttribute('href',href);
 }
 async function busy(form,fn){const b=form.querySelector('button[type="submit"],button.primary');if(b)b.disabled=true;try{await fn()}catch(e){message(e.message,true)}finally{if(b)b.disabled=false}}
+let googleReady=false;
 async function checkGoogleLogin(){
- const link=$('#google-sign-in'),note=$('#google-login-note');
- if(!link||!note)return;
- try{
+ const button=$('#google-sign-in'),note=$('#google-login-note');
+ if(!button||!note)return false;
+ try {
   const status=await api('./api/auth/google/status');
-  if(status.enabled===true){
-   link.setAttribute('aria-disabled','false');link.removeAttribute('tabindex');
-   note.textContent='Sign in using the Google account registered with your SK staff email.';
-  }else{
-   note.textContent='Google login will be enabled after secure OAuth setup.';
-  }
- }catch{note.textContent='Google sign-in is temporarily unavailable.';}
+  googleReady=status.enabled===true;
+ }catch {googleReady=false;}
+ button.setAttribute('aria-describedby','google-login-note');
+ note.textContent=googleReady
+  ? 'Use the Google account matching your authorized SK staff email.'
+  : 'Google login is not yet activated for this deployment. Email and password login remains available.';
+ return googleReady;
 }
-$('#google-sign-in').addEventListener('click',e=>{
- if(e.currentTarget.getAttribute('aria-disabled')==='true')e.preventDefault();
+$('#google-sign-in').addEventListener('click',async e=>{
+ const button=e.currentTarget;
+ if(button.disabled)return;
+ button.disabled=true;
+ try {
+  if(await checkGoogleLogin())location.assign('./api/auth/google/start');
+  else {
+   $('#google-login-note').textContent='Google Sign-In needs activation by the SK administrator. This preview may use a different redirect URL from vasra.vercel.app.';
+   $('#google-login-note').focus?.();
+  }
+ }finally {button.disabled=false;}
 });
 const googleError=new URLSearchParams(location.search).get('google_error');
 if(googleError){
@@ -51,13 +61,16 @@ $('#change-email-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
  await api('./api/account/email/request',{method:'POST',body:JSON.stringify(payload)});
  e.target.reset();$('#settings-message').textContent='Verification link requested. Check your new email inbox (and spam folder) within 15 minutes.';
 });};
+let recoveryReady=false;
 async function checkRecoveryAvailability(){
- let ready=false;
- try{ready=(await api('./api/account/capabilities')).ready===true;}catch{}
- $('#forgot-password-link').disabled=!ready;
- $('#forgot-password-link').textContent=ready?'Forgot password?':'Forgot password (setup pending)';
- $('#change-email-form').querySelector('button[type="submit"]').disabled=!ready;
- $('#email-setup-note').textContent=ready?'Verification links expire after 15 minutes.':'Email verification and password recovery will be enabled once the SK administrator completes secure email setup.';
+ try{recoveryReady=(await api('./api/account/capabilities')).ready===true;}catch{recoveryReady=false;}
+ $('#forgot-password-link').disabled=false;
+ $('#forgot-password-link').textContent='Forgot password?';
+ $('#recovery-request-form').querySelector('button[type="submit"]').disabled=!recoveryReady;
+ $('#change-email-form').querySelector('button[type="submit"]').disabled=!recoveryReady;
+ $('#email-setup-note').textContent=recoveryReady
+  ? 'Verification links expire after 15 minutes.'
+  : 'Email verification and password recovery are awaiting secure server setup. Please contact the SK administrator.';
 }
 $('#forgot-password-link').onclick=()=>showRecovery('request');
 $('#recovery-back').onclick=()=>{recoveryMode=null;recoveryToken=null;$('#recovery-message').textContent='';history.replaceState(null,'',location.pathname+location.search);showDashboard();};
@@ -68,7 +81,9 @@ function showRecovery(mode,token=null){
  $('#recovery-reset-form').hidden=mode!=='reset';
  $('#recovery-heading').textContent=mode==='reset'?'Create a new password':'Reset your password';
  $('#recovery-description').textContent=mode==='reset'?'This secure reset link works only once and expires after 30 minutes.':'Ilagay ang account email para makatanggap ng reset link.';
- $('#recovery-message').textContent='';
+ $('#recovery-message').textContent=mode==='request'&&!recoveryReady
+  ? 'Password recovery by email is temporarily unavailable. Please contact the SK Chairman to recover your account.'
+  : '';
  $('#recovery-section').scrollIntoView({block:'start'});
 }
 $('#recovery-request-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
