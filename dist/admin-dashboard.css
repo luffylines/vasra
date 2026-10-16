@@ -141,3 +141,67 @@ body.account-workspace .staff-overview-grid .staff-icon{width:24px;height:24px}
 .settings-feature-note{color:#7b6235;background:#fff9e9;border:1px solid #eadcbb;padding:11px 13px;border-radius:10px;font-size:12px;line-height:1.6;margin:0 0 12px}
 .settings-card button:disabled,.forgot-link:disabled{opacity:.53;cursor:not-allowed}
 .forgot-link:disabled{text-decoration:none}
+
+/* Secure SK staff sign-in — two-panel workspace experience. */
+.account-workspace[data-staff-mode="public"] .site-header,
+.account-workspace[data-staff-mode="loading"] .site-header,
+.account-workspace[data-staff-mode="public"] .sidebar-backdrop,
+.account-workspace[data-staff-mode="loading"] .sidebar-backdrop,
+.account-workspace[data-staff-mode="public"] .mobile-appbar,
+.account-workspace[data-staff-mode="loading"] .mobile-appbar{display:none!important}
+.account-workspace[data-staff-mode="public"] .portal-main,
+.account-workspace[data-staff-mode="loading"] .portal-main{margin-left:0!important;max-width:100%!important}
+.account-workspace[data-staff-mode="public"] .account-main,
+.account-workspace[data-staff-mode="loading"] .account-main{max-width:1260px!important;min-height:100vh;padding:20px 24px 48px;margin:0 auto}
+.account-workspace[data-staff-mode="public"] .page-top,
+.account-workspace[data-staff-mode="loading"] .page-top,
+.account-workspace[data-staff-mode="public"] .account-actions,
+.account-workspace[data-staff-mode="loading"] .account-actions{display:none!important}
+.account-workspace[data-staff-mode="public"] #auth,.account-workspace[data-staff-mode="public"] #recovery-section{margin:0 auto}
+.vasra-login.auth-layout{display:grid;grid-template-columns:1.02fr .98fr;gap:0;align-items:stretch;min-height:min(760px,calc(100vh - 50px));margin:0 auto;max-width:1180px;background:white;border:1px solid #dce6f2;border-radius:25px;overflow:hidden;box-shadow:0 22px 80px rgba(16,41,79,.1)}
+.vasra-login .auth-story{display:flex;flex-direction:column;justify-content:space-between;min-height:690px;margin:0;padding:45px;background:linear-gradient(135deg,#142b50 0%,#194272 54%,#2c659a 100%);border-radius:0;color:white;position:relative;isolation:isolate}
+.vasra-login .auth-story::after{content:"";position:absolute;z-index:-1;right:-105px;bottom:36px;width:420px;height:420px;border-radius:50%;border:1px solid #ffffff2e;box-shadow:0 0 0 55px #ffffff08,0 0 0 115px #ffffff08}
+.vasra-login .auth-story-top{display:flex;align-items:center;gap:13px}
+.vasra-login .auth-story-logo{display:grid;place-items:center;background:#fff;border-radius:14px;width:50px;height:50px;overflow:hidden;flex:none}
+.vasra-login .auth-story-logo img{width:90%;height:90%;object-fit:contain}
+.vasra-login .auth-story-brand{font:800 16px Manrope,system-ui,sans-serif;letter-spacing:.3px}
+.vasra-login .auth-story-brand small{display:block;font:500 11px 'DM Sans',sans-serif;color:#bfcee1;margin-top:5px}
+.vasra-login .auth-story-center .eyebrow{color:#9dc2ee;font-size:11px;letter-spacing:1.5px;margin-bottom:21px}
+.vasra-login .auth-story-center h1{font-size:clamp(32px,3.15vw,47px);color:white;line-height:1.17;letter-spacing:-2px;margin:0 0 23px;font-weight:800}
+.vasra-login .auth-story-center h1 em{font-style:normal;color:#9cc5ff}
+.vasra-login .auth-story-center p{font-size:14px;line-height:1.9;color:#d8e4f5;max-width:390px;margin:0 0 26px}
+.vasra-login .auth-story-features{display:flex;flex-wrap:wrap;gap:9px}
+.vasra-login .auth-story-features span{border:1px solid #ffffff2b;background:#ffffff0e;border-radius:99px;color:#d5e8fc;font-size:11px;padding:9px 11px}
+.vasra-login .auth-story-bottom{display:flex;align-items:center;gap:8px;color:#bed1ea;font-size:11px}
+.vasra-login .auth-story-dot{width:7px;height:7px;border-radius:50%;background:#93dbba}
+.vasra-login .auth-story-bottom a{color:white;margin:0 0 0 auto;text-decoration:none;font-weight:700;font-size:11px}
+.vasra-login .auth-form-card{display:flex;flex-direction:column;justify-content:center;max-width:none;border:0;border-radius:0;box-shadow:none;padding:54px clamp(28px,4.2vw,70px);margin:0}
+.vasra-login .auth-panel-icon{display:grid;place-items:center;width:47px;height:47px;border-radius:14px;background:#eaf2ff;color:#295993;margin:0 0 21px}
+.vasra-login .auth-panel-icon svg{width:25px;height:25px}
+.vasra-login .auth-form-card .eyebrow{font-size:10px;color:#6e8bb4;letter-spacing:1.5px}
+.vasra-login .auth-form-card h2{font-size:clamp(25px,2.5vw,34px);color:#19365f;letter-spacing:-1.1px;margin:10px 0 4px}
+.vasra-login .auth-subtitle{font-size:13px;color:#7586a0;line-height:1.6;margin:0 0 23px}
+.vasra-login #auth-form label:not(.auth-remember){font-size:12px;color:#3e587b;font-weight:700;gap:7px;margin:13px 0}
+.vasra-login #auth-form input:not([type="checkbox"]){min-height:48px;border:1px solid #cbd9ea;background:#f8faff;border-radius:11px;padding:12px 14px;font-size:14px;color:#183353}
+.vasra-login #auth-form input:focus{outline:2px solid #a5c4f3;outline-offset:1px;background:white}
+.vasra-login .password-toggle{min-height:30px}
+.vasra-login .auth-form-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 18px}
+.vasra-login .auth-remember{display:flex;align-items:center;flex-direction:row;font-size:11px!important;color:#647e9d!important;font-weight:500!important;margin:0!important}
+.vasra-login .auth-remember input{width:14px;height:14px;margin:0;accent-color:#3562a0}
+.vasra-login .auth-form-row .forgot-link{margin:0;font-size:12px;text-decoration:underline}
+.vasra-login .auth-signin{width:100%;min-height:48px;background:#2455a2;color:#fff;display:flex;align-items:center;justify-content:center;gap:11px;font-weight:800;border-radius:12px;margin:0}
+.vasra-login .auth-signin:hover{background:#194687}
+.vasra-login .auth-divider{display:flex;align-items:center;gap:13px;color:#91a1b6;font-size:11px;margin:20px 0}
+.vasra-login .auth-divider:before,.vasra-login .auth-divider:after{content:"";height:1px;flex:1;background:#e1e8f3}
+.vasra-login .auth-google{min-height:49px;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #cddaea;border-radius:12px;background:#fff;color:#24436b;font-size:13px;font-weight:800;text-decoration:none}
+.vasra-login .auth-google:not([aria-disabled="true"]):hover{background:#f7faff;border-color:#aec5e3;box-shadow:0 5px 14px #28497012}
+.vasra-login .auth-google[aria-disabled="true"]{opacity:.56;cursor:not-allowed}
+.vasra-login .google-logo{width:21px;height:21px;flex:none}
+.vasra-login .google-login-note{font-size:11px;color:#7186a2;line-height:1.5;margin:9px 0 0;text-align:center}
+.vasra-login .auth-privacy{display:flex;align-items:center;justify-content:center;gap:7px;color:#8394aa;border-top:1px solid #e6edf6;padding-top:18px;margin:20px 0 0;font-size:11px;text-align:center;line-height:1.5}
+.vasra-login .auth-privacy svg{flex:none}
+@media(max-width:850px){.vasra-login.auth-layout{grid-template-columns:1fr;min-height:auto;max-width:570px}.vasra-login .auth-story{min-height:0;padding:21px 26px}.vasra-login .auth-story-center{display:none}.vasra-login .auth-story-bottom{display:none}.vasra-login .auth-form-card{padding:30px 28px 34px}.account-workspace[data-staff-mode="public"] .account-main,.account-workspace[data-staff-mode="loading"] .account-main{padding:16px 13px 25px}}
+@media(max-width:390px){.vasra-login .auth-form-card{padding:22px 19px}.vasra-login .auth-form-row{flex-wrap:wrap;gap:8px}.vasra-login .auth-story-brand{font-size:14px}}
+
+.vasra-login .auth-back-mobile{display:none}
+@media(max-width:850px){.vasra-login .auth-back-mobile{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;color:#315b8c;text-decoration:none;font-size:12px;font-weight:800}.vasra-login .auth-form-row .auth-remember{display:flex;gap:5px}}

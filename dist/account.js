@@ -13,6 +13,28 @@ function syncWorkspaceMode(){
  if(mobileBrand)mobileBrand.setAttribute('href',href);
 }
 async function busy(form,fn){const b=form.querySelector('button[type="submit"],button.primary');if(b)b.disabled=true;try{await fn()}catch(e){message(e.message,true)}finally{if(b)b.disabled=false}}
+async function checkGoogleLogin(){
+ const link=$('#google-sign-in'),note=$('#google-login-note');
+ if(!link||!note)return;
+ try{
+  const status=await api('./api/auth/google/status');
+  if(status.enabled===true){
+   link.setAttribute('aria-disabled','false');link.removeAttribute('tabindex');
+   note.textContent='Sign in using the Google account registered with your SK staff email.';
+  }else{
+   note.textContent='Google login will be enabled after secure OAuth setup.';
+  }
+ }catch{note.textContent='Google sign-in is temporarily unavailable.';}
+}
+$('#google-sign-in').addEventListener('click',e=>{
+ if(e.currentTarget.getAttribute('aria-disabled')==='true')e.preventDefault();
+});
+const googleError=new URLSearchParams(location.search).get('google_error');
+if(googleError){
+ history.replaceState(null,'',location.pathname+location.hash);
+ message(googleError==='not_authorized'?'This Google account is not registered as SK staff. Contact your Chairman.':'Hindi natuloy ang Google login. Try again or use your password.',true);
+}
+checkGoogleLogin();
 $('#auth-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{const f=new FormData(e.target),b=await api('./api/login',{method:'POST',body:JSON.stringify(Object.fromEntries(f))});user=b.user;e.target.reset();message('');await showDashboard()})};
 $('#logout').onclick=async()=>{try{await api('./api/logout',{method:'POST',body:'{}'});user=null;managed=[];editing=null;$('#managed-projects').replaceChildren();$('#users-list').replaceChildren();$('#new-credentials').replaceChildren();$('#new-credentials').hidden=true;$('#audit-list').replaceChildren();$('#project-form').reset();$('#editor').close();$('#password-form').reset();message('Naka-logout ka na.');await showDashboard()}catch(e){message(e.message,true)}};
 $('#change-password').onclick=()=>{selectTab('settings');$('#panel-settings').scrollIntoView({behavior:'smooth',block:'start'});};
