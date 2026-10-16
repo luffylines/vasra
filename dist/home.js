@@ -32,7 +32,7 @@ api('./api/transparency?year='+homePeriod.year).then(data=>{
 }).catch(()=>{
  ['#home-month-count','#home-year-count','#home-budget','#home-expense'].forEach(id=>{$(id).textContent='Hindi ma-load sa ngayon';$(id).className='summary-empty'});
  $('#home-budget-reference').textContent='Hindi ma-load ang transparency report. Subukan muli mamaya.';
- $('#home-officials').innerHTML='<div class="trans-empty">Hindi ma-load ang published officer directory sa ngayon. Subukan muli mamaya.</div>';
+ $('#home-officials').innerHTML=dutyOfficers().length?'<p class="org-source-note">Hindi ma-check ang published directory sa ngayon.</p>'+officerDirectory([]):'<div class="trans-empty">Hindi ma-load ang published officer directory sa ngayon. Subukan muli mamaya.</div>';
 });
 let homeDutyMode='unknown',homeDutyDate='';
 function renderHomeDuty(){

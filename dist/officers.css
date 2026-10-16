@@ -17,7 +17,9 @@
 .home-metrics .summary-empty{font-size:16px;line-height:1.5;letter-spacing:0}
 @media(max-width:600px){.portal-refresh .duty-info{padding:22px}.duty-officer-grid{grid-template-columns:minmax(0,1fr)}.duty-officer-card{padding:18px;gap:16px;align-items:flex-start}.duty-officer-card .officer-portrait{width:90px;height:106px}.duty-officer-card h3{font-size:19px}}
 
-/* Only Transparency uses the connected organizational hierarchy. */
+/* The connected organizational hierarchy is shown on the SK Youth Leaders page. */
+.org-source-note{font-size:12px;line-height:1.6;color:#526e92;background:#eef4fc;border:1px solid #d5e3f4;border-radius:11px;padding:11px 15px;margin:16px 0 0}
+
 .org-chart{--connector:#8da9cc;max-width:1050px;margin:26px auto 0}
 .org-lead{display:flex;justify-content:center;gap:16px;position:relative;padding-bottom:34px}
 .org-lead:has(+.org-members):after{content:'';position:absolute;left:50%;bottom:0;height:34px;border-left:2px solid var(--connector)}
