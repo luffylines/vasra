@@ -17,13 +17,30 @@ const message=(text,error=false)=>{
   messageTimer=null;
  },10000);
 };
+// Light theme is the default; a manually selected dark theme is remembered locally.
+const themeStorageKey='vasra-staff-theme-v1';
+function setStaffTheme(theme,persist=false){
+ const dark=theme==='dark';
+ document.body.dataset.theme=dark?'dark':'light';
+ const button=$('#theme-toggle');
+ button.setAttribute('aria-pressed',String(dark));
+ button.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');
+ button.title=dark?'Dark mode — switch to light':'Light mode — switch to dark';
+ if(persist){try{localStorage.setItem(themeStorageKey,dark?'dark':'light')}catch{}}
+}
+let savedStaffTheme='light';
+try{if(localStorage.getItem(themeStorageKey)==='dark')savedStaffTheme='dark'}catch{}
+setStaffTheme(savedStaffTheme);
+$('#theme-toggle').onclick=()=>setStaffTheme(document.body.dataset.theme==='dark'?'light':'dark',true);
 function syncWorkspaceMode(){
  const signedIn=!!user;
  document.body.dataset.staffMode=signedIn?'staff':'public';
  $('#staff-sidebar-footer').hidden=!signedIn;
  $('#staff-sidebar-name').textContent=signedIn?user.name||'SK Officer':'';
  $('#staff-sidebar-role').textContent=signedIn?(user.role==='chairman'?'SK CHAIRMAN':({kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'})[user.position]||'SK OFFICER'):'';
- $('#account-breadcrumb').textContent=signedIn?'Staff Dashboard':'Aking account';
+ $('#account-breadcrumb').textContent=signedIn?'Dashboard':'Aking account';
+ $('#theme-toggle').hidden=!signedIn;
+ $('#header-settings').hidden=!signedIn;
  const href=signedIn?'./account':'./';
  $('.site-header .brand').setAttribute('href',href);
  const mobileBrand=document.querySelector('.mobile-brand');
@@ -64,7 +81,7 @@ if(googleError){
 checkGoogleLogin();
 $('#auth-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{const f=new FormData(e.target),b=await api('./api/login',{method:'POST',body:JSON.stringify(Object.fromEntries(f))});user=b.user;e.target.reset();message('');await showDashboard()})};
 $('#logout').onclick=async()=>{try{await api('./api/logout',{method:'POST',body:'{}'});user=null;managed=[];editing=null;$('#managed-projects').replaceChildren();$('#users-list').replaceChildren();$('#new-credentials').replaceChildren();$('#new-credentials').hidden=true;$('#audit-list').replaceChildren();$('#project-form').reset();$('#editor').close();$('#password-form').reset();message('Naka-logout ka na.');await showDashboard()}catch(e){message(e.message,true)}};
-$('#change-password').onclick=()=>{selectTab('settings');$('#panel-settings').scrollIntoView({behavior:'smooth',block:'start'});};
+$('#header-settings').onclick=async()=>{if(!user||user.mustChange)return;await selectTab('settings');$('#panel-settings').scrollIntoView({behavior:'smooth',block:'start'});};
 async function savePassword(form){
  const f=Object.fromEntries(new FormData(form));
  if(f.password!==f.confirm)throw Error('Hindi magkatugma ang bagong password.');
@@ -122,7 +139,13 @@ async function verifyEmailFromLink(token){
  }catch(e){user=null;await showDashboard();message('Hindi ma-verify ang email. '+e.message,true);}
 }
 async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Finance and project monitoring workspace.':user.position==='secretary'?'Documentation and project records workspace.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: monitor project updates and documentation. Budget reports are not yet enabled.':user.position==='secretary'?'Secretary workspace: organize project records and updates. Meeting minutes are not yet enabled.':'Kagawad workspace: manage project updates. Duty status controls are coming next.';await selectTab('overview');await updateDutyControls();}
-async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');$('#officer-overview').hidden=!(name==='overview'&&user?.role!=='chairman');document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}}
+async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');$('#officer-overview').hidden=!(name==='overview'&&user?.role!=='chairman');
+ $('#dashboard-welcome').hidden=name!=='overview';
+ const tabLabels={overview:'Dashboard',projects:'Manage Projects',monthly:'Monthly Updates',budget:'Annual Finance',roster:'SK Officials',users:'SK Accounts',audit:'Activity Log',settings:'Account Settings'};
+ $('#account-breadcrumb').textContent=tabLabels[name];
+ $('#header-settings').classList.toggle('active',name==='settings');
+ $('#header-settings').setAttribute('aria-current',name==='settings'?'page':'false');
+ document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p></div><button class="secondary" data-edit="${esc(p.id)}">I-edit ↗</button></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}

@@ -404,3 +404,134 @@ body.account-workspace #message.message:not(.error){
 @media(prefers-reduced-motion:reduce){
  body.account-workspace #message.message{animation:none}
 }
+
+
+/* Staff header actions: top-right, accessible, icon-only controls. */
+body.account-workspace[data-staff-mode="staff"] .page-top{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;min-height:76px;height:auto;margin-bottom:21px;
+}
+body.account-workspace .account-top-right{display:flex;align-items:center;justify-content:flex-end;gap:17px;min-width:0}
+body.account-workspace .account-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin:0;flex:none}
+body.account-workspace .staff-icon-button{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:43px;height:43px;padding:0;min-width:43px;
+  border:1px solid #ccd9e9;border-radius:12px;
+  background:#fff;color:#254b7c;box-shadow:0 2px 9px rgba(23,55,100,.04);
+  cursor:pointer;transition:background .2s,border-color .2s,transform .2s;
+}
+body.account-workspace .staff-icon-button:hover{background:#eaf2ff;border-color:#abc6e8;transform:translateY(-1px)}
+body.account-workspace .staff-icon-button:focus-visible{outline:3px solid #6ca2e6;outline-offset:2px}
+body.account-workspace .staff-icon-button.active{background:#e2edfe;border-color:#97bdeb;color:#1b4d89}
+body.account-workspace .staff-logout{color:#ad3d50}
+body.account-workspace .staff-logout:hover{background:#fff0f1;border-color:#edbcc3}
+body.account-workspace .staff-toolbar-icon{display:block;width:20px;height:20px;flex:none}
+body.account-workspace[data-theme="light"] .staff-moon{display:none}
+body.account-workspace[data-theme="dark"] .staff-sun{display:none}
+body.account-workspace #dashboard-welcome[hidden],
+body.account-workspace .staff-icon-button[hidden]{display:none!important}
+body.account-workspace[data-staff-mode="staff"] #dashboard .dashboard-head{margin-top:0}
+@media(max-width:850px){
+ body.account-workspace[data-staff-mode="staff"] .page-top{
+   padding:9px 0 11px;min-height:64px;margin-bottom:16px;gap:8px;
+ }
+ body.account-workspace .account-top-right{gap:9px}
+ body.account-workspace .account-actions{gap:6px}
+ body.account-workspace .staff-icon-button{width:41px;height:41px;min-width:41px;border-radius:11px}
+ body.account-workspace .location-tag{display:none}
+}
+@media(max-width:390px){
+ body.account-workspace .account-breadcrumb{font-size:10px}
+ body.account-workspace .staff-icon-button{width:38px;height:38px;min-width:38px}
+ body.account-workspace .staff-toolbar-icon{width:18px;height:18px}
+}
+
+/* Staff-only dark palette. Default remains light; selected theme persists locally. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#e6eefc;--muted:#afbed5;--line:#30435e;--nav:#0b1a32;
+  background:#0c1526;color:#e6eefc;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .site-header{background:#0a1b34}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .mobile-appbar{background:#0a1b34}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .page-top{border-bottom-color:#334762;color:#9db1ce}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .page-top b{color:#e2eeff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-icon-button{
+  color:#c8defa;border-color:#385170;background:#172942;box-shadow:none;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-icon-button:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-icon-button.active{background:#234064;border-color:#5d82b1}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-logout{color:#ffa5ac}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .dashboard-head{
+  background:linear-gradient(120deg,#18365e,#245586);box-shadow:0 8px 30px #0004;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard article,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-quick-wrap,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-roster-source,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-card,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .position-info,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content .empty,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .manage-row,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .credential-note,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .form-panel,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog{
+  background:#15243a;border-color:#344c69;color:#e4ecfb;box-shadow:0 4px 18px #0002;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard h2,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard h3,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard article strong,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-card h3,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-header h2,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .panel-heading h2{
+  color:#eaf3ff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard small,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .muted,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-card p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-header p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .eyebrow{
+  color:#afc4df;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .dashboard-head h1{color:white}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .dashboard-head p{color:#d6e5fb}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .dashboard-head .eyebrow{color:#b0d4fc}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-card input,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard input,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard select,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard textarea,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog input,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog select,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog textarea{
+  background:#101d31;border:1px solid #425979;color:#ecf4ff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] input::placeholder,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] textarea::placeholder{color:#94a6bd}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-card label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .current-email{color:#d1e2f8}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content #duty-controls,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-feature-note,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-overview-icon{
+  background:#1b3452;border-color:#426387;color:#dceaff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard button.secondary,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-quick-actions button,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-overview-grid button,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .pagination button{
+  color:#d4e5ff;background:#203553;border-color:#45638a;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard button.secondary:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-quick-actions button:hover{background:#2b4971}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-metric span,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-metric small{color:#9cb8d9}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-tag,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .badge-inline{
+  color:#d1e4ff;background:#244162;border-color:#375778;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-card-head>span{
+  color:#add0ff;background:#213b5f;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content #duty-controls strong,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-roster-heading strong{color:#d4e8ff}
