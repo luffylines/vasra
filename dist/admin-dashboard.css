@@ -1256,3 +1256,26 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #proj
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-use-activity-as-project{
  background:#49351f;border-color:#8d6840;color:#ffe0ad;
 }
+
+
+/* Sticky project upload toast: a child of <dialog> so it stays above its modal backdrop.
+   It is independent from the auto-dismiss success/error notifications. */
+#editor .project-upload-toast{
+  position:fixed;top:max(18px,env(safe-area-inset-top));right:max(22px,env(safe-area-inset-right));
+  z-index:1000;display:flex;align-items:center;gap:12px;
+  width:min(340px,calc(100vw - 36px));min-height:60px;box-sizing:border-box;
+  padding:14px 16px;background:#eff6ff;border:1px solid #a8cdf8;
+  border-left:4px solid #2f69c5;border-radius:14px;box-shadow:0 14px 40px rgba(18,46,88,.20);
+  color:#1a457c;font-size:13px;font-weight:750;line-height:1.5;pointer-events:none;
+}
+#editor .project-upload-toast[hidden]{display:none!important}
+#editor .project-upload-spinner{flex:0 0 22px;width:22px;height:22px;border:3px solid #cbdcf4;border-top-color:#235cb4;border-radius:50%;animation:vasra-upload-spin .8s linear infinite}
+@keyframes vasra-upload-spin{to{transform:rotate(360deg)}}
+body.account-workspace[data-theme="dark"] #editor .project-upload-toast{
+  background:#193653;color:#e5f3ff;border-color:#517dae;border-left-color:#77b6fb;
+}
+body.account-workspace[data-theme="dark"] #editor .project-upload-spinner{border-color:#3d5b81;border-top-color:#80c3ff}
+@media(max-width:600px){
+ #editor .project-upload-toast{top:max(10px,env(safe-area-inset-top));right:10px;width:min(310px,calc(100vw - 20px));padding:11px 12px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){#editor .project-upload-spinner{animation:none;border-top-color:#235cb4}}

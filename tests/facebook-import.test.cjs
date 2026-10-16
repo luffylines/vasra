@@ -18,7 +18,7 @@ test('public OG metadata parsing is bounded and excludes generic Facebook login 
  assert.equal(FB.metadata('<html><meta property="og:description" content="SK Vasra Youth Leadership Seminar 2026!"></html>'),'SK Vasra Youth Leadership Seminar 2026!');
  assert.equal(FB.metadata('<meta name="description" content="Log in to Facebook to see posts">'),'');
 });
-test('pasted caption basic autofill returns review-only draft with original source URL',async()=>{
+test('pasted caption basic autofill returns review-only draft without Facebook URL',async()=>{
  const result=await FB.importFacebookPost({
   url:'https://www.facebook.com/skbrgyvasra/posts/123',
   caption:'Youth Leadership Training\nPara sa kabataan ng Barangay Vasra'
@@ -28,12 +28,14 @@ test('pasted caption basic autofill returns review-only draft with original sour
  assert.equal(result.draft.category,'Edukasyon');
  assert.equal(result.draft.status,'Pinaplano');
  assert.equal(result.draft.progress,0);
- assert.match(result.draft.scope,/Facebook post: https:\/\/www\.facebook\.com\/skbrgyvasra\/posts\/123/);
+ assert.doesNotMatch(result.draft.scope,/Facebook post: https/);
  assert.equal(result.imagesImported,0);
  assert.equal(result.needsReview,true);
 });
-test('unavailable Facebook pages return caption fallback instead of guessed project info',async()=>{
- const res=await FB.importFacebookPost({url:'https://facebook.com/post/123',caption:''},{aiKey:'',fetcher:async()=>{throw new Error('Blocked')}});
+test('empty or too-short captions are rejected without guessing project info',async()=>{
+ const res=await FB.importFacebookPost({caption:''},{aiKey:'',fetcher:()=>{throw Error('Network should never be called')}});
+ const short=await FB.importFacebookPost({caption:'hello'},{aiKey:''});
+ assert.equal(short.ok,false);
  assert.equal(res.ok,false);
  assert.equal(res.reason,'caption_required');
  assert.equal(res.draft,undefined);
@@ -49,10 +51,14 @@ test('AI response is constrained to text fields, publication and progress remain
  assert.equal(res.ok,true);assert.equal(res.draft.method,'ai');
  assert.equal(res.draft.title,'Community Cleanup');
  assert.equal(res.draft.progress,0);assert.equal(res.draft.status,'Pinaplano');
- assert.match(res.draft.scope,/Facebook post:/);
+ assert.doesNotMatch(res.draft.scope,/Facebook post:/);
 });
-test('UI provides URL, caption and photo fallback, and never autosaves imported drafts',()=>{
- for(const id of ['fb-import-panel','fb-post-url','fb-post-caption','fb-import-screenshot','fb-analyze-post','fb-import-result'])assert.match(html,new RegExp('id="'+id+'"'));
+test('UI provides caption-only and optional photo upload, without auto-saving drafts',()=>{
+ for(const id of ['fb-import-panel','fb-post-caption','fb-import-screenshot','fb-analyze-post','fb-import-result'])assert.match(html,new RegExp('id="'+id+'"'));
+ assert.doesNotMatch(html,/id="fb-post-url"/);
+ assert.match(staff,/JSON\.stringify\(\{caption\}\)/);
+ assert.match(api,/if\(typeof b\.caption!=='string'\)/);
+ assert.doesNotMatch(api,/typeof b\.url!=='string'/);
  assert.match(staff,/form\.elements\.publication_mode\.value='draft'/);
  assert.match(staff,/form\.elements\.status\.value=\['Pinaplano','Natapos','Isinasagawa'\]/);
  assert.match(staff,/appendProjectFiles\(files\)/);
@@ -61,12 +67,13 @@ test('UI provides URL, caption and photo fallback, and never autosaves imported 
  assert.match(api,/limit\('facebook-import'/);
 });
 
-test('new project has explicit Manual Entry and Facebook URL + Groq AI modes',()=>{
+test('new project has Manual Entry and Facebook Caption Analyzer modes',()=>{
  assert.match(html,/id="project-entry-mode"/);
  assert.match(html,/id="entry-mode-manual"[^>]*aria-pressed="true"/);
  assert.match(html,/id="entry-mode-facebook"[^>]*aria-pressed="false"/);
  assert.match(html,/Manual Entry/);
- assert.match(html,/Facebook URL \+ Groq AI/);
+ assert.match(html,/Facebook Caption \+ AI/);
+ assert.match(html,/Facebook Caption Analyzer/);
  assert.match(html,/id="fb-import-panel"[^>]*hidden/);
  assert.match(staff,/function setProjectEntryMode\(mode\)/);
  assert.match(staff,/const facebook=mode==='facebook'&&!editing&&user\?\.role==='chairman'/);
@@ -129,7 +136,7 @@ test('36th SK VASRA Regular Session is recognized as an event, not an education 
  assert.match(x.draft.description,/Naganap ang ika-36/);
  assert.doesNotMatch(x.draft.description,/SKR037-2026/);
  assert.match(x.draft.scope,/SKR035-2026/);
- assert.match(x.warning,/hindi awtomatikong isang project/i);
+ assert.match(x.warning,/hindi awtomatikong project/i);
  assert.equal(x.reviewRecommended,true);
 });
 test('Groq failures report safe diagnostic instead of pretending basic fallback is AI',async()=>{
@@ -141,7 +148,7 @@ test('Groq failures report safe diagnostic instead of pretending basic fallback 
  assert.equal(notAuthorized.ai.status,'provider_error');
  assert.equal(notAuthorized.ai.http_status,401);
  assert.equal(notAuthorized.draft.method,'basic');
- assert(!JSON.stringify(notAuthorized).includes('test'));
+ assert.equal(notAuthorized.source,'pasted-caption');
 });
 test('AI cannot turn meeting into education project or change evidence-based event date',async()=>{
  const caption='OCTOBER 10, 2026 | 36TH SK VASRA REGULAR SESSION\nNaganap ang Regular Session ng SK Vasra.';
@@ -166,4 +173,53 @@ test('Meeting/announcement requires explicit chairman confirmation before projec
  assert.match(staff,/applyFacebookDraft\(pendingImportedActivity\)/);
  assert.match(staff,/if\(isNonProject\)\{/);
  assert.match(staff,/function facebookAiStatus\(/);
+});
+
+test('completed clean-up caption is a completed activity rather than 0%-planned',async()=>{
+ const caption='CLEAN-UP DRIVE SA BARANGAY VASRA\nMatagumpay na naisagawa ang clean-up drive noong ika-12 ng Oktubre 2026 sa Barangay Vasra. Nakiisa ang mga kabataan sa paglilinis ng paligid.';
+ const result=await FB.importFacebookPost({caption},{aiKey:'',fetcher:()=>{throw Error('Should not contact Facebook')}});
+ assert.equal(result.ok,true);
+ assert.equal(result.draft.category,'Kalikasan');
+ assert.equal(result.draft.status,'Natapos');
+ assert.equal(result.draft.progress,100);
+ assert.equal(result.draft.activity_date,'2026-10-12');
+ assert.equal(result.ai.status,'missing_key');
+});
+test('future planning caption does not falsely claim an event is completed',async()=>{
+ const caption='YOUTH SPORTS FESTIVAL\nInihahanda ng SK Vasra ang isang paligsahan sa barangay para sa susunod na buwan.';
+ const result=await FB.importFacebookPost({caption},{aiKey:'',fetcher:()=>{throw Error('Should not contact Facebook')}});
+ assert.equal(result.ok,true);
+ assert.equal(result.draft.status,'Pinaplano');
+ assert.equal(result.draft.progress,0);
+ assert.equal(result.draft.activity_date,null);
+});
+test('announcements require review, not automatic project creation',async()=>{
+ const caption='PAALALA SA MGA KABATAAN\nAng SK Vasra Office ay pansamantalang sarado ngayong hapon. Maghintay ng karagdagang anunsyo.';
+ const result=await FB.importFacebookPost({caption},{aiKey:'',fetcher:()=>{throw Error('Should not contact Facebook')}});
+ assert.equal(result.draft.content_type,'announcement');
+ assert.equal(result.reviewRecommended,true);
+});
+test('AI output can improve summary while preserving confirmed classification/status and correct date',async()=>{
+ const caption='OCTOBER 10, 2026 | 36TH SK VASRA REGULAR SESSION\nNaganap ang regular session ng SK Vasra.';
+ const result=await FB.importFacebookPost({caption},{aiKey:'test',
+  fetcher:async()=>({ok:true,json:async()=>({choices:[{message:{content:JSON.stringify({
+   title:'Invented education project',category:'Edukasyon',description:'Naganap ang regular session noong October 10, 2026.',
+   scope:'Pinag-usapan ang mga programa.',
+   status:'Pinaplano',progress:0
+  })}}]})})
+ });
+ assert.equal(result.draft.category,'SK Regular Session');
+ assert.equal(result.draft.status,'Natapos');
+ assert.equal(result.draft.method,'ai');
+ assert.match(result.draft.description,/Naganap/);
+});
+test('upload progress stays in an accessible fixed dialog toast until completion',()=>{
+ assert.match(html,/id="project-upload-progress"[^>]*role="status"[^>]*hidden/);
+ assert.match(staff,/function projectUploadStatus\(text\)/);
+ assert.match(staff,/toast\.hidden=!text/);
+ assert.match(staff,/projectUploadStatus\(progressText\)/);
+ assert.match(staff,/projectUploadStatus\('Tapos na ang photo upload/);
+ assert.match(staff,/projectUploadStatus\(''\)/);
+ assert.match(staff,/success\(editing\?/);
+ assert.doesNotMatch(staff,/setTimeout\([^)]*projectUploadStatus/);
 });

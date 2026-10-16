@@ -17,6 +17,13 @@ const message=(text,error=false)=>{
   messageTimer=null;
  },10000);
 };
+// A fixed, persistent side toast remains visible while photos are uploading.
+// Success/error toast resumes its normal 10-second timeout only on completion.
+function projectUploadStatus(text){
+ const toast=$('#project-upload-progress');
+ toast.hidden=!text;
+ $('#project-upload-progress-text').textContent=String(text||'');
+}
 // All confirmed staff mutations use the same 10-second green confirmation toast.
 const success=(text)=>message(text,false);
 // Light theme is the default; a manually selected dark theme is remembered locally.
@@ -258,6 +265,7 @@ function openEditor(project=null){
  pendingImportedActivity=null;
  $('#fb-use-activity-as-project').hidden=true;
  $('#editor-message').textContent='';
+ projectUploadStatus('');
  $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
  if(project){
    for(const key of ['title','category','description','scope','status','progress'])form.elements[key].value=project[key];
@@ -434,17 +442,17 @@ $('#fb-use-activity-as-project').addEventListener('click',()=>{
 });
 $('#fb-analyze-post').addEventListener('click',async()=>{
  const button=$('#fb-analyze-post'),status=$('#fb-import-status'),resultBox=$('#fb-import-result');
- const url=$('#fb-post-url').value.trim(),caption=$('#fb-post-caption').value.trim();
+ const caption=$('#fb-post-caption').value.trim();
  if(editing||user?.role!=='chairman')return;
- if(!url){status.textContent='Ilagay muna ang Facebook post link.';return;}
+ if(caption.length<15){status.textContent='I-paste ang buong caption (at least 15 characters) bago mag-analyze.';$('#fb-post-caption').focus();return;}
  pendingImportedActivity=null;$('#fb-use-activity-as-project').hidden=true;
- button.disabled=true;status.textContent='Sinusubukang basahin ang post…';resultBox.hidden=true;
+ button.disabled=true;status.textContent='Sinusuri ang caption gamit ang Groq AI…';resultBox.hidden=true;
  try{
   const result=await api('./api/manage/projects/import-facebook',{
-   method:'POST',body:JSON.stringify({url,caption})
+   method:'POST',body:JSON.stringify({caption})
   });
   if(!result.ok){
-   status.textContent='Kailangan ang caption para mag-autofill.';
+   status.textContent='Kailangan ang mas kumpletong caption para sa tamang analysis.';
    resultBox.hidden=false;resultBox.textContent=result.message||'I-paste ang caption at subukang muli.';
    $('#fb-post-caption').focus();
    return;
@@ -471,7 +479,7 @@ $('#fb-analyze-post').addEventListener('click',async()=>{
    status.textContent='Hindi ito regular na SK project; i-review muna bago ilipat sa project form.';
   }else{
    applyFacebookDraft(result);
-   status.textContent=(draft.method==='ai'?'Groq AI':'Basic')+' analysis complete — review the fields below.';
+   status.textContent=(draft.method==='ai'?'Groq AI analysis complete':'Basic draft lamang (Groq unavailable)')+' — basahin at i-review ang mga fields bago mag-save.';
   }
  }catch(err){
   resultBox.hidden=false;
@@ -514,6 +522,7 @@ $('#project-form').onsubmit=async e=>{
  e.preventDefault();const form=e.target;
  const save=$('#save-project');save.disabled=true;
  $('#editor-message').textContent='Sine-save ang proyekto…';
+ projectUploadStatus('Inihahanda ang pag-save ng proyekto…');
  try{
    const body=Object.fromEntries(new FormData(form));
    body.progress=Number(body.progress);
@@ -531,9 +540,12 @@ $('#project-form').onsubmit=async e=>{
    const ids=[];
    for(let i=0;i<editorPhotos.length;i++){
      const photo=editorPhotos[i];
-     $('#editor-message').textContent=photo.file?'Uploading photo '+(i+1)+' of '+editorPhotos.length+'…':'Preparing gallery…';
+     const progressText=photo.file?'Uploading photo '+(i+1)+' of '+editorPhotos.length+'…':'Preparing gallery…';
+     $('#editor-message').textContent=progressText;
+     projectUploadStatus(progressText);
      ids.push(photo.id||await uploadProjectPhoto(photo.file));
    }
+   projectUploadStatus('Tapos na ang photo upload. Sine-save ang project details…');
    body.image_ids=ids;body.image_id=ids[0]||null;
    delete body.image;
    const result=await api('./api/manage/projects'+(editing?'/'+editing.id:''),{
@@ -541,9 +553,11 @@ $('#project-form').onsubmit=async e=>{
    });
    if(!result.project?.id)throw Error('Hindi nakumpirma ang pag-save.');
    $('#editor').close();
+   projectUploadStatus('');
    success(editing?'Matagumpay na na-update ang proyekto at mga larawan.':'Matagumpay na nagawa ang proyekto at mga larawan.');
    await loadProjects();
  }catch(error){
+   projectUploadStatus('');
    $('#editor-message').textContent=error.message;message(error.message,true);
  }finally{save.disabled=false;}
 };
