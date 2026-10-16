@@ -1160,3 +1160,51 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-i
  #editor .fb-import-panel summary small{font-size:10px}
  #editor .fb-import-bottom .fb-import-action{width:100%}
 }
+
+
+/* Two explicit, accessible choices for manual creation vs Facebook/Groq draft. */
+#editor #project-entry-mode{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:19px 0 7px;
+}
+#editor #project-entry-mode[hidden],#editor #manual-entry-help[hidden]{display:none!important}
+#editor .project-mode-choice{
+ display:flex;align-items:flex-start;gap:11px;text-align:left;min-height:100px;
+ border:1px solid #d6e3f4;background:#f9fbff;border-radius:14px;padding:15px 13px;
+ color:#23486f;cursor:pointer;position:relative;
+ transition:background .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+#editor .project-mode-choice:hover{border-color:#7ea9df;background:#f2f7ff}
+#editor .project-mode-choice.selected{
+ border:2px solid #2e6abd;padding:14px 12px;
+ background:#edf5ff;box-shadow:0 0 0 3px rgba(46,106,189,.08);
+}
+#editor .project-mode-choice:focus-visible{outline:3px solid #619cea;outline-offset:3px}
+#editor .project-mode-choice>span:nth-child(2){flex:1;min-width:0}
+#editor .project-mode-choice strong{display:block;font-size:14px;font-weight:800;color:#1a3b68;line-height:1.4}
+#editor .project-mode-choice small{display:block;font-size:11px;line-height:1.5;color:#5d789b;margin-top:5px}
+#editor .project-mode-icon{
+ width:32px;height:32px;flex:none;display:grid;place-items:center;border-radius:9px;
+ background:#e4effd;color:#285fa5;font-size:20px;font-weight:800;
+}
+#editor .project-mode-icon.facebook-icon{
+ font-family:Arial,sans-serif;font-size:25px;background:#e6efff;color:#1761bd;
+}
+#editor .project-mode-check{display:none;font-weight:900;font-size:14px;color:#1e63ae}
+#editor .project-mode-choice.selected .project-mode-check{display:block}
+#editor .project-entry-helper{font-size:12px;line-height:1.6;color:#607c9e;margin:0 0 15px}
+#editor #fb-import-panel[hidden]{display:none!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .project-mode-choice{
+ background:#172a44;color:#e8f2ff;border-color:#486585;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .project-mode-choice.selected{
+ background:#21436d;border-color:#81b5f8;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .project-mode-choice strong{color:#eff6ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .project-mode-choice small,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .project-entry-helper{color:#c4d8f0}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .project-mode-check{color:#b7d8ff}
+@media(max-width:620px){
+ #editor #project-entry-mode{grid-template-columns:1fr;gap:9px}
+ #editor .project-mode-choice{min-height:76px;padding:12px}
+ #editor .project-mode-choice.selected{padding:11px}
+}

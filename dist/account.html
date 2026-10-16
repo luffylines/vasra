@@ -52,8 +52,21 @@
 <div class="project-editor-header"><span class="eyebrow">SK VASRA · PROJECT MANAGEMENT</span><h2 id="editor-heading">Bagong proyekto</h2><p>Idagdag ang impormasyon, progreso at mga larawan ng programa.</p></div>
 <p id="editor-message" role="status" aria-live="polite"></p>
 <form id="project-form">
-<details id="fb-import-panel" class="fb-import-panel">
- <summary><span class="fb-import-icon" aria-hidden="true">f</span><span><strong>Import from Facebook Post</strong><small>Autofill mula sa public post link o pasted caption · Review before saving</small></span><span class="fb-import-chevron" aria-hidden="true">⌄</span></summary>
+<div id="project-entry-mode" class="project-entry-mode" role="group" aria-label="Choose how to create a project">
+ <button type="button" id="entry-mode-manual" class="project-mode-choice selected" data-entry-mode="manual" aria-pressed="true">
+  <span class="project-mode-icon" aria-hidden="true">✎</span>
+  <span><strong>Manual Entry</strong><small>Isulat ang detalye ng project at mag-upload ng photos.</small></span>
+  <span class="project-mode-check" aria-hidden="true">✓</span>
+ </button>
+ <button type="button" id="entry-mode-facebook" class="project-mode-choice" data-entry-mode="facebook" aria-pressed="false">
+  <span class="project-mode-icon facebook-icon" aria-hidden="true">f</span>
+  <span><strong>Facebook URL + Groq AI</strong><small>Mag-import gamit ang public post link o caption fallback.</small></span>
+  <span class="project-mode-check" aria-hidden="true">✓</span>
+ </button>
+</div>
+<p id="manual-entry-help" class="project-entry-helper">Manual mode: ikaw ang maglalagay ng Project Title, Category, Summary, Details / Scope, at photos. Puwedeng magpalit sa Facebook import anumang oras.</p>
+<details id="fb-import-panel" class="fb-import-panel" hidden>
+ <summary><span class="fb-import-icon" aria-hidden="true">f</span><span><strong>Import from Facebook Post</strong><small>Groq AI autofill kapag configured · Puwede ring i-paste ang caption kung blocked ang link.</small></span><span class="fb-import-chevron" aria-hidden="true">⌄</span></summary>
  <div class="fb-import-content">
   <label for="fb-post-url">Facebook post URL</label>
   <input type="url" id="fb-post-url" placeholder="https://www.facebook.com/skbrgyvasra/posts/..." autocomplete="url">

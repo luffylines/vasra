@@ -60,3 +60,50 @@ test('UI provides URL, caption and photo fallback, and never autosaves imported 
  assert.match(api,/await user\(\['chairman'\]\)/);
  assert.match(api,/limit\('facebook-import'/);
 });
+
+test('new project has explicit Manual Entry and Facebook URL + Groq AI modes',()=>{
+ assert.match(html,/id="project-entry-mode"/);
+ assert.match(html,/id="entry-mode-manual"[^>]*aria-pressed="true"/);
+ assert.match(html,/id="entry-mode-facebook"[^>]*aria-pressed="false"/);
+ assert.match(html,/Manual Entry/);
+ assert.match(html,/Facebook URL \+ Groq AI/);
+ assert.match(html,/id="fb-import-panel"[^>]*hidden/);
+ assert.match(staff,/function setProjectEntryMode\(mode\)/);
+ assert.match(staff,/const facebook=mode==='facebook'&&!editing&&user\?\.role==='chairman'/);
+ assert.match(staff,/setProjectEntryMode\('manual'\)/);
+ assert.match(staff,/button\.setAttribute\('aria-pressed',String\(active\)\)/);
+});
+test('Manual mode is always the default; Facebook mode offers Groq and fallback without auto-publish',()=>{
+ const start=staff.indexOf('function setProjectEntryMode(mode){');
+ const end=staff.indexOf("function openEditor(project=null)",start);
+ assert(start>=0&&end>start);
+ const block=staff.slice(start,end);
+ const buttons=['manual','facebook'].map(value=>({
+  dataset:{entryMode:value},classList:{toggle(name,v){this.selected=v}},
+  setAttribute(name,v){this[name]=v}
+ }));
+ const nodes={
+  '#project-entry-mode':{hidden:false,addEventListener(){}},
+  '#manual-entry-help':{hidden:false},
+  '#fb-import-panel':{hidden:true,open:false}
+ };
+ const dom={querySelectorAll:()=>buttons};
+ const $=id=>nodes[id];
+ const build=new Function('$','document','getUser','getEditing',
+  'return function(mode){let user=getUser(),editing=getEditing();'+
+  block.slice(block.indexOf('const facebook='),block.indexOf("$('#project-entry-mode').addEventListener")).replace(/\}\s*$/,'')+
+  '}');
+ const chairman=build($,dom,()=>({role:'chairman'}),()=>null);
+ chairman('manual');
+ assert.equal(nodes['#fb-import-panel'].hidden,true);
+ assert.equal(nodes['#manual-entry-help'].hidden,false);
+ chairman('facebook');
+ assert.equal(nodes['#fb-import-panel'].hidden,false);
+ assert.equal(nodes['#fb-import-panel'].open,true);
+ assert.equal(nodes['#manual-entry-help'].hidden,true);
+ assert.equal(buttons[1]['aria-pressed'],'true');
+ const officer=build($,dom,()=>({role:'sk'}),()=>null);
+ officer('facebook');
+ assert.equal(nodes['#project-entry-mode'].hidden,true);
+ assert.equal(nodes['#fb-import-panel'].hidden,true);
+});

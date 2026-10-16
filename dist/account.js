@@ -167,11 +167,29 @@ function renderProjectPreviews(){
  }).join('');
  region.hidden=editorPhotos.length===0;
 }
+function setProjectEntryMode(mode){
+ const facebook=mode==='facebook'&&!editing&&user?.role==='chairman';
+ const visible=!editing&&user?.role==='chairman';
+ $('#project-entry-mode').hidden=!visible;
+ $('#manual-entry-help').hidden=!visible||facebook;
+ const panel=$('#fb-import-panel');
+ panel.hidden=!facebook;
+ panel.open=facebook;
+ for(const button of document.querySelectorAll('#project-entry-mode [data-entry-mode]')){
+  const active=button.dataset.entryMode===(facebook?'facebook':'manual');
+  button.setAttribute('aria-pressed',String(active));
+  button.classList.toggle('selected',active);
+ }
+}
+$('#project-entry-mode').addEventListener('click',e=>{
+ const button=e.target.closest('[data-entry-mode]');
+ if(!button)return;
+ setProjectEntryMode(button.dataset.entryMode);
+});
 function openEditor(project=null){
  clearProjectPreviews();editing=project;
  const form=$('#project-form');form.reset();
- const importPanel=$('#fb-import-panel');
- importPanel.open=false;importPanel.hidden=user?.role!=='chairman';
+ setProjectEntryMode('manual');
  $('#fb-import-result').hidden=true;$('#fb-import-result').textContent='';
  $('#fb-import-status').textContent='';
  $('#editor-message').textContent='';
@@ -334,7 +352,7 @@ $('#fb-analyze-post').addEventListener('click',async()=>{
   resultBox.textContent=(draft.method==='ai'?'AI draft ready. ':'Basic autofill ready. ')+
    (result.source==='pasted-caption'?'Pasted caption ang ginamit. ':'Public metadata ang ginamit. ')+
    'Draft lamang ito; suriin ang bawat field at i-upload ang mga original photos bago i-publish.';
-  status.textContent='Autofill complete — review the fields below.';
+  status.textContent=draft.method==='ai'?'Groq AI autofill completed — review below.':'Basic autofill completed — review below.';
   $('#editor-heading').textContent='Review Imported Project';
   form.elements.title.focus();
  }catch(err){

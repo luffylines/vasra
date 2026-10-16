@@ -1,6 +1,11 @@
 # Facebook Post Import — SK VASRA
 
-Open the signed-in SK Chairman dashboard → Manage Projects → New Project → Import from Facebook Post.
+Open the signed-in SK Chairman dashboard → Manage Projects → New Project. Two explicit modes are displayed:
+
+- **Manual Entry** (default): fill Project Title, Category, Summary, Details / Scope, Progress and upload up to 12 photos. No Facebook URL or AI request is necessary.
+- **Facebook URL + Groq AI**: provide a public Facebook post URL and optional pasted caption; use **Analyze & Autofill**. The imported values populate the SAME editable project form; add or remove images and review details before manually saving. If Facebook blocks metadata, paste the caption and retry. Switching back to Manual Entry does not erase form fields.
+
+When editing an existing project the manual editing interface is displayed. The Facebook importer is limited to new projects for SK Chairman.
 
 1. Paste a full public Facebook post HTTPS URL (e.g. `https://www.facebook.com/skbrgyvasra/posts/...`).
 2. Choose **Analyze & Autofill**. VASRA attempts a bounded public Open Graph preview. Facebook may return a login page, rate limit, or block this preview. No Facebook account cookies or private APIs are used.
