@@ -702,3 +702,198 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog{
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog .close{
   color:#d7e7ff!important
 }
+
+
+/* Dark-mode completeness: shared Chairman + SK Officer panels and forms.
+   Scoped to authenticated staff only, preserving the public site and login. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard{
+  --surface:#192a42;
+  --surface-hover:#243b59;
+  --field:#111f33;
+  --outline:#405978;
+  --text:#e9f1fd;
+  --secondary-text:#b8cce4;
+  --placeholder:#9eb6d2;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #monthly-form,#budget-form,#roster-form,#create-officer,
+  .trans-editform,.officer-create,
+  .trans-section,.trans-stats article,.trans-report,.trans-empty,
+  .trans-report-list article,.manage-row,.audit-row,
+  .admin-roster-row,.admin-roster-source,.admin-metric,
+  .admin-quick-wrap,.admin-roster-suggestions button,
+  .admin-roster-list,.staff-overview-grid article,
+  .settings-card,.position-info,.credential-note,.new-credentials,
+  #new-credentials,#monthly-manage-list .trans-empty,
+  #roster-list .trans-empty,#budget-summary,#users-list article,
+  #audit-list article,#managed-projects .empty,#staff-content .empty,
+  #duty-controls,.form-panel,.role-form
+){
+  background:var(--surface)!important;
+  border-color:var(--outline)!important;
+  color:var(--text)!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #monthly-form,#budget-form,#roster-form,#create-officer
+){
+  box-shadow:0 8px 28px rgba(0,0,0,.16);
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #panel-projects,#panel-monthly,#panel-budget,
+  #panel-roster,#panel-users,#panel-audit,#panel-settings
+){
+  color:var(--text)!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .panel-heading h2,#panel-users>h2,#panel-audit>h2,
+  .admin-section-head h2,.admin-roster-form-title h3,
+  .admin-roster-list-head h3,.admin-metric strong,.manage-row h3,
+  .trans-report strong,.trans-report-list strong,
+  .staff-overview-grid h3,.settings-header h2,.settings-card h3,
+  .admin-roster-suggestions button span,#roster-form-title
+){
+  color:var(--text)!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .trans-editform label,.officer-create label,.role-form label,
+  .checkline,.settings-card label,
+  #panel-monthly label,#panel-budget label,#panel-roster label,
+  #panel-users label,#panel-projects label,
+  .admin-metric span,.admin-metric small,
+  .admin-roster-heading small,.admin-roster-form-title span,
+  .admin-roster-list-head small,.trans-report small,
+  .trans-report-top span,.trans-meta,
+  .admin-roster-suggestions button small,.manage-row p,
+  .audit-row small,.empty,.trans-empty,.muted
+){
+  color:var(--secondary-text)!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #monthly-form input,#monthly-form select,#monthly-form textarea,
+  #budget-form input,#budget-form select,#budget-form textarea,
+  #roster-form input,#roster-form select,#roster-form textarea,
+  #create-officer input,#create-officer select,
+  .role-form select,.role-form input,
+  .settings-card input,#project-form input,#project-form select,
+  #project-form textarea
+):not([type="checkbox"]):not([type="hidden"]){
+  background:var(--field)!important;
+  color:var(--text)!important;
+  border:1px solid #567397!important;
+  color-scheme:dark;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #monthly-form,#budget-form,#roster-form,#create-officer,.role-form,
+  .settings-card
+) :is(input,textarea)::placeholder{
+  color:var(--placeholder)!important;
+  opacity:1;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #monthly-form,#budget-form,#roster-form,#create-officer,.role-form,
+  .settings-card
+) :is(input,select,textarea):focus-visible{
+  outline:2px solid #91bdff;
+  outline-offset:2px;
+  border-color:#91bdff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #monthly-form,#budget-form,#roster-form,#create-officer,.role-form
+) input[type="checkbox"]{
+  accent-color:#79aeff;
+  color-scheme:dark;
+  width:16px;
+  height:16px;
+  flex:0 0 auto;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  #monthly-form,#budget-form,#roster-form,#create-officer,.role-form
+) select option{
+  background:#15263e;
+  color:#e9f1fd;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .trans-empty,#monthly-manage-list .trans-empty,
+  #roster-list .trans-empty,#managed-projects .empty
+){
+  background:#1b2e47!important;
+  border:1px dashed #526e91!important;
+  color:#c5d8f0!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .trans-report-list article,.manage-row,.audit-row,#users-list article
+){
+  border:1px solid var(--outline)!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .badge-inline,.admin-roster-state,.admin-tag
+){
+  background:#274466!important;
+  color:#d4e7ff!important;
+  border-color:#45688e!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .admin-roster-state.is-live{
+  background:#164c3d!important;color:#b0f8d9!important;border-color:#3b8a72!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .panel-heading .secondary,.trans-report .secondary,.role-form .secondary,
+  .admin-roster-actions .secondary,.pagination button,
+  .admin-roster-suggestions button,.staff-overview-grid button
+){
+  background:var(--surface-hover)!important;
+  color:#eaf3ff!important;
+  border:1px solid #536f92!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .panel-heading .secondary,.trans-report .secondary,.role-form .secondary,
+  .admin-roster-actions .secondary,.pagination button,
+  .admin-roster-suggestions button,.staff-overview-grid button
+):hover:not(:disabled){
+  background:#315377!important;
+  border-color:#80a5ce!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard button.primary{
+  color:#fff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard button:disabled{
+  opacity:.62;
+  cursor:not-allowed;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .trans-report-list p,.audit-row p,.manage-row p,.credential-note,
+  .new-credentials,#new-credentials,#budget-summary
+){
+  color:#d5e4f7!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard :is(
+  .admin-roster-form-title,.admin-roster-list-head,
+  .settings-card-head
+){
+  border-color:var(--outline)!important;
+}
+/* The edit dialog is a sibling of #dashboard, so theme it separately. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor{
+  background:#192a42!important;
+  color:#e9f1fd!important;
+  border-color:#405978!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor :is(
+  h2,label,p,#current-image
+){color:#e9f1fd!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor :is(
+  input,select,textarea
+):not([type="checkbox"]):not([type="file"]){
+  background:#111f33!important;
+  border:1px solid #567397!important;
+  color:#e9f1fd!important;
+  color-scheme:dark;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor :is(
+  input,textarea
+)::placeholder{color:#a8bfd9!important;opacity:1}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor input[type="checkbox"]{
+  accent-color:#79aeff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .close{
+  color:#dceaff!important;
+}
