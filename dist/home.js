@@ -27,12 +27,12 @@ api('./api/transparency?year='+homePeriod.year).then(data=>{
  $('#home-budget-reference').textContent=data.budget?(data.budget.reference||'Published annual budget · Walang reference na ibinigay'):'Hinihintay ang published annual budget.';
  const expenses=homeReports.filter(r=>r.expense!==null&&r.expense!==undefined);
  $('#home-expense').textContent=expenses.length?homeMoney(expenses.reduce((sum,r)=>sum+Number(r.expense),0)):'Wala pang nai-publish na gastos.';
- $('#home-officials').innerHTML=officerDirectory(data.officials);
+ $('#home-officials').innerHTML=officerDirectory(data.officials,false,data.directory_managed===true);
  renderHomeHighlights();
 }).catch(()=>{
  ['#home-month-count','#home-year-count','#home-budget','#home-expense'].forEach(id=>{$(id).textContent='Hindi ma-load sa ngayon';$(id).className='summary-empty'});
  $('#home-budget-reference').textContent='Hindi ma-load ang transparency report. Subukan muli mamaya.';
- $('#home-officials').innerHTML=dutyOfficers().length?'<p class="org-source-note">Hindi ma-check ang published directory sa ngayon.</p>'+officerDirectory([]):'<div class="trans-empty">Hindi ma-load ang published officer directory sa ngayon. Subukan muli mamaya.</div>';
+ $('#home-officials').innerHTML='<div class="trans-empty">Hindi ma-check ang official SK directory sa ngayon. Subukan muli mamaya.</div>';
 });
 let homeDutyMode='unknown',homeDutyDate='';
 function renderHomeDuty(){

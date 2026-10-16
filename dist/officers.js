@@ -32,22 +32,26 @@ function dutyOfficers(){
  }
  return publishedOfficers(roster);
 }
-function displayedOfficerRoster(records){
+function displayedOfficerRoster(records, managed=false){
  const published=publishedOfficers(records);
- return published.length?{roster:published,fromDuty:false}:{roster:dutyOfficers(),fromDuty:true};
+ return published.length||managed
+   ?{roster:published,fromDuty:false}
+   :{roster:dutyOfficers(),fromDuty:true};
 }
 const dutySourceNote='<p class="org-source-note">Batay sa nakapaskil na SK Duty schedule. Hindi pa ito ang opisyal na published SK directory.</p>';
 
-function officerChart(records){
- const {roster,fromDuty}=displayedOfficerRoster(records);
- if(!roster.length)return '<div class="trans-empty">Wala pang available na verified officers.</div>';
- const chairs=roster.filter(o=>o.position==='chairman'),members=roster.filter(o=>o.position!=='chairman');
- const card=o=>'<article class="org-card">'+officerPortrait(o.name,o.position)+'<strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></article>';
- return (fromDuty?dutySourceNote:'')+'<div class="org-chart'+(chairs.length?' has-chair':'')+'" aria-label="SK organizational hierarchy">'+(chairs.length?'<div class="org-lead">'+chairs.map(card).join('')+'</div>':'<p class="org-note">Wala pang published SK Chairperson sa directory.</p>')+(members.length?'<ul class="org-members">'+members.map(o=>'<li>'+card(o)+'</li>').join('')+'</ul>':'')+'</div>';
+function officerChart(records, managed=false){
+ const {roster,fromDuty}=displayedOfficerRoster(records, managed);
+ if(!roster.length)return '<div class="trans-empty">Wala pang published SK officers. Ang SK Chairman lamang ang maaaring mag-publish ng official directory.</div>';
+ const chairs=roster.filter(o=>o.position==='chairman'),support=roster.filter(o=>o.position==='treasurer'||o.position==='secretary'),members=roster.filter(o=>o.position==='kagawad');
+ const card=(o,chair=false)=>'<article class="org-card'+(chair?' org-chair':'')+'">'+officerPortrait(o.name,o.position)+'<div class="org-person"><strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></div></article>';
+ const tier=(group,title,kicker)=>group.length?'<section class="org-tier" aria-label="'+esc(title)+'"><div class="org-tier-heading"><span>'+esc(kicker)+'</span><h3>'+esc(title)+'</h3></div><div class="org-tier-grid">'+group.map(o=>card(o)).join('')+'</div></section>':'';
+ const top=chairs.length?'<div class="org-lead">'+chairs.map(o=>card(o,true)).join('')+'</div>':'<p class="org-note">Wala pang nakatalang SK Chairperson sa directory.</p>';
+ return (fromDuty?dutySourceNote:'')+'<div class="org-chart'+(chairs.length?' has-chair':'')+'" aria-label="SK organizational hierarchy">'+top+tier(support,'SK Secretary at Treasurer','TANGGAPAN NG KONSEHO')+tier(members,'Mga SK Kagawad','MGA KASAPI NG KONSEHO')+'</div>';
 }
 function officerCard(o){return '<article class="trans-person">'+officerPortrait(o.name,o.position)+'<strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></article>'}
-function officerDirectory(records,grouped=false){
- const {roster,fromDuty}=displayedOfficerRoster(records);
+function officerDirectory(records,grouped=false,managed=false){
+ const {roster,fromDuty}=displayedOfficerRoster(records,managed);
  if(!roster.length)return '<div class="trans-empty">Wala pang available na verified officers.</div>';
  const html=grouped?Object.entries(officerRoles).map(([position,label])=>{const members=roster.filter(o=>o.position===position);return members.length?'<div class="trans-org-group"><h3>'+label+'</h3><div class="trans-roster">'+members.map(officerCard).join('')+'</div></div>':''}).join(''):roster.map(officerCard).join('');
  return (fromDuty?dutySourceNote:'')+html;

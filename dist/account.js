@@ -66,7 +66,8 @@ async function loadTransparencyEditor(tab){
   $('#monthly-manage-list').innerHTML=d.updates.length?d.updates.map(m=>'<article class="trans-report trans-spending"><div><strong>'+esc(m.title)+'</strong><small>'+esc(m.month)+' · '+(m.published?'Published':'Draft')+' · '+esc(m.summary)+'</small></div><div><strong>'+(m.expense===null?'Expense not reported':transMoney(m.expense))+'</strong><button type="button" class="secondary" data-month-id="'+esc(m.id)+'">Edit</button></div></article>').join(''):'<div class="trans-empty">No monthly updates saved for '+year+' yet.</div>';
  }
  if(tab==='roster'){
-  $('#roster-list').innerHTML=d.officials.length?d.officials.map(o=>'<article class="trans-report trans-spending"><div><strong>'+esc(o.name)+'</strong><small>'+esc(o.position)+' · '+(o.published?'Public':'Draft')+'</small></div><button class="secondary" type="button" data-official-id="'+esc(o.id)+'">Edit</button></article>').join(''):'<div class="trans-empty">No SK officials in the directory yet.</div>';
+  $('#roster-list').innerHTML=d.officials.length?d.officials.map(o=>'<article class="trans-report trans-spending admin-roster-row"><div><strong>'+esc(o.name)+'</strong><small>'+esc(({chairman:'SK Chairperson',treasurer:'SK Treasurer',secretary:'SK Secretary',kagawad:'SK Kagawad'})[o.position]||o.position)+'</small><span class="admin-roster-state '+(o.published?'is-live':'')+'">'+(o.published?'Published':'Draft')+'</span></div><div class="admin-roster-actions"><button class="secondary" type="button" data-official-id="'+esc(o.id)+'">Edit</button><button class="secondary admin-remove" type="button" data-official-remove="'+esc(o.id)+'" '+(d.directory_management_v2===true?'':'disabled title="Requires approved database migration"')+' aria-label="Alisin si '+esc(o.name)+' sa SK directory">Remove</button></div></article>').join(''):'<div class="trans-empty">Wala pang managed SK officials. Maaaring kumuha ng pangalan mula sa duty schedule at i-confirm bago i-publish.</div>';
+  renderDutySuggestions();
  }
 }
 $('#budget-form').elements.year.onchange=()=>{if(!$('#panel-budget').hidden)loadTransparencyEditor('budget').catch(e=>message(e.message,true))};
@@ -89,15 +90,50 @@ $('#monthly-manage-list').onclick=e=>{
  const f=$('#monthly-form').elements;f.project_id.value=item.project_id;f.month.value=String(item.month).slice(0,7);f.summary.value=item.summary;f.expense.value=item.expense??'';f.published.checked=!!item.published;
  $('#monthly-form').scrollIntoView({behavior:'smooth',block:'center'});
 };
+function renderDutySuggestions(){
+ const target=$('#roster-suggestions');
+ if(!target)return;
+ const roles={'SK Chairman':'chairman','SK Treasurer':'treasurer','SK Secretary':'secretary','SK Kagawad':'kagawad'},seen=new Set();
+ const roster=[];
+ if(typeof days!=='undefined')for(const d of days)for(let i=0;i<d.names.length;i++){
+  const name=String(d.names[i]||'').trim(),position=roles[d.roles[i]],key=name.toLocaleLowerCase();
+  if(!name||!position||seen.has(key))continue;
+  seen.add(key);roster.push({name,position});
+ }
+ const known=new Set((transparencyCache?.officials||[]).map(o=>o.name.trim().toLocaleLowerCase()));
+ target.innerHTML=roster.map(o=>'<button type="button" data-roster-name="'+esc(o.name)+'" data-roster-position="'+esc(o.position)+'" '+(known.has(o.name.toLocaleLowerCase())?'disabled title="Already in managed directory"':'')+'><span>'+esc(o.name)+'</span><small>'+esc(({chairman:'SK Chairperson',secretary:'SK Secretary',treasurer:'SK Treasurer',kagawad:'SK Kagawad'})[o.position])+'</small></button>').join('')||'<p class="muted">Walang available na duty roster.</p>';
+}
+$('#roster-suggestions').onclick=e=>{
+ const btn=e.target.closest('[data-roster-name]');if(!btn||btn.disabled)return;
+ const f=$('#roster-form').elements;
+ f.id.value='';f.name.value=btn.dataset.rosterName;f.position.value=btn.dataset.rosterPosition;f.sort.value='10';f.published.checked=false;
+ $('#roster-form-title').textContent='Review SK Duty officer';
+ $('#roster-form').scrollIntoView({behavior:'smooth',block:'center'});f.name.focus();
+};
+$('#roster-form').onreset=()=>{$('#roster-form-title').textContent='Add SK official'};
 $('#roster-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
  if(user?.role!=='chairman')throw Error('Only the Chairman can manage the official directory.');
  const f=e.target.elements;
  await api('./api/transparency/official',{method:'POST',body:JSON.stringify({id:f.id.value||null,name:f.name.value,position:f.position.value,sort:Number(f.sort.value),published:f.published.checked})});
- message('SK official directory updated.');e.target.reset();await loadTransparencyEditor('roster');
+ message('SK official saved. Published records will appear in Youth Leaders.');e.target.reset();$('#roster-form-title').textContent='Add SK official';await loadTransparencyEditor('roster');
 })};
-$('#roster-list').onclick=e=>{
+$('#roster-list').onclick=async e=>{
+ const remove=e.target.closest('[data-official-remove]');
+ if(remove){
+  if(user?.role!=='chairman'||!transparencyCache||transparencyCache.directory_management_v2!==true)return;
+  const item=transparencyCache.officials.find(o=>o.id===remove.dataset.officialRemove);
+  if(!item||!window.confirm('Alisin si '+item.name+' sa managed SK directory? Hindi mababago ang original SK Duty poster.'))return;
+  remove.disabled=true;
+  try{
+   await api('./api/transparency/official/remove',{method:'POST',body:JSON.stringify({id:item.id})});
+   message('Inalis sa public SK directory. Naitala ang pagbabago.');
+   $('#roster-form').reset();await loadTransparencyEditor('roster');
+  }catch(err){message(err.message,true)}finally{remove.disabled=false}
+  return;
+ }
  const btn=e.target.closest('[data-official-id]');if(!btn||!transparencyCache)return;
  const item=transparencyCache.officials.find(o=>o.id===btn.dataset.officialId);if(!item)return;
  const f=$('#roster-form').elements;f.id.value=item.id;f.name.value=item.name;f.position.value=item.position;f.sort.value=item.display_order;f.published.checked=!!item.published;
+ $('#roster-form-title').textContent='Edit SK official';
  $('#roster-form').scrollIntoView({behavior:'smooth',block:'center'});
 };

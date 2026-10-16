@@ -20,23 +20,47 @@
 /* The connected organizational hierarchy is shown on the SK Youth Leaders page. */
 .org-source-note{font-size:12px;line-height:1.6;color:#526e92;background:#eef4fc;border:1px solid #d5e3f4;border-radius:11px;padding:11px 15px;margin:16px 0 0}
 
-.org-chart{--connector:#8da9cc;max-width:1050px;margin:26px auto 0}
-.org-lead{display:flex;justify-content:center;gap:16px;position:relative;padding-bottom:34px}
-.org-lead:has(+.org-members):after{content:'';position:absolute;left:50%;bottom:0;height:34px;border-left:2px solid var(--connector)}
-.org-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;background:#f8fbff;border:1px solid #d9e4f2;border-radius:14px;padding:18px 12px;min-width:0;box-shadow:0 4px 12px #1d3c6505}
-.org-card strong{font-size:13px;color:#203e68;line-height:1.5;overflow-wrap:anywhere}
-.org-card small{font-size:11px;color:#5d7799;line-height:1.5}
-.org-card .officer-portrait{width:72px;height:84px;border-radius:13px;margin-bottom:3px}
-.org-lead .org-card{width:210px;background:#edf4ff;border-color:#aec5e5}
-.org-members{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;padding:0 0 0 18px;list-style:none;border-left:2px solid var(--connector)}
-.org-members>li{position:relative;padding:28px 8px 18px;border-top:2px solid var(--connector);min-width:0}
-.org-members>li:before{content:'';position:absolute;top:0;left:50%;height:28px;border-left:2px solid var(--connector)}
-.org-members>li:nth-child(4n+1):after{content:'';position:absolute;left:-20px;top:-2px;width:20px;border-top:2px solid var(--connector)}
-.org-note{font-size:12px;color:#667d99;text-align:center}
-.org-card{transition:background .18s,border-color .18s,box-shadow .18s}
-.org-card:hover{background:#eef5ff;border-color:#a9c1e2;box-shadow:0 6px 16px #1d3c6510}
+
+/* SK Youth Leaders — clean, compact leadership tree. Public display is read-only. */
+.org-chart{--org-line:#a7bbd9;max-width:1080px;margin:30px auto 8px;padding:0 10px}
+.org-lead{display:flex;justify-content:center;gap:16px;position:relative;padding-bottom:36px}
+.org-lead:after{content:"";position:absolute;left:50%;bottom:0;height:36px;border-left:2px solid var(--org-line)}
+.org-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;border:1px solid #dae5f3;background:linear-gradient(145deg,#fff,#f7faff);border-radius:18px;padding:20px 14px;min-width:0;box-shadow:0 8px 24px rgba(29,62,104,.045);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.org-card:hover{transform:translateY(-3px);border-color:#a9c4e7;box-shadow:0 12px 25px rgba(29,62,104,.1)}
+.org-card .officer-portrait{width:74px;height:85px;margin:0;border-radius:15px}
+.org-person{display:grid;gap:4px}
+.org-card strong{font-size:13px;line-height:1.45;color:#183b66;overflow-wrap:anywhere}
+.org-card small{font-size:11px;line-height:1.5;color:#7087a4}
+.org-chair{width:214px;background:linear-gradient(160deg,#e8f1ff,#fbfdff);border:1px solid #a7c6ee;padding:22px 16px;box-shadow:0 12px 24px rgba(31,82,153,.09)}
+.org-chair .officer-portrait{width:88px;height:101px}
+.org-tier{position:relative;padding:25px 0 8px;border-top:2px solid var(--org-line)}
+.org-tier+.org-tier{margin-top:28px}
+.org-tier+.org-tier:after{content:"";position:absolute;left:50%;top:-30px;height:30px;border-left:2px solid var(--org-line)}
+.org-tier:before{content:"";position:absolute;left:50%;top:-1px;height:24px;border-left:2px solid var(--org-line)}
+.org-tier-heading{display:flex;flex-direction:column;align-items:center;gap:5px;margin:0 0 18px;text-align:center}
+.org-tier-heading span{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#6486b4}
+.org-tier-heading h3{font-size:17px;font-weight:800;color:#244b7d;margin:0}
+.org-tier-grid{display:flex;align-items:stretch;justify-content:center;gap:14px;flex-wrap:wrap}
+.org-tier-grid>.org-card{width:174px;max-width:calc(50% - 8px);position:relative}
+.org-tier-grid>.org-card:before{content:"";position:absolute;top:-38px;left:50%;height:18px;border-left:2px solid var(--org-line);display:none}
+.org-note{text-align:center;color:#6c809e;font-size:12px;margin:0 0 24px}
+.org-source-note{font-size:12px;line-height:1.6;color:#526e92;background:#eef4fc;border:1px solid #d5e3f4;border-radius:11px;padding:11px 15px;margin:16px 0 0}
 #leaders-retry{margin-top:18px;min-height:44px}
 #leaders-directory .trans-empty a{text-decoration:underline;color:#285699}
-@media(prefers-reduced-motion:reduce){.org-card{transition:none}}
-@media(max-width:900px) and (min-width:601px){.org-members{grid-template-columns:repeat(2,minmax(0,1fr))}.org-members>li:nth-child(2n+1):after{content:'';position:absolute;left:-20px;top:-2px;width:20px;border-top:2px solid var(--connector)}}
-@media(max-width:600px){.org-lead{justify-content:flex-start;padding-left:32px;padding-bottom:24px}.org-lead:has(+.org-members):after{left:0;bottom:0;height:calc(50% + 24px);width:32px;border-top:2px solid var(--connector);border-radius:8px 0 0 0}.org-lead .org-card{width:100%}.org-members{display:flex;flex-direction:column;gap:0;padding-left:30px}.org-members>li{border-top:0;padding:0 0 18px}.org-members>li:before{left:-32px;top:40px;width:32px;height:0;border-left:0;border-top:2px solid var(--connector)}.org-members>li:after{display:none}.org-card{flex-direction:row;text-align:left;display:grid;grid-template-columns:64px minmax(0,1fr);gap:5px 14px;padding:16px}.org-card .officer-portrait,.org-card .trans-avatar{grid-row:1/3}.org-card .officer-portrait{width:64px;height:75px;margin:0}.org-card strong{align-self:end}.org-card small{grid-column:2;align-self:start}}
+@media(max-width:690px){
+ .org-chart{margin-top:22px;padding:0 0 0 10px;border-left:2px solid var(--org-line)}
+ .org-lead{justify-content:flex-start;padding:0 0 22px 22px}
+ .org-lead:after{left:0;bottom:42px;height:0;width:22px;border-top:2px solid var(--org-line);border-left:0}
+ .org-chair{width:min(100%,310px)}
+ .org-tier{border-top:0;padding:12px 0 10px 22px}
+ .org-tier:before{left:0;top:48px;width:22px;height:0;border-left:0;border-top:2px solid var(--org-line)}
+ .org-tier+.org-tier{margin-top:10px}.org-tier+.org-tier:after{display:none}
+ .org-tier-heading{align-items:flex-start;text-align:left}
+ .org-tier-grid{justify-content:flex-start;gap:10px}
+ .org-tier-grid>.org-card{width:calc(50% - 5px);max-width:none}
+ .org-card{padding:14px 10px}
+ .org-card .officer-portrait{width:62px;height:72px}
+ .org-chair .officer-portrait{width:76px;height:88px}
+}
+@media(max-width:385px){.org-tier-grid>.org-card{width:100%}.org-card{flex-direction:row;text-align:left;gap:14px}.org-person{text-align:left}}
+@media(prefers-reduced-motion:reduce){.org-card{transition:none}.org-card:hover{transform:none}}
