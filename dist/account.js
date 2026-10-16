@@ -1,5 +1,22 @@
 let user=null,managed=[],editing=null,auditOffset=0,auditTotal=0,recoveryMode=null,recoveryToken=null;
-const message=(text,error=false)=>{$('#message').textContent=text;$('#message').className=error?'message error':'message'};
+// Notifications display as accessible toasts; each new message restarts the 10s timer.
+let messageTimer=null;
+const message=(text,error=false)=>{
+ const toast=$('#message');
+ if(messageTimer!==null){clearTimeout(messageTimer);messageTimer=null;}
+ toast.textContent=String(text||'');
+ toast.className=error?'message error':'message';
+ toast.setAttribute('role',error?'alert':'status');
+ toast.setAttribute('aria-live',error?'assertive':'polite');
+ if(!text)return;
+ messageTimer=setTimeout(()=>{
+  toast.textContent='';
+  toast.className='message';
+  toast.setAttribute('role','status');
+  toast.setAttribute('aria-live','polite');
+  messageTimer=null;
+ },10000);
+};
 function syncWorkspaceMode(){
  const signedIn=!!user;
  document.body.dataset.staffMode=signedIn?'staff':'public';

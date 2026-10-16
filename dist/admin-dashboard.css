@@ -330,3 +330,77 @@ body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]
   body.account-workspace .vasra-login .auth-back-mobile svg{height:17px;width:17px}
   body.account-workspace .vasra-login .auth-back-mobile:hover{background:#dcecff}
 }
+
+
+/* Login and staff notifications: fixed right-side toasts, 10s controlled by account.js. */
+body.account-workspace #message.message{
+ position:fixed!important;
+ z-index:130;
+ top:20px;
+ right:22px;
+ left:auto;
+ width:min(380px,calc(100vw - 32px));
+ max-width:380px!important;
+ box-sizing:border-box;
+ display:flex;
+ align-items:flex-start;
+ gap:12px;
+ padding:15px 18px!important;
+ margin:0!important;
+ border-radius:14px;
+ box-shadow:0 14px 45px rgba(18,40,75,.17);
+ font-size:13px;
+ font-weight:600;
+ line-height:1.5;
+ overflow-wrap:anywhere;
+ animation:vasra-toast-enter .2s ease both;
+}
+body.account-workspace #message.message:empty{display:none!important}
+body.account-workspace #message.message::before{
+ content:"✓";
+ display:grid;
+ place-items:center;
+ height:23px;
+ width:23px;
+ min-width:23px;
+ border-radius:50%;
+ color:#176f50;
+ background:#d0ecdf;
+ font-size:14px;
+ font-weight:800;
+ line-height:1;
+}
+body.account-workspace #message.message.error::before{
+ content:"!";
+ color:#a52f34;
+ background:#f8d9dc;
+}
+body.account-workspace #message.message.error{
+ background:#fff8f8;
+ border:1px solid #f2bdc3;
+ border-left:4px solid #d74b54;
+ color:#822a34;
+}
+body.account-workspace #message.message:not(.error){
+ background:#f3fcf8;
+ border:1px solid #bde7d4;
+ border-left:4px solid #259a6a;
+ color:#206047;
+}
+@keyframes vasra-toast-enter{
+ from{opacity:0;transform:translateX(16px)}
+ to{opacity:1;transform:translateX(0)}
+}
+@media(max-width:600px){
+ body.account-workspace #message.message{
+  top:12px;
+  right:12px;
+  left:12px;
+  width:auto;
+  max-width:none!important;
+  padding:13px 15px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body.account-workspace #message.message{animation:none}
+}
