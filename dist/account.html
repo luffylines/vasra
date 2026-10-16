@@ -52,6 +52,20 @@
 <div class="project-editor-header"><span class="eyebrow">SK VASRA · PROJECT MANAGEMENT</span><h2 id="editor-heading">Bagong proyekto</h2><p>Idagdag ang impormasyon, progreso at mga larawan ng programa.</p></div>
 <p id="editor-message" role="status" aria-live="polite"></p>
 <form id="project-form">
+<details id="fb-import-panel" class="fb-import-panel">
+ <summary><span class="fb-import-icon" aria-hidden="true">f</span><span><strong>Import from Facebook Post</strong><small>Autofill mula sa public post link o pasted caption · Review before saving</small></span><span class="fb-import-chevron" aria-hidden="true">⌄</span></summary>
+ <div class="fb-import-content">
+  <label for="fb-post-url">Facebook post URL</label>
+  <input type="url" id="fb-post-url" placeholder="https://www.facebook.com/skbrgyvasra/posts/..." autocomplete="url">
+  <label for="fb-post-caption">Post caption (fallback kapag hindi accessible ang Facebook)</label>
+  <textarea id="fb-post-caption" rows="5" maxlength="12000" placeholder="I-paste dito ang caption ng Facebook post. Kung public link preview ang accessible, puwedeng iwanang blanko."></textarea>
+  <label class="fb-screenshot-label" for="fb-import-screenshot"><span aria-hidden="true">▧</span> Optional: Magdagdag ng screenshot o post images sa gallery</label>
+  <input type="file" id="fb-import-screenshot" accept="image/png,image/jpeg,image/webp" multiple aria-describedby="fb-photo-note">
+  <p id="fb-photo-note" class="fb-import-note">Ang screenshots ay magiging larawan sa project gallery, hindi awtomatikong babasahin bilang caption. Kung ayaw mong gamitin bilang cover, piliin ang ibang cover sa ibaba. Walang automatic download ng Facebook album photos nang walang Page access.</p>
+  <div class="fb-import-bottom"><button type="button" id="fb-analyze-post" class="fb-import-action">✦ Analyze & Autofill</button><span id="fb-import-status" role="status" aria-live="polite"></span></div>
+  <div class="fb-import-alert" id="fb-import-result" hidden></div>
+ </div>
+</details>
 <div class="editor-section-title"><span class="editor-section-number">01</span><strong>Project information</strong></div>
 <label>Project Title<input name="title" required maxlength="150" placeholder="Hal. Youth Leadership Training"></label>
 <div class="form-row"><label>Category<input name="category" required maxlength="60" placeholder="Edukasyon, Palakasan..."></label><label>Status<select name="status"><option>Pinaplano</option><option>Isinasagawa</option><option>Natapos</option></select></label></div>

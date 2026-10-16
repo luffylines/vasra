@@ -170,6 +170,10 @@ function renderProjectPreviews(){
 function openEditor(project=null){
  clearProjectPreviews();editing=project;
  const form=$('#project-form');form.reset();
+ const importPanel=$('#fb-import-panel');
+ importPanel.open=false;importPanel.hidden=user?.role!=='chairman';
+ $('#fb-import-result').hidden=true;$('#fb-import-result').textContent='';
+ $('#fb-import-status').textContent='';
  $('#editor-message').textContent='';
  $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
  if(project){
@@ -281,16 +285,64 @@ $('#delete-project-button').onclick=async()=>{
 };
 $('.close').onclick=()=>$('#editor').close();
 $('#editor').addEventListener('close',clearProjectPreviews);
-$('#editor-files').addEventListener('change',e=>{
- const input=e.target,files=[...(input.files||[])];input.value='';
- if(files.length+editorPhotos.length>12){message('Maximum 12 photos per project.',true);return;}
+function appendProjectFiles(files){
+ if(files.length+editorPhotos.length>12){message('Maximum 12 photos per project.',true);return false;}
+ let accepted=0;
  for(const file of files){
    if(file.size<1||file.size>5242880||!['image/png','image/jpeg','image/webp'].includes(file.type)){
      message('JPG, PNG o WebP lamang, hanggang 5 MB bawat larawan.',true);continue;
    }
-   editorPhotos.push({file,url:URL.createObjectURL(file)});
+   editorPhotos.push({file,url:URL.createObjectURL(file)});accepted++;
  }
  renderProjectPreviews();
+ return accepted===files.length;
+}
+$('#editor-files').addEventListener('change',e=>{
+ const input=e.target,files=[...(input.files||[])];input.value='';
+ appendProjectFiles(files);
+});
+$('#fb-import-screenshot').addEventListener('change',e=>{
+ const input=e.target,files=[...(input.files||[])];input.value='';
+ if(appendProjectFiles(files)){
+  $('#fb-import-status').textContent=files.length+' larawan ang nadagdag sa gallery. I-review ang cover photo sa ibaba.';
+ }
+});
+$('#fb-analyze-post').addEventListener('click',async()=>{
+ const button=$('#fb-analyze-post'),status=$('#fb-import-status'),resultBox=$('#fb-import-result');
+ const url=$('#fb-post-url').value.trim(),caption=$('#fb-post-caption').value.trim();
+ if(editing||user?.role!=='chairman')return;
+ if(!url){status.textContent='Ilagay muna ang Facebook post link.';return;}
+ button.disabled=true;status.textContent='Sinusubukang basahin ang post…';resultBox.hidden=true;
+ try{
+  const result=await api('./api/manage/projects/import-facebook',{
+   method:'POST',body:JSON.stringify({url,caption})
+  });
+  if(!result.ok){
+   status.textContent='Kailangan ang caption para mag-autofill.';
+   resultBox.hidden=false;resultBox.textContent=result.message||'I-paste ang caption at subukang muli.';
+   $('#fb-post-caption').focus();
+   return;
+  }
+  const draft=result.draft||{},form=$('#project-form');
+  for(const field of ['title','category','description','scope']){
+   if(typeof draft[field]==='string')form.elements[field].value=draft[field];
+  }
+  form.elements.status.value='Pinaplano';
+  form.elements.progress.value='0';
+  form.elements.published.checked=false;
+  resultBox.hidden=false;
+  resultBox.textContent=(draft.method==='ai'?'AI draft ready. ':'Basic autofill ready. ')+
+   (result.source==='pasted-caption'?'Pasted caption ang ginamit. ':'Public metadata ang ginamit. ')+
+   'Draft lamang ito; suriin ang bawat field at i-upload ang mga original photos bago i-publish.';
+  status.textContent='Autofill complete — review the fields below.';
+  $('#editor-heading').textContent='Review Imported Project';
+  form.elements.title.focus();
+ }catch(err){
+  resultBox.hidden=false;
+  resultBox.textContent=err.message||'Hindi natuloy ang Facebook import.';
+  status.textContent='Import failed.';
+  message(err.message,true);
+ }finally{button.disabled=false;}
 });
 $('#current-image').addEventListener('click',e=>{
  const remove=e.target.closest('[data-photo-remove]');

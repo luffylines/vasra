@@ -1108,3 +1108,55 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-conten
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content .audit-more summary{color:#a9cdff}
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content .audit-more .audit-detail-text{background:#162a44;color:#e1efff;border-color:#375576}
 @media(max-width:650px){#staff-content .audit-row{padding:16px 14px}#staff-content .audit-more .audit-detail-text{padding:12px}}
+
+
+/* Safe Facebook post drafting UI, only shown to authorised SK Chairman. */
+#editor .fb-import-panel{
+ margin:14px 0 10px;border:1px solid #c4d9f2;background:#f1f7ff;
+ border-radius:15px;overflow:hidden;color:#214774;
+}
+#editor .fb-import-panel summary{
+ display:flex;align-items:center;gap:12px;padding:16px 17px;cursor:pointer;
+ list-style:none;font-size:13px;line-height:1.35;
+}
+#editor .fb-import-panel summary::-webkit-details-marker{display:none}
+#editor .fb-import-panel summary strong{display:block;font-size:14px;letter-spacing:-.1px;color:#18467e}
+#editor .fb-import-panel summary small{display:block;font-size:11px;font-weight:500;color:#647fa4;margin-top:5px}
+#editor .fb-import-panel .fb-import-icon{flex:0 0 36px;width:36px;height:36px;display:grid;place-items:center;background:#2768bc;color:white;font-family:Arial,sans-serif;font-size:23px;font-weight:800;border-radius:10px}
+#editor .fb-import-panel .fb-import-chevron{margin-left:auto;font-size:22px;font-weight:800;transition:transform .2s ease}
+#editor .fb-import-panel[open] .fb-import-chevron{transform:rotate(180deg)}
+#editor .fb-import-content{
+ padding:17px;display:flex;flex-direction:column;gap:11px;
+ border-top:1px solid #cbdff6;background:rgba(255,255,255,.85)
+}
+#editor .fb-import-content label{display:block;font-size:12px;font-weight:750;color:#254d7c}
+#editor .fb-import-content :is(input[type="url"],textarea){
+ width:100%;box-sizing:border-box;min-height:43px;padding:11px 12px;border-radius:9px;
+ border:1px solid #c9d9ed;background:white;color:#153957;font-size:13px;line-height:1.5;
+}
+#editor .fb-import-content textarea{min-height:110px;resize:vertical}
+#editor .fb-import-content input[type="file"]{width:100%;padding:8px;border-radius:9px;background:#f2f6fd;border:1px solid #d4e1f1;font-size:12px;color:#32557c}
+#editor .fb-import-content .fb-screenshot-label{margin-top:5px}
+#editor .fb-import-content .fb-import-note{font-size:11px;color:#5d7899;line-height:1.6;margin:0}
+#editor .fb-import-content .fb-import-bottom{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:4px}
+#editor .fb-import-action{background:#225baa;border:1px solid #225baa;border-radius:9px;padding:12px 15px;color:#fff;font-size:12px;font-weight:800;cursor:pointer}
+#editor .fb-import-action:hover{background:#174986}
+#editor .fb-import-action:disabled{opacity:.6;cursor:wait}
+#editor #fb-import-status{flex:1;font-size:12px;line-height:1.5;color:#335f94}
+#editor .fb-import-alert{padding:12px 14px;border-radius:10px;background:#e5f0ff;border:1px solid #c6dcf8;color:#24518b;font-size:12px;line-height:1.65}
+#editor .fb-import-alert[hidden],#editor .fb-import-panel[hidden]{display:none}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-panel{background:#213e60;color:#e9f3ff;border-color:#486a91}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-panel summary strong{color:#f4f8ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-panel summary small,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-content .fb-import-note{color:#c9defa}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-content{background:#192c46;border-color:#466286}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-content label{color:#d9eaff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-content :is(input[type="url"],textarea,input[type="file"]){background:#14243b;color:#eef6ff;border-color:#536f96}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-import-alert{background:#203c62;color:#dcecff;border-color:#536f96}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-import-status{color:#c0dfff}
+@media(max-width:600px){
+ #editor .fb-import-panel summary{padding:13px 12px;gap:9px}
+ #editor .fb-import-content{padding:14px 12px}
+ #editor .fb-import-panel summary small{font-size:10px}
+ #editor .fb-import-bottom .fb-import-action{width:100%}
+}
