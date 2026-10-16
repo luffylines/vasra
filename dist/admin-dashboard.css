@@ -535,3 +535,170 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-car
 }
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content #duty-controls strong,
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-roster-heading strong{color:#d4e8ff}
+
+
+/* Desktop toolbar spans the available page width, not just a centered 1400px card.
+   The sidebar remains 238px wide; only the staff workspace header stretches. */
+@media (min-width:851px){
+  body.account-workspace[data-staff-mode="staff"] main.account-main.portal-main{
+    width:calc(100% - 238px)!important;
+    max-width:none!important;
+    margin:0 0 0 238px!important;
+    padding-left:clamp(22px,3.1vw,48px);
+    padding-right:clamp(22px,3.1vw,48px);
+  }
+  body.account-workspace[data-staff-mode="staff"] main.account-main > #dashboard{
+    max-width:1300px;
+    margin-inline:auto;
+  }
+  body.account-workspace[data-staff-mode="staff"] main.account-main > .page-top{
+    width:100%;
+    max-width:none;
+  }
+}
+body.account-workspace[data-staff-mode="staff"] .page-top{
+  width:100%;min-width:0;justify-content:space-between;
+}
+body.account-workspace[data-staff-mode="staff"] .account-top-right{
+  margin-left:auto!important;flex:0 0 auto;justify-content:flex-end;
+}
+body.account-workspace[data-staff-mode="staff"] .account-actions{
+  margin-left:auto!important;justify-content:flex-end;
+}
+@media(max-width:850px){
+  body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] main.account-main.portal-main{
+    width:100%!important;max-width:none!important;
+    margin:0!important;padding-left:16px;padding-right:16px;
+  }
+  body.account-workspace[data-staff-mode="staff"] .account-top-right{
+    margin-left:auto!important;
+  }
+}
+@media(max-width:380px){
+  body.account-workspace[data-staff-mode="staff"] .account-breadcrumb{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+}
+
+/* Fully coordinated dark workspace surfaces (only while authenticated). */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"]{
+  --ink:#e5eefc;--muted:#a8bdd7;--line:#374c69;--nav:#0b1b32;
+  --staff-bg:#0e1727;--staff-card:#18283e;--staff-raised:#213651;
+  --staff-field:#111f33;--staff-border:#394e6c;--staff-text:#e5eefc;
+  --staff-soft:#b0c3dd;
+  background:var(--staff-bg)!important;color:var(--staff-text);
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] main.account-main.portal-main{
+  background:var(--staff-bg)!important;color:var(--staff-text)!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  .settings-card,.admin-metric,.admin-quick-wrap,.admin-roster-source,
+  .staff-overview-grid article,.manage-row,.audit-row,.position-info,
+  .trans-report,.trans-empty,.trans-summary,.trans-spending,
+  .empty,.form-panel,.admin-roster-row,.new-credentials,
+  .credential-note,.settings-layout article,.recovery-panel,
+  .admin-roster-list,.staff-card,#roster-form,#new-credentials,
+  #staff-content #managed-projects .empty,#staff-content #duty-controls
+){
+  background:var(--staff-card)!important;
+  border-color:var(--staff-border)!important;
+  color:var(--staff-text)!important;
+  box-shadow:0 4px 22px rgba(0,0,0,.12);
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  #dashboard h2,#dashboard h3,#dashboard h4,#dashboard strong,
+  #dashboard .admin-metric strong,#dashboard .admin-quick-wrap h3,
+  #dashboard .admin-roster-heading strong,#dashboard .admin-roster-form-title h3,
+  #dashboard .admin-roster-list-head h3,
+  #dashboard .settings-header h2,#dashboard .settings-card h3,
+  #staff-content .panel-heading h2
+){color:var(--staff-text)!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  #dashboard p,#dashboard small,#dashboard label,
+  #dashboard .muted,#dashboard .admin-metric span,
+  #dashboard .admin-metric small,#dashboard .admin-section-head p,
+  #dashboard .admin-roster-heading small,
+  #dashboard .admin-roster-suggestions button small,
+  #dashboard .settings-card p,#dashboard .settings-header p,
+  #dashboard .manage-row p,#dashboard .audit-row small,
+  #dashboard .admin-quick-wrap p,#staff-content .panel-heading p
+){color:var(--staff-soft)!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  #dashboard input,#dashboard textarea,#dashboard select,
+  .settings-card input,.recovery-panel input,dialog input,dialog textarea,dialog select
+){
+  background:var(--staff-field)!important;
+  border:1px solid #536b8c!important;
+  color:var(--staff-text)!important;
+  color-scheme:dark;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  input,textarea
+)::placeholder{color:#9badc7!important;opacity:1}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  #dashboard button.secondary,.admin-quick-actions button,
+  .admin-roster-actions button,.admin-roster-suggestions button,
+  .staff-overview-grid button,#dashboard .pagination button,
+  #dashboard .secondary,.settings-card .secondary
+){
+  background:var(--staff-raised)!important;
+  color:#e3efff!important;
+  border-color:#4b678a!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  #dashboard button.secondary,.admin-quick-actions button,
+  .admin-roster-actions button,.admin-roster-suggestions button,
+  .staff-overview-grid button
+):hover{background:#2b4b71!important;border-color:#7a99be!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  .admin-tag,.badge-inline,.admin-roster-state,
+  .staff-overview-icon,.settings-card-head>span,
+  .settings-feature-note
+){
+  background:#263d5d!important;
+  border-color:#426083!important;
+  color:#d2e6ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  #dashboard .admin-section-head h2,
+  #staff-content .panel-heading h2,.settings-header h2,
+  .admin-roster-form-title h3,.admin-roster-list-head h3
+){color:#eaf3ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  .admin-roster-source,#roster-form,#staff-content #duty-controls,
+  .settings-card
+) a{color:#93c9ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  #dashboard .admin-roster-suggestions button span,.admin-roster-heading strong,
+  #dashboard .settings-card label,.settings-card .current-email,
+  #staff-content #duty-controls strong
+){color:#dceaff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-roster-suggestions button:disabled{
+  opacity:.6
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(
+  .settings-card,.admin-metric,.admin-quick-wrap,.manage-row,.audit-row,
+  .trans-report,.admin-roster-source,#roster-form
+) *{border-color:var(--staff-border)}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .dashboard-head,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .dashboard-head :is(h1,p,.eyebrow){
+  color:#f5f9ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-logout{
+  color:#ffc0c4!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .staff-logout:hover{
+  background:#543044!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .admin-roster-state.is-live{
+  background:#153c35!important;color:#a3f6d6!important;border-color:#397461!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .settings-feature-note{
+  background:#413923!important;color:#fae7b0!important;border-color:#806e42!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog{
+  background:#18283e!important;color:var(--staff-text)!important;border-color:var(--staff-border)!important
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] dialog .close{
+  color:#d7e7ff!important
+}
