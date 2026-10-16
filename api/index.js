@@ -1,6 +1,7 @@
 // Vercel Node.js function adapter for the VASRA Fetch-style API handler.
 // Local SQLite server.cjs remains available for local-only development.
 const { createHandler } = require('../lib/handler.cjs');
+const { isIP } = require('node:net');
 const handle = createHandler();
 
 module.exports = async function vercelHandler(req, res) {
@@ -24,7 +25,8 @@ module.exports = async function vercelHandler(req, res) {
     if (method !== 'GET' && method !== 'HEAD') opts.body = Buffer.concat(raw);
     const url = new URL(req.url, proto + '://' + host);
     const response = await handle(new Request(url, opts), {
-      ip: String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()
+      // Vercel's proxy-provided address, not a client-provided form value.
+      ip: (()=>{const value=String(req.headers['x-vercel-forwarded-for']||req.headers['x-real-ip']||'').split(',')[0].trim();return isIP(value)?value:null;})()
     });
     res.statusCode = response.status;
     for (const [key, value] of response.headers) res.setHeader(key, value);

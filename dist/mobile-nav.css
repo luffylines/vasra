@@ -63,3 +63,21 @@
 /* Modern Facebook link in public sidebar footer on every page. */
 .site-header .sidebar-bottom .social-footer-link{display:flex;align-items:center;gap:8px}
 .site-header .sidebar-bottom .social-footer-link svg{width:16px;height:16px;flex:none;fill:currentColor;stroke:none}
+
+
+/* Philippine-time clock in public and staff headers. */
+.page-top .location-tag{display:inline-flex;align-items:center;justify-content:flex-end;gap:9px;white-space:nowrap;flex-wrap:wrap;text-align:right}
+.page-top .ph-live-clock{display:inline-flex;align-items:center;padding-left:10px;border-left:1px solid currentColor;font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.2px;white-space:nowrap;font-variant-numeric:tabular-nums}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .page-top .ph-live-clock{color:#e1efff}
+.audit-row .audit-ip{display:block;margin-top:5px;color:#697f9f;font-size:11px;font-variant-numeric:tabular-nums}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .audit-ip{color:#c4d5ef!important}
+@media(max-width:850px){
+ .page-top .location-tag{gap:0;max-width:44%;letter-spacing:0}
+ .page-top .ph-location-name{display:none}
+ .page-top .ph-live-clock{border-left:0;padding-left:0;font-size:11px;letter-spacing:0}
+ body.account-workspace .account-top-right .location-tag{display:inline-flex!important;align-items:center;margin-right:4px;max-width:none}
+}
+@media(max-width:390px){
+ body.account-workspace .account-top-right .location-tag{margin-right:1px}
+ body.account-workspace .page-top .ph-live-clock{font-size:10px}
+}

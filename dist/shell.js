@@ -87,3 +87,54 @@
 if((location.pathname.endsWith('/transparency')||location.pathname.endsWith('/transparency.html'))&&location.hash==='#officials')location.replace('./youth-leaders');
 if(location.pathname.endsWith('/')||location.pathname.endsWith('/index.html')){if(location.hash==='#duty')location.replace('./duty.html');if(location.hash==='#contacts')location.replace('./contacts.html');if(location.hash==='#projects')location.replace('./projects.html');}
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+
+/* Consistent Philippine Time at the page header on every public/staff page.
+   Syncs against a lightweight server timestamp to avoid wrong device clocks;
+   if server is offline the client clock is shown as a fallback. */
+(() => {
+ const tags=[...document.querySelectorAll('.page-top .location-tag')];
+ if(!tags.length)return;
+ const display=new Intl.DateTimeFormat('en-PH',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:'Asia/Manila'});
+ let originTime=Date.now(),originTick=performance.now();
+ for(const tag of tags){
+   const label=document.createElement('span');
+   label.className='ph-location-name';
+   label.textContent=tag.textContent.trim();
+   tag.replaceChildren(label);
+   const clock=document.createElement('time');
+   clock.className='ph-live-clock';
+   clock.title='Philippine Standard Time (Asia/Manila)';
+   clock.setAttribute('aria-label','Philippine Time');
+   tag.append(clock);
+ }
+ const update=()=>{
+   const now=new Date(originTime+performance.now()-originTick);
+   const text=display.format(now);
+   for(const clock of document.querySelectorAll('.page-top .ph-live-clock')){
+     clock.textContent=text;
+     clock.dateTime=now.toISOString();
+   }
+ };
+ const sync=async()=>{
+   try{
+     const before=performance.now();
+     const r=await fetch('./api/time',{cache:'no-store'});
+     if(!r.ok)throw Error('Time service unavailable');
+     const data=await r.json();
+     const remote=Date.parse(data.now);
+     if(!Number.isFinite(remote))throw Error('Invalid time');
+     const after=performance.now();
+     originTime=remote;
+     originTick=(before+after)/2;
+   }catch{
+     // Graceful fallback: device clock, still formatted for Asia/Manila.
+   }
+   update();
+ };
+ update();
+ sync();
+ setInterval(update,10000);
+ setInterval(sync,300000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
+})();

@@ -50,9 +50,9 @@ function officerChart(records, managed=false){
  return '<div class="org-chart'+(chairs.length?' has-chair':'')+'" aria-label="SK organizational hierarchy">'+top+tier(support,'SK Secretary at Treasurer','TANGGAPAN NG KONSEHO')+tier(members,'Mga SK Kagawad','MGA KASAPI NG KONSEHO')+'</div>';
 }
 function officerCard(o){return '<article class="trans-person">'+officerPortrait(o.name,o.position)+'<strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></article>'}
-function officerDirectory(records,grouped=false,managed=false){
+function officerDirectory(records,grouped=false,managed=false,showDutyNote=true){
  const {roster,fromDuty}=displayedOfficerRoster(records,managed);
  if(!roster.length)return '<div class="trans-empty">Wala pang available na verified officers.</div>';
  const html=grouped?Object.entries(officerRoles).map(([position,label])=>{const members=roster.filter(o=>o.position===position);return members.length?'<div class="trans-org-group"><h3>'+label+'</h3><div class="trans-roster">'+members.map(officerCard).join('')+'</div></div>':''}).join(''):roster.map(officerCard).join('');
- return (fromDuty?dutySourceNote:'')+html;
+ return (fromDuty&&showDutyNote?dutySourceNote:'')+html;
 }
