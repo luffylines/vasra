@@ -154,10 +154,109 @@ document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dat
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p></div><button class="secondary" data-edit="${esc(p.id)}">I-edit ↗</button></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
 function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
-function openEditor(p=null){editing=p;const f=$('#project-form');f.reset();$('#editor-message').textContent='';$('#editor-heading').textContent=p?'I-edit ang proyekto':'Bagong proyekto';if(p){for(const n of ['title','category','description','scope','status','progress'])f.elements[n].value=p[n];f.elements.published.checked=!!p.published;}$('#current-image').innerHTML=p?.image_id?`<img class="detail-photo" src="./api/images/${encodeURIComponent(p.image_id)}" alt="Kasalukuyang larawan">`:'';$('#editor').showModal()}
-$('#new-project').onclick=()=>openEditor();$('#managed-projects').onclick=e=>{const b=e.target.closest('[data-edit]');if(b)openEditor(managed.find(p=>p.id===b.dataset.edit))};$('.close').onclick=()=>$('#editor').close();
-$('#project-form').elements.status.onchange=e=>{if(e.target.value==='Natapos')$('#project-form').elements.progress.value=100};
-$('#project-form').onsubmit=async e=>{e.preventDefault();const f=e.target;$('#save-project').disabled=true;$('#editor-message').textContent='Sine-save…';try{const b=Object.fromEntries(new FormData(f));b.progress=Number(b.progress);b.published=f.elements.published.checked;b.version=editing?.version;b.image_id=f.elements.remove_image.checked?null:editing?.image_id||null;const file=f.elements.image.files[0];if(file){if(file.size>5242880)throw Error('Hanggang 5 MB lamang ang larawan.');if(!['image/png','image/jpeg','image/webp'].includes(file.type))throw Error('JPG, PNG, o WebP lamang.');const upload=await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'begin',size:file.size,mime:file.type})});for(let index=0,start=0;start<file.size;index++,start+=upload.chunkSize){const piece=file.slice(start,start+upload.chunkSize);const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result.split(',')[1]);r.onerror=()=>reject(Error('Hindi mabasa ang larawan.'));r.readAsDataURL(piece)});await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'chunk',id:upload.id,index,data})});}b.image_id=(await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'complete',id:upload.id})})).id;}delete b.image;delete b.remove_image;await api('./api/manage/projects'+(editing?'/'+editing.id:''),{method:editing?'PUT':'POST',body:JSON.stringify(b)});$('#editor').close();success(editing?'Matagumpay na na-update ang proyekto at naitala sa activity log.':'Matagumpay na nagawa ang bagong proyekto at naitala sa activity log.');await loadProjects()}catch(error){$('#editor-message').textContent=error.message;message(error.message,true)}finally{$('#save-project').disabled=false}};
+
+let editorPhotos=[];
+function clearProjectPreviews(){for(const p of editorPhotos)if(p.url)URL.revokeObjectURL(p.url);editorPhotos=[];}
+function renderProjectPreviews(){
+ const region=$('#current-image');
+ region.innerHTML=editorPhotos.map((p,i)=>{
+   const src=p.id?'./api/images/'+encodeURIComponent(p.id):p.url;
+   return '<article class="editor-photo"><img src="'+esc(src)+'" alt="Project photo '+(i+1)+'">'+
+     (i===0?'<span class="editor-photo-cover">Cover photo</span>':'<button type="button" class="editor-set-cover" data-photo-cover="'+i+'">Set cover</button>')+
+     '<button type="button" class="editor-photo-remove" data-photo-remove="'+i+'" aria-label="Alisin ang larawan '+(i+1)+'">×</button></article>';
+ }).join('');
+ region.hidden=editorPhotos.length===0;
+}
+function openEditor(project=null){
+ clearProjectPreviews();editing=project;
+ const form=$('#project-form');form.reset();
+ $('#editor-message').textContent='';
+ $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
+ if(project){
+   for(const key of ['title','category','description','scope','status','progress'])form.elements[key].value=project[key];
+   form.elements.published.checked=!!project.published;
+   const ids=Array.isArray(project.image_ids)&&project.image_ids.length?project.image_ids:(project.image_id?[project.image_id]:[]);
+   editorPhotos=ids.map(id=>({id}));
+ }
+ renderProjectPreviews();
+ $('#editor').showModal();
+}
+$('#new-project').onclick=()=>openEditor();
+$('#managed-projects').onclick=e=>{
+ const button=e.target.closest('[data-edit]');
+ if(button)openEditor(managed.find(p=>p.id===button.dataset.edit));
+};
+$('.close').onclick=()=>$('#editor').close();
+$('#editor').addEventListener('close',clearProjectPreviews);
+$('#editor-files').addEventListener('change',e=>{
+ const input=e.target,files=[...(input.files||[])];input.value='';
+ if(files.length+editorPhotos.length>8){message('Maximum 8 photos per project.',true);return;}
+ for(const file of files){
+   if(file.size<1||file.size>5242880||!['image/png','image/jpeg','image/webp'].includes(file.type)){
+     message('JPG, PNG o WebP lamang, hanggang 5 MB bawat larawan.',true);continue;
+   }
+   editorPhotos.push({file,url:URL.createObjectURL(file)});
+ }
+ renderProjectPreviews();
+});
+$('#current-image').addEventListener('click',e=>{
+ const remove=e.target.closest('[data-photo-remove]');
+ const cover=e.target.closest('[data-photo-cover]');
+ if(remove){
+   const index=Number(remove.dataset.photoRemove);
+   const photo=editorPhotos.splice(index,1)[0];
+   if(photo?.url)URL.revokeObjectURL(photo.url);
+ }else if(cover){
+   const index=Number(cover.dataset.photoCover);
+   if(index>0&&index<editorPhotos.length)editorPhotos.unshift(editorPhotos.splice(index,1)[0]);
+ }else return;
+ renderProjectPreviews();
+});
+$('#project-form').elements.status.onchange=e=>{
+ if(e.target.value==='Natapos')$('#project-form').elements.progress.value=100;
+};
+async function uploadProjectPhoto(file){
+ const upload=await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'begin',size:file.size,mime:file.type})});
+ for(let index=0,start=0;start<file.size;index++,start+=upload.chunkSize){
+   const piece=file.slice(start,start+upload.chunkSize);
+   const data=await new Promise((resolve,reject)=>{
+     const reader=new FileReader();
+     reader.onload=()=>resolve(String(reader.result).split(',')[1]);
+     reader.onerror=()=>reject(Error('Hindi mabasa ang larawan.'));
+     reader.readAsDataURL(piece);
+   });
+   await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'chunk',id:upload.id,index,data})});
+ }
+ return (await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'complete',id:upload.id})})).id;
+}
+$('#project-form').onsubmit=async e=>{
+ e.preventDefault();const form=e.target;
+ const save=$('#save-project');save.disabled=true;
+ $('#editor-message').textContent='Sine-save ang proyekto…';
+ try{
+   const body=Object.fromEntries(new FormData(form));
+   body.progress=Number(body.progress);
+   body.published=form.elements.published.checked;
+   body.version=editing?.version;
+   const ids=[];
+   for(let i=0;i<editorPhotos.length;i++){
+     const photo=editorPhotos[i];
+     $('#editor-message').textContent=photo.file?'Uploading photo '+(i+1)+' of '+editorPhotos.length+'…':'Preparing gallery…';
+     ids.push(photo.id||await uploadProjectPhoto(photo.file));
+   }
+   body.image_ids=ids;body.image_id=ids[0]||null;
+   delete body.image;
+   const result=await api('./api/manage/projects'+(editing?'/'+editing.id:''),{
+     method:editing?'PUT':'POST',body:JSON.stringify(body)
+   });
+   if(!result.project?.id)throw Error('Hindi nakumpirma ang pag-save.');
+   $('#editor').close();
+   success(editing?'Matagumpay na na-update ang proyekto at mga larawan.':'Matagumpay na nagawa ang proyekto at mga larawan.');
+   await loadProjects();
+ }catch(error){
+   $('#editor-message').textContent=error.message;message(error.message,true);
+ }finally{save.disabled=false;}
+};
 async function loadUsers(){const b=await api('./api/users');$('#users-list').innerHTML=b.users.map(u=>`<article class="manage-row"><div><h3>${esc(u.name)}</h3><p>${esc(u.email)}</p><span>${roleText[u.role]}${u.role==='sk'?' · '+esc(({kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'})[u.position]||'SK Kagawad'):''}</span></div>${u.role==='chairman'?'<span class="badge-inline">Chairman</span>':`<form class="role-form" data-user="${esc(u.id)}"><label>Role para kay ${esc(u.name)}<select name="role"><option value="youth" ${u.role==='youth'?'selected':''}>Walang SK access</option><option value="sk" ${u.role==='sk'?'selected':''}>SK Officer</option></select></label><button class="secondary">Save Access</button><label>Designation<select name="position"><option value="kagawad" ${u.position==='kagawad'?'selected':''}>SK Kagawad</option><option value="treasurer" ${u.position==='treasurer'?'selected':''}>SK Treasurer</option><option value="secretary" ${u.position==='secretary'?'selected':''}>SK Secretary</option></select></label><button type="button" data-save-position="${esc(u.id)}" class="secondary">Save Position</button></form>`}</article>`).join('')}
 $('#users-list').onclick=async e=>{const btn=e.target.closest('[data-save-position]');if(!btn)return;const form=btn.closest('form');btn.disabled=true;try{await api('./api/users/'+btn.dataset.savePosition+'/position',{method:'PUT',body:JSON.stringify({position:form.elements.position.value})});success('Matagumpay na na-update ang posisyon ng SK officer.');await loadUsers()}catch(error){message(error.message,true)}finally{btn.disabled=false}};
 $('#users-list').onsubmit=async e=>{e.preventDefault();const form=e.target,b=form.querySelector('button');b.disabled=true;try{await api('./api/users/'+form.dataset.user+'/role',{method:'PUT',body:JSON.stringify({role:form.elements.role.value})});success('Matagumpay na na-update ang SK account access.');await loadUsers()}catch(error){message(error.message,true)}finally{b.disabled=false}};

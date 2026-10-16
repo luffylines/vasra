@@ -936,3 +936,77 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard > 
  #dashboard > #duty-controls > div{align-items:stretch}
  #dashboard > #duty-controls button{flex:1 1 140px}
 }
+
+
+/* Modern project editor with a private eight-image gallery. */
+#editor.project-editor-modal{
+ width:min(690px,calc(100vw - 28px));max-width:690px;
+ max-height:min(90dvh,920px);overflow-y:auto;
+ border:1px solid #d8e4f5;border-radius:22px;
+ padding:0;background:#fff;color:#1c3355;
+ box-shadow:0 28px 80px rgba(13,37,75,.27);
+}
+#editor.project-editor-modal::backdrop{background:rgba(12,29,56,.65);backdrop-filter:blur(5px)}
+#editor .project-editor-header{
+ padding:32px 34px 24px;
+ background:linear-gradient(125deg,#f2f7ff 0%,#fff 100%);
+ border-bottom:1px solid #e1e9f5;
+}
+#editor .project-editor-header h2{font-size:25px;margin:9px 0 7px;letter-spacing:-.7px;color:#15375f}
+#editor .project-editor-header p{font-size:13px;line-height:1.5;margin:0;color:#667f9f}
+#editor .project-editor-header .eyebrow{color:#2c60a4;font-size:10px;letter-spacing:1.5px;font-weight:800}
+#editor.project-editor-modal .close{
+ position:absolute;right:18px;top:16px;width:34px;height:34px;
+ border:1px solid #d8e4f4;border-radius:10px;
+ display:grid;place-items:center;background:rgba(255,255,255,.8);z-index:3;
+ font-size:22px;color:#1b3458;
+}
+#editor.project-editor-modal #project-form{padding:8px 34px 30px;display:flex;flex-direction:column;gap:15px}
+#editor .editor-section-title{display:flex;align-items:center;gap:11px;margin-top:18px;margin-bottom:1px;font-size:15px;color:#15365b}
+#editor .editor-section-number{width:28px;height:28px;flex:none;display:grid;place-items:center;border-radius:9px;background:#e6f0ff;color:#275aa0;font-size:11px;font-weight:800}
+#editor #project-form>label:not(.editor-upload-zone),#editor #project-form .form-row>label{display:flex;flex-direction:column;gap:7px;color:#3a5172;font-weight:700;font-size:12px}
+#editor #project-form input:not([type="checkbox"]):not([type="file"]),#editor #project-form select,#editor #project-form textarea{
+ border:1px solid #d6e1f0;background:#f9fbff;color:#173355;border-radius:10px;
+ font-size:13px;padding:11px 13px;min-height:42px;outline-offset:2px;
+}
+#editor #project-form textarea{resize:vertical;line-height:1.5}
+#editor #project-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#editor .editor-gallery-help{font-size:12px!important;line-height:1.65;color:#5d7598!important;margin:0}
+#editor .editor-upload-zone{
+ position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;
+ text-align:center;min-height:128px;justify-content:center;
+ border:2px dashed #aac6ed;border-radius:14px;background:#f6faff;
+ padding:18px;cursor:pointer;color:#1e477c;font-size:13px;
+}
+#editor .editor-upload-zone:hover{background:#edf5ff;border-color:#4383cf}
+#editor .editor-upload-zone small{font-size:11px;color:#6783a8}
+#editor .editor-upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+#editor .editor-upload-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#e2edfe;color:#2361a6;font-size:24px;line-height:1}
+#editor .editor-image-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#editor .editor-image-grid[hidden]{display:none}
+#editor .editor-photo{position:relative;min-width:0;border-radius:12px;border:1px solid #d2e0f2;overflow:hidden;background:#e8eff9;aspect-ratio:1}
+#editor .editor-photo>img{width:100%;height:100%;object-fit:cover}
+#editor .editor-photo-cover,#editor .editor-set-cover{position:absolute;bottom:6px;left:6px;right:6px;text-align:center;border:0;border-radius:7px;padding:6px 4px;background:#2054a0;color:#fff;font-size:10px;font-weight:700}
+#editor .editor-set-cover{cursor:pointer;background:rgba(19,43,79,.9)}
+#editor .editor-photo-remove{position:absolute;right:6px;top:6px;width:25px;height:25px;border:0;border-radius:7px;background:rgba(14,30,55,.85);color:white;font-size:19px;line-height:1}
+#editor .editor-publish{margin-top:6px;border:1px solid #e0eaf5;background:#f8fbff;padding:14px;border-radius:12px}
+#editor .editor-publish .check-label{display:flex;align-items:center;gap:12px;margin:0;font-weight:700;color:#1c3e6a}
+#editor .editor-publish small{display:block;color:#6c819f;margin-top:3px;font-size:11px;font-weight:400}
+#editor .editor-footer{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-top:18px;border-top:1px solid #e3eaf4}
+#editor .editor-footer span{color:#7a8eaa;font-size:11px;line-height:1.5}
+#editor .editor-footer button{min-width:166px;border-radius:10px;min-height:42px}
+body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor.project-editor-modal{background:#192a42!important;color:#e9f1fd!important;border-color:#445c80}
+body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor .project-editor-header{background:linear-gradient(125deg,#203d66,#192a42)!important;border-color:#425d7e}
+body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor .project-editor-header :is(h2,p,.eyebrow),body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor .editor-section-title{color:#e9f1fd!important}
+body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor :is(.editor-publish,.editor-upload-zone){background:#1e3655!important;border-color:#567397!important;color:#dfecff!important}
+body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor :is(.editor-gallery-help,.editor-publish small,.editor-upload-zone small,.editor-footer span){color:#c8d9ef!important}
+body.account-workspace[data-theme="dark"][data-staff-mode="staff"] #editor .editor-publish .check-label{color:#ecf4ff!important}
+@media(max-width:600px){
+ #editor.project-editor-modal{width:calc(100vw - 14px);max-height:94dvh;border-radius:16px}
+ #editor .project-editor-header{padding:26px 20px 20px}
+ #editor.project-editor-modal #project-form{padding:6px 20px 22px}
+ #editor #project-form .form-row{grid-template-columns:1fr}
+ #editor .editor-image-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #editor .editor-footer{flex-direction:column;align-items:stretch}
+ #editor .editor-footer button{width:100%}
+}
