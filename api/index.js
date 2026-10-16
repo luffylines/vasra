@@ -26,7 +26,7 @@ module.exports = async function vercelHandler(req, res) {
     const url = new URL(req.url, proto + '://' + host);
     const response = await handle(new Request(url, opts), {
       // Vercel's proxy-provided address, not a client-provided form value.
-      ip: (()=>{const value=String(req.headers['x-vercel-forwarded-for']||req.headers['x-real-ip']||'').split(',')[0].trim();return isIP(value)?value:null;})()
+      ip: (()=>{const value=String(req.headers['x-vercel-forwarded-for']||req.headers['x-forwarded-for']||req.headers['x-real-ip']||'').split(',')[0].trim();return isIP(value)?value:null;})()
     });
     res.statusCode = response.status;
     for (const [key, value] of response.headers) res.setHeader(key, value);

@@ -362,22 +362,59 @@ const actions={
  monthly_update:'Nag-save ng monthly report',official_updated:'Nag-update ng SK directory',
  official_removed:'Nag-alis ng SK official',duty_status_changed:'Binago ang office status',
  google_login:'Nag-login gamit ang Google',google_account_linked:'Ikinonekta ang Google account',
- password_reset:'Nag-reset ng password',email_changed:'Nagpalit ng email'
+ password_reset:'Nag-reset ng password',email_changed:'Nagpalit ng email',
+ project_gallery_updated:'Nag-update ng mga larawan ng proyekto',
+ project_progress_updated:'Nag-update ng progreso ng proyekto',
+ project_deleted:'Nag-delete ng proyekto'
 };
 function auditDetails(event){
- let details=event.details;
- if(typeof details==='string'){try{details=JSON.parse(details)}catch{return details.slice(0,1000)}}
- if(!details||typeof details!=='object')return 'Walang dagdag na detalye.';
- const keys=['title','category','description','scope','status','progress','published','image_id'];
- if(details.after&&typeof details.after==='object'){
-  const changes=keys.filter(k=>!details.before||details.before[k]!==details.after[k])
-   .map(k=>k+': '+(details.before?String(details.before[k]??'wala')+' → ':'')+String(details.after[k]??'wala'));
-  if(changes.length)return changes.join('\n');
+ let d=event.details;
+ if(typeof d==='string'){try{d=JSON.parse(d)}catch{return 'Hindi available ang detalye ng lumang activity.';}}
+ if(!d||typeof d!=='object'||Array.isArray(d))return 'Walang karagdagang detalye para sa activity na ito.';
+ const name=v=>String(v??'').trim();
+ const title=name(d.title);
+ const progress=v=>Number.isFinite(Number(v))?Number(v)+'%':'hindi nakasaad';
+ const number=v=>Number.isInteger(Number(v))&&Number(v)>=0?Number(v):null;
+ if(event.action==='project_gallery_updated'){
+  const count=number(d.image_count);
+  return count===null?'Na-update ang mga larawan ng proyekto.':
+    count===0?'Tinanggal ang lahat ng larawan sa project gallery.':
+    count+' '+(count===1?'larawan':'larawan')+' ang naka-save sa project gallery. Ang unang larawan ang cover photo.';
  }
- if(event.action==='role_changed')return String(details.name||'SK account')+': '+String(details.before||'—')+' → '+String(details.after||'—');
- if(event.action==='duty_status_changed')return details.mode==='closed'?'Office marked Closed':'Automatic office schedule restored';
- const safe=Object.fromEntries(Object.entries(details).filter(([key])=>!/password|token|secret|session|credential|key/i.test(key)));
- return Object.keys(safe).length?JSON.stringify(safe,null,2):'Walang dagdag na detalye para sa action na ito.';
+ if(event.action==='image_uploaded')return 'Matagumpay na na-upload ang larawan sa project storage.';
+ if(event.action==='project_progress_updated')
+  return (title?'Proyekto: '+title+'\n':'')+'Progreso: '+progress(d.before_progress)+' → '+progress(d.after_progress)+'\nStatus: '+name(d.before_status||'—')+' → '+name(d.after_status||'—');
+ if(event.action==='project_deleted')
+  return 'Na-delete ang proyekto'+(title?': '+title:'')+'.'+(number(d.gallery_count)!==null?'\nDating bilang ng naka-link na larawan: '+number(d.gallery_count):'');
+ if(event.action==='password_changed'||event.action==='password_reset')
+  return 'Naitala ang pagbabago sa password. Hindi inilalagay ang mismong password sa Activity Log.';
+ if(event.action==='duty_status_changed')
+  return d.mode==='closed'?'Manu-manong minarkahang sarado ang SK office.':'Ibinalik sa automatic office schedule ang status.';
+ if(event.action==='role_changed')
+  return 'Account: '+name(d.name||'SK officer')+'\nAccess: '+name(d.before||'—')+' → '+name(d.after||'—');
+ if(event.action==='project_created'||event.action==='project_updated'){
+  const lines=title?['Proyekto: '+title]:[];
+  if(d.status)lines.push('Status: '+name(d.status));
+  if(d.progress!==undefined)lines.push('Progreso: '+progress(d.progress));
+  if(d.after&&typeof d.after==='object'){
+   const before=d.before&&typeof d.before==='object'?d.before:{};
+   for(const [key,label] of Object.entries({title:'Pamagat',category:'Kategorya',status:'Status',progress:'Progreso',published:'Public visibility'})){
+    if(Object.hasOwn(d.after,key)&&d.after[key]!==before[key]){
+     const formatted=x=>key==='progress'?progress(x):key==='published'?(x?'Published':'Draft'):name(x||'—');
+     lines.push(label+': '+formatted(before[key])+' → '+formatted(d.after[key]));
+    }
+   }
+  }
+  if(lines.length)return lines.join('\n');
+ }
+ if(event.action==='account_created'){
+  return d.name?'Nagawa ang SK officer account para kay '+name(d.name)+'.':'Naitala ang paglikha ng SK officer account.';
+ }
+ if(event.action==='email_changed')return 'Naitala ang pagbabago ng email address.';
+ const labels={image_count:'Bilang ng larawan',gallery_count:'Bilang ng larawan',title:'Proyekto',name:'Pangalan',status:'Status',progress:'Progreso',position:'Posisyon',mode:'Office status',month:'Buwan',year:'Taon',published:'Public visibility'};
+ const safe=Object.entries(d).filter(([k,v])=>Object.hasOwn(labels,k)&&v!==null&&typeof v!=='object')
+  .map(([k,v])=>labels[k]+': '+(typeof v==='boolean'?(v?'Oo':'Hindi'):String(v)));
+ return safe.length?safe.join('\n'):'Walang karagdagang detalye para sa activity na ito.';
 }
 async function loadAudit(){
  const data=await api('./api/audit?offset='+auditOffset);
@@ -385,11 +422,11 @@ async function loadAudit(){
  $('#audit-list').innerHTML=(data.events||[]).map(event=>{
   const actor=event.actor_name||'Unknown account';
   const action=actions[event.action]||String(event.action||'Unknown activity').replace(/_/g,' ');
-  const ip=typeof event.ip_address==='string'&&event.ip_address?event.ip_address:'Not recorded';
+  const ip=typeof event.ip_address==='string'&&event.ip_address?event.ip_address.replace(/\/(?:32|128)$/,''):'Hindi naitala';
   return '<article class="audit-row"><div><b>'+esc(actor)+'</b> · '+esc(action)+'</div>'+
    '<small>'+esc(dateText(event.created))+' PHT · Record #'+esc(event.id)+'</small>'+
    '<small class="audit-ip">IP address: '+esc(ip)+'</small>'+
-   '<details><summary>Tingnan ang detalye</summary><pre>'+esc(auditDetails(event))+'</pre></details></article>';
+   '<details class="audit-more"><summary>Tingnan ang detalye</summary><div class="audit-detail-text">'+esc(auditDetails(event))+'</div></details></article>';
  }).join('')||'<p>Wala pang activity.</p>';
  $('#audit-page').textContent=(auditTotal?auditOffset+1:0)+'–'+Math.min(auditOffset+50,auditTotal)+' / '+auditTotal;
  $('#audit-prev').disabled=auditOffset===0;

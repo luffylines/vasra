@@ -1088,3 +1088,23 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dia
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-presets button{background:#213955;border-color:#4f6d93;color:#dcecff}
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-presets button[aria-pressed="true"]{background:#326cbd;color:white}
 @media(max-width:600px){#progress-dialog .progress-dialog-header,#progress-dialog .progress-dialog-body{padding-left:20px;padding-right:20px}#progress-dialog .progress-dialog-actions{padding:14px 20px 22px}}
+
+
+/* Readable, structured SK activity history (no raw JSON display). */
+#staff-content .audit-row{padding:21px 23px;border-radius:15px}
+#staff-content .audit-row>div:first-child{font-size:15px;line-height:1.6;font-weight:600;color:#1b3455}
+#staff-content .audit-row>div:first-child b{font-weight:800}
+#staff-content .audit-row>small{display:block;margin-top:7px;font-size:12px;line-height:1.5;color:#657d9e}
+#staff-content .audit-row .audit-ip{font-size:12px;color:#506d91}
+#staff-content .audit-more{margin-top:13px}
+#staff-content .audit-more summary{font-size:13px;font-weight:750;color:#275ca7;cursor:pointer;width:max-content;max-width:100%;padding:4px 0}
+#staff-content .audit-more .audit-detail-text{
+ white-space:pre-line;overflow-wrap:anywhere;font-size:14px;line-height:1.75;
+ color:#294766;background:#f4f8fe;border:1px solid #e1eaf8;
+ border-radius:11px;padding:15px 17px;margin-top:10px;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content .audit-row>div:first-child{color:#e9f1ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content .audit-row>small{color:#b7cbe6}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content .audit-more summary{color:#a9cdff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-content .audit-more .audit-detail-text{background:#162a44;color:#e1efff;border-color:#375576}
+@media(max-width:650px){#staff-content .audit-row{padding:16px 14px}#staff-content .audit-more .audit-detail-text{padding:12px}}

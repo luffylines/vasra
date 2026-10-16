@@ -156,3 +156,45 @@
  #image-lightbox .lightbox-arrow{width:30px;height:44px;font-size:27px}
  #image-lightbox .lightbox-tip{font-size:10px}
 }
+
+
+/* Accessible, larger text across SK VASRA project cards and See More dialog. */
+.portal-refresh .cardbody .category{font-size:12px;line-height:1.5;letter-spacing:.5px;text-transform:uppercase;font-weight:800;color:#315a91}
+.portal-refresh .cardbody h3{font-size:clamp(19px,1.5vw,23px);line-height:1.3;font-weight:800;letter-spacing:-.4px}
+.portal-refresh .cardbody p{font-size:14px;line-height:1.65}
+.portal-refresh #detail{
+ width:min(720px,calc(100vw - 30px));max-width:720px;
+ max-height:min(90dvh,950px);overflow-y:auto;
+ padding:38px 42px 36px;border-radius:20px;
+ box-shadow:0 28px 85px rgba(10,32,65,.26);
+}
+.portal-refresh #detail #detailbody>.eyebrow{
+ display:block;font-size:14px;line-height:1.4;letter-spacing:.6px;
+ text-transform:uppercase;color:#32609e;font-weight:800;margin-bottom:8px;
+}
+.portal-refresh #detail #detailbody>h2{
+ font-family:Manrope,system-ui,sans-serif;
+ font-size:clamp(28px,3vw,38px);font-weight:800;
+ letter-spacing:-.9px;line-height:1.2;
+ color:#172f52;margin:6px 30px 20px 0;overflow-wrap:anywhere;
+}
+.portal-refresh #detail #detailbody>p{
+ font-size:15px;line-height:1.75;color:#385170;margin:15px 0;
+ overflow-wrap:anywhere;
+}
+.portal-refresh #detail #detailbody>p>b{color:#1b3f73;font-weight:800}
+.portal-refresh #detail #detailbody>h3{
+ font-size:19px;line-height:1.4;font-weight:800;color:#1a385f;margin:26px 0 10px;
+}
+.portal-refresh #detail .project-gallery-count{font-size:13px;line-height:1.5;color:#4b678c}
+.portal-refresh #detail .project-gallery-thumb{flex-basis:92px;width:92px;height:78px}
+.portal-refresh #detail .project-gallery-cover img{max-height:450px}
+.portal-refresh #detail .trans-picker{font-size:13px}
+.portal-refresh #detail .trans-report p,.portal-refresh #detail .trans-empty{font-size:14px;line-height:1.65}
+@media(max-width:650px){
+ .portal-refresh #detail{width:calc(100vw - 14px);max-height:94dvh;padding:28px 20px;border-radius:15px}
+ .portal-refresh #detail #detailbody>.eyebrow{font-size:12px}
+ .portal-refresh #detail #detailbody>h2{font-size:clamp(26px,7vw,32px)}
+ .portal-refresh #detail #detailbody>p{font-size:14px}
+ .portal-refresh #detail .project-gallery-thumb{flex-basis:72px;width:72px;height:64px}
+}
