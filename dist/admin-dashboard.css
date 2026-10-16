@@ -205,3 +205,81 @@ body.account-workspace .staff-overview-grid .staff-icon{width:24px;height:24px}
 
 .vasra-login .auth-back-mobile{display:none}
 @media(max-width:850px){.vasra-login .auth-back-mobile{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;color:#315b8c;text-decoration:none;font-size:12px;font-weight:800}.vasra-login .auth-form-row .auth-remember{display:flex;gap:5px}}
+
+
+/* Login alignment and phone-only form.
+   Keep all overrides scoped to signed-out states; staff dashboard is unchanged. */
+body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .account-main{
+  width:100%;
+  max-width:1260px!important;
+  min-height:100svh;
+  margin:0 auto!important;
+  padding:clamp(18px,3vh,32px) clamp(16px,3vw,36px)!important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .portal-main{
+  margin:0 auto!important;
+  max-width:1260px!important;
+}
+body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) #auth,
+body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) #recovery-section,
+body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) #message:not(:empty){
+  width:100%;
+  max-width:1100px;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+body.account-workspace #auth[hidden],
+body.account-workspace #recovery-section[hidden]{display:none!important}
+body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .vasra-login.auth-layout{
+  width:100%;
+  min-height:clamp(600px,76svh,720px);
+  margin:0 auto!important;
+  align-items:stretch;
+}
+body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .vasra-login .auth-story{
+  min-height:0;
+}
+@media (min-width:851px) and (max-height:720px){
+  body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .vasra-login.auth-layout{min-height:560px}
+  .vasra-login .auth-story{padding:32px}
+  .vasra-login .auth-form-card{padding-top:28px;padding-bottom:28px}
+}
+@media(max-width:850px){
+  /* A phone shows the sign-in screen only; no branding/intro panel. */
+  body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .account-main{
+    min-height:100svh;
+    padding:16px 14px 22px!important;
+  }
+  body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .vasra-login.auth-layout{
+    width:100%;
+    max-width:440px;
+    min-height:0;
+    display:block;
+    border-radius:20px;
+    margin:0 auto!important;
+  }
+  body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .vasra-login .auth-story{
+    display:none!important;
+  }
+  body.account-workspace .vasra-login .auth-back-mobile{display:none!important}
+  body.account-workspace .vasra-login .auth-form-card{
+    width:100%;
+    padding:clamp(24px,6vw,36px);
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    max-width:none;
+    border:0;
+    box-shadow:none;
+  }
+  body.account-workspace .vasra-login .auth-form-card h2{font-size:clamp(24px,7vw,30px)}
+}
+@media(max-width:380px){
+  body.account-workspace:is([data-staff-mode="public"],[data-staff-mode="loading"]) .account-main{padding:12px 10px 18px!important}
+  body.account-workspace .vasra-login .auth-form-card{padding:22px 18px}
+  body.account-workspace .vasra-login .auth-privacy{font-size:10px}
+}
