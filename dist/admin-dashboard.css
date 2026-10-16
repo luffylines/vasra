@@ -1208,3 +1208,30 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .proj
  #editor .project-mode-choice{min-height:76px;padding:12px}
  #editor .project-mode-choice.selected{padding:11px}
 }
+
+
+/* Explicit publication scheduling and date selection (Philippine Standard Time). */
+#editor #project-publication-controls .publish-field-title{
+ display:block;margin-bottom:7px;font-size:14px;font-weight:800;color:#1d497d;
+}
+#editor #project-publication-controls .publish-field-description{
+ margin:0 0 13px;color:#6780a1;font-size:12px;line-height:1.65;
+}
+#editor #project-publication-mode,
+#editor #project-publish-datetime{
+ display:block;width:100%;min-height:43px;box-sizing:border-box;
+ background:#fff;border:1px solid #c9daef;color:#193b63;border-radius:10px;
+ padding:11px 12px;font-size:13px;
+}
+#editor #project-publish-datetime-wrap{margin-top:15px;padding:13px 14px;background:#edf5ff;border:1px solid #d7e6f7;border-radius:10px}
+#editor #project-publish-datetime-wrap[hidden]{display:none!important}
+#editor #project-publish-datetime-wrap label{display:block;font-weight:750;font-size:12px;margin-bottom:8px;color:#264e80}
+#editor #project-publish-datetime-wrap p{font-size:11px;line-height:1.7;color:#607fa7;margin:9px 0 0}
+#editor #project-publish-preview{font-size:12px;line-height:1.65;color:#315f96;font-weight:650;margin:11px 0 0}
+#staff-content .manage-row .badge-inline{display:inline-block;font-size:12px;line-height:1.6;white-space:normal}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publication-controls{background:#172d48;border-color:#486687}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publication-controls :is(.publish-field-title,#project-publish-datetime-wrap label){color:#e7f3ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publication-controls :is(.publish-field-description,#project-publish-preview,#project-publish-datetime-wrap p){color:#b9d3f4}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publication-mode,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-datetime{background:#12243b;border-color:#526f93;color:#fff;color-scheme:dark}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-datetime-wrap{background:#1a3655;border-color:#496a90}

@@ -198,3 +198,23 @@
  .portal-refresh #detail #detailbody>p{font-size:14px}
  .portal-refresh #detail .project-gallery-thumb{flex-basis:72px;width:72px;height:64px}
 }
+
+
+/* Project publication date: readable across project cards and See More. */
+.portal-refresh .cardbottom .card-publish-date{
+ display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+ font-size:12px;line-height:1.55;color:#526c91;
+ min-width:0;max-width:100%;
+}
+.portal-refresh .cardbottom .card-publish-date strong{font-weight:800;color:#274c7b}
+.portal-refresh .cardbottom .card-publish-date>span[aria-hidden]{color:#2d63ab;font-size:15px}
+.portal-refresh #detail .detail-publication-meta{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+ margin:24px 0 12px;padding:15px 17px;background:#edf4ff;border:1px solid #d4e5fc;
+ border-radius:12px;font-size:13px;line-height:1.6;color:#3f6088;
+}
+.portal-refresh #detail .detail-publication-meta strong{font-size:14px;color:#194779}
+@media(max-width:650px){
+ .portal-refresh .cardbottom .card-publish-date{flex:1 1 100%}
+ .portal-refresh #detail .detail-publication-meta{align-items:flex-start;flex-direction:column;gap:3px}
+}

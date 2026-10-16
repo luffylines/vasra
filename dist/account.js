@@ -152,8 +152,46 @@ async function selectTab(name){const tabs=['overview','projects','monthly','budg
  document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
-async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p><div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div><div class="project-row-actions">${p.status!=='Natapos'?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
-function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
+async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p><div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div><div class="project-row-actions">${p.status!=='Natapos'?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
+function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published&&(!p.publish_at||Date.parse(p.publish_at)<=Date.now())).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
+
+
+const phPublicationDate=iso=>{
+ const date=new Date(iso);
+ return Number.isFinite(date.getTime())
+  ?new Intl.DateTimeFormat('en-PH',{timeZone:'Asia/Manila',year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true}).format(date)
+  :'Petsa hindi naitala';
+};
+const projectPublishStatus=p=>{
+ if(!p.published)return 'Draft · Hindi pa published';
+ if(!p.publish_at)return 'Published · Petsa hindi naitala';
+ return (new Date(p.publish_at).getTime()>Date.now()?'Scheduled · ':'Published · ')+phPublicationDate(p.publish_at)+' PHT';
+};
+const phtLocalInput=iso=>{
+ const d=new Date(iso);
+ if(!Number.isFinite(d.getTime()))return '';
+ return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(d).replace(' ','T');
+};
+function scheduledDateIso(raw){
+ if(typeof raw!=='string'||!(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/).test(raw))return null;
+ const parsed=new Date(raw+':00+08:00');
+ if(!Number.isFinite(parsed.getTime())||phtLocalInput(parsed.toISOString())!==raw)return null;
+ return parsed.toISOString();
+}
+function updatePublicationFields(){
+ const mode=$('#project-publication-mode').value,wrap=$('#project-publish-datetime-wrap'),info=$('#project-publish-preview');
+ wrap.hidden=mode!=='schedule';
+ $('#project-publish-datetime').required=mode==='schedule';
+ if(mode==='draft')info.textContent='Draft — sa dashboard lang muna makikita.';
+ else if(mode==='now')info.textContent='Publish Now — makikita agad sa public website pagkatapos ma-save.';
+ else if(mode==='keep')info.textContent=editing?projectPublishStatus(editing)+' · Mananatili ang kasalukuyang publication schedule/petsa.':'';
+ else{
+  const iso=scheduledDateIso($('#project-publish-datetime').value);
+  info.textContent=iso?'Scheduled for '+phPublicationDate(iso)+' PHT · Lalabas sa public site sa oras na ito.':'Piliin ang date at time sa Philippine Time.';
+ }
+}
+$('#project-publication-mode').addEventListener('change',updatePublicationFields);
+$('#project-publish-datetime').addEventListener('input',updatePublicationFields);
 
 let editorPhotos=[];
 function clearProjectPreviews(){for(const p of editorPhotos)if(p.url)URL.revokeObjectURL(p.url);editorPhotos=[];}
@@ -189,6 +227,10 @@ $('#project-entry-mode').addEventListener('click',e=>{
 function openEditor(project=null){
  clearProjectPreviews();editing=project;
  const form=$('#project-form');form.reset();
+ const publishMode=$('#project-publication-mode');
+ publishMode.querySelector('[value="keep"]')?.remove();
+ publishMode.value='draft';
+ $('#project-publish-datetime').value='';
  setProjectEntryMode('manual');
  $('#fb-import-result').hidden=true;$('#fb-import-result').textContent='';
  $('#fb-import-status').textContent='';
@@ -196,11 +238,18 @@ function openEditor(project=null){
  $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
  if(project){
    for(const key of ['title','category','description','scope','status','progress'])form.elements[key].value=project[key];
-   form.elements.published.checked=!!project.published;
+   if(project.published){
+     const keep=document.createElement('option');keep.value='keep';
+     keep.textContent=project.publish_at&&Date.parse(project.publish_at)>Date.now()?'Keep current publication schedule':'Keep existing publication date';
+     publishMode.prepend(keep);
+     publishMode.value='keep';
+   }
+   if(project.publish_at)$('#project-publish-datetime').value=phtLocalInput(project.publish_at);
    const ids=Array.isArray(project.image_ids)&&project.image_ids.length?project.image_ids:(project.image_id?[project.image_id]:[]);
    editorPhotos=ids.map(id=>({id}));
  }
  renderProjectPreviews();
+ updatePublicationFields();
  $('#editor').showModal();
 }
 $('#new-project').onclick=()=>openEditor();
@@ -347,7 +396,8 @@ $('#fb-analyze-post').addEventListener('click',async()=>{
   }
   form.elements.status.value='Pinaplano';
   form.elements.progress.value='0';
-  form.elements.published.checked=false;
+  form.elements.publication_mode.value='draft';
+  updatePublicationFields();
   resultBox.hidden=false;
   resultBox.textContent=(draft.method==='ai'?'AI draft ready. ':'Basic autofill ready. ')+
    (result.source==='pasted-caption'?'Pasted caption ang ginamit. ':'Public metadata ang ginamit. ')+
@@ -399,7 +449,15 @@ $('#project-form').onsubmit=async e=>{
  try{
    const body=Object.fromEntries(new FormData(form));
    body.progress=Number(body.progress);
-   body.published=form.elements.published.checked;
+   const mode=form.elements.publication_mode.value;
+   body.published=mode!=='draft';
+   body.publication_mode=mode;
+   body.publish_at=null;
+   if(mode==='schedule'){
+     const iso=scheduledDateIso($('#project-publish-datetime').value);
+     if(!iso||Date.parse(iso)<=Date.now()+30000)throw Error('Pumili ng future date at oras sa Philippine Time para sa publication.');
+     body.publish_at=iso;
+   }
    body.version=editing?.version;
    const ids=[];
    for(let i=0;i<editorPhotos.length;i++){
