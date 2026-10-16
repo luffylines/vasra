@@ -1,4 +1,4 @@
-let user=null,managed=[],editing=null,auditOffset=0,auditTotal=0;
+let user=null,managed=[],editing=null,auditOffset=0,auditTotal=0,recoveryMode=null,recoveryToken=null;
 const message=(text,error=false)=>{$('#message').textContent=text;$('#message').className=error?'message error':'message'};
 function syncWorkspaceMode(){
  const signedIn=!!user;
@@ -15,10 +15,60 @@ function syncWorkspaceMode(){
 async function busy(form,fn){const b=form.querySelector('button[type="submit"],button.primary');if(b)b.disabled=true;try{await fn()}catch(e){message(e.message,true)}finally{if(b)b.disabled=false}}
 $('#auth-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{const f=new FormData(e.target),b=await api('./api/login',{method:'POST',body:JSON.stringify(Object.fromEntries(f))});user=b.user;e.target.reset();message('');await showDashboard()})};
 $('#logout').onclick=async()=>{try{await api('./api/logout',{method:'POST',body:'{}'});user=null;managed=[];editing=null;$('#managed-projects').replaceChildren();$('#users-list').replaceChildren();$('#new-credentials').replaceChildren();$('#new-credentials').hidden=true;$('#audit-list').replaceChildren();$('#project-form').reset();$('#editor').close();$('#password-form').reset();message('Naka-logout ka na.');await showDashboard()}catch(e){message(e.message,true)}};
-$('#change-password').onclick=()=>{$('#password-section').hidden=!$('#password-section').hidden;$('#password-note').textContent='Gumamit ng password na hindi bababa sa 12 characters.'};
-$('#password-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{const f=Object.fromEntries(new FormData(e.target));if(f.password!==f.confirm)throw Error('Hindi magkatugma ang bagong password.');user=(await api('./api/password',{method:'POST',body:JSON.stringify(f)})).user;e.target.reset();message('Password updated successfully.');await showDashboard()})};
-async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#auth').hidden=!!user;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Finance and project monitoring workspace.':user.position==='secretary'?'Documentation and project records workspace.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: monitor project updates and documentation. Budget reports are not yet enabled.':user.position==='secretary'?'Secretary workspace: organize project records and updates. Meeting minutes are not yet enabled.':'Kagawad workspace: manage project updates. Duty status controls are coming next.';await selectTab('overview');await updateDutyControls();}
-async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');$('#officer-overview').hidden=!(name==='overview'&&user?.role!=='chairman');document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}}
+$('#change-password').onclick=()=>{selectTab('settings');$('#panel-settings').scrollIntoView({behavior:'smooth',block:'start'});};
+async function savePassword(form){
+ const f=Object.fromEntries(new FormData(form));
+ if(f.password!==f.confirm)throw Error('Hindi magkatugma ang bagong password.');
+ user=(await api('./api/password',{method:'POST',body:JSON.stringify(f)})).user;
+ form.reset();await showDashboard();
+}
+$('#password-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{await savePassword(e.target);message('Password updated successfully.');});};
+$('#settings-password-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{await savePassword(e.target);await selectTab('settings');$('#settings-message').textContent='Password updated. Your session has been secured.';});};
+$('#change-email-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
+ const payload=Object.fromEntries(new FormData(e.target));
+ await api('./api/account/email/request',{method:'POST',body:JSON.stringify(payload)});
+ e.target.reset();$('#settings-message').textContent='Verification link requested. Check your new email inbox (and spam folder) within 15 minutes.';
+});};
+async function checkRecoveryAvailability(){
+ let ready=false;
+ try{ready=(await api('./api/account/capabilities')).ready===true;}catch{}
+ $('#forgot-password-link').disabled=!ready;
+ $('#forgot-password-link').textContent=ready?'Forgot password?':'Forgot password (setup pending)';
+ $('#change-email-form').querySelector('button[type="submit"]').disabled=!ready;
+ $('#email-setup-note').textContent=ready?'Verification links expire after 15 minutes.':'Email verification and password recovery will be enabled once the SK administrator completes secure email setup.';
+}
+$('#forgot-password-link').onclick=()=>showRecovery('request');
+$('#recovery-back').onclick=()=>{recoveryMode=null;recoveryToken=null;$('#recovery-message').textContent='';history.replaceState(null,'',location.pathname+location.search);showDashboard();};
+function showRecovery(mode,token=null){
+ recoveryMode=mode;recoveryToken=token;
+ $('#recovery-section').hidden=false;$('#auth').hidden=true;$('#dashboard').hidden=true;$('#staff-nav').hidden=true;
+ $('#recovery-request-form').hidden=mode==='reset';
+ $('#recovery-reset-form').hidden=mode!=='reset';
+ $('#recovery-heading').textContent=mode==='reset'?'Create a new password':'Reset your password';
+ $('#recovery-description').textContent=mode==='reset'?'This secure reset link works only once and expires after 30 minutes.':'Ilagay ang account email para makatanggap ng reset link.';
+ $('#recovery-message').textContent='';
+ $('#recovery-section').scrollIntoView({block:'start'});
+}
+$('#recovery-request-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
+ await api('./api/account/reset/request',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});
+ $('#recovery-message').textContent='Kung may SK account sa email na iyon, ipapadala ang recovery instructions. Check inbox at spam.';
+ e.target.reset();
+});};
+$('#recovery-reset-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
+ const data=Object.fromEntries(new FormData(e.target));
+ if(data.password!==data.confirm)throw Error('Hindi magkatugma ang bagong password.');
+ await api('./api/account/reset/confirm',{method:'POST',body:JSON.stringify({token:recoveryToken,password:data.password})});
+ user=null;recoveryMode=null;recoveryToken=null;history.replaceState(null,'',location.pathname+location.search);
+ await showDashboard();message('Password reset successful. Mag-login gamit ang iyong bagong password.');
+});};
+async function verifyEmailFromLink(token){
+ try{
+  await api('./api/account/email/confirm',{method:'POST',body:JSON.stringify({token})});
+  user=null;await showDashboard();message('Verified ang bagong email. Mag-login muli gamit ang bagong address.');
+ }catch(e){user=null;await showDashboard();message('Hindi ma-verify ang email. '+e.message,true);}
+}
+async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Finance and project monitoring workspace.':user.position==='secretary'?'Documentation and project records workspace.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: monitor project updates and documentation. Budget reports are not yet enabled.':user.position==='secretary'?'Secretary workspace: organize project records and updates. Meeting minutes are not yet enabled.':'Kagawad workspace: manage project updates. Duty status controls are coming next.';await selectTab('overview');await updateDutyControls();}
+async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');$('#officer-overview').hidden=!(name==='overview'&&user?.role!=='chairman');document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p></div><button class="secondary" data-edit="${esc(p.id)}">I-edit ↗</button></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
@@ -33,7 +83,22 @@ $('#users-list').onsubmit=async e=>{e.preventDefault();const form=e.target,b=for
 const actions={account_registered:'Gumawa ng account',account_created:'Gumawa ng SK account',password_changed:'Nagpalit ng password',image_uploaded:'Nag-upload ng larawan',project_created:'Gumawa ng proyekto',project_updated:'Nag-edit ng proyekto',role_changed:'Nagbago ng account role'};
 async function loadAudit(){const b=await api('./api/audit?offset='+auditOffset);auditTotal=b.total;$('#audit-list').innerHTML=b.events.map(e=>{const d=JSON.parse(e.details);const fields=['title','category','description','scope','status','progress','published','image_id'];const changes=d.after&&typeof d.after==='object'?fields.filter(k=>!d.before||d.before[k]!==d.after[k]).map(k=>`${k}: ${d.before?String(d.before[k]??'wala')+' → ':''}${String(d.after[k]??'wala')}`).join('\n'):e.action==='role_changed'?`${d.name}: ${d.before} → ${d.after}`:JSON.stringify(d);return `<article class="audit-row"><div><b>${esc(e.actor_name)}</b> · ${esc(actions[e.action]||e.action)}</div><small>${dateText(e.created)} · Record #${e.id}</small><details><summary>Tingnan ang detalye</summary><pre>${esc(changes)}</pre></details></article>`}).join('')||'<p>Wala pang activity.</p>';$('#audit-page').textContent=`${auditTotal?auditOffset+1:0}–${Math.min(auditOffset+50,auditTotal)} / ${auditTotal}`;$('#audit-prev').disabled=auditOffset===0;$('#audit-next').disabled=auditOffset+50>=auditTotal;}
 $('#audit-prev').onclick=async()=>{auditOffset=Math.max(0,auditOffset-50);try{await loadAudit()}catch(e){message(e.message,true)}};$('#audit-next').onclick=async()=>{auditOffset+=50;try{await loadAudit()}catch(e){message(e.message,true)}};
-api('./api/me').then(async b=>{user=b.user;await showDashboard()}).catch(e=>{user=null;syncWorkspaceMode();$('#auth').hidden=false;message(e.message,true)});
+const pendingHash=new URLSearchParams(location.hash.slice(1));
+const emailVerifyToken=pendingHash.get('verify_email'),passwordResetToken=pendingHash.get('reset');
+if(emailVerifyToken||passwordResetToken)history.replaceState(null,'',location.pathname+location.search);
+checkRecoveryAvailability();
+if(passwordResetToken)showRecovery('reset',passwordResetToken);
+api('./api/me').then(async b=>{
+ user=b.user;
+ if(passwordResetToken){user=null;syncWorkspaceMode();return;}
+ await showDashboard();
+ if(emailVerifyToken)await verifyEmailFromLink(emailVerifyToken);
+}).catch(e=>{
+ user=null;syncWorkspaceMode();
+ if(!recoveryMode)$('#auth').hidden=false;
+ if(emailVerifyToken)verifyEmailFromLink(emailVerifyToken);
+ else if(!recoveryMode)message(e.message,true);
+});
 
 $('#create-officer').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{const b=await api('./api/users',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});const note=$('#new-credentials');note.hidden=false;note.innerHTML='<b>Na-create ang SK account.</b><p>Email: '+esc(b.user.email)+'</p><p>Temporary password: <code>'+esc(b.temporaryPassword)+'</code></p><small>Ibigay nang pribado. Isang beses lang ipinapakita rito ang password.</small><button type="button" class="secondary" id="dismiss-credentials">Itago ang password</button>';$('#dismiss-credentials').onclick=()=>{note.replaceChildren();note.hidden=true};e.target.reset();await loadUsers()})};
 

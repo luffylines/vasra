@@ -29,6 +29,11 @@
   if(old)old.outerHTML=icon(route.icon);
   else a.insertAdjacentHTML('afterbegin',icon(route.icon));
  }
+ const fbPath='<path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v4H8v7h4v-7h3l.6-4H12V7.7c0-.5.3-.7.8-.7H15V3z"/>';
+ document.querySelectorAll('.sidebar-bottom a[href*="facebook.com"]').forEach(link=>{
+  if(!link.querySelector('svg'))link.insertAdjacentHTML('afterbegin',icon(fbPath));
+  link.classList.add('social-footer-link');
+ });
  const topbar=document.createElement('div');
  topbar.className='mobile-appbar';
  topbar.innerHTML='<a class="mobile-brand" href="./" aria-label="SK Vasra homepage"><img src="./sk%20logo.jpg" alt=""><span>SK VASRA<small>Sangguniang Kabataan</small></span></a><button class="mobile-menu-toggle" type="button" aria-controls="vasra-sidebar" aria-expanded="false" aria-label="Buksan ang menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';

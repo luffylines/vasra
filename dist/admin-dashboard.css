@@ -105,3 +105,39 @@ body.account-workspace .staff-overview-grid .staff-icon{width:24px;height:24px}
  body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header #staff-sidebar-footer{display:block;margin-top:auto}
 }
 @media(max-width:540px){body.account-workspace .staff-overview-grid{grid-template-columns:1fr}body.account-workspace .staff-overview-grid article{padding:20px}}
+
+/* Account settings, actionable icons and recovery. */
+.account-actions #logout,.dashboard-head #change-password{display:inline-flex;align-items:center;gap:9px}
+.staff-action-icon{height:17px;width:17px;flex:none}
+.staff-nav [data-tab="settings"] .staff-action-icon{width:20px;height:20px}
+.account-settings-panel{margin-top:22px}
+.account-settings-panel[hidden],.account-recovery[hidden]{display:none!important}
+.settings-header{margin:12px 0 24px}.settings-header h2{font-size:26px;margin:7px 0;color:#163966}.settings-header p{color:#627997;font-size:13px}
+.settings-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.settings-card{border-radius:16px;padding:24px;background:#fff;border:1px solid #dce6f2;box-shadow:0 6px 18px rgba(24,61,104,.035)}
+.settings-card-head{display:flex;gap:13px;align-items:center;margin-bottom:22px}
+.settings-card-head>span{display:grid;place-items:center;flex:none;border-radius:12px;background:#eaf2ff;color:#305e9b;width:44px;height:44px}
+.settings-card-head .staff-action-icon{width:22px;height:22px}
+.settings-card h3{color:#234772;font-size:17px;margin:0 0 5px}
+.settings-card p{color:#71849f;font-size:12px;line-height:1.55;margin:0}
+.settings-card .current-email{margin:0 0 12px;font-size:13px}
+.settings-card label,.recovery-panel label{display:block;margin:12px 0;font-size:12px;font-weight:700;color:#455b78}
+.settings-card input,.recovery-panel input{width:100%;min-height:44px;font-size:14px;padding:10px 12px;border:1px solid #cad9eb;border-radius:9px;margin-top:6px;background:#f9fbff}
+.settings-card button[type=submit]{margin:13px 0 0;min-height:44px}
+#settings-message{font-size:13px;color:#204f83;margin-top:16px}
+.forgot-link{border:0;background:none;text-decoration:underline;text-underline-offset:4px;color:#22589d;font:600 13px 'DM Sans',sans-serif;cursor:pointer;padding:8px 0;display:block;text-align:left}
+.account-recovery{max-width:520px;margin:25px auto}
+.recovery-panel{border:1px solid #dce7f4;background:#fff;border-radius:20px;padding:30px;box-shadow:0 10px 34px #18365610}
+.recovery-panel .eyebrow{color:#6481a5}
+.recovery-panel h2{font-size:27px;margin:14px 0;color:#203e67}
+.recovery-panel p{font-size:13px;line-height:1.7;color:#667d98}
+.recovery-panel form[hidden]{display:none!important}
+.recovery-panel .secondary{margin-top:14px}
+#recovery-message{margin-top:12px}
+.social-footer-link{display:flex!important;align-items:center;gap:8px}
+.social-footer-link .nav-icon{width:17px!important;height:17px!important;fill:currentColor!important;stroke-width:0!important;flex:none}
+@media(max-width:800px){.settings-layout{grid-template-columns:1fr}.settings-card{padding:20px}.recovery-panel{padding:23px}}
+
+.settings-feature-note{color:#7b6235;background:#fff9e9;border:1px solid #eadcbb;padding:11px 13px;border-radius:10px;font-size:12px;line-height:1.6;margin:0 0 12px}
+.settings-card button:disabled,.forgot-link:disabled{opacity:.53;cursor:not-allowed}
+.forgot-link:disabled{text-decoration:none}

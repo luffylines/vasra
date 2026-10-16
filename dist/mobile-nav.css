@@ -59,3 +59,7 @@
   .portal-refresh .contact-grid a{transition:none}
   .portal-refresh .contact-grid a:hover{transform:none}
 }
+
+/* Modern Facebook link in public sidebar footer on every page. */
+.site-header .sidebar-bottom .social-footer-link{display:flex;align-items:center;gap:8px}
+.site-header .sidebar-bottom .social-footer-link svg{width:16px;height:16px;flex:none;fill:currentColor;stroke:none}
