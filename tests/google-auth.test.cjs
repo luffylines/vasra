@@ -38,3 +38,20 @@ test('Verifies signed Google ID token; rejects wrong audience and unverified ema
   await assert.rejects(()=>google.verifyIdToken(token(claims),settings,'different-nonce'),/Untrusted Google identity/);
  }finally{global.fetch=original;}
 });
+
+test('Google status uses safe configuration/database readiness reasons, never claims setup is active',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const root=path.join(__dirname,'..');
+ const handler=fs.readFileSync(path.join(root,'lib/handler.cjs'),'utf8');
+ const staff=fs.readFileSync(path.join(root,'dist/account.js'),'utf8');
+ const block=handler.slice(handler.indexOf("if (path === '/api/auth/google/status'"),handler.indexOf("if (path === '/api/auth/google/start'"));
+ assert.match(block,/reason:'oauth_not_configured'/);
+ assert.match(block,/reason:'redirect_mismatch'/);
+ assert.match(block,/reason:'database_setup'/);
+ assert.match(block,/reason:'database_check_failed'/);
+ assert.match(block,/health\?\.ready===true/);
+ assert.doesNotMatch(block,/clientSecret\s*[:=]\s*settings\.clientSecret/);
+ assert.match(staff,/const googleStatusMessage=/);
+ assert.match(staff,/button\.setAttribute\('aria-disabled',String\(!googleReady\)\)/);
+ assert.doesNotMatch(staff,/This preview may use a different redirect URL/);
+});

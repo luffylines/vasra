@@ -57,17 +57,29 @@ function syncWorkspaceMode(){
 }
 async function busy(form,fn){const b=form.querySelector('button[type="submit"],button.primary');if(b)b.disabled=true;try{await fn()}catch(e){message(e.message,true)}finally{if(b)b.disabled=false}}
 let googleReady=false;
+let googleUnavailableMessage='Google login is unavailable. Email/password login is still available.';
+const googleStatusMessage={
+ oauth_not_configured:'Google Sign-In is not configured for this deployment. Ask the administrator to set the OAuth credentials in Vercel.',
+ redirect_mismatch:'Google OAuth callback URL does not match this domain. For now, use https://vasra.vercel.app/account or email/password login.',
+ database_setup:'Google Sign-In database migration is pending. The administrator must complete the approved database setup.',
+ database_check_failed:'Google Sign-In database readiness could not be verified. Check the database migration and connection.',
+ status_unavailable:'Could not check Google Sign-In status right now. Try again later or use email/password.'
+};
 async function checkGoogleLogin(){
  const button=$('#google-sign-in'),note=$('#google-login-note');
  if(!button||!note)return false;
+ let reason='status_unavailable';
  try {
   const status=await api('./api/auth/google/status');
   googleReady=status.enabled===true;
+  reason=status.reason||'oauth_not_configured';
  }catch {googleReady=false;}
+ googleUnavailableMessage=googleStatusMessage[reason]||googleStatusMessage.status_unavailable;
  button.setAttribute('aria-describedby','google-login-note');
+ button.setAttribute('aria-disabled',String(!googleReady));
  note.textContent=googleReady
   ? 'Use the Google account matching your authorized SK staff email.'
-  : 'Google login is not yet activated for this deployment. Email and password login remains available.';
+  : googleUnavailableMessage;
  return googleReady;
 }
 $('#google-sign-in').addEventListener('click',async e=>{
@@ -76,10 +88,7 @@ $('#google-sign-in').addEventListener('click',async e=>{
  button.disabled=true;
  try {
   if(await checkGoogleLogin())location.assign('./api/auth/google/start');
-  else {
-   $('#google-login-note').textContent='Google Sign-In needs activation by the SK administrator. This preview may use a different redirect URL from vasra.vercel.app.';
-   $('#google-login-note').focus?.();
-  }
+  else message(googleUnavailableMessage,true);
  }finally {button.disabled=false;}
 });
 const googleSuccess=new URLSearchParams(location.search).get('google_success')==='1';
@@ -159,7 +168,7 @@ async function selectTab(name){const tabs=['overview','projects','monthly','budg
  document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
-async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p><div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div><div class="project-row-actions">${p.status!=='Natapos'?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
+async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p><div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div><div class="project-row-actions">${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
 function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published&&(!p.publish_at||Date.parse(p.publish_at)<=Date.now())).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
 
 
@@ -299,7 +308,7 @@ function updateProgressPreview(value){
 function openProgressDialog(p){
  if(!p||!['sk','chairman'].includes(user?.role))return;
  activeProgressProject={id:p.id,version:p.version,title:p.title};
- $('#progress-project-title').textContent=p.title;
+ $('#progress-project-title').textContent=p.title+(p.published?'':' · Draft — progress updates do not publish the project.');
  $('#progress-error').textContent='';
  updateProgressPreview(p.progress);
  $('#progress-dialog').showModal();
@@ -331,7 +340,7 @@ $('#progress-form').onsubmit=async e=>{
   });
   if(!result?.ok)throw Error('Hindi natuloy ang pag-save.');
   $('#progress-dialog').close();
-  success('Na-update ang '+p.title+': '+n+'% · '+projectProgressStatus(n)+'.');
+  success(result.unchanged===true?'Walang binago sa progress ng '+p.title+'.':'Na-update ang '+p.title+': '+n+'% · '+projectProgressStatus(n)+'.');
   await loadProjects();
  }catch(err){
   $('#progress-error').textContent=err.message;

@@ -33,3 +33,17 @@ Change Email and Forgot Password additionally require approved migration `supaba
 - The server grants an 8-hour SK session only to an already-authorized `sk`/`chairman` record whose email matches the verified Google identity and linked subject.
 - OAuth session cookies use SameSite=Lax for the cross-site Google redirect; normal password sessions remain SameSite=Strict. POST routes enforce the trusted origin.
 - Production database migrations, access changes and provider secrets require explicit user authorization. Test using a non-production SK account where possible.
+
+## Readiness diagnostics (2026-10-16)
+
+The sign-in page now reads the server's safe readiness reason instead of displaying a generic "preview" message. The `GET /api/auth/google/status` response can contain:
+
+- `enabled: true`: OAuth credentials, trusted callback URL and Supabase Google health are all ready.
+- `reason: "oauth_not_configured"`: required server-side OAuth environment variables are missing.
+- `reason: "redirect_mismatch"`: configured callback does not match this deployment's trusted origin. The production URL is `https://vasra.vercel.app/api/auth/google/callback`.
+- `reason: "database_setup"`: Google login health did not report ready.
+- `reason: "database_check_failed"`: database health request failed; this can be due to a missing migration/function or an outage. Check Supabase first.
+
+The live VASRA Supabase project check on October 16 found **no `public.vasra_google_login` function**. Therefore Google login will stay disabled even when a Google OAuth client exists. Do not bypass the server-side readiness guard. The existing migration is explicitly staged, not auto-deployed.
+
+Project progress quick actions are available for authorized staff on **drafts and completed projects**, including 100%-complete draft activities. Updating progress can correct the recorded status, but cannot publish the project. The Chairman must deliberately choose a publication mode in Edit Project.

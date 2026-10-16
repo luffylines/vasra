@@ -31,9 +31,12 @@ test('every gallery photo opens the enlarged viewer without altering image data'
   assert.match(files.projectCss,/object-fit:contain/);
   assert.match(files.projectCss,/@media\(max-width:600px\)/);
 });
-test('quick progress is discoverable on planned and ongoing project rows',()=>{
+test('quick progress is available to staff on draft and completed project rows',()=>{
   assert.match(files.staff,/data-progress/);
-  assert.match(files.staff,/p\.status!=='Natapos'/);
+  assert.match(files.staff,/\['sk','chairman'\]\.includes\(user\?\.role\)\?/);
+  assert.doesNotMatch(files.staff,/p\.status!=='Natapos'\?/);
+  assert.match(files.staff,/Draft — progress updates do not publish the project/);
+  assert.match(files.staff,/result\.unchanged===true/);
   assert.match(files.staff,/function openProgressDialog/);
   assert.match(files.staff,/const projectProgressStatus=/);
   assert.match(files.staff,/0\?'Pinaplano':value===100\?'Natapos':'Isinasagawa'/);
