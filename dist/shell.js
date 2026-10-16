@@ -1,3 +1,83 @@
+// Shared client-side navigation: consistent SVG icons, accessible mobile drawer.
+// Keep the existing page routes and desktop sidebar behavior intact.
+(() => {
+ const routes=[
+  {part:'./',key:'home',label:'Home',icon:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>'},
+  {part:'projects',key:'projects',icon:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'},
+  {part:'duty',key:'duty',icon:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="m9 16 2 2 4-4"/>'},
+  {part:'youth-leaders',key:'leaders',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'},
+  {part:'contacts',key:'contacts',icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>'},
+  {part:'transparency',key:'transparency',icon:'<path d="M3 3v18h18"/><path d="M7 16V9M12 16V5M17 16v-6"/>'}
+ ];
+ const header=document.querySelector('header.site-header');
+ const nav=header?.querySelector('nav[aria-label="Pangunahing navigation"]');
+ if(!header||!nav)return;
+ const icon=(path)=>'<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+path+'</svg>';
+ const match=(href)=>{const target=new URL(href,location.href).pathname.toLowerCase();
+  if(target.endsWith('/projects')||target.endsWith('/projects.html'))return 'projects';
+  if(target.endsWith('/duty')||target.endsWith('/duty.html'))return 'duty';
+  if(target.endsWith('/youth-leaders')||target.endsWith('/youth-leaders.html'))return 'leaders';
+  if(target.endsWith('/contacts')||target.endsWith('/contacts.html'))return 'contacts';
+  if(target.endsWith('/transparency')||target.endsWith('/transparency.html'))return 'transparency';
+  if(target.endsWith('/index.html')||target.endsWith('/'))return 'home';
+  return null;
+ };
+ for(const a of nav.querySelectorAll('a[href]')){
+  const route=routes.find(item=>item.key===match(a.getAttribute('href')));
+  if(!route)continue;
+  const old=a.querySelector(':scope > svg, :scope > span[aria-hidden="true"]');
+  if(old)old.outerHTML=icon(route.icon);
+  else a.insertAdjacentHTML('afterbegin',icon(route.icon));
+ }
+ const topbar=document.createElement('div');
+ topbar.className='mobile-appbar';
+ topbar.innerHTML='<a class="mobile-brand" href="./" aria-label="SK Vasra homepage"><img src="./sk%20logo.jpg" alt=""><span>SK VASRA<small>Sangguniang Kabataan</small></span></a><button class="mobile-menu-toggle" type="button" aria-controls="vasra-sidebar" aria-expanded="false" aria-label="Buksan ang menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';
+ const close=document.createElement('button');
+ close.className='sidebar-close';close.type='button';close.setAttribute('aria-label','Isara ang menu');
+ close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+ const overlay=document.createElement('button');
+ overlay.className='sidebar-backdrop';overlay.type='button';overlay.setAttribute('aria-label','Isara ang navigation menu');
+ overlay.setAttribute('tabindex','-1');
+ header.id='vasra-sidebar';
+ header.append(close);
+ header.before(topbar);
+ header.after(overlay);
+ const toggle=topbar.querySelector('.mobile-menu-toggle');
+ const mobile=window.matchMedia('(max-width:850px)');
+ let isOpen=false;
+ const sync=()=>{
+  const active=isOpen&&mobile.matches;
+  document.body.classList.toggle('menu-open',active);
+  toggle.setAttribute('aria-expanded',String(active));
+  toggle.setAttribute('aria-label',active?'Isara ang menu':'Buksan ang menu');
+  if(mobile.matches){header.inert=!active;header.setAttribute('aria-hidden',String(!active));}
+  else{header.inert=false;header.removeAttribute('aria-hidden');}
+ };
+ const setOpen=(value,restoreFocus=false)=>{
+  isOpen=Boolean(value)&&mobile.matches;
+  sync();
+  if(isOpen)close.focus();
+  else if(restoreFocus&&mobile.matches)toggle.focus();
+ };
+ toggle.addEventListener('click',()=>setOpen(!isOpen,true));
+ close.addEventListener('click',()=>setOpen(false,true));
+ overlay.addEventListener('click',()=>setOpen(false,true));
+ header.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
+ document.addEventListener('keydown',event=>{
+  if(!isOpen||!mobile.matches)return;
+  if(event.key==='Escape'){event.preventDefault();setOpen(false,true);return;}
+  if(event.key==='Tab'){
+   const items=[...header.querySelectorAll('a[href],button:not([disabled])')].filter(el=>el.getClientRects().length);
+   if(!items.length)return;
+   const first=items[0],last=items[items.length-1];
+   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  }
+ });
+ mobile.addEventListener('change',()=>{isOpen=false;sync()});
+ document.body.classList.add('mobile-menu-ready');
+ sync();
+})();
 // Keep previously shared section links working as dedicated pages.
 if((location.pathname.endsWith('/transparency')||location.pathname.endsWith('/transparency.html'))&&location.hash==='#officials')location.replace('./youth-leaders');
 if(location.pathname.endsWith('/')||location.pathname.endsWith('/index.html')){if(location.hash==='#duty')location.replace('./duty.html');if(location.hash==='#contacts')location.replace('./contacts.html');if(location.hash==='#projects')location.replace('./projects.html');}
