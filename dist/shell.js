@@ -62,7 +62,7 @@
  toggle.addEventListener('click',()=>setOpen(!isOpen,true));
  close.addEventListener('click',()=>setOpen(false,true));
  overlay.addEventListener('click',()=>setOpen(false,true));
- header.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
+ header.querySelectorAll('nav a, #staff-nav button[data-tab]').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
  document.addEventListener('keydown',event=>{
   if(!isOpen||!mobile.matches)return;
   if(event.key==='Escape'){event.preventDefault();setOpen(false,true);return;}

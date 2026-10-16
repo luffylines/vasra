@@ -67,3 +67,41 @@
 .admin-roster-actions .admin-remove{color:#ae3948;border-color:#edd1d5}
 .admin-roster-actions .admin-remove:hover{background:#fff1f3}
 @media(max-width:660px){#roster-form{grid-template-columns:1fr;padding:14px}.admin-roster-form-title,.admin-roster-list-head{align-items:flex-start;flex-direction:column}.admin-roster-row{align-items:flex-start;flex-direction:column}.admin-roster-actions{width:100%}.admin-roster-actions button{flex:1}.admin-roster-suggestions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Signed-in accounts use a staff-only navigation workspace. */
+body.account-workspace[data-staff-mode="loading"] .community-label,
+body.account-workspace[data-staff-mode="loading"] .community-nav,
+body.account-workspace[data-staff-mode="loading"] .sidebar-bottom,
+body.account-workspace[data-staff-mode="staff"] .community-label,
+body.account-workspace[data-staff-mode="staff"] .community-nav,
+body.account-workspace[data-staff-mode="staff"] .sidebar-bottom{display:none!important}
+body.account-workspace[data-staff-mode="staff"] .site-header .brand{cursor:pointer}
+body.account-workspace #staff-nav{margin:28px 0 0;padding:23px 0 12px;border-top:1px solid #ffffff24}
+body.account-workspace #staff-nav .nav-label{margin:0 12px 14px;padding:0;font-size:10px;letter-spacing:1.6px;color:#97b1d5}
+body.account-workspace #staff-nav button{display:flex;align-items:center;gap:13px;width:100%;min-height:47px;padding:12px 14px;margin:3px 0;border:0;border-radius:11px;background:transparent;color:#b8c8e1;font:600 13px 'DM Sans',sans-serif;text-align:left;cursor:pointer}
+body.account-workspace #staff-nav button:hover{background:#ffffff0d;color:white}
+body.account-workspace #staff-nav button.selected{background:#294b7e;box-shadow:inset 3px 0 #91bfff;color:white}
+body.account-workspace #staff-nav .staff-icon{width:20px;height:20px;flex:none;display:block}
+body.account-workspace #staff-nav button:focus-visible{outline:2px solid #c8defc;outline-offset:1px}
+body.account-workspace #staff-nav[hidden],body.account-workspace #staff-nav button[hidden]{display:none!important}
+body.account-workspace #staff-sidebar-footer{margin-top:auto;padding:22px 12px 3px;border-top:1px solid #ffffff1d;color:#a9b8d3;font-size:10px;line-height:1.6}
+body.account-workspace #staff-sidebar-footer[hidden]{display:none!important}
+body.account-workspace #staff-sidebar-footer small{display:block;color:#a8c4ea;font-size:10px;margin-top:7px;letter-spacing:.6px}
+body.account-workspace #staff-sidebar-footer strong{display:block;color:#fff;font-size:13px;font-weight:700;margin-top:3px;overflow-wrap:anywhere}
+body.account-workspace #staff-sidebar-footer>span:last-child{display:block;color:#8399b8;font-size:10px;margin-top:5px}
+body.account-workspace #officer-overview[hidden],body.account-workspace #chairman-overview[hidden]{display:none!important}
+body.account-workspace .staff-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body.account-workspace .staff-overview-grid article{background:#fff;border:1px solid #dbe6f2;border-radius:17px;padding:25px;box-shadow:0 4px 16px #15335c0b}
+body.account-workspace .staff-overview-grid h3{font-size:17px;color:#203e68;margin:15px 0 7px}
+body.account-workspace .staff-overview-grid p{font-size:13px;color:#687d99;line-height:1.6}
+body.account-workspace .staff-overview-grid button{padding:12px 15px;background:#eaf2ff;color:#224a80;border:1px solid #c5d9f3;border-radius:10px;cursor:pointer;font-weight:700}
+body.account-workspace .staff-overview-grid .staff-overview-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#e9f2ff;color:#24599b}
+body.account-workspace .staff-overview-grid .staff-icon{width:24px;height:24px}
+@media(max-width:850px){
+ body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header #staff-nav{display:block;margin:27px 0 0;padding:20px 0 12px}
+ body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header #staff-nav button{display:flex;min-height:48px;width:100%;flex:none;justify-content:flex-start;font-size:13px;padding:12px 14px}
+ body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header #staff-nav button[hidden]{display:none!important}
+ body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header .sidebar-bottom{display:none!important}
+ body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header #staff-sidebar-footer{display:block;margin-top:auto}
+}
+@media(max-width:540px){body.account-workspace .staff-overview-grid{grid-template-columns:1fr}body.account-workspace .staff-overview-grid article{padding:20px}}
