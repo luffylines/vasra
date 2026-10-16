@@ -27,17 +27,57 @@ function officerPortrait(name,position){
 
 // Image load/error events do not bubble. Capture them so dynamic roster cards
 // and cached mobile Safari images receive the same presentation state.
+// Some iOS Safari cached images finish loading before a dynamically inserted
+// officer card can receive a load event. Decode when available and re-check
+// complete images after cards are inserted or restored from the back/forward cache.
+function revealOfficerPortrait(img){
+ const parent=img?.parentElement;
+ if(!parent?.classList.contains('officer-portrait'))return;
+ const finish=()=>{
+  if(img.parentElement!==parent)return;
+  const ok=img.naturalWidth>0;
+  parent.classList.toggle('portrait-loaded',ok);
+  parent.classList.toggle('portrait-error',!ok);
+ };
+ if(!img.complete)return;
+ if(img.naturalWidth>0&&typeof img.decode==='function'){
+  try{
+   const pending=img.decode();
+   if(pending&&typeof pending.then==='function'){pending.then(finish,finish);return;}
+  }catch{}
+ }
+ finish();
+}
+function syncOfficerPortraits(root){
+ if(!root||typeof root.querySelectorAll!=='function')return;
+ for(const img of root.querySelectorAll('.officer-portrait img'))
+  if(img.complete)revealOfficerPortrait(img);
+}
 if(typeof document!=='undefined'){
  document.addEventListener('load',event=>{
   const img=event.target;
   if(img?.tagName==='IMG'&&img.parentElement?.classList.contains('officer-portrait'))
-   img.parentElement.classList.add('portrait-loaded');
+   revealOfficerPortrait(img);
  },true);
  document.addEventListener('error',event=>{
   const img=event.target;
-  if(img?.tagName==='IMG'&&img.parentElement?.classList.contains('officer-portrait'))
+  if(img?.tagName==='IMG'&&img.parentElement?.classList.contains('officer-portrait')){
+   img.parentElement.classList.remove('portrait-loaded');
    img.parentElement.classList.add('portrait-error');
+  }
  },true);
+ if(typeof MutationObserver!=='undefined'&&document.body){
+  const observer=new MutationObserver(records=>{
+   const added=records.some(record=>Array.from(record.addedNodes||[]).some(node=>
+    node.nodeType===1&&(node.matches?.('.officer-portrait')||
+      node.querySelector?.('.officer-portrait img'))));
+   if(added)syncOfficerPortraits(document);
+  });
+  observer.observe(document.body,{childList:true,subtree:true});
+ }
+ syncOfficerPortraits(document);
+ if(typeof window!=='undefined')
+  window.addEventListener('pageshow',()=>syncOfficerPortraits(document));
 }
 
 const dutyPositions={'SK Chairman':'chairman','SK Treasurer':'treasurer','SK Secretary':'secretary','SK Kagawad':'kagawad'};

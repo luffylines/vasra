@@ -50,3 +50,30 @@ test('mobile header and content have no forced desktop-width layout',()=>{
  assert.match(mobile,/body\.account-workspace\.mobile-menu-ready \.account-main/);
  assert.match(mobile,/body\.account-workspace\.mobile-menu-ready \.account-main :is\(input,select,textarea\)/);
 });
+
+test('cached and failed portrait images settle without hiding initials in Safari',async()=>{
+ const vm=require('node:vm');
+ const names=new Set(['officer-portrait']);
+ const classList={
+  contains:name=>names.has(name),add:name=>names.add(name),
+  remove:name=>names.delete(name),
+  toggle:(name,present)=>present?names.add(name):names.delete(name)
+ };
+ const parent={classList};
+ const img={tagName:'IMG',parentElement:parent,complete:true,naturalWidth:640,decode:()=>Promise.resolve()};
+ const doc={body:null,addEventListener(){},querySelectorAll:()=>[img]};
+ const ctx=vm.createContext({document:doc,Promise});
+ vm.runInContext(officers,ctx);
+ await Promise.resolve();await Promise.resolve();
+ assert(names.has('portrait-loaded'));
+ assert(!names.has('portrait-error'));
+ img.naturalWidth=0;img.decode=undefined;
+ vm.runInContext('syncOfficerPortraits(document)',ctx);
+ assert(names.has('portrait-error'));
+ assert(!names.has('portrait-loaded'));
+});
+test('phone hierarchy does not force tall officer cards',()=>{
+ assert.match(chart,/Compact iPhone\/Android hierarchy/);
+ assert.match(chart,/\.leaders-compact \.org-tier-grid>\.org-card\{min-height:0\}/);
+ assert.match(chart,/\.leaders-compact \.org-card \.officer-portrait\{width:53px;height:63px\}/);
+});
