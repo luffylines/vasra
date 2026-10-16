@@ -1239,3 +1239,20 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #proj
 /* Make expired publication dates unmistakable before the user saves. */
 #editor #project-publish-preview.publication-time-error{color:#b62929;font-weight:800}
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-preview.publication-time-error{color:#ffacac}
+
+/* AI diagnostics and confirmation for non-project Facebook posts. */
+#editor #fb-import-result{
+ white-space:pre-wrap;overflow-wrap:anywhere;
+ max-height:270px;overflow-y:auto;line-height:1.7;
+ font-size:12px;letter-spacing:0;
+}
+#editor #fb-use-activity-as-project{
+ background:#fff4e7;color:#784319;border:1px solid #edcd99;
+ padding:10px 14px;text-align:center;min-height:42px;width:100%;
+ font-weight:750;cursor:pointer;
+}
+#editor #fb-use-activity-as-project:hover{background:#fee7c4}
+#editor #fb-use-activity-as-project[hidden]{display:none!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-use-activity-as-project{
+ background:#49351f;border-color:#8d6840;color:#ffe0ad;
+}

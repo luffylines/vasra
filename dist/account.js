@@ -255,6 +255,8 @@ function openEditor(project=null){
  setProjectEntryMode('manual');
  $('#fb-import-result').hidden=true;$('#fb-import-result').textContent='';
  $('#fb-import-status').textContent='';
+ pendingImportedActivity=null;
+ $('#fb-use-activity-as-project').hidden=true;
  $('#editor-message').textContent='';
  $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
  if(project){
@@ -395,11 +397,47 @@ $('#fb-import-screenshot').addEventListener('change',e=>{
   $('#fb-import-status').textContent=files.length+' larawan ang nadagdag sa gallery. I-review ang cover photo sa ibaba.';
  }
 });
+let pendingImportedActivity=null;
+function applyFacebookDraft(result){
+ const draft=result.draft||{},form=$('#project-form');
+ for(const field of ['title','category','description','scope']){
+  if(typeof draft[field]==='string')form.elements[field].value=draft[field];
+ }
+ // A completed SK meeting can be represented as completed only after Chairman
+ // explicitly agrees to enter it in the PROJECT catalogue.
+ form.elements.status.value=['Pinaplano','Natapos','Isinasagawa'].includes(draft.status)?draft.status:'Pinaplano';
+ form.elements.progress.value=String(Number.isInteger(draft.progress)?draft.progress:0);
+ form.elements.publication_mode.value='draft';
+ updatePublicationFields();
+ $('#editor-heading').textContent='Review Imported '+(draft.content_type==='meeting'?'SK Activity':'Project');
+ form.elements.title.focus();
+}
+function facebookAiStatus(info){
+ if(!info||info.status==='success')return 'Groq AI analysis successful.';
+ if(info.status==='missing_key')return 'Groq AI hindi naka-configure sa environment ng deployment na ito. Tingnan ang GROQ_API_KEY sa Preview at Production.';
+ if(info.status==='provider_error'){
+  const code=info.http_status;
+  if(code===401||code===403)return 'Groq authentication failed (HTTP '+code+'). Suriin ang GROQ_API_KEY.';
+  if(code===429)return 'Groq rate limit o credits exceeded (HTTP 429). Basic analysis ang ginamit.';
+  return 'Groq returned HTTP '+code+'. Suriin ang API/model configuration at deployment logs.';
+ }
+ if(info.status==='timeout')return 'Nag-timeout ang Groq request. Basic analysis ang ginamit.';
+ if(info.status==='invalid_response')return 'Hindi valid ang AI response; basic analysis ang ginamit.';
+ return 'Hindi maabot ang Groq ngayon; basic analysis ang ginamit.';
+}
+$('#fb-use-activity-as-project').addEventListener('click',()=>{
+ if(!pendingImportedActivity)return;
+ applyFacebookDraft(pendingImportedActivity);
+ $('#fb-import-status').textContent='Na-transfer sa editable project form. I-review bago i-save.';
+ $('#fb-use-activity-as-project').hidden=true;
+ pendingImportedActivity=null;
+});
 $('#fb-analyze-post').addEventListener('click',async()=>{
  const button=$('#fb-analyze-post'),status=$('#fb-import-status'),resultBox=$('#fb-import-result');
  const url=$('#fb-post-url').value.trim(),caption=$('#fb-post-caption').value.trim();
  if(editing||user?.role!=='chairman')return;
  if(!url){status.textContent='Ilagay muna ang Facebook post link.';return;}
+ pendingImportedActivity=null;$('#fb-use-activity-as-project').hidden=true;
  button.disabled=true;status.textContent='Sinusubukang basahin ang post…';resultBox.hidden=true;
  try{
   const result=await api('./api/manage/projects/import-facebook',{
@@ -411,21 +449,30 @@ $('#fb-analyze-post').addEventListener('click',async()=>{
    $('#fb-post-caption').focus();
    return;
   }
-  const draft=result.draft||{},form=$('#project-form');
-  for(const field of ['title','category','description','scope']){
-   if(typeof draft[field]==='string')form.elements[field].value=draft[field];
-  }
-  form.elements.status.value='Pinaplano';
-  form.elements.progress.value='0';
-  form.elements.publication_mode.value='draft';
-  updatePublicationFields();
+  const draft=result.draft||{};
+  const kind=draft.content_type==='meeting'?'SK Regular Session / Meeting':draft.content_type==='announcement'?'Announcement':'SK Project';
+  const details=[
+   'Uri ng post: '+kind,
+   draft.activity_date?'Petsa sa caption: '+draft.activity_date:'Petsa sa caption: Hindi matukoy',
+   'AI status: '+facebookAiStatus(result.ai),
+   'Title: '+(draft.title||''),
+   'Category: '+(draft.category||''),
+   'Summary: '+(draft.description||''),
+   'Details / Scope: '+(draft.scope||''),
+   '',
+   result.warning||'I-review ang lahat ng detalye.'
+  ];
   resultBox.hidden=false;
-  resultBox.textContent=(draft.method==='ai'?'AI draft ready. ':'Basic autofill ready. ')+
-   (result.source==='pasted-caption'?'Pasted caption ang ginamit. ':'Public metadata ang ginamit. ')+
-   'Draft lamang ito; suriin ang bawat field at i-upload ang mga original photos bago i-publish.';
-  status.textContent=draft.method==='ai'?'Groq AI autofill completed — review below.':'Basic autofill completed — review below.';
-  $('#editor-heading').textContent='Review Imported Project';
-  form.elements.title.focus();
+  resultBox.textContent=details.join('\n');
+  const isNonProject=draft.content_type==='meeting'||draft.content_type==='announcement';
+  if(isNonProject){
+   pendingImportedActivity=result;
+   $('#fb-use-activity-as-project').hidden=false;
+   status.textContent='Hindi ito regular na SK project; i-review muna bago ilipat sa project form.';
+  }else{
+   applyFacebookDraft(result);
+   status.textContent=(draft.method==='ai'?'Groq AI':'Basic')+' analysis complete — review the fields below.';
+  }
  }catch(err){
   resultBox.hidden=false;
   resultBox.textContent=err.message||'Hindi natuloy ang Facebook import.';

@@ -53,8 +53,8 @@ test('AI response is constrained to text fields, publication and progress remain
 });
 test('UI provides URL, caption and photo fallback, and never autosaves imported drafts',()=>{
  for(const id of ['fb-import-panel','fb-post-url','fb-post-caption','fb-import-screenshot','fb-analyze-post','fb-import-result'])assert.match(html,new RegExp('id="'+id+'"'));
- assert.match(staff,/form\.elements\.published\.checked=false/);
- assert.match(staff,/form\.elements\.status\.value='Pinaplano'/);
+ assert.match(staff,/form\.elements\.publication_mode\.value='draft'/);
+ assert.match(staff,/form\.elements\.status\.value=\['Pinaplano','Natapos','Isinasagawa'\]/);
  assert.match(staff,/appendProjectFiles\(files\)/);
  assert.match(staff,/\.\/api\/manage\/projects\/import-facebook/);
  assert.match(api,/await user\(\['chairman'\]\)/);
@@ -106,4 +106,64 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
  officer('facebook');
  assert.equal(nodes['#project-entry-mode'].hidden,true);
  assert.equal(nodes['#fb-import-panel'].hidden,true);
+});
+
+test('36th SK VASRA Regular Session is recognized as an event, not an education project',async()=>{
+ const caption=[
+ 'OCTOBER 10, 2026 | 36TH SK VASRA REGULAR SESSION',
+ 'Naganap ang ika-36 na Regular Session ng Sangguniang Kabataan ng Barangay VASRA noong ika-10 ng Oktubre 2026 sa SK VASRA Office.',
+ 'Tinalakay ng konseho ang mga nakatakdang programa at aktibidad para sa mga buwan ng Oktubre at Nobyembre. Layunin ng mga paghahandang ito na makapaghatid ng mga makabuluhang proyekto at aktibidad para sa mga Kabataang VASRA.',
+ 'Naipasa rin sa sesyong ito ang mga sumusunod na SK Resolutions:',
+ 'a. SKR035-2026 A RESOLUTION EXTENDING THE CONGRATULATIONS',
+ 'b. SKR036-2026 A RESOLUTION EXTENDING THE CONGRATULATIONS',
+ 'c. SKR037-2026 A RESOLUTION FORMALLY ACCEPTING STUDENT INTERNS'
+ ].join('\n');
+ const x=await FB.importFacebookPost({url:'https://www.facebook.com/share/p/1GcDA2vCM8/',caption},{aiKey:'',fetcher:()=>{throw Error('no network')}});
+ assert.equal(x.ok,true);
+ assert.equal(x.draft.content_type,'meeting');
+ assert.equal(x.draft.category,'SK Regular Session');
+ assert.equal(x.draft.title,'36th SK VASRA Regular Session');
+ assert.equal(x.draft.activity_date,'2026-10-10');
+ assert.equal(x.draft.status,'Natapos');
+ assert.equal(x.draft.progress,100);
+ assert.match(x.draft.description,/Naganap ang ika-36/);
+ assert.doesNotMatch(x.draft.description,/SKR037-2026/);
+ assert.match(x.draft.scope,/SKR035-2026/);
+ assert.match(x.warning,/hindi awtomatikong isang project/i);
+ assert.equal(x.reviewRecommended,true);
+});
+test('Groq failures report safe diagnostic instead of pretending basic fallback is AI',async()=>{
+ const caption='OCTOBER 10, 2026 | 36TH SK VASRA REGULAR SESSION\nNaganap ang Regular Session ng SK.';
+ const missing=await FB.importFacebookPost({url:'https://www.facebook.com/share/p/123',caption},{aiKey:'',fetcher:()=>{throw Error('no network')}});
+ assert.equal(missing.ai.status,'missing_key');
+ assert.equal(missing.draft.method,'basic');
+ const notAuthorized=await FB.importFacebookPost({url:'https://www.facebook.com/share/p/123',caption},{aiKey:'test',fetcher:async()=>({ok:false,status:401})});
+ assert.equal(notAuthorized.ai.status,'provider_error');
+ assert.equal(notAuthorized.ai.http_status,401);
+ assert.equal(notAuthorized.draft.method,'basic');
+ assert(!JSON.stringify(notAuthorized).includes('test'));
+});
+test('AI cannot turn meeting into education project or change evidence-based event date',async()=>{
+ const caption='OCTOBER 10, 2026 | 36TH SK VASRA REGULAR SESSION\nNaganap ang Regular Session ng SK Vasra.';
+ const ai=await FB.importFacebookPost({url:'https://www.facebook.com/share/p/123',caption},{
+  aiKey:'test-only',
+  fetcher:async()=>({ok:true,json:async()=>({choices:[{message:{content:JSON.stringify({
+   title:'Educational Project',category:'Edukasyon',description:'Naganap ang regular session ng SK Vasra.',scope:'Regular session agenda.',
+   activity_date:'2025-01-01',content_type:'project',progress:0,status:'Pinaplano'
+  })}}]})})
+ });
+ assert.equal(ai.draft.method,'ai');
+ assert.equal(ai.draft.title,'36th SK VASRA Regular Session');
+ assert.equal(ai.draft.category,'SK Regular Session');
+ assert.equal(ai.draft.content_type,'meeting');
+ assert.equal(ai.draft.activity_date,'2026-10-10');
+ assert.equal(ai.draft.status,'Natapos');
+});
+test('Meeting/announcement requires explicit chairman confirmation before project autofill',()=>{
+ assert.match(html,/id="fb-use-activity-as-project"[^>]*hidden/);
+ assert.match(staff,/const isNonProject=draft\.content_type==='meeting'\|\|draft\.content_type==='announcement'/);
+ assert.match(staff,/pendingImportedActivity=result/);
+ assert.match(staff,/applyFacebookDraft\(pendingImportedActivity\)/);
+ assert.match(staff,/if\(isNonProject\)\{/);
+ assert.match(staff,/function facebookAiStatus\(/);
 });
