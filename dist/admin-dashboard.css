@@ -1049,3 +1049,42 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-proje
  #delete-project-dialog{padding:24px 20px}
  #delete-project-dialog .delete-project-actions{flex-wrap:wrap}
 }
+
+
+/* SK project quick-progress controls */
+#managed-projects .project-quick-progress{margin-top:13px;max-width:360px}
+#managed-projects .project-progress-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:#607a9e;margin-bottom:8px}
+#managed-projects .project-progress-caption strong{font-size:15px;color:#255da8;font-variant-numeric:tabular-nums}
+#managed-projects .project-progress-bar,.project-progress-dialog .progress-preview-track{height:9px;overflow:hidden;border-radius:20px;background:#e0eaf7}
+#managed-projects .project-progress-bar span,.project-progress-dialog .progress-preview-track span{display:block;height:100%;background:linear-gradient(90deg,#2862bd,#4f98ea);border-radius:inherit;transition:width .2s ease}
+#managed-projects .project-progress-trigger{border:1px solid #a9c7f0;background:#eef5ff;color:#2459a3;border-radius:10px;min-height:38px;padding:9px 13px;font-size:12px;font-weight:750;cursor:pointer}
+#managed-projects .project-progress-trigger:hover{background:#e1eeff;border-color:#73a3e4}
+#progress-dialog{width:min(490px,calc(100vw - 24px));max-width:490px;padding:0;border:1px solid #d6e3f5;border-radius:19px;background:#fff;color:#193553;max-height:90dvh;overflow:auto;box-shadow:0 25px 80px #142c5060}
+#progress-dialog::backdrop{background:#0d213aaf;backdrop-filter:blur(5px)}
+#progress-dialog .progress-dialog-header{padding:26px 28px 18px;background:linear-gradient(130deg,#eaf2ff,#fff);border-bottom:1px solid #dce7f5}
+#progress-dialog .progress-dialog-header h2{font-size:23px;letter-spacing:-.5px;margin:9px 0 4px;color:inherit}
+#progress-dialog .progress-dialog-header p{font-size:13px;color:#607c9f;margin:0}
+#progress-dialog .progress-dialog-header .eyebrow{color:#3263ae;font-size:10px;letter-spacing:1.5px}
+#progress-dialog .progress-dialog-body{padding:23px 28px 12px;display:flex;flex-direction:column;gap:12px}
+#progress-dialog .progress-dialog-body label{font-size:12px;font-weight:750}
+#progress-dialog .progress-percent-row{display:flex;justify-content:space-between;align-items:center}
+#progress-dialog .progress-percent-row strong{font-size:38px;letter-spacing:-1px;color:#255fb5;font-variant-numeric:tabular-nums}
+#progress-dialog .progress-percent-row span{font-size:12px;background:#e8f1ff;color:#255a99;padding:7px 10px;border-radius:9px;font-weight:750}
+#progress-dialog #progress-range{accent-color:#2a65be;width:100%;cursor:pointer;height:22px}
+#progress-dialog .progress-presets{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+#progress-dialog .progress-presets button{flex:1;min-width:50px;border:1px solid #d4e2f3;border-radius:9px;background:#f6f9ff;padding:9px 7px;font-size:12px;font-weight:750;color:#396494}
+#progress-dialog .progress-presets button[aria-pressed="true"]{background:#295fb2;color:white;border-color:#295fb2}
+#progress-dialog #progress-number{padding:11px 12px;width:100%;height:44px;min-height:44px;border:1px solid #c6d8f0;border-radius:9px;background:#fafcff;color:inherit}
+#progress-dialog .progress-hint{font-size:12px;line-height:1.6;color:#667e9e;margin:0}
+#progress-dialog #progress-error{font-size:12px;color:#b33543;margin:0}
+#progress-dialog .progress-dialog-actions{display:flex;justify-content:flex-end;gap:11px;padding:15px 28px 25px}
+#progress-dialog .progress-dialog-actions button{border-radius:9px;min-height:42px;padding:10px 18px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog{background:#17283e;color:#ecf4ff;border-color:#456184}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-dialog-header{background:linear-gradient(130deg,#1e3656,#17283e);border-color:#425b78}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-dialog-header p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-hint{color:#c6d7f0}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-percent-row span{background:#294e79;color:#e0eeff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog #progress-number{background:#102036;border-color:#536d91;color:#f4f8ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-presets button{background:#213955;border-color:#4f6d93;color:#dcecff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #progress-dialog .progress-presets button[aria-pressed="true"]{background:#326cbd;color:white}
+@media(max-width:600px){#progress-dialog .progress-dialog-header,#progress-dialog .progress-dialog-body{padding-left:20px;padding-right:20px}#progress-dialog .progress-dialog-actions{padding:14px 20px 22px}}

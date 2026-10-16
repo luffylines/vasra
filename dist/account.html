@@ -65,6 +65,23 @@
 <div class="editor-publish"><label class="check-label"><input name="published" type="checkbox"><span>Publish for everyone<small>Makikita ang proyekto sa public website.</small></span></label></div>
 <div class="editor-footer"><span>Ang detalye at gallery ay isi-save sa SK VASRA.</span><button class="primary" type="submit" id="save-project">Save Project →</button></div>
 </form></dialog>
+<dialog id="progress-dialog" class="project-progress-dialog" aria-labelledby="progress-heading">
+ <form id="progress-form">
+  <div class="progress-dialog-header"><span class="eyebrow">SK VASRA · PROJECT TRACKING</span><h2 id="progress-heading">Update Project Progress</h2><p id="progress-project-title"></p></div>
+  <div class="progress-dialog-body">
+   <label for="progress-range">Ilang porsiyento na ang nagawa?</label>
+   <div class="progress-percent-row"><strong id="progress-percent">0%</strong><span id="progress-status">Pinaplano</span></div>
+   <input type="range" id="progress-range" min="0" max="100" step="1" value="0">
+   <div class="progress-preview-track" aria-hidden="true"><span id="progress-preview-bar"></span></div>
+   <div class="progress-presets" aria-label="Quick progress choices"><button type="button" data-progress-preset="0">0%</button><button type="button" data-progress-preset="25">25%</button><button type="button" data-progress-preset="50">50%</button><button type="button" data-progress-preset="75">75%</button><button type="button" data-progress-preset="100">100%</button></div>
+   <label for="progress-number">Exact completion percentage (%)</label>
+   <input type="number" id="progress-number" min="0" max="100" step="1" required value="0">
+   <p class="progress-hint">0% = Pinaplano · 1–99% = Isinasagawa · 100% = Natapos. Makikita rin ang updated progress sa public Mga proyekto kapag published ang project.</p>
+   <p id="progress-error" role="alert"></p>
+  </div>
+  <div class="progress-dialog-actions"><button type="button" id="progress-cancel" class="secondary">Cancel</button><button type="submit" id="progress-save" class="primary">Save Progress</button></div>
+ </form>
+</dialog>
 <dialog id="delete-project-dialog" class="delete-project-dialog" aria-labelledby="delete-project-heading">
   <div class="delete-project-mark" aria-hidden="true">!</div>
   <h2 id="delete-project-heading">I-delete ang proyekto?</h2>

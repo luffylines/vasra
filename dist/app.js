@@ -4,7 +4,7 @@ const galleryUrl=id=>'./api/images/'+encodeURIComponent(id);
 function projectGallery(p){
  const ids=galleryIds(p);if(!ids.length)return '';
  return '<section class="project-detail-gallery" aria-label="Project photos">'+
-  '<div class="project-gallery-cover"><img id="detail-cover-image" src="'+galleryUrl(ids[0])+'" alt="'+esc(p.title)+' cover"></div>'+
+  '<button type="button" class="project-gallery-cover" id="detail-cover-trigger" aria-label="Palakihin ang larawan"><img id="detail-cover-image" src="'+galleryUrl(ids[0])+'" alt="'+esc(p.title)+' cover"><span class="photo-zoom-label">⌕ Palakihin ang larawan</span></button>'+
   (ids.length>1?'<div class="project-gallery-thumbs">'+ids.map((id,index)=>
    '<button type="button" class="project-gallery-thumb'+(index===0?' selected':'')+'" data-gallery-image="'+esc(id)+'" aria-label="View photo '+(index+1)+'">'+
     '<img src="'+galleryUrl(id)+'" alt="" loading="lazy"></button>').join('')+'</div>':'')+
@@ -38,11 +38,53 @@ $('#grid').addEventListener('click',e=>{
  $('#detailbody').innerHTML='<div class="eyebrow">'+esc(p.category)+'</div><h2>'+esc(p.title)+'</h2>'+projectGallery(p)+'<p><b>'+esc(p.status)+'</b> · '+p.progress+'%</p><p>'+esc(p.description)+'</p><h3>Project scope</h3><p class="preserve">'+esc(p.scope)+'</p><p class="muted">Last updated: '+dateText(p.updated)+'</p><h3>Monthly Project Updates</h3><div class="trans-sectionhead"><label class="trans-picker">Year <select id="detail-year">'+years+'</select></label><label class="trans-picker">Month <select id="detail-month">'+months+'</select></label></div><div id="detail-monthly" class="trans-report-list"></div><p class="muted"><a href="./transparency">View annual SK transparency ↗</a></p>';
  $('#detail').showModal();loadProjectHistory();
 });
+let lightboxIndex=0,lightboxImages=[],lightboxTitle='';
+function renderLightbox(){
+ const img=$('#lightbox-image');
+ if(!img||!lightboxImages.length)return;
+ img.src=galleryUrl(lightboxImages[lightboxIndex]);
+ img.alt=lightboxTitle+' — larawan '+(lightboxIndex+1)+' sa '+lightboxImages.length;
+ $('#lightbox-counter').textContent=(lightboxIndex+1)+' / '+lightboxImages.length;
+ $('#lightbox-prev').disabled=lightboxImages.length<2;
+ $('#lightbox-next').disabled=lightboxImages.length<2;
+}
+function openProjectLightbox(){
+ const p=projects.find(x=>x.id===detailProjectId);
+ if(!p)return;
+ lightboxImages=galleryIds(p);if(!lightboxImages.length)return;
+ lightboxTitle=p.title;
+ const active=$('#detail-cover-image')?.getAttribute('src');
+ lightboxIndex=Math.max(0,lightboxImages.findIndex(id=>galleryUrl(id)===active));
+ $('#lightbox-title').textContent=lightboxTitle;
+ renderLightbox();
+ $('#image-lightbox').showModal();
+}
+function advanceLightbox(step){
+ if(!lightboxImages.length)return;
+ lightboxIndex=(lightboxIndex+step+lightboxImages.length)%lightboxImages.length;
+ renderLightbox();
+ const id=lightboxImages[lightboxIndex];
+ const main=$('#detail-cover-image');
+ if(main)main.src=galleryUrl(id);
+ document.querySelectorAll('.project-gallery-thumb').forEach(button=>button.classList.toggle('selected',button.dataset.galleryImage===id));
+}
 $('#detail').addEventListener('click',e=>{
+ if(e.target.closest('#detail-cover-trigger')){openProjectLightbox();return;}
  const thumb=e.target.closest('[data-gallery-image]');if(!thumb)return;
  const cover=$('#detail-cover-image');if(!cover)return;
  cover.src=galleryUrl(thumb.dataset.galleryImage);
  document.querySelectorAll('.project-gallery-thumb').forEach(button=>button.classList.toggle('selected',button===thumb));
+ openProjectLightbox();
 });
+$('#lightbox-prev').addEventListener('click',()=>advanceLightbox(-1));
+$('#lightbox-next').addEventListener('click',()=>advanceLightbox(1));
+$('#lightbox-close').addEventListener('click',()=>$('#image-lightbox').close());
+$('#image-lightbox').addEventListener('click',e=>{if(e.target.id==='image-lightbox')e.target.close();});
+document.addEventListener('keydown',e=>{
+ if(!$('#image-lightbox').open)return;
+ if(e.key==='ArrowLeft'){e.preventDefault();advanceLightbox(-1)}
+ if(e.key==='ArrowRight'){e.preventDefault();advanceLightbox(1)}
+});
+
 $('#detail').addEventListener('change',e=>{if(e.target.id==='detail-year'||e.target.id==='detail-month')loadProjectHistory()});
 document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('dialog').close());let installPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e});async function install(){if(installPrompt){await installPrompt.prompt();installPrompt=null}else $('#installhelp').showModal()}$('#install').onclick=install;$('#install2').onclick=install;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===filter)));render();api('./api/projects').then(b=>{projects=b.projects;render()}).catch(e=>{$('#count').textContent='Hindi ma-load ang mga proyekto.';$('#grid').innerHTML=`<div class="empty">${esc(e.message)}</div>`});if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});

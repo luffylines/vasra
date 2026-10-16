@@ -152,7 +152,7 @@ async function selectTab(name){const tabs=['overview','projects','monthly','budg
  document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
-async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p></div><div class="project-row-actions"><button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
+async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${p.published?'Published':'Draft'} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p><div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div><div class="project-row-actions">${p.status!=='Natapos'?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
 function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
 
 let editorPhotos=[];
@@ -182,6 +182,60 @@ function openEditor(project=null){
  $('#editor').showModal();
 }
 $('#new-project').onclick=()=>openEditor();
+let activeProgressProject=null;
+const projectProgressStatus=value=>value===0?'Pinaplano':value===100?'Natapos':'Isinasagawa';
+function updateProgressPreview(value){
+ const n=Number(value);
+ if(!Number.isInteger(n)||n<0||n>100)return;
+ $('#progress-range').value=n;
+ $('#progress-number').value=n;
+ $('#progress-percent').textContent=n+'%';
+ $('#progress-status').textContent=projectProgressStatus(n);
+ $('#progress-preview-bar').style.width=n+'%';
+ document.querySelectorAll('#progress-dialog [data-progress-preset]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.progressPreset)===n)));
+}
+function openProgressDialog(p){
+ if(!p||!['sk','chairman'].includes(user?.role))return;
+ activeProgressProject={id:p.id,version:p.version,title:p.title};
+ $('#progress-project-title').textContent=p.title;
+ $('#progress-error').textContent='';
+ updateProgressPreview(p.progress);
+ $('#progress-dialog').showModal();
+}
+$('#progress-range').addEventListener('input',e=>updateProgressPreview(e.target.value));
+$('#progress-number').addEventListener('input',e=>{
+ const n=Number(e.target.value);
+ if(e.target.value!==''&&Number.isInteger(n)&&n>=0&&n<=100)updateProgressPreview(n);
+});
+$('#progress-dialog').addEventListener('click',e=>{
+ const preset=e.target.closest('[data-progress-preset]');
+ if(preset)updateProgressPreview(Number(preset.dataset.progressPreset));
+});
+$('#progress-cancel').onclick=()=>$('#progress-dialog').close();
+$('#progress-dialog').addEventListener('close',()=>{activeProgressProject=null;});
+$('#progress-form').onsubmit=async e=>{
+ e.preventDefault();
+ const p=activeProgressProject;
+ const n=Number($('#progress-number').value);
+ if(!p||!['sk','chairman'].includes(user?.role)||!Number.isInteger(n)||n<0||n>100){
+  $('#progress-error').textContent='Maglagay ng valid na porsiyento mula 0 hanggang 100.';
+  return;
+ }
+ const save=$('#progress-save');
+ save.disabled=true;$('#progress-error').textContent='Sine-save ang progress…';
+ try{
+  const result=await api('./api/manage/projects/'+encodeURIComponent(p.id)+'/progress',{
+    method:'POST',body:JSON.stringify({progress:n,version:p.version})
+  });
+  if(!result?.ok)throw Error('Hindi natuloy ang pag-save.');
+  $('#progress-dialog').close();
+  success('Na-update ang '+p.title+': '+n+'% · '+projectProgressStatus(n)+'.');
+  await loadProjects();
+ }catch(err){
+  $('#progress-error').textContent=err.message;
+  message(err.message,true);
+ }finally{save.disabled=false;}
+};
 let pendingDeleteProject=null;
 function openDeleteProject(p){
  if(!p||user?.role!=='chairman')return;
@@ -194,6 +248,8 @@ function openDeleteProject(p){
  $('#delete-project-dialog').showModal();
 }
 $('#managed-projects').onclick=e=>{
+ const progressButton=e.target.closest('[data-progress]');
+ if(progressButton){openProgressDialog(managed.find(p=>p.id===progressButton.dataset.progress));return;}
  const deleteButton=e.target.closest('[data-delete]');
  if(deleteButton){openDeleteProject(managed.find(p=>p.id===deleteButton.dataset.delete));return;}
  const editButton=e.target.closest('[data-edit]');
