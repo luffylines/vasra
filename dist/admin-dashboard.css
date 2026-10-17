@@ -1258,9 +1258,8 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-u
 }
 
 
-/* Sticky project upload toast: a child of <dialog> so it stays above its modal backdrop.
-   It is independent from the auto-dismiss success/error notifications. */
-#editor .project-upload-toast{
+/* Persistent top-layer upload popover, independent of editor dialog. */
+#project-upload-progress.project-upload-toast{
   position:fixed;top:max(18px,env(safe-area-inset-top));right:max(22px,env(safe-area-inset-right));
   z-index:1000;display:flex;align-items:center;gap:12px;
   width:min(340px,calc(100vw - 36px));min-height:60px;box-sizing:border-box;
@@ -1268,17 +1267,17 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-u
   border-left:4px solid #2f69c5;border-radius:14px;box-shadow:0 14px 40px rgba(18,46,88,.20);
   color:#1a457c;font-size:13px;font-weight:750;line-height:1.5;pointer-events:none;
 }
-#editor .project-upload-toast[hidden]{display:none!important}
-#editor .project-upload-spinner{flex:0 0 22px;width:22px;height:22px;border:3px solid #cbdcf4;border-top-color:#235cb4;border-radius:50%;animation:vasra-upload-spin .8s linear infinite}
+#project-upload-progress.project-upload-toast[hidden]{display:none!important}
+#project-upload-progress .project-upload-spinner{flex:0 0 22px;width:22px;height:22px;border:3px solid #cbdcf4;border-top-color:#235cb4;border-radius:50%;animation:vasra-upload-spin .8s linear infinite}
 @keyframes vasra-upload-spin{to{transform:rotate(360deg)}}
-body.account-workspace[data-theme="dark"] #editor .project-upload-toast{
+body.account-workspace[data-theme="dark"] #project-upload-progress.project-upload-toast{
   background:#193653;color:#e5f3ff;border-color:#517dae;border-left-color:#77b6fb;
 }
-body.account-workspace[data-theme="dark"] #editor .project-upload-spinner{border-color:#3d5b81;border-top-color:#80c3ff}
+body.account-workspace[data-theme="dark"] #project-upload-progress .project-upload-spinner{border-color:#3d5b81;border-top-color:#80c3ff}
 @media(max-width:600px){
- #editor .project-upload-toast{top:max(10px,env(safe-area-inset-top));right:10px;width:min(310px,calc(100vw - 20px));padding:11px 12px;font-size:12px}
+ #project-upload-progress.project-upload-toast{top:max(10px,env(safe-area-inset-top));right:10px;width:min(310px,calc(100vw - 20px));padding:11px 12px;font-size:12px}
 }
-@media(prefers-reduced-motion:reduce){#editor .project-upload-spinner{animation:none;border-top-color:#235cb4}}
+@media(prefers-reduced-motion:reduce){#project-upload-progress .project-upload-spinner{animation:none;border-top-color:#235cb4}}
 
 
 /* Dedicated, compact and responsive SK Vasra password-recovery experience. */
@@ -1896,4 +1895,81 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .r
  #dashboard .role-workflow-card{padding:14px}
  #dashboard .role-record-item{align-items:flex-start;flex-wrap:wrap}
  #dashboard .role-record-value{white-space:normal}
+}
+
+/* Top-layer progress persists after X; success/error remain visible for 14 s. */
+#project-upload-progress.project-upload-toast{
+ inset:auto;top:max(18px,env(safe-area-inset-top));right:max(22px,env(safe-area-inset-right));
+ bottom:auto;left:auto;margin:0;max-width:calc(100vw - 24px);
+ z-index:2147483640;isolation:isolate;
+}
+#project-upload-progress.project-upload-toast:popover-open{display:flex!important}
+#project-upload-progress.project-upload-toast[data-state="success"]{
+ background:#e7f8f0;border-color:#9ccdb6;border-left-color:#22845d;color:#195d40;
+}
+#project-upload-progress.project-upload-toast[data-state="error"]{
+ background:#fff0f2;border-color:#e6aeb8;border-left-color:#b3394e;color:#8f233c;
+}
+#project-upload-progress.project-upload-toast[data-state="success"] .project-upload-spinner,
+#project-upload-progress.project-upload-toast[data-state="error"] .project-upload-spinner{display:none}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #project-upload-progress.project-upload-toast[data-state="success"]{
+ background:#123c30;color:#d8ffec;border-color:#327b61;border-left-color:#7be6b5;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #project-upload-progress.project-upload-toast[data-state="error"]{
+ background:#4c2635;color:#ffe4e8;border-color:#925168;border-left-color:#ffa4b0;
+}
+/* Fix weak contrast on dark modal and misleading mint saving banner. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .project-save-feedback:not(.error){
+ background:#133f34!important;color:#e3ffef!important;border:1px solid #398265!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .project-save-feedback.error{
+ background:#512a37!important;color:#ffe4ec!important;border:1px solid #a66174!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-footer #project-save-note{
+ color:#d1e2fa!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal :is(
+ .editor-gallery-help,.editor-gallery-help b,.editor-upload-zone small,
+ .editor-upload-zone strong,.publish-field-description,.publish-field-title,
+ #project-publish-preview,.publication-choice small,.publication-choice strong,
+ #fb-import-status,#fb-review-hint,.fb-import-note
+){color:#e2efff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal :is(.editor-photo-cover,.editor-set-cover){
+ background:#113e7b!important;color:#fff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-upload-zone{
+ background:#213b5a!important;border-color:#5b86b1!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-photo{
+ background:#182e4d!important;border-color:#567396!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-section-title{
+ background:#294667!important;color:#f2f7ff!important;border-color:#55789c!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .publication-choice{
+ background:#132c48!important;color:#e2efff!important;border-color:#6b91bb!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .publication-choice.selected{
+ background:#234f80!important;color:#fff!important;border-color:#9cc7ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-footer button.secondary{
+ background:#2a4365!important;color:#edf5ff!important;border:1px solid #6689b3!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-footer button.primary:disabled{
+ background:#3a537a!important;color:#d7e5f8!important;opacity:.85;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal #editor-message:not(:empty):not(.error){
+ background:#203a56!important;color:#e2efff!important;
+}
+#editor.project-editor-modal #project-save-feedback[hidden],
+#editor.project-editor-modal #editor-message:empty{display:none!important}
+#editor.project-editor-modal .editor-photo-remove{background:#112742!important;color:#fff!important}
+#editor.project-editor-modal .editor-footer .project-save-feedback:not([hidden]){
+ flex:1 1 100%;max-width:100%;font-size:12px!important;line-height:1.55!important;padding:10px 12px;
+}
+@media(max-width:600px){
+ #project-upload-progress.project-upload-toast{
+  inset:auto;top:max(10px,env(safe-area-inset-top));right:10px;left:auto;bottom:auto;
+  width:min(310px,calc(100vw - 20px));
+ }
 }
