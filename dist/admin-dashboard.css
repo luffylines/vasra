@@ -1792,3 +1792,108 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-control
  #dashboard > #duty-controls button.duty-action-button{width:100%;justify-content:center}
 }
 @media(prefers-reduced-motion:reduce){#dashboard > #duty-controls button.duty-action-button{transition:none}}
+
+/* Dedicated Secretary and Treasurer dashboards – intentionally distinct from Kagawad. */
+body.account-workspace #secretary-overview[hidden],
+body.account-workspace #treasurer-overview[hidden]{display:none!important}
+#dashboard .role-overview{margin:0 0 24px;min-width:0}
+#dashboard .role-dashboard-hero{
+ display:flex;gap:16px;align-items:center;padding:23px 24px;border-radius:18px;
+ background:linear-gradient(115deg,#16345e,#285e94);color:#fff;margin:0 0 16px;
+ box-shadow:0 12px 30px rgba(25,63,112,.12);min-width:0;
+}
+#dashboard #treasurer-overview .role-dashboard-hero{background:linear-gradient(115deg,#183f51,#297d87)}
+#dashboard .role-hero-icon{width:56px;height:56px;display:grid;place-items:center;
+ flex:none;border:1px solid #ffffff38;border-radius:15px;background:#ffffff20}
+#dashboard .role-hero-icon svg{width:27px;height:27px}
+#dashboard .role-dashboard-hero>div{flex:1;min-width:0}
+#dashboard .role-kicker{display:block;color:#c4dcfb;letter-spacing:1.4px;font-size:10px;font-weight:850}
+#dashboard .role-dashboard-hero h2{color:#fff!important;font-size:23px;line-height:1.25;margin:7px 0}
+#dashboard .role-dashboard-hero p{color:#d8e8fa!important;line-height:1.55;font-size:12px;margin:0}
+#dashboard .role-hero-tag{flex:none;white-space:nowrap;border-radius:999px;border:1px solid #ffffff52;background:#ffffff16;
+ padding:8px 11px;color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px}
+#dashboard .role-dashboard-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:19px}
+#dashboard .role-metric{border:1px solid #deebf5;background:#fff;border-radius:15px;
+ padding:18px;min-width:0;display:flex;gap:12px;align-items:flex-start;box-shadow:0 5px 17px #152b5010}
+#dashboard .role-metric-icon{display:grid;place-items:center;flex:none;width:40px;height:40px;
+ background:#eaf2ff;color:#2763a9;border-radius:12px}
+#dashboard #treasurer-overview .role-metric-icon{background:#e3f7f4;color:#26756f}
+#dashboard .role-metric-icon svg{width:21px;height:21px}
+#dashboard .role-metric>div{min-width:0}
+#dashboard .role-metric-label{display:block;font-size:10px;line-height:1.3;color:#607e9e;font-weight:800}
+#dashboard .role-metric strong{display:block;margin:6px 0;font-size:23px;line-height:1.2;overflow-wrap:anywhere;color:#193e68}
+#dashboard .role-metric small{display:block;color:#6d85a0;font-size:10px;line-height:1.45}
+#dashboard .role-dashboard-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:17px;align-items:start}
+#dashboard .role-dashboard-layout>div{min-width:0}
+#dashboard .role-section-header{margin:0 0 12px}
+#dashboard .role-section-header h3{font-size:16px;color:#20456c;margin:0 0 5px}
+#dashboard .role-section-header p{color:#6e819b;font-size:11px;margin:0;line-height:1.45}
+#dashboard .role-workflows{display:grid;gap:10px}
+#dashboard .role-workflow-card{
+ display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px 12px;align-items:start;
+ padding:17px;border-radius:14px;border:1px solid #dce6f4;background:#fff;min-width:0;
+ box-shadow:0 3px 13px #16315b09;
+}
+#dashboard .role-workflow-icon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+ background:#e9f2ff;color:#2868ac}
+#dashboard #treasurer-overview .role-workflow-icon{background:#e6f5f1;color:#28796d}
+#dashboard .role-workflow-icon svg{width:21px;height:21px}
+#dashboard .role-workflow-card h3{font-size:13px;color:#19406b;margin:2px 0 6px}
+#dashboard .role-workflow-card p{font-size:11px;color:#6a829d;line-height:1.55;margin:0}
+#dashboard .role-workflow-card button{
+ grid-column:2;justify-self:start;border:1px solid #c4daf2;color:#245c9b;
+ background:#edf5ff;border-radius:9px;padding:9px 12px;font-size:11px;font-weight:800;
+ cursor:pointer;display:flex;align-items:center;gap:10px;min-height:37px}
+#dashboard .role-workflow-card button:hover{background:#e0efff}
+#dashboard .role-workflow-card button:focus-visible{outline:3px solid #9fc9f8;outline-offset:2px}
+#dashboard .role-records{border:1px solid #dce7f5;background:#fff;border-radius:14px;
+ min-height:96px;padding:7px 15px;font-size:12px;color:#677f9d}
+#dashboard .role-record-item{display:flex;gap:10px;align-items:center;justify-content:space-between;
+ padding:13px 0;border-bottom:1px solid #e9eef5}
+#dashboard .role-record-item:last-child{border-bottom:0}
+#dashboard .role-record-item>div{min-width:0}
+#dashboard .role-record-item strong{display:block;color:#204b7b;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+#dashboard .role-record-item small{display:block;font-size:10px;color:#6b829d;line-height:1.5;margin-top:3px;
+ overflow-wrap:anywhere}
+#dashboard .role-record-value{font-size:10px;font-weight:800;color:#316eaa;white-space:nowrap}
+#dashboard .role-record-empty{padding:24px 8px;text-align:center;color:#677f9d;font-size:12px;line-height:1.5}
+#dashboard .role-workflow-note{display:flex;gap:10px;align-items:flex-start;margin:11px 0 0;
+ background:#f0f6ff;border:1px solid #d7e6f9;color:#456888;
+ border-radius:11px;padding:12px;font-size:11px;line-height:1.5}
+#dashboard .role-workflow-note svg{width:18px;height:18px;flex:none;color:#3170b0;margin-top:1px}
+#dashboard .role-workflow-note strong{color:#235083}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-metric,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-records{
+ background:#1d324d!important;border-color:#425e82!important;color:#d5e6fa!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-metric :is(strong,.role-metric-label),
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card h3,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-record-item strong,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-section-header h3{
+ color:#e3f0ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-section-header p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-record-item small,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-metric small{
+ color:#b0c7e4!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-note{
+ background:#263e5b;border-color:#4b6d97;color:#c8def5}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-note strong{color:#e0eeff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-record-item{border-bottom-color:#385373}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card button{
+ background:#2a4a70;border-color:#4b759f;color:#e5f2ff}
+@media(max-width:1050px){
+ #dashboard .role-dashboard-layout{grid-template-columns:1fr}
+ #dashboard .role-dashboard-metrics{gap:9px}
+ #dashboard .role-metric{padding:15px;gap:9px}
+}
+@media(max-width:710px){
+ #dashboard .role-dashboard-hero{padding:18px;flex-wrap:wrap;gap:12px}
+ #dashboard .role-dashboard-hero h2{font-size:20px}
+ #dashboard .role-hero-tag{margin-left:0}
+ #dashboard .role-dashboard-metrics{grid-template-columns:1fr;gap:9px}
+ #dashboard .role-metric strong{font-size:21px}
+ #dashboard .role-workflow-card{padding:14px}
+ #dashboard .role-record-item{align-items:flex-start;flex-wrap:wrap}
+ #dashboard .role-record-value{white-space:normal}
+}
