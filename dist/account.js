@@ -253,10 +253,17 @@ function nextSchedulePHInput(){
 function updatePublicationFields(){
  const mode=$('#project-publication-mode').value,wrap=$('#project-publish-datetime-wrap'),info=$('#project-publish-preview');
  const input=$('#project-publish-datetime');
- // Refresh this bound every time the picker or form is used (not only on page load).
- input.min=phtLocalInput(new Date(Math.ceil((Date.now()+60*1000)/(60*1000))*(60*1000)));
- wrap.hidden=mode!=='schedule';
- input.required=mode==='schedule';
+ // A hidden datetime-local is STILL a constraint-validated form control.
+ // Disable it completely unless scheduling; otherwise an old date from an
+ // existing project blocks Publish Now, Save Draft, or Keep Current.
+ const scheduling=mode==='schedule';
+ wrap.hidden=!scheduling;
+ input.disabled=!scheduling;
+ input.required=scheduling;
+ input.min=scheduling
+  ?phtLocalInput(new Date(Math.ceil((Date.now()+60*1000)/(60*1000))*(60*1000)))
+  :'';
+ if(!scheduling&&typeof input.setCustomValidity==='function')input.setCustomValidity('');
  info.classList.remove('publication-time-error');
  // The main save action always reflects whether this change stays private or goes public.
  const save=$('#save-project'),note=$('#project-save-note');
@@ -751,7 +758,9 @@ $('#project-form').addEventListener('invalid',e=>{
  const control=e.target;
  const names={title:'Project Title',category:'Category',description:'Summary',scope:'Details / Scope',
   status:'Status',progress:'Progreso (%)',publication_mode:'Publication'};
- const field=names[control.name]||'required field';
+ const field=control.id==='project-publish-datetime'
+  ?'Petsa at oras ng publication'
+  :(names[control.name]||'required field');
  projectSaveFeedback('Hindi pa ma-save: pakisuri ang '+field+'. '+(control.validationMessage||''),true);
 },true);
 $('#project-form').addEventListener('input',e=>{
