@@ -69,3 +69,39 @@ test('scripts remain syntactically valid and images are accessed through existin
  assert.match(publicApp,/const galleryUrl=id=>'\.\/api\/images\/'.*encodeURIComponent\(id\)/);
  assert.doesNotMatch(staffHtml,/src="https?:\/\//);
 });
+test('draft cards have safe Publish Now action and a confirmation dialog',()=>{
+ assert.match(staff,/data-publish/);
+ assert.match(staff,/!p\.published&&\['sk','chairman'\]\.includes\(user\?\.role\)/);
+ assert.match(staff,/function openPublishProject\(p\)/);
+ assert.match(staff,/function draftPublishPayload\(p\)/);
+ assert.match(staff,/result\.project\.published!==true/);
+ assert.match(staff,/method:'PUT',body:JSON\.stringify\(draftPublishPayload\(p\)\)/);
+ assert.match(staffHtml,/id="publish-project-dialog"/);
+ assert.match(staffHtml,/id="publish-project-confirm"/);
+ assert.match(staffCss,/#managed-projects \.project-publish-trigger/);
+});
+test('publishing payload preserves details, image order, and project version',()=>{
+ const c=vm.createContext({});
+ const gallery=staff.match(/const managedGalleryIds=p=>[^\n]+;/)?.[0];
+ const payload=staff.slice(staff.indexOf('function draftPublishPayload(p)'),staff.indexOf('let pendingPublishProject=null'));
+ assert(gallery&&payload);
+ vm.runInContext(gallery+'\n'+payload,c);
+ const p={id:'id',version:7,title:'School project',category:'Edukasyon',description:'Summary',
+  scope:'Scope',status:'Natapos',progress:100,image_id:'old',image_ids:['cover','two'],published:false};
+ const result=vm.runInContext('draftPublishPayload('+JSON.stringify(p)+')',c);
+ assert.deepEqual(JSON.parse(JSON.stringify(result)),{
+  title:'School project',category:'Edukasyon',description:'Summary',scope:'Scope',
+  status:'Natapos',progress:100,image_ids:['cover','two'],image_id:'cover',
+  version:7,publication_mode:'now',published:true,publish_at:null
+ });
+});
+test('project editor scrolls internally while header and action footer stay visible',()=>{
+ assert.match(staffHtml,/id="project-editor-scroll"/);
+ assert.match(staffHtml,/id="editor-cancel"/);
+ assert.match(staffHtml,/id="project-save-note"/);
+ assert.match(staff,/$('#editor-cancel').onclick=/);
+ assert.match(staffCss,/#editor\.project-editor-modal\[open\]/);
+ assert.match(staffCss,/#editor\.project-editor-modal #project-editor-scroll/);
+ assert.match(staffCss,/overflow-y:auto;overscroll-behavior:contain/);
+ assert.match(staffCss,/#editor\.project-editor-modal \.editor-footer/);
+});
