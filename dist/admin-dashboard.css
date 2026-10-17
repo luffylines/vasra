@@ -1559,3 +1559,44 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-proj
  #publish-project-dialog{padding:22px 18px}
  #publish-project-dialog .publish-confirm-actions button{flex:1}
 }
+
+/* Visual publication choice tiles (the original select remains the form source). */
+#editor #project-publication-controls{position:relative}
+#editor #project-publication-choices{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;
+}
+#editor .publication-choice{
+ display:flex;flex-direction:column;align-items:flex-start;text-align:left;
+ gap:5px;min-width:0;min-height:112px;margin:0;padding:13px 11px;
+ border:1px solid #cfdef0;border-radius:11px;background:#fff;
+ color:#385578;cursor:pointer;transition:border-color .15s,background .15s;
+}
+#editor .publication-choice strong{color:#284c78;font-size:12px;font-weight:800;line-height:1.35}
+#editor .publication-choice small{font-size:10px;line-height:1.45;color:#6982a1}
+#editor .publication-choice-icon{
+ display:grid;place-items:center;width:27px;height:27px;border-radius:9px;
+ background:#e6effd;color:#285fab;font-size:16px;font-weight:800;
+}
+#editor .publication-choice.selected{background:#e8f2ff;border:2px solid #3169b4;padding:12px 10px}
+#editor .publication-choice.selected .publication-choice-icon{background:#2c64b1;color:#fff}
+#editor .publication-choice:focus-visible{outline:3px solid #75a7e4;outline-offset:2px}
+#editor .publication-choice[hidden]{display:none!important}
+#editor #project-publication-mode{
+ position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;
+ padding:0!important;margin:0!important;border:0!important;clip-path:inset(50%);
+ overflow:hidden!important;opacity:0;pointer-events:none;
+}
+#editor .publication-choice-keep{grid-column:1/-1;min-height:76px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice{
+ background:#142c47;color:#e1efff;border-color:#4c6c94;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice strong{color:#e4efff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice small{color:#b4ccec}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice.selected{background:#1d4670;border-color:#82bbff}
+@media(max-width:540px){
+ #editor #project-publication-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #editor .publication-choice{min-height:102px;padding:11px 9px}
+ #editor .publication-choice.selected{padding:10px 8px}
+ #editor .publication-choice-keep{grid-column:1/-1;min-height:70px}
+}
+@media(prefers-reduced-motion:reduce){#editor .publication-choice{transition:none}}
