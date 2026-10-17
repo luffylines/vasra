@@ -1666,3 +1666,54 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-i
  #editor #fb-import-panel .fb-import-chevron,
  #editor #fb-import-panel .fb-import-chevron svg{transition:none}
 }
+/* Persistent save feedback beside the action; works for native validation and API errors. */
+#editor.project-editor-modal .project-save-feedback{
+ flex:1 1 100%;min-width:0;margin:0;padding:9px 11px;line-height:1.5;
+ font-size:12px;font-weight:750;color:#1a674b;background:#e6f6ec;
+ border:1px solid #b6decb;border-radius:9px;overflow-wrap:anywhere;
+}
+#editor.project-editor-modal .project-save-feedback.error{
+ color:#9e2538;background:#fff0f1;border-color:#f0c3cb;
+}
+#editor.project-editor-modal .project-save-feedback[hidden]{display:none!important}
+#editor.project-editor-modal .editor-footer:has(.project-save-feedback:not([hidden])){flex-wrap:wrap}
+#editor.project-editor-modal .editor-footer .project-save-feedback:not([hidden]){order:-1}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .project-save-feedback.error{
+ background:#482636;border-color:#a45566;color:#ffd4de;
+}
+@media(max-width:650px){
+ #editor.project-editor-modal .editor-footer .project-save-feedback:not([hidden]){flex:1 1 100%}
+}
+/* Chairman delete confirmation: copy the exact name, then manually paste to confirm. */
+#delete-project-dialog .delete-project-copy-row{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:10px 12px;margin:7px 0;border:1px solid #d3e1f2;border-radius:10px;
+ background:#f3f7fd;
+}
+#delete-project-dialog .delete-project-copy-row strong{
+ font-size:13px;line-height:1.4;overflow-wrap:anywhere;min-width:0;color:#214b79;
+}
+#delete-project-dialog .delete-project-copy-name{
+ display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;
+ background:#e7effd;border:1px solid #aac4e8;border-radius:9px;color:#225a9c;
+ min-height:38px;padding:8px 10px;font-weight:750;font-size:11px;cursor:pointer;
+}
+#delete-project-dialog .delete-project-copy-name:hover{background:#d8e9ff}
+#delete-project-dialog .delete-project-copy-name:focus-visible{outline:3px solid #8db5ef;outline-offset:2px}
+#delete-project-dialog #delete-project-copy-status{
+ margin:3px 0 10px;font-size:11px;font-weight:750;color:#186549;
+}
+#delete-project-dialog #delete-project-copy-status[hidden]{display:none!important}
+#delete-project-dialog #delete-project-copy-status.error{color:#aa303b}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog .delete-project-copy-row{
+ background:#142740;border-color:#4d698a;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog .delete-project-copy-row strong{color:#e1eeff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog .delete-project-copy-name{
+ color:#d9eaff;background:#23466c;border-color:#5379a6;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog #delete-project-copy-status{color:#9fefd1}
+@media(max-width:420px){
+ #delete-project-dialog .delete-project-copy-row{flex-direction:column;align-items:stretch}
+ #delete-project-dialog .delete-project-copy-name{width:100%}
+}
