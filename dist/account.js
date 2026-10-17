@@ -819,7 +819,7 @@ async function uploadPhotoRequest(data,stage){
    const msg=String(error?.message||'');
    // Authentication, validation, integrity and missing images need a real fix,
    // not an automatic retry that could conceal or repeat invalid requests.
-   const transient=/Hindi makonekta|server|timed?\\s*out|network|fetch|temporar|try again|retry|502|503|504/i.test(msg);
+   const transient=/Hindi makonekta|Hindi natuloy ang pag-upload|server|timed?\s*out|network|fetch|temporar|try again|retry|502|503|504/i.test(msg);
    if(!transient||attempt===maxTries){
     throw Error(stage+': '+(msg||'Hindi natuloy ang pag-upload.')+
       ' Subukan muli kung stable na ang internet; hindi mabubura ang mga larawang na-save na.');
