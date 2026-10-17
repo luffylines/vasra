@@ -123,3 +123,19 @@ test('Authorized SK officers also see project deletion and Facebook import contr
  assert.match(js,/if\(!p\|\|!\['sk','chairman'\]\.includes\(user\?\.role\)\)return;/);
  assert.match(js,/const facebook=mode==='facebook'&&!editing&&\['sk','chairman'\]\.includes\(user\?\.role\)/);
 });
+
+test('SK officer deletion migration retains authorization, record version and financial safeguards',()=>{
+ const migration=fs.readFileSync(path.join(root,'supabase/migrations/20261017094500_sk_officer_project_permissions.sql'),'utf8');
+ assert.match(migration,/u\.role IN \('sk','chairman'\)/);
+ assert.match(migration,/NOT u\.must_change/);
+ assert.match(migration,/project_row\.version<>\(payload->>'version'\)::integer/);
+ assert.match(migration,/report_count>0/);
+ assert.match(migration,/reason','monthly_reports'/);
+ assert.match(migration,/INSERT INTO vasra\.audit/);
+ assert.match(migration,/GRANT EXECUTE ON FUNCTION public\.vasra_project_delete\(text,jsonb,text\) TO service_role/);
+ assert.doesNotMatch(migration,/GRANT EXECUTE ON FUNCTION public\.vasra_project_delete\(text,jsonb,text\) TO (?:anon|authenticated)/);
+});
+test('Project delete access is limited to SK role while account/roster management stays Chairman only',()=>{
+ assert.match(source,/await user\(\['chairman'\]\); const b = await body\(\); if \(!\['sk','youth'\]\.includes\(b\.role\)\)/);
+ assert.match(js,/if\(\['roster','users','audit'\]\.includes\(name\)&&user\?\.role!=='chairman'\)/);
+});
