@@ -238,7 +238,7 @@ test('upload progress lives outside modal and remains until completion or error'
  assert(html.indexOf('id="project-upload-progress"')<html.indexOf('<dialog id="editor"'));
  assert.match(staff,/function projectUploadStatus\(text,state='uploading'\)/);
  assert.match(staff,/toast\.showPopover\(\)/);
- assert.match(staff,/data-state="uploading"/);
+ assert.match(toast,/data-state="uploading"/);
  assert.match(staff,/projectUploadStatus\(notice\+' · '\+job\.photos\.length/);
  assert.match(staff,/startProjectSave\(captureProjectSave\(true\)\)/);
 });
