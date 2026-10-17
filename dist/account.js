@@ -255,9 +255,22 @@ async function loadProjects(){
    <div class="project-manage-media">${thumbnail}<span class="project-manage-photo-count">${photoCount?photoCount+' '+(photoCount===1?'photo':'photos'):'No photos'}</span></div>
    <div class="project-manage-info"><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p>
    <div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div>
-   <div class="project-row-actions">${!p.published&&['sk','chairman'].includes(user?.role)?'<button type="button" class="project-publish-trigger" data-publish="'+esc(p.id)+'" aria-label="Publish now ang '+esc(p.title)+'">↗ Publish Now</button>':''}${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">▣ Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div>
+   <div class="project-row-actions">${!p.published&&['sk','chairman'].includes(user?.role)?'<button type="button" class="project-publish-trigger" data-publish="'+esc(p.id)+'" aria-label="Publish now ang '+esc(p.title)+'">'+managementActionIcon('globe')+' Publish Now</button>':''}${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">'+managementActionIcon('photos')+' Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">'+managementActionIcon('progress')+' Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">'+managementActionIcon('edit')+' Edit</button>${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">'+managementActionIcon('delete')+' Delete</button>':''}</div>
   </article>`;
  }).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>';
+}
+
+/* Unified Lucide-style action icons for dynamically created staff buttons. */
+function managementActionIcon(type){
+ const paths={
+  right:'<path d="M5 12h14m-6-6 6 6-6 6"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  photos:'<rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m5 17 4-4 3 3 3-4 4 5"/>',
+  progress:'<path d="M4 17h4l3-9 4 12 3-7h3"/>',
+  edit:'<path d="m4 20 4.5-1 10.9-10.9a2 2 0 0 0-2.8-2.8L5.7 16.2 4 20Z"/>',
+  delete:'<path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/>'
+ };
+ return '<svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+(paths[type]||paths.right)+'</svg>';
 }
 
 /* Role dashboards show real existing database records. No invented minutes,
@@ -351,7 +364,10 @@ function updatePublicationFields(){
  info.classList.remove('publication-time-error');
  // The main save action always reflects whether this change stays private or goes public.
  const save=$('#save-project'),note=$('#project-save-note');
- if(save)save.textContent=mode==='draft'?'Save as Draft →':mode==='now'?'Publish Project →':mode==='schedule'?'Schedule Project →':'Save Changes →';
+ if(save){
+  save.textContent=mode==='draft'?'Save as Draft':mode==='now'?'Publish Project':mode==='schedule'?'Schedule Project':'Save Changes';
+  save.insertAdjacentHTML('beforeend',managementActionIcon('right'));
+ }
  if(note)note.textContent=mode==='draft'?'Draft lamang — sa SK accounts lang makikita.':
   mode==='now'?'Magiging public ang project at mga larawan pagkatapos ma-save.':
   mode==='schedule'?'Mananatiling nakatago hanggang sa napiling oras sa Pilipinas.':
