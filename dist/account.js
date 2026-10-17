@@ -721,6 +721,7 @@ function facebookAiStatus(info){
   const code=info.http_status;
   if(code===401||code===403)return 'Groq authentication failed (HTTP '+code+'). Suriin ang GROQ_API_KEY.';
   if(code===429)return 'Groq rate limit o credits exceeded (HTTP 429). Basic analysis ang ginamit.';
+  if(code===404)return 'Groq model o endpoint unavailable (HTTP 404). Na-update na ang default sa GPT-OSS 20B; siguraduhing latest deployment ang binuksan. Basic draft lamang ito.';
   return 'Groq returned HTTP '+code+'. Suriin ang API/model configuration at deployment logs.';
  }
  if(info.status==='timeout')return 'Nag-timeout ang Groq request. Basic analysis ang ginamit.';
