@@ -105,3 +105,14 @@ test('project editor scrolls internally while header and action footer stay visi
  assert.match(staffCss,/overflow-y:auto;overscroll-behavior:contain/);
  assert.match(staffCss,/#editor\.project-editor-modal \.editor-footer/);
 });
+test('publication choices use accessible buttons but preserve the existing select as form source',()=>{
+ assert.match(staffHtml,/id="project-publication-choices"/);
+ for(const mode of ['draft','now','schedule','keep'])assert(staffHtml.includes('data-publication-option="'+mode+'"'));
+ assert.match(staffHtml,/id="project-publication-mode" tabindex="-1" aria-hidden="true"/);
+ assert.match(staff,/publicationChoices\.addEventListener\('click'/);
+ assert.match(staff,/dataset\.publicationOption/);
+ assert.match(staff,/dispatchEvent\(new Event\('change'/);
+ assert.match(staff,/if\(save\)save\.textContent=/);
+ assert.match(staff,/if\(note\)note\.textContent=/);
+ assert.match(staffCss,/#editor #project-publication-choices/);
+});
