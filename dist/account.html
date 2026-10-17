@@ -132,7 +132,13 @@
 <div class="editor-publish" id="project-publication-controls">
   <label for="project-publication-mode" class="publish-field-title">Publication ng proyekto</label>
   <p class="publish-field-description">Piliin kung kailan ito lalabas sa public Mga proyekto. Philippine Standard Time (PHT).</p>
-  <select name="publication_mode" id="project-publication-mode">
+  <div class="project-publication-choices" id="project-publication-choices" role="group" aria-label="Piliin ang publication ng proyekto">
+  <button type="button" class="publication-choice selected" data-publication-option="draft" aria-pressed="true"><span class="publication-choice-icon" aria-hidden="true">▤</span><strong>Save as Draft</strong><small>SK accounts lang muna ang makakakita</small></button>
+  <button type="button" class="publication-choice" data-publication-option="now" aria-pressed="false"><span class="publication-choice-icon" aria-hidden="true">↗</span><strong>Publish Now</strong><small>Makikita agad sa public website</small></button>
+  <button type="button" class="publication-choice" data-publication-option="schedule" aria-pressed="false"><span class="publication-choice-icon" aria-hidden="true">◷</span><strong>Schedule</strong><small>Pumili ng petsa at oras (PHT)</small></button>
+  <button type="button" class="publication-choice publication-choice-keep" id="publication-keep" data-publication-option="keep" aria-pressed="false" hidden><span class="publication-choice-icon" aria-hidden="true">✓</span><strong>Keep current</strong><small>Huwag baguhin ang publication date</small></button>
+ </div>
+ <select name="publication_mode" id="project-publication-mode" tabindex="-1" aria-hidden="true">
     <option value="draft">Save as Draft — Huwag munang i-publish</option>
     <option value="now">Publish Now — Ipakita agad sa website</option>
     <option value="schedule">Schedule Publication — Pumili ng petsa at oras</option>
