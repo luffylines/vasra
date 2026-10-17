@@ -201,7 +201,25 @@ async function selectTab(name){const tabs=['overview','projects','monthly','budg
  document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
-async function loadProjects(){managed=(await api('./api/manage/projects')).projects;updateChairmanMetrics();$('#managed-projects').innerHTML=managed.map(p=>`<article class="manage-row"><div><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p><div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div><div class="project-row-actions">${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div></article>`).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>'}
+// The gallery's first image is authoritative when an older record has no image_id.
+const managedGalleryIds=p=>Array.isArray(p.image_ids)&&p.image_ids.length?p.image_ids:(p.image_id?[p.image_id]:[]);
+const managedPhotoUrl=id=>'./api/images/'+encodeURIComponent(id);
+async function loadProjects(){
+ managed=(await api('./api/manage/projects')).projects;
+ updateChairmanMetrics();
+ $('#managed-projects').innerHTML=managed.map(p=>{
+  const ids=managedGalleryIds(p),photoCount=ids.length;
+  const thumbnail=photoCount
+   ?'<button type="button" class="project-manage-thumbnail" data-view-gallery="'+esc(p.id)+'" aria-label="Tingnan ang '+photoCount+' larawan ng '+esc(p.title)+'"><span class="project-thumb-fallback" aria-hidden="true">SK</span><img src="'+esc(managedPhotoUrl(ids[0]))+'" alt="" loading="lazy" decoding="async"></button>'
+   :'<span class="project-manage-thumbnail is-empty" aria-label="Wala pang larawan"><span class="project-thumb-fallback" aria-hidden="true">SK</span></span>';
+  return `<article class="manage-row project-manage-row">
+   <div class="project-manage-media">${thumbnail}<span class="project-manage-photo-count">${photoCount?photoCount+' '+(photoCount===1?'photo':'photos'):'No photos'}</span></div>
+   <div class="project-manage-info"><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p>
+   <div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div>
+   <div class="project-row-actions">${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">▣ Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div>
+  </article>`;
+ }).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>';
+}
 function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published&&(!p.publish_at||Date.parse(p.publish_at)<=Date.now())).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
 
 
@@ -391,7 +409,53 @@ function openDeleteProject(p){
  $('#delete-project-error').textContent='';
  $('#delete-project-dialog').showModal();
 }
+let staffGalleryImages=[],staffGalleryIndex=0,staffGalleryTitle='';
+function renderStaffGallery(){
+ if(!staffGalleryImages.length)return;
+ const image=$('#staff-gallery-image');
+ image.hidden=false;
+ $('#staff-gallery-error').hidden=true;
+ image.src=managedPhotoUrl(staffGalleryImages[staffGalleryIndex]);
+ image.alt=staffGalleryTitle+' — photo '+(staffGalleryIndex+1)+' of '+staffGalleryImages.length;
+ $('#staff-gallery-count').textContent=(staffGalleryIndex+1)+' / '+staffGalleryImages.length;
+ $('#staff-gallery-prev').disabled=staffGalleryImages.length<2;
+ $('#staff-gallery-next').disabled=staffGalleryImages.length<2;
+}
+function openStaffGallery(p){
+ if(!p||!['sk','chairman'].includes(user?.role))return;
+ const ids=managedGalleryIds(p);if(!ids.length)return;
+ staffGalleryImages=ids.slice();
+ staffGalleryIndex=0;
+ staffGalleryTitle=p.title;
+ $('#staff-gallery-title').textContent=p.title;
+ renderStaffGallery();
+ $('#staff-project-gallery').showModal();
+}
+function moveStaffGallery(step){
+ if(!staffGalleryImages.length)return;
+ staffGalleryIndex=(staffGalleryIndex+step+staffGalleryImages.length)%staffGalleryImages.length;
+ renderStaffGallery();
+}
+$('#staff-gallery-prev').onclick=()=>moveStaffGallery(-1);
+$('#staff-gallery-next').onclick=()=>moveStaffGallery(1);
+$('#staff-gallery-close').onclick=()=>$('#staff-project-gallery').close();
+$('#staff-project-gallery').addEventListener('click',e=>{if(e.target.id==='staff-project-gallery')e.target.close();});
+$('#staff-project-gallery').addEventListener('close',()=>{staffGalleryImages=[];$('#staff-gallery-image').removeAttribute('src');});
+$('#staff-gallery-image').addEventListener('error',()=>{$('#staff-gallery-image').hidden=true;$('#staff-gallery-error').hidden=false;});
+$('#staff-gallery-image').addEventListener('load',()=>{$('#staff-gallery-image').hidden=false;$('#staff-gallery-error').hidden=true;});
+document.addEventListener('keydown',e=>{
+ if(!$('#staff-project-gallery').open)return;
+ if(e.key==='ArrowLeft'){e.preventDefault();moveStaffGallery(-1);}
+ if(e.key==='ArrowRight'){e.preventDefault();moveStaffGallery(1);}
+});
+// Preserve the placeholder if an uploaded image is unavailable.
+$('#managed-projects').addEventListener('error',e=>{
+ if(e.target.matches?.('.project-manage-thumbnail img'))e.target.hidden=true;
+},true);
+
 $('#managed-projects').onclick=e=>{
+ const galleryButton=e.target.closest('[data-view-gallery]');
+ if(galleryButton){openStaffGallery(managed.find(p=>p.id===galleryButton.dataset.viewGallery));return;}
  const progressButton=e.target.closest('[data-progress]');
  if(progressButton){openProgressDialog(managed.find(p=>p.id===progressButton.dataset.progress));return;}
  const deleteButton=e.target.closest('[data-delete]');
