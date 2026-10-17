@@ -236,3 +236,33 @@ test('upload progress stays in an accessible fixed dialog toast until completion
  assert.match(staff,/success\(editing\?/);
  assert.doesNotMatch(staff,/setTimeout\([^)]*projectUploadStatus/);
 });
+test('GEAR UP road safety seminar uses educational category from full caption body',async()=>{
+ const caption='OCTOBER 10, 2026 | GEAR UP!\nNoong October 10, 2026, idinaos ang GEAR UP! Secured Kabataan: Road Safety Awareness Seminar sa 2nd Floor, Mines Multipurpose Building, sa pakikipagtulungan ng Automobile Association Philippines (AAP). Dinaluhan ito ng mga kabataang riders mula sa ride-hailing at delivery platforms. Tinuro ang mga traffic signs at road safety.';
+ const draft=await FB.importFacebookPost({caption},{aiKey:''});
+ assert.equal(draft.draft.category,'Edukasyon');
+ assert.equal(draft.draft.content_type,'project');
+ assert.equal(draft.draft.activity_date,'2026-10-10');
+});
+test('Groq cannot downgrade an evidence-supported education category to Iba pang programa',async()=>{
+ const caption='OCTOBER 10, 2026 | GEAR UP!\nNaganap ang Road Safety Awareness Seminar para sa mga kabataang riders. Tinuruan sila tungkol sa traffic signs.';
+ const result=await FB.importFacebookPost({caption},{aiKey:'test',fetcher:async()=>({
+  ok:true,json:async()=>({choices:[{message:{content:JSON.stringify({
+   title:'GEAR UP! Road Safety Seminar',category:'Iba pang programa',
+   description:'Road safety awareness seminar para sa youth riders.',
+   scope:'Road signs and safe riding.'
+  })}}]})
+ })});
+ assert.equal(result.draft.method,'ai');
+ assert.equal(result.draft.category,'Edukasyon');
+ assert.equal(result.draft.description,'Road safety awareness seminar para sa youth riders.');
+});
+test('Unrelated education mention does not turn an SK meeting into a project',async()=>{
+ const caption='OCTOBER 10, 2026 | SK VASRA REGULAR SESSION\nNaganap ang regular session ng SK council tungkol sa road safety seminar at mga educational plans.';
+ const result=await FB.importFacebookPost({caption},{aiKey:''});
+ assert.equal(result.draft.content_type,'meeting');
+ assert.equal(result.draft.category,'SK Regular Session');
+});
+test('Caption Analyzer disclosure uses modern SVG chevron with open-state rotation',()=>{
+ assert.match(html,/<span class="fb-import-chevron"[^>]*><svg/);
+ assert.doesNotMatch(html,/<span class="fb-import-chevron"[^>]*>⌄<\/span>/);
+});
