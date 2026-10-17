@@ -19,7 +19,8 @@ function createMock(role='chairman',deleteResult={ok:true,id:projectId}){
  const calls=[];
  const backend={rpc:async(action,payload,session)=>{
   calls.push({action,payload,session});
-  if(action==='me')return {id:'actor',role,must_change:false,name:'Test Chairman'};
+  if(action==='me')return {id:'actor',role,must_change:false,name:'Test SK Staff'};
+  if(action==='rate_limit')return {allowed:true};
   if(action==='gallery_verify')return {ok:true};
   if(action==='save_project')return {...payload,id:projectId,version:8};
   if(action==='gallery_set')return {ok:true,image_ids:payload.image_ids};
@@ -37,17 +38,19 @@ async function request(handler,method,body,origin=base){
  const res=await handler(req);
  return {status:res.status,body:await res.json()};
 }
-test('Chairman can DELETE a versioned project, through existing authenticated endpoint',async()=>{
- const {handler,calls}=createMock();
- const res=await request(handler,'DELETE',{version:7});
- assert.equal(res.status,200,JSON.stringify(res.body));
- assert.deepEqual(res.body,{ok:true,id:projectId});
- assert(calls.some(x=>x.action==='project_delete'&&x.payload.id===projectId&&x.payload.version===7));
+test('Both SK Chairman and SK officers can DELETE a versioned project',async()=>{
+ for(const role of ['chairman','sk']){
+  const {handler,calls}=createMock(role);
+  const res=await request(handler,'DELETE',{version:7});
+  assert.equal(res.status,200,role+': '+JSON.stringify(res.body));
+  assert.deepEqual(res.body,{ok:true,id:projectId});
+  assert(calls.some(x=>x.action==='project_delete'&&x.payload.id===projectId&&x.payload.version===7));
+ }
 });
 test('DELETE still enforces role, CSRF origin, version and financial-history protection',async()=>{
- const sk=createMock('sk');
- assert.equal((await request(sk.handler,'DELETE',{version:7})).status,403);
- assert(!sk.calls.some(x=>x.action==='project_delete'));
+ const youth=createMock('youth');
+ assert.equal((await request(youth.handler,'DELETE',{version:7})).status,403);
+ assert(!youth.calls.some(x=>x.action==='project_delete'));
  const fake=createMock();
  assert.equal((await request(fake.handler,'DELETE',{version:7},'https://evil.example')).status,403);
  assert(!fake.calls.some(x=>x.action==='project_delete'));
@@ -90,6 +93,33 @@ test('delete confirmation offers exact-name copy, without bypassing typed-name v
 });
 test('server allowlist includes DELETE without allowing arbitrary methods',()=>{
  assert.match(source,/\['GET','POST','PUT','DELETE'\]\.includes\(method\)/);
- assert.match(source,/await user\(\['chairman'\]\)/);
+ assert.match(source,/await user\(\['sk','chairman'\]\)/);
  assert.match(source,/result\?\.error===409&&result\.reason==='monthly_reports'/);
+});
+
+test('Facebook caption analysis accepts SK officers, denies youth accounts',async()=>{
+ for(const role of ['chairman','sk']){
+  const {handler}=createMock(role);
+  const response=await handler(new Request(base+'/api/manage/projects/import-facebook',{
+   method:'POST',
+   headers:{'content-type':'application/json','origin':base,'cookie':'vasra_session='+token},
+   body:JSON.stringify({caption:'Youth Leadership Training para sa mga kabataan sa Barangay Vasra.'})
+  }));
+  assert.equal(response.status,200,role);
+  const parsed=await response.json();
+  assert.equal(parsed.ok,true);
+  assert.equal(parsed.draft.category,'Edukasyon');
+ }
+ const {handler}=createMock('youth');
+ const response=await handler(new Request(base+'/api/manage/projects/import-facebook',{
+   method:'POST',
+   headers:{'content-type':'application/json','origin':base,'cookie':'vasra_session='+token},
+   body:JSON.stringify({caption:'Youth Leadership Training para sa mga kabataan sa Barangay Vasra.'})
+ }));
+ assert.equal(response.status,403);
+});
+test('Authorized SK officers also see project deletion and Facebook import controls',()=>{
+ assert.match(js,/\$\{\['sk','chairman'\]\.includes\(user\?\.role\)\?'<button type="button" class="project-delete-trigger"/);
+ assert.match(js,/if\(!p\|\|!\['sk','chairman'\]\.includes\(user\?\.role\)\)return;/);
+ assert.match(js,/const facebook=mode==='facebook'&&!editing&&\['sk','chairman'\]\.includes\(user\?\.role\)/);
 });
