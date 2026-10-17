@@ -19,8 +19,8 @@ test('new/edit project modal allows a maximum of twelve photos with previews and
  assert.match(editor,/URL\.revokeObjectURL\(/);
  assert.match(editor,/data-photo-cover/);
  assert.match(editor,/data-photo-remove/);
- assert.match(editor,/body\.image_id=ids\[0\]\|\|null/);
- assert.match(editor,/body\.image_ids=ids/);
+ assert.match(editor,/image_ids:ids,image_id:ids\[0\]\|\|null/);
+ assert.match(editor,/await saveProjectStage\(job,stage,job\.photos\.filter\(p=>p\.id\)\.map\(p=>p\.id\)\)/);
 });
 test('gallery is secured and is validated before project save',()=>{
  assert.match(supabase,/action\.startsWith\('gallery_'\)/);
