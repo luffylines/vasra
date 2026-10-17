@@ -7,6 +7,36 @@ const publishedPHT=iso=>{
   :'Petsa hindi naitala';
 };
 
+// Sort by actual activity date in the title first, not the upload/publish
+// timestamp. Supports the historic projects with no stored activity_date.
+const monthNumber={january:1,enero:1,february:2,pebrero:2,march:3,marso:3,april:4,abril:4,may:5,mayo:5,june:6,hunyo:6,july:7,hulyo:7,august:8,agosto:8,september:9,setyembre:9,septiyembre:9,october:10,oktubre:10,november:11,nobyembre:11,december:12,disyembre:12};
+function projectActivityTimestamp(p){
+ const text=String(p.title||'').normalize('NFKC');
+ const names=Object.keys(monthNumber).join('|');
+ const m=text.match(new RegExp('\\b('+names+')\\s+(\\d{1,2}),?\\s+(20\\d{2})\\b','i'))||
+  text.match(new RegExp('\\b(\\d{1,2})(?:st|nd|rd|th|ng)?\\s+(?:ng\\s+)?('+names+')\\s*,?\\s*(20\\d{2})\\b','i'));
+ let fromTitle=null;
+ if(m){
+  const nameFirst=Object.hasOwn(monthNumber,m[1].toLowerCase());
+  const mon=monthNumber[(nameFirst?m[1]:m[2]).toLowerCase()];
+  const day=Number(nameFirst?m[2]:m[1]),year=Number(m[3]);
+  const d=Date.UTC(year,mon-1,day);
+  if(new Date(d).getUTCMonth()===mon-1&&new Date(d).getUTCDate()===day)fromTitle=d;
+ }
+ // Explicit activity date, where present, takes precedence over a title date.
+ const declared=typeof p.activity_date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(p.activity_date)
+  ?Date.parse(p.activity_date+'T00:00:00Z'):NaN;
+ return Number.isFinite(declared)?declared:(fromTitle??NaN);
+}
+function sortProjectsNewestFirst(rows){
+ return [...rows].sort((a,b)=>{
+  const aActivity=projectActivityTimestamp(a),bActivity=projectActivityTimestamp(b);
+  const aValue=Number.isFinite(aActivity)?aActivity:Date.parse(a.publish_at||'')||0;
+  const bValue=Number.isFinite(bActivity)?bActivity:Date.parse(b.publish_at||'')||0;
+  return bValue-aValue||(Date.parse(b.publish_at||'')||0)-(Date.parse(a.publish_at||'')||0)||String(a.id).localeCompare(String(b.id));
+ });
+}
+
 const galleryIds=p=>Array.isArray(p.image_ids)&&p.image_ids.length?p.image_ids:(p.image_id?[p.image_id]:[]);
 const galleryUrl=id=>'./api/images/'+encodeURIComponent(id);
 function projectGallery(p){
@@ -19,7 +49,7 @@ function projectGallery(p){
   '<p class="project-gallery-count">'+ids.length+' larawan · Piliin ang thumbnail para palakihin.</p></section>';
 }
 
-function render(){const q=$('#search').value.toLocaleLowerCase();const found=projects.filter(p=>(filter==='Lahat'||p.status===filter)&&`${p.title} ${p.category} ${p.description}`.toLocaleLowerCase().includes(q));$('#count').textContent=`${found.length} proyekto`;$('#grid').innerHTML=found.map(p=>`<article class="card"><div class="cover" style="background:#e5eafb"><span class="badge">${esc(p.status)}</span><span class="project-placeholder" aria-hidden="true">SK VASRA</span>${galleryIds(p).length?`<img class="project-photo" data-project-cover src="${galleryUrl(galleryIds(p)[0])}" alt="${esc(p.title)} cover photo" loading="lazy" decoding="async">`:''}${galleryIds(p).length>1?'<span class="project-photo-badge">+'+(galleryIds(p).length-1)+' photos</span>':''}</div><div class="cardbody"><div class="category">${esc(p.category)}</div><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><div class="progresslabel"><span>Progreso</span><b>${p.progress}%</b></div><div class="track"><div style="width:${p.progress}%"></div></div><div class="cardbottom"><span class="card-publish-date"><span aria-hidden="true">▣</span> Na-publish: <strong>${esc(publishedPHT(p.publish_at))}</strong></span><button data-id="${esc(p.id)}">See More ↗</button></div></div></article>`).join('')||`<div class="empty"><span class="empty-icon" aria-hidden="true">▤</span><h3>${projects.length?"Walang tugmang proyekto":"May mga bagong hakbang na darating."}</h3><p>${projects.length?"Subukan ang ibang salita o piliin ang ibang status ng proyekto.":"Dito makikita ang mga inilathalang programa at progreso ng SK Vasra."}</p><a class="secondary" href="./contacts.html">May ideya ka? Makipag-ugnay ↗</a></div>`;$('#stat-all').textContent=projects.length;$('#stat-active').textContent=projects.filter(p=>p.status==='Isinasagawa').length;$('#stat-done').textContent=projects.filter(p=>p.status==='Natapos').length;$('#stat-planned').textContent=projects.filter(p=>p.status==='Pinaplano').length;}
+function render(){const q=$('#search').value.toLocaleLowerCase();const found=sortProjectsNewestFirst(projects.filter(p=>(filter==='Lahat'||p.status===filter)&&`${p.title} ${p.category} ${p.description}`.toLocaleLowerCase().includes(q)));$('#count').textContent=`${found.length} proyekto`;$('#grid').innerHTML=found.map(p=>`<article class="card"><div class="cover" style="background:#e5eafb"><span class="badge">${esc(p.status)}</span><span class="project-placeholder" aria-hidden="true">SK VASRA</span>${galleryIds(p).length?`<img class="project-photo" data-project-cover src="${galleryUrl(galleryIds(p)[0])}" alt="${esc(p.title)} cover photo" loading="lazy" decoding="async">`:''}${galleryIds(p).length>1?'<span class="project-photo-badge">+'+(galleryIds(p).length-1)+' photos</span>':''}</div><div class="cardbody"><div class="category">${esc(p.category)}</div><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><div class="progresslabel"><span>Progreso</span><b>${p.progress}%</b></div><div class="track"><div style="width:${p.progress}%"></div></div><div class="cardbottom"><span class="card-publish-date"><span aria-hidden="true">▣</span> Na-publish: <strong>${esc(publishedPHT(p.publish_at))}</strong></span><button data-id="${esc(p.id)}">See More ↗</button></div></div></article>`).join('')||`<div class="empty"><span class="empty-icon" aria-hidden="true">▤</span><h3>${projects.length?"Walang tugmang proyekto":"May mga bagong hakbang na darating."}</h3><p>${projects.length?"Subukan ang ibang salita o piliin ang ibang status ng proyekto.":"Dito makikita ang mga inilathalang programa at progreso ng SK Vasra."}</p><a class="secondary" href="./contacts.html">May ideya ka? Makipag-ugnay ↗</a></div>`;$('#stat-all').textContent=projects.length;$('#stat-active').textContent=projects.filter(p=>p.status==='Isinasagawa').length;$('#stat-done').textContent=projects.filter(p=>p.status==='Natapos').length;$('#stat-planned').textContent=projects.filter(p=>p.status==='Pinaplano').length;}
 // Broken public image links fall back to branding rather than leaving an empty card.
 $('#grid').addEventListener('error',event=>{
  if(event.target.matches?.('[data-project-cover]'))event.target.hidden=true;
