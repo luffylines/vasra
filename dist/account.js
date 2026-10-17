@@ -192,7 +192,7 @@ async function verifyEmailFromLink(token){
 }
 async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Finance and project monitoring workspace.':user.position==='secretary'?'Documentation and project records workspace.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: monitor project updates and documentation. Budget reports are not yet enabled.':user.position==='secretary'?'Secretary workspace: organize project records and updates. Meeting minutes are not yet enabled.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
 let activeStaffTab='overview';
-async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;activeStaffTab=name;$('#duty-controls').hidden=true;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');$('#officer-overview').hidden=!(name==='overview'&&user?.role!=='chairman');
+async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;activeStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');$('#officer-overview').hidden=!(name==='overview'&&user?.role!=='chairman');
  $('#dashboard-welcome').hidden=name!=='overview';
  const tabLabels={overview:'Dashboard',projects:'Manage Projects',monthly:'Monthly Updates',budget:'Annual Finance',roster:'SK Officials',users:'SK Accounts',audit:'Activity Log',settings:'Account Settings'};
  $('#account-breadcrumb').textContent=tabLabels[name];
@@ -924,34 +924,73 @@ api('./api/me').then(async b=>{
 
 $('#create-officer').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{const b=await api('./api/users',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});const note=$('#new-credentials');note.hidden=false;note.innerHTML='<b>Na-create ang SK account.</b><p>Email: '+esc(b.user.email)+'</p><p>Temporary password: <code>'+esc(b.temporaryPassword)+'</code></p><small>Ibigay nang pribado. Isang beses lang ipinapakita rito ang password.</small><button type="button" class="secondary" id="dismiss-credentials">Itago ang password</button>';$('#dismiss-credentials').onclick=()=>{note.replaceChildren();note.hidden=true};e.target.reset();success('Matagumpay na nagawa ang SK officer account. Ibigay nang pribado ang temporary password.');await loadUsers()})};
 
+
 const dutyNames=[['gel bergonio'],['ernest bragais','kristine de ocampo'],['sherwin estanislao'],['rembert natividad'],['arvin capiral'],['kath irag'],['roland reyes']];
-function manilaDutyDay(){const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(p=>[p.type,p.value]));return {index:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].indexOf(parts.weekday),date:parts.year+'-'+parts.month+'-'+parts.day};}
-// The backend applies the same on-duty name restriction; UI visibility is not authorization.
+let dutyReadSequence=0,dutyMutationBusy=false;
+function manilaDutyDay(){
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{
+  timeZone:'Asia/Manila',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',
+  hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+ }).formatToParts(new Date()).map(p=>[p.type,p.value]));
+ return {index:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].indexOf(parts.weekday),
+  date:parts.year+'-'+parts.month+'-'+parts.day,hour:Number(parts.hour),minute:Number(parts.minute)};
+}
+// UI visibility never grants privileges: the server RPC repeats the duty/role check.
 function canManageDutyToday(actor,dayIndex){
  if(!actor||actor.mustChange)return false;
- if(actor.role==='chairman')return true; // Chairperson keeps emergency override access.
- return actor.role==='sk'&&dutyNames[dayIndex]?.includes(String(actor.name||'').trim().toLowerCase())===true;
+ if(actor.role==='chairman')return true; // Chairman retains emergency override.
+ return actor.role==='sk'&&dutyNames[dayIndex]?.includes(
+  String(actor.name||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase()
+ )===true;
+}
+function setDutyBadge(state,label){
+ $('#duty-mode-badge').dataset.state=state;
+ $('#duty-mode-text').textContent=label;
 }
 async function updateDutyControls(){
+ const ticket=++dutyReadSequence;
  const box=$('#duty-controls'),d=manilaDutyDay();
- const permitted=canManageDutyToday(user,d.index);
- const show=activeStaffTab==='overview'&&permitted;
- box.hidden=!show;
- if(!show)return;
- const info=$('#duty-control-info'),closed=$('#duty-set-closed'),auto=$('#duty-set-auto'),retry=$('#duty-retry');
- closed.disabled=true;auto.disabled=true;
- info.textContent='Sinusuri ang kasalukuyang SK Duty status para sa '+d.date+'…';
+ const visible=activeStaffTab==='overview'&&canManageDutyToday(user,d.index);
+ box.hidden=!visible;
+ if(!visible)return;
+ const info=$('#duty-control-info'),closed=$('#duty-set-closed'),
+  auto=$('#duty-set-auto'),retry=$('#duty-retry');
+ const roster=typeof days!=='undefined'&&Array.isArray(days)?days[d.index]:null;
+ const assigned=roster?.names?.length?roster.names.join(' · '):
+  dutyNames[d.index]?.join(' · ')||'Walang nakatalagang SK officer';
+ $('#duty-assigned-name').textContent=assigned;
+ $('#duty-control-date').textContent='Ngayong araw · '+new Intl.DateTimeFormat('fil-PH',{
+  timeZone:'Asia/Manila',weekday:'long',month:'long',day:'numeric',year:'numeric'
+ }).format(new Date());
+ closed.disabled=true;auto.disabled=true;retry.hidden=true;
+ setDutyBadge('checking','Checking…');
+ info.textContent='Sinusuri ang live office status para sa '+d.date+'…';
  try{
-  const r=await api('./api/duty-status');
-  if(!['auto','closed'].includes(r.mode)||r.date&&r.date!==d.date)throw Error('Invalid SK Duty status response.');
-  info.textContent='Ngayong araw ('+d.date+'): '+(r.mode==='closed'?'Closed by SK on duty':'Automatic office schedule · 9 AM–6 PM')+'.';
-  if(user.role==='chairman')$('#admin-office').textContent=r.mode==='closed'?'Manually closed':'Auto schedule';
+  const result=await api('./api/duty-status');
+  // Ignore older requests after navigation, user change or a Manila day rollover.
+  if(ticket!==dutyReadSequence||activeStaffTab!=='overview'||!canManageDutyToday(user,manilaDutyDay().index)||manilaDutyDay().date!==d.date)return;
+  if(!['auto','closed'].includes(result.mode)||(result.date&&result.date!==d.date))
+   throw Error('Invalid SK Duty status response.');
+  const hoursOpen=d.hour>=9&&d.hour<18;
+  const manualClosed=result.mode==='closed';
+  const open=!manualClosed&&hoursOpen;
+  setDutyBadge(open?'open':'closed',open?'Office Open':'Office Closed');
+  info.textContent=manualClosed
+   ?'Manually marked Closed for today. The public SK Duty page also reflects this status.'
+   :hoursOpen
+    ?'Automatic Schedule · Open ngayon mula 9:00 AM hanggang 6:00 PM (PHT).'
+    :d.hour<9
+     ?'Automatic Schedule · Sarado pa ang opisina. Magbubukas ng 9:00 AM (PHT).'
+     :'Automatic Schedule · Tapos na ang office hours. Sarado mula 6:00 PM (PHT).';
+  if(user.role==='chairman')$('#admin-office').textContent=open?'Open':manualClosed?'Manually closed':'Closed · Auto';
   retry.hidden=true;
-  closed.disabled=r.mode==='closed';
-  auto.disabled=r.mode==='auto';
+  closed.disabled=dutyMutationBusy||manualClosed;
+  auto.disabled=dutyMutationBusy||result.mode==='auto';
  }catch(e){
-  // Failed reads MUST NOT enable writes or claim office status is verified.
-  info.textContent='Hindi makuha ang live SK Duty status. Naka-disable muna ang pag-update habang may problema sa database.';
+  if(ticket!==dutyReadSequence||activeStaffTab!=='overview')return;
+  // Failed status reads NEVER authorize a status change or claim verification.
+  info.textContent='Hindi ma-verify ang live office status. Retry muna bago gumawa ng pagbabago.';
+  setDutyBadge('unknown','Status unavailable');
   closed.disabled=true;auto.disabled=true;retry.hidden=false;
   if(user?.role==='chairman')$('#admin-office').textContent='Hindi ma-load';
  }
@@ -961,18 +1000,23 @@ async function setDutyMode(mode){
  if(activeStaffTab!=='overview'||!canManageDutyToday(user,manilaDutyDay().index))return;
  if(!['closed','auto'].includes(mode))return;
  if(buttons.some(b=>!b)||buttons.find(b=>b.id==='duty-set-'+mode)?.disabled)return;
+ if(dutyMutationBusy)return;
+ dutyMutationBusy=true;
  buttons.forEach(b=>b.disabled=true);
  try{
   const result=await api('./api/duty-status',{method:'POST',body:JSON.stringify({mode})});
-  if(result.mode!==mode)throw Error('Hindi nakumpirma ang bagong SK Duty status.');
+  if(result.mode!==mode||result.date&&result.date!==manilaDutyDay().date)
+   throw Error('Hindi nakumpirma ang bagong SK Duty status.');
   success(mode==='closed'?'Matagumpay na na-set ang SK Office bilang Closed ngayong araw.':'Matagumpay na naibalik ang automatic SK Duty schedule.');
  }catch(e){message(e.message,true)}
- finally{await updateDutyControls()}
+ finally{dutyMutationBusy=false;await updateDutyControls()}
 }
 $('#duty-retry').onclick=updateDutyControls;
 $('#duty-set-closed').onclick=()=>setDutyMode('closed');
 $('#duty-set-auto').onclick=()=>setDutyMode('auto');
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&user)updateDutyControls()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&user&&activeStaffTab==='overview')updateDutyControls()});
+// Office opening, 6 PM closing and duty rotations update even without reload.
+setInterval(()=>{if(!document.hidden&&user&&!user.mustChange&&activeStaffTab==='overview')updateDutyControls()},60000);
 
 
 /* Annual finance, monthly accomplishments and official-directory editors */
