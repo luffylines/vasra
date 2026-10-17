@@ -1,0 +1,50 @@
+/* SK VASRA shared action icons: accessible, inline SVG, no external CDN. */
+.ui-action-icon{width:17px;height:17px;display:inline-block;flex:0 0 auto;
+ vertical-align:-3px;stroke:currentColor;stroke-width:2;fill:none;
+ stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:transform .18s ease}
+.ui-action-icon[aria-hidden="true"]{user-select:none}
+.ui-action-icon-sm{width:15px;height:15px}
+.ui-action-icon-lg{width:19px;height:19px}
+.ui-action-icon-only{width:19px;height:19px;vertical-align:middle}
+.ui-icon-link{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.ui-icon-link .ui-action-icon{margin-left:0}
+.ui-icon-link:hover .ui-action-icon[data-direction="right"]{transform:translateX(2px)}
+.ui-icon-link:hover .ui-action-icon[data-direction="external"]{transform:translate(2px,-2px)}
+.ui-icon-link:hover .ui-action-icon[data-direction="down"]{transform:translateY(2px)}
+.ui-icon-link:focus-visible,.ui-icon-button:focus-visible{outline:3px solid #8bb9f4;outline-offset:3px}
+.ui-icon-button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.ui-icon-button .ui-action-icon{margin:0}
+.ui-inline-arrow{margin-left:6px}
+.ui-inline-arrow[data-direction="external"]{vertical-align:-3px}
+.ui-service-label{display:inline-flex;align-items:center;gap:7px}
+.ui-service-label .ui-action-icon{width:16px;height:16px}
+.portal-refresh .hero-link.ui-icon-link,
+.portal-refresh .primary.ui-icon-link{gap:10px}
+.portal-refresh .home-shortcuts strong .ui-action-icon{vertical-align:-3px;margin-left:4px}
+.portal-refresh .home-contact-links a .ui-action-icon{vertical-align:-3px;margin-left:4px}
+.portal-refresh .contact-grid strong .ui-action-icon{vertical-align:-3px;margin-left:4px}
+.portal-refresh .contact-action .ui-action-icon{width:15px;height:15px;vertical-align:-3px}
+.portal-refresh .contact-action b{display:inline-flex;align-items:center}
+.portal-refresh .service-chips .ui-service-label{display:inline-flex;align-items:center;gap:7px}
+.portal-refresh .search .ui-action-icon{width:17px;height:17px}
+.portal-refresh .home-text-link.ui-icon-link{justify-content:flex-start}
+.portal-refresh .home-highlights .ui-action-icon{vertical-align:-3px}
+.portal-refresh .sidebar-bottom .ui-action-icon,
+body.account-workspace .sidebar-bottom .ui-action-icon{width:13px;height:13px;vertical-align:-2px}
+body.account-workspace .role-workflow-card button .ui-action-icon,
+body.account-workspace .admin-quick-actions button .ui-action-icon{width:16px;height:16px;margin-left:4px}
+body.account-workspace .publication-choice-icon .ui-action-icon,
+body.account-workspace .publish-confirm-icon .ui-action-icon{width:19px;height:19px;margin:0}
+body.account-workspace .publication-choice-icon,
+body.account-workspace .publish-confirm-icon{display:grid;place-items:center}
+body.account-workspace .panel-heading a.ui-icon-link{gap:8px}
+body.account-workspace #publish-project-confirm .ui-action-icon{margin-left:6px}
+body.account-workspace #audit-prev .ui-action-icon{margin-right:4px}
+body.account-workspace #audit-next .ui-action-icon{margin-left:4px}
+body.account-workspace[data-theme="dark"] .ui-action-icon{color:inherit}
+@media(max-width:600px){
+ .ui-action-icon{width:16px;height:16px}
+ .ui-action-icon-lg{width:18px;height:18px}
+ .ui-icon-link{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){.ui-action-icon{transition:none!important}}
