@@ -50,13 +50,16 @@ test('staff thumbnails and public project cards stay dense and responsive',()=>{
  assert.match(staffCss,/width:72px;height:56px/);
  assert.match(staffCss,/#staff-project-gallery/);
  assert.match(staffCss,/object-fit:contain/);
- assert.match(publicCss,/\.portal-refresh #grid \.cover\{height:118px/);
- assert.match(publicCss,/height:90px;min-height:90px/);
+ assert.match(publicCss,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+ assert.match(publicCss,/aspect-ratio:16 \/ 9/);
  assert.match(publicCss,/-webkit-line-clamp:3/);
- assert.match(publicCss,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+ assert.match(publicCss,/object-fit:contain;object-position:center/);
+ assert.match(publicCss,/@media\(max-width:1250px\)/);
+ assert.match(publicCss,/@media\(max-width:950px\)/);
+ assert.doesNotMatch(publicCss,/\.portal-refresh #grid \.cover\{height:118px/);
  assert.match(publicCss,/grid-template-columns:minmax\(0,1fr\)/);
  assert.match(publicCss,/\.project-photo\[hidden\]\{display:none!important\}/);
- assert.match(worker,/vasra-v36-project-cover-cards/);
+ assert.match(worker,/vasra-v37-full-project-covers/);
 });
 
 test('scripts remain syntactically valid and images are accessed through existing routes',()=>{
