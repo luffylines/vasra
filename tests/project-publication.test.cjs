@@ -18,7 +18,7 @@ test('SK staff can draft, publish now, schedule, and keep previous publication d
  assert.match(staffJs,/function updatePublicationFields\(/);
  assert.match(staffJs,/publishMode\.value='keep'/);
  assert.match(staffJs,/body\.publication_mode=mode/);
- assert.match(staffJs,/body\.publish_at=iso/);
+ assert.match(staffJs,/body\.publish_at=date/);
  assert.match(staffJs,/form\.elements\.publication_mode\.value='draft'/);
 });
 test('scheduled local time is interpreted as Philippine Standard Time, independent of browser zone',()=>{
