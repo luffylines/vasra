@@ -9,31 +9,69 @@ const publishedPHT=iso=>{
 
 // Sort by actual activity date in the title first, not the upload/publish
 // timestamp. Supports the historic projects with no stored activity_date.
-const monthNumber={january:1,enero:1,february:2,pebrero:2,march:3,marso:3,april:4,abril:4,may:5,mayo:5,june:6,hunyo:6,july:7,hulyo:7,august:8,agosto:8,september:9,setyembre:9,septiyembre:9,october:10,oktubre:10,november:11,nobyembre:11,december:12,disyembre:12};
-function projectActivityTimestamp(p){
- const text=String(p.title||'').normalize('NFKC');
- const names=Object.keys(monthNumber).join('|');
- const m=text.match(new RegExp('\\b('+names+')\\s+(\\d{1,2}),?\\s+(20\\d{2})\\b','i'))||
-  text.match(new RegExp('\\b(\\d{1,2})(?:st|nd|rd|th|ng)?\\s+(?:ng\\s+)?('+names+')\\s*,?\\s*(20\\d{2})\\b','i'));
- let fromTitle=null;
- if(m){
-  const nameFirst=Object.hasOwn(monthNumber,m[1].toLowerCase());
-  const mon=monthNumber[(nameFirst?m[1]:m[2]).toLowerCase()];
-  const day=Number(nameFirst?m[2]:m[1]),year=Number(m[3]);
-  const d=Date.UTC(year,mon-1,day);
-  if(new Date(d).getUTCMonth()===mon-1&&new Date(d).getUTCDate()===day)fromTitle=d;
+// Explicit event dates (not upload/publication timestamps) order public projects.
+// Old records do not have an activity_date DB field, so parse the event title.
+const monthNumber=Object.freeze({
+ january:1,jan:1,enero:1,
+ february:2,feb:2,pebrero:2,
+ march:3,mar:3,marso:3,
+ april:4,apr:4,abril:4,
+ may:5,mayo:5,
+ june:6,jun:6,hunyo:6,
+ july:7,jul:7,hulyo:7,
+ august:8,aug:8,agosto:8,
+ september:9,sept:9,sep:9,setyembre:9,septiyembre:9,
+ october:10,oct:10,oktubre:10,
+ november:11,nov:11,nobyembre:11,
+ december:12,dec:12,disyembre:12
+});
+const projectDateMonths=Object.keys(monthNumber).sort((a,b)=>b.length-a.length).join('|');
+function validActivityTimestamp(year,month,day){
+ const y=Number(year),m=Number(month),d=Number(day);
+ if(y<2000||y>2100||m<1||m>12||d<1||d>31)return NaN;
+ const result=Date.UTC(y,m-1,d),parsed=new Date(result);
+ return parsed.getUTCFullYear()===y&&parsed.getUTCMonth()===m-1&&parsed.getUTCDate()===d?result:NaN;
+}
+function projectActivityTimestamp(project){
+ const declared=project?.activity_date;
+ if(typeof declared==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(declared)){
+  const [year,month,day]=declared.split('-');
+  const stamp=validActivityTimestamp(year,month,day);
+  if(Number.isFinite(stamp))return stamp;
  }
- // Explicit activity date, where present, takes precedence over a title date.
- const declared=typeof p.activity_date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(p.activity_date)
-  ?Date.parse(p.activity_date+'T00:00:00Z'):NaN;
- return Number.isFinite(declared)?declared:(fromTitle??NaN);
+ const title=String(project?.title||'').normalize('NFKC');
+ // ISO-style titles, e.g. "2026-09-27 | Project".
+ const iso=title.match(/\b(20\d{2})[-/](0?[1-9]|1[0-2])[-/](0?[1-9]|[12]\d|3[01])\b/);
+ if(iso){
+  const stamp=validActivityTimestamp(iso[1],iso[2],iso[3]);
+  if(Number.isFinite(stamp))return stamp;
+ }
+ // Full and abbreviated Filipino/English dates including Sep, Sept., Oct.
+ const named=title.match(new RegExp('\\b('+projectDateMonths+')\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?\\s*,?\\s*(20\\d{2})\\b','i'));
+ if(named){
+  const stamp=validActivityTimestamp(named[3],monthNumber[named[1].toLowerCase()],named[2]);
+  if(Number.isFinite(stamp))return stamp;
+ }
+ // Tagalog/day-first titles such as "ika-4 ng Oktubre 2026".
+ const reversed=title.match(new RegExp('\\b(\\d{1,2})(?:st|nd|rd|th|ng)?\\s+(?:ng\\s+)?('+projectDateMonths+')\\.?\\s*,?\\s*(20\\d{2})\\b','i'));
+ if(reversed){
+  const stamp=validActivityTimestamp(reversed[3],monthNumber[reversed[2].toLowerCase()],reversed[1]);
+  if(Number.isFinite(stamp))return stamp;
+ }
+ // Unknown event dates are deliberately NOT treated as today's new projects.
+ return NaN;
 }
 function sortProjectsNewestFirst(rows){
  return [...rows].sort((a,b)=>{
-  const aActivity=projectActivityTimestamp(a),bActivity=projectActivityTimestamp(b);
-  const aValue=Number.isFinite(aActivity)?aActivity:Date.parse(a.publish_at||'')||0;
-  const bValue=Number.isFinite(bActivity)?bActivity:Date.parse(b.publish_at||'')||0;
-  return bValue-aValue||(Date.parse(b.publish_at||'')||0)-(Date.parse(a.publish_at||'')||0)||String(a.id).localeCompare(String(b.id));
+  const aDate=projectActivityTimestamp(a),bDate=projectActivityTimestamp(b);
+  const aKnown=Number.isFinite(aDate),bKnown=Number.isFinite(bDate);
+  if(aKnown!==bKnown)return aKnown?-1:1;
+  if(aKnown&&aDate!==bDate)return bDate-aDate;
+  // Publication time only orders projects *within* the same activity day
+  // or within the unknown-date group. It never outranks an older event day.
+  const publishedA=Date.parse(a.publish_at||'')||0;
+  const publishedB=Date.parse(b.publish_at||'')||0;
+  return publishedB-publishedA||String(a.id||'').localeCompare(String(b.id||''));
  });
 }
 
