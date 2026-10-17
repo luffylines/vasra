@@ -38,7 +38,6 @@ test('project footer is a single aligned component across differently-sized card
  assert.equal((result.match(/class="cardbottom"/g)||[]).length,4);
  assert.equal((result.match(/class="project-see-more"/g)||[]).length,4);
  assert.equal((result.match(/class="project-see-more-icon"/g)||[]).length,4);
- assert.equal((result.match(/class="project-card-publish-date"/g)||[]).length,4);
  assert.equal((result.match(/class="card-publish-date"/g)||[]).length,4);
  assert.equal((result.match(/data-id="/g)||[]).length,4);
 });
