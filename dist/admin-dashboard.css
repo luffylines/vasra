@@ -1717,3 +1717,78 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-proje
  #delete-project-dialog .delete-project-copy-row{flex-direction:column;align-items:stretch}
  #delete-project-dialog .delete-project-copy-name{width:100%}
 }
+
+/* Duty status dashboard card – compact, icon-led, responsive, light/dark. */
+#dashboard > #duty-controls.duty-office-card{
+ padding:22px 24px!important;margin:0 0 22px!important;
+ background:linear-gradient(120deg,#fff 0%,#f7faff 100%)!important;
+ border:1px solid #dce7f5!important;border-radius:18px!important;
+ box-shadow:0 12px 32px rgba(19,45,88,.065)!important;
+ color:#17365b;min-width:0;
+}
+#dashboard > #duty-controls.duty-office-card[hidden]{display:none!important}
+#duty-controls .duty-card-heading{display:flex;align-items:center;gap:13px;min-width:0}
+#duty-controls .duty-card-heading-icon{display:grid;place-items:center;width:46px;height:46px;flex:none;
+ border-radius:14px;background:#e7f0fe;color:#2762af}
+#duty-controls :is(.duty-card-heading-icon,.duty-card-info-icon,.duty-card-note,.duty-action-button) svg{width:20px;height:20px;flex:none}
+#duty-controls .duty-card-heading-text{flex:1;min-width:0}
+#duty-controls .duty-card-eyebrow{font-size:10px;font-weight:850;letter-spacing:1.05px;color:#6585af}
+#duty-controls .duty-card-heading h3{font-size:17px;line-height:1.35;letter-spacing:-.2px;color:#173b68;margin:3px 0}
+#dashboard > #duty-controls .duty-card-heading p{margin:0;font-size:12px;line-height:1.5;color:#6883a5}
+#duty-controls .duty-mode-badge{display:inline-flex;align-items:center;gap:8px;flex:none;white-space:nowrap;
+ padding:9px 13px;border-radius:999px;font-size:11px;font-weight:800;
+ border:1px solid #dae5f1;background:#edf3fa;color:#536e91}
+#duty-controls .duty-mode-badge .duty-status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+ background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 12%,transparent)}
+#duty-controls .duty-mode-badge[data-state="open"]{background:#e5f7ee;border-color:#b4dfc9;color:#176847}
+#duty-controls .duty-mode-badge[data-state="closed"]{background:#fff0f0;border-color:#efc5c8;color:#a23541}
+#duty-controls .duty-mode-badge[data-state="unknown"]{background:#fff7e8;border-color:#edd8b0;color:#85611d}
+#duty-controls .duty-card-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 14px}
+#duty-controls .duty-card-info{display:flex;gap:12px;align-items:center;min-width:0;padding:13px 14px;
+ border:1px solid #e1eaf5;border-radius:12px;background:#f5f8ff}
+#duty-controls .duty-card-info-icon{display:grid;place-items:center;width:38px;height:38px;flex:none;
+ color:#2c69b6;background:#e3efff;border-radius:11px}
+#duty-controls .duty-card-info>div{min-width:0}
+#duty-controls .duty-card-label{display:block;font-size:11px;color:#667f9f;font-weight:650;margin-bottom:4px}
+#duty-controls .duty-card-info strong{display:block;font-size:13px;line-height:1.45;color:#173d68;overflow-wrap:anywhere}
+#dashboard > #duty-controls .duty-card-description{font-size:12px;color:#456487;line-height:1.55;margin:0 0 16px}
+#duty-controls .duty-card-actions{display:flex;gap:10px;flex-wrap:wrap}
+#dashboard > #duty-controls button.duty-action-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+ min-height:44px!important;border:1px solid transparent;border-radius:11px;
+ padding:11px 16px!important;margin:0;font-size:12px;font-weight:800;line-height:1.2;
+ cursor:pointer;transition:background-color .15s,border-color .15s,transform .15s,box-shadow .15s}
+#duty-controls .duty-action-close{color:#fff;background:#c62f43;border-color:#a92536!important}
+#duty-controls .duty-action-close:hover:not(:disabled){background:#aa2537;transform:translateY(-1px)}
+#duty-controls .duty-action-auto{color:#225da7;background:#eaf2ff;border-color:#bfd7f8!important}
+#duty-controls .duty-action-auto:hover:not(:disabled){background:#dceaff;transform:translateY(-1px)}
+#duty-controls .duty-action-retry{color:#6c4f17;background:#fff5dc;border-color:#e9d196!important}
+#dashboard > #duty-controls button.duty-action-button:disabled{opacity:.46;cursor:not-allowed;transform:none}
+#dashboard > #duty-controls button.duty-action-button[hidden]{display:none!important}
+#dashboard > #duty-controls button.duty-action-button:focus-visible{outline:3px solid #88b4f3;outline-offset:3px}
+#dashboard > #duty-controls .duty-card-note{display:flex;align-items:center;gap:8px;margin:17px 0 0;
+ padding-top:13px;border-top:1px solid #e0eaf4;color:#7088a5;font-size:10px;line-height:1.5}
+#duty-controls .duty-card-note svg{width:15px!important;height:15px!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard > #duty-controls.duty-office-card{
+ background:linear-gradient(120deg,#182a42,#1b3350)!important;border-color:#45607e!important;color:#e9f4ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls :is(.duty-card-heading h3,.duty-card-info strong){color:#e4efff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls :is(.duty-card-eyebrow,.duty-card-heading p,.duty-card-label,.duty-card-note){color:#b6cbe7!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls :is(.duty-card-heading-icon,.duty-card-info-icon){background:#244669;color:#a8cffc}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-card-info{background:#213954;border-color:#405d80}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-card-description{color:#c9d9ee!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="open"]{color:#b6f4d3;background:#164635;border-color:#337d63}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="closed"]{color:#ffcbd1;background:#522d38;border-color:#915064}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="unknown"]{color:#f6d995;background:#493f2d;border-color:#716341}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="checking"]{color:#d4e6fa;background:#28405c;border-color:#48698c}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-action-auto{color:#e1f0ff;background:#28486b;border-color:#4d769f!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-action-auto:hover:not(:disabled){background:#325981}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-card-note{border-top-color:#45617f}
+@media(max-width:730px){
+ #dashboard > #duty-controls.duty-office-card{padding:16px!important}
+ #duty-controls .duty-card-heading{flex-wrap:wrap;gap:10px}
+ #duty-controls .duty-card-heading-icon{width:40px;height:40px}
+ #duty-controls .duty-mode-badge{margin-left:0}
+ #duty-controls .duty-card-metrics{grid-template-columns:1fr;gap:8px;margin:14px 0}
+ #duty-controls .duty-card-actions{flex-direction:column;gap:9px}
+ #dashboard > #duty-controls button.duty-action-button{width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){#dashboard > #duty-controls button.duty-action-button{transition:none}}
