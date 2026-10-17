@@ -111,9 +111,11 @@
  <div class="staff-gallery-header"><div><span class="staff-gallery-kicker">SK PROJECT DOCUMENTATION</span><h2 id="staff-gallery-title">Project photos</h2></div><button id="staff-gallery-close" type="button" aria-label="Close photo viewer">✕</button></div>
  <div class="staff-gallery-stage"><button type="button" id="staff-gallery-prev" class="staff-gallery-arrow" aria-label="Previous photo">‹</button><div class="staff-gallery-photo-wrap"><img id="staff-gallery-image" alt=""><p id="staff-gallery-error" hidden>Hindi ma-load ang larawang ito. Subukan muli mamaya.</p></div><button type="button" id="staff-gallery-next" class="staff-gallery-arrow" aria-label="Next photo">›</button></div>
  <div class="staff-gallery-footer"><span id="staff-gallery-count" aria-live="polite"></span><small>Gamitin ang ← → keys o arrows para magpalit ng larawan.</small></div>
-</dialog><dialog id="editor" class="project-editor-modal" aria-labelledby="editor-heading">
+</dialog><!-- A manual top-layer popover survives project-editor modal close and stays above its backdrop. -->
+<div id="project-upload-progress" class="project-upload-toast" popover="manual" role="status" aria-live="polite" aria-atomic="true" data-state="uploading" hidden><span class="project-upload-spinner" aria-hidden="true"></span><span id="project-upload-progress-text"></span></div>
+<dialog id="editor" class="project-editor-modal" aria-labelledby="editor-heading">
 <button class="close" type="button" aria-label="Isara">×</button>
-<div id="project-upload-progress" class="project-upload-toast" role="status" aria-live="polite" aria-atomic="true" hidden><span class="project-upload-spinner" aria-hidden="true"></span><span id="project-upload-progress-text"></span></div>
+
 <div class="project-editor-header"><span class="eyebrow">SK VASRA · PROJECT MANAGEMENT</span><h2 id="editor-heading">Bagong proyekto</h2><p>Idagdag ang impormasyon, progreso at mga larawan ng programa.</p></div>
 <p id="editor-message" role="status" aria-live="polite"></p>
 <form id="project-form">
