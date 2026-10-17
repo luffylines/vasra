@@ -166,7 +166,7 @@ async function checkRecoveryAvailability(){
  const emailButton=$('#change-email-form').querySelector('button[type="submit"]');
  if(emailButton.getAttribute('aria-busy')!=='true')emailButton.disabled=false;
  $('#email-setup-note').textContent=recoveryReady
-  ? 'Email verification service configured. Links expire after 15 minutes.'
+  ? 'Email setup detected. Delivery depends on a valid Resend key and verified sender domain. Links expire after 15 minutes.'
   : 'Hindi makumpirma ang email service ngayon. Maaari pa ring subukan ang verification request; ipapakita ang server error kung hindi ito available.';
  if(recoveryMode==='request'&&!recoveryReady)
   recoveryFeedback('Hindi pa makumpirma ang email service. Maaari mong subukan ang Send reset link; ipapakita ang status kung may problema.','info');
