@@ -38,7 +38,8 @@ test('gallery is secured and is validated before project save',()=>{
 test('public projects display first photo only; details have the complete gallery',()=>{
  assert.match(publicApp,/const galleryIds=p=>/);
  assert.match(publicApp,/project-photo-badge/);
- assert.match(publicApp,/See More ↗/);
+ assert.match(publicApp,/class=\"project-see-more\"/);
+ assert.match(publicApp,/project-see-more-icon/);
  assert.match(publicApp,/function projectGallery\(p\)/);
  assert.match(publicApp,/project-gallery-thumbs/);
  assert.match(publicApp,/data-gallery-image/);
