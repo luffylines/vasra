@@ -91,21 +91,22 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
   dataset:{entryMode:value},classList:{toggle(name,v){this.selected=v}},
   setAttribute(name,v){this[name]=v}
  }));
+ const footer={hidden:false};
  const nodes={
   '#project-entry-mode':{hidden:false,addEventListener(){}},
   '#manual-entry-help':{hidden:false},
   '#fb-import-panel':{hidden:true,open:false},
   '#project-review-fields':{hidden:false},
   '#fb-review-hint':{hidden:true},
-  '#project-form':{querySelector:()=>({hidden:false})}
+  '#project-form':{querySelector:()=>footer}
  };
  const dom={querySelectorAll:()=>buttons};
  const $=id=>nodes[id];
- const build=new Function('$','document','getUser','getEditing',
-  'return function(mode){let user=getUser(),editing=getEditing();'+
+ const build=new Function('$','document','getUser','getEditing','getDraftReady',
+  'return function(mode){let user=getUser(),editing=getEditing(),facebookDraftReady=getDraftReady();'+
   block.slice(block.indexOf('const facebook='),block.indexOf("$('#project-entry-mode').addEventListener")).replace(/\}\s*$/,'')+
   '}');
- const chairman=build($,dom,()=>({role:'chairman'}),()=>null);
+ const chairman=build($,dom,()=>({role:'chairman'}),()=>null,()=>false);
  chairman('manual');
  assert.equal(nodes['#fb-import-panel'].hidden,true);
  assert.equal(nodes['#manual-entry-help'].hidden,false);
@@ -114,8 +115,14 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
  assert.equal(nodes['#fb-import-panel'].open,true);
  assert.equal(nodes['#manual-entry-help'].hidden,true);
  assert.equal(nodes['#project-review-fields'].hidden,true);
+ assert.equal(footer.hidden,true);
  assert.equal(buttons[1]['aria-pressed'],'true');
- const officer=build($,dom,()=>({role:'sk'}),()=>null);
+ const analyzed=build($,dom,()=>({role:'chairman'}),()=>null,()=>true);
+ analyzed('facebook');
+ assert.equal(nodes['#project-review-fields'].hidden,false);
+ assert.equal(nodes['#fb-review-hint'].hidden,false);
+ assert.equal(footer.hidden,false);
+ const officer=build($,dom,()=>({role:'sk'}),()=>null,()=>false);
  officer('facebook');
  assert.equal(nodes['#project-entry-mode'].hidden,true);
  assert.equal(nodes['#fb-import-panel'].hidden,true);
