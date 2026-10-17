@@ -1349,3 +1349,79 @@ body.account-workspace #recovery-section.account-recovery{
  #recovery-section .recovery-content{padding:24px 18px}
 }
 @media(prefers-reduced-motion:reduce){#recovery-section .recovery-submit:hover{transform:none}}
+
+/* Dense staff project rows: visible small cover and secure photo viewer. */
+#managed-projects .project-manage-row{
+ display:grid;grid-template-columns:104px minmax(0,1fr) auto;align-items:center;
+ column-gap:18px;row-gap:10px;padding:16px 18px;min-width:0;
+}
+#managed-projects .project-manage-media{display:flex;flex-direction:column;gap:6px;align-items:center;min-width:0}
+#managed-projects .project-manage-thumbnail{
+ position:relative;display:block;width:104px;height:78px;flex:none;padding:0;
+ border:1px solid #d2e1f2;border-radius:10px;overflow:hidden;
+ background:#eaf1fb;cursor:pointer;
+}
+#managed-projects .project-manage-thumbnail.is-empty{cursor:default}
+#managed-projects .project-manage-thumbnail img{
+ display:block;position:absolute;inset:0;width:100%;height:100%;
+ object-fit:cover;z-index:1;
+}
+#managed-projects .project-manage-thumbnail img[hidden]{display:none!important}
+#managed-projects .project-thumb-fallback{
+ display:grid;place-items:center;position:absolute;inset:0;
+ color:#4d76a4;font-weight:850;letter-spacing:.1em;font-size:16px;
+ background:linear-gradient(135deg,#e2edfb,#f3f7ff);
+}
+#managed-projects button.project-manage-thumbnail:hover,
+#managed-projects button.project-manage-thumbnail:focus-visible{border-color:#316ebc;outline-offset:2px}
+#managed-projects .project-manage-photo-count{font-size:11px;font-weight:700;color:#657f9e;text-align:center}
+#managed-projects .project-manage-info{min-width:0}
+#managed-projects .project-manage-info h3{margin:7px 0;font-size:16px;line-height:1.35;overflow-wrap:anywhere}
+#managed-projects .project-manage-info p{margin:3px 0;font-size:11px;line-height:1.45}
+#managed-projects .project-manage-row .badge-inline{font-size:10px;line-height:1.45;padding:5px 8px}
+#managed-projects .project-manage-info .project-quick-progress{margin-top:8px;max-width:300px}
+#managed-projects .project-manage-info .project-progress-caption{margin-bottom:5px;font-size:11px}
+#managed-projects .project-manage-info .project-progress-caption strong{font-size:12px}
+#managed-projects .project-manage-info .project-progress-bar{height:6px}
+#managed-projects .project-manage-row .project-row-actions{max-width:305px;justify-content:flex-end;gap:7px}
+#managed-projects .project-manage-row .project-row-actions button{min-height:36px;padding:8px 10px;font-size:11px;white-space:nowrap}
+#managed-projects .project-view-photos{color:#2457a0;border-color:#bad3f3;background:#f1f7ff}
+#staff-project-gallery{
+ width:min(950px,calc(100vw - 24px));height:min(740px,calc(100dvh - 24px));
+ max-width:950px;max-height:calc(100dvh - 24px);padding:0;border-radius:18px;
+ border:1px solid #40536c;background:#101d30;color:#f4f8ff;overflow:hidden;
+ box-shadow:0 30px 80px #0008;
+}
+#staff-project-gallery::backdrop{background:rgba(5,14,29,.8);backdrop-filter:blur(4px)}
+#staff-project-gallery .staff-gallery-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #ffffff26}
+#staff-project-gallery .staff-gallery-kicker{display:block;color:#9ebbe4;font-size:10px;font-weight:800;letter-spacing:1.2px;margin-bottom:4px}
+#staff-project-gallery h2{font-size:17px;line-height:1.35;color:#fff;margin:0;overflow-wrap:anywhere}
+#staff-project-gallery #staff-gallery-close{width:40px;height:40px;flex:none;border:1px solid #ffffff40;border-radius:10px;background:#ffffff15;color:#fff;font-size:17px}
+#staff-project-gallery .staff-gallery-stage{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:10px;align-items:center;height:calc(100% - 143px);min-height:0;padding:14px}
+#staff-project-gallery .staff-gallery-photo-wrap{height:100%;width:100%;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
+#staff-project-gallery .staff-gallery-photo-wrap img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+#staff-project-gallery .staff-gallery-photo-wrap p{color:#fbd2d2;text-align:center;font-size:13px;line-height:1.5}
+#staff-project-gallery .staff-gallery-arrow{width:44px;height:52px;border:1px solid #ffffff3a;border-radius:10px;background:#ffffff16;color:white;font-size:34px}
+#staff-project-gallery .staff-gallery-arrow:disabled{opacity:.3;cursor:default}
+#staff-project-gallery .staff-gallery-footer{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid #ffffff24;color:#d0dcf1;font-size:12px}
+#staff-project-gallery .staff-gallery-footer small{color:#a9bdd7;text-align:right;font-size:11px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-manage-photo-count{color:#b4c9e5}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-view-photos{color:#d8eaff;background:#234064;border-color:#4d78a8}
+@media(max-width:1050px){
+ #managed-projects .project-manage-row{grid-template-columns:92px minmax(0,1fr)}
+ #managed-projects .project-manage-thumbnail{width:92px;height:69px}
+ #managed-projects .project-manage-row .project-row-actions{grid-column:2;max-width:none;justify-content:flex-start}
+}
+@media(max-width:650px){
+ #managed-projects .project-manage-row{grid-template-columns:72px minmax(0,1fr);gap:8px 12px;padding:12px}
+ #managed-projects .project-manage-thumbnail{width:72px;height:56px}
+ #managed-projects .project-manage-info h3{font-size:14px}
+ #managed-projects .project-manage-info p{font-size:10px}
+ #managed-projects .project-manage-row .project-row-actions{grid-column:1/-1;justify-content:flex-start;width:100%;max-width:100%;gap:6px}
+ #managed-projects .project-manage-row .project-row-actions button{flex:1 1 auto;min-width:0;font-size:11px;white-space:normal}
+ #staff-project-gallery .staff-gallery-stage{grid-template-columns:32px minmax(0,1fr) 32px;gap:4px;padding:6px;height:calc(100% - 145px)}
+ #staff-project-gallery .staff-gallery-arrow{width:32px;height:46px;font-size:25px}
+ #staff-project-gallery .staff-gallery-header{padding:13px}
+ #staff-project-gallery .staff-gallery-footer{padding:12px;align-items:flex-start;flex-direction:column;gap:5px}
+ #staff-project-gallery .staff-gallery-footer small{text-align:left}
+}
