@@ -35,7 +35,7 @@ test('SK-only gallery is reachable from thumbnails without changing existing act
  assert.match(staff,/data-progress/);
  assert.match(staff,/data-edit/);
  assert.match(staff,/data-delete/);
- assert.match(staff,/body\.image_ids=ids/);
+ assert.match(staff,/image_ids:ids,image_id:ids\[0\]\|\|null/);
  assert.match(staffHtml,/id="staff-project-gallery"/);
  for(const id of ['staff-gallery-image','staff-gallery-prev','staff-gallery-next','staff-gallery-close','staff-gallery-count'])
   assert(staffHtml.includes('id="'+id+'"'),id);
