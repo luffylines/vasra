@@ -116,11 +116,36 @@ async function savePassword(form){
 }
 $('#password-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{await savePassword(e.target);success('Matagumpay na napalitan ang iyong password.');});};
 $('#settings-password-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{await savePassword(e.target);await selectTab('settings');$('#settings-message').textContent='Password updated. Your session has been secured.';success('Matagumpay na na-update ang iyong password.');});};
-$('#change-email-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
- const payload=Object.fromEntries(new FormData(e.target));
- await api('./api/account/email/request',{method:'POST',body:JSON.stringify(payload)});
- e.target.reset();$('#settings-message').textContent='Verification link requested. Check your new email inbox (and spam folder) within 15 minutes.';success('Naipadala ang email verification request. Tingnan ang inbox ng bago mong email.');
-});};
+// A readiness probe is only advisory. Submitting an authenticated email
+// request must remain possible even if the capabilities check times out.
+function emailChangeFeedback(text='',kind='info'){
+ const box=$('#email-change-message');
+ box.textContent=String(text||'');box.dataset.kind=kind;box.hidden=!text;
+}
+$('#change-email-form').onsubmit=async e=>{
+ e.preventDefault();
+ const form=e.target,button=form.querySelector('button[type="submit"]');
+ if(button.disabled||!form.reportValidity())return;
+ const data=Object.fromEntries(new FormData(form));
+ const next=String(data.email||'').trim().toLowerCase();
+ if(next===String(user?.email||'').toLowerCase()){
+  emailChangeFeedback('Ilagay ang ibang email address kaysa sa kasalukuyan.','error');return;
+ }
+ button.disabled=true;button.setAttribute('aria-busy','true');
+ emailChangeFeedback('Sending a secure verification link to the new email…','info');
+ try{
+  await api('./api/account/email/request',{method:'POST',
+   body:JSON.stringify({email:next,current:data.current})});
+  form.reset();
+  emailChangeFeedback('Tinanggap ng email provider ang verification request. Tingnan ang inbox at Spam/Junk ng bagong email; valid ang link sa loob ng 15 minuto.','success');
+  $('#settings-message').textContent='Pending verification: hindi pa binabago ang account email.';
+  success('Verification request submitted. Verify from your new email address.');
+ }catch(error){
+  const detail=error?.message||'Hindi maipadala ang verification request.';
+  emailChangeFeedback(detail,'error');
+  message(detail,true);
+ }finally{button.disabled=false;button.setAttribute('aria-busy','false');}
+};
 let recoveryReady=false;
 function recoveryFeedback(text='',kind='info'){
  const box=$('#recovery-message');
@@ -136,10 +161,13 @@ async function checkRecoveryAvailability(){
  // A failed network readiness probe must not leave Send reset link permanently disabled.
  const submit=$('#recovery-send');
  if(submit.getAttribute('aria-busy')!=='true')submit.disabled=false;
- $('#change-email-form').querySelector('button[type="submit"]').disabled=!recoveryReady;
+ // Do not lock Change Email solely because a health probe fails. The API
+ // still enforces identity, password, verified sender and rate limits.
+ const emailButton=$('#change-email-form').querySelector('button[type="submit"]');
+ if(emailButton.getAttribute('aria-busy')!=='true')emailButton.disabled=false;
  $('#email-setup-note').textContent=recoveryReady
-  ? 'Verification links expire after 15 minutes.'
-  : 'Email verification and password recovery are temporarily unavailable. Please contact the SK administrator.';
+  ? 'Email verification service configured. Links expire after 15 minutes.'
+  : 'Hindi makumpirma ang email service ngayon. Maaari pa ring subukan ang verification request; ipapakita ang server error kung hindi ito available.';
  if(recoveryMode==='request'&&!recoveryReady)
   recoveryFeedback('Hindi pa makumpirma ang email service. Maaari mong subukan ang Send reset link; ipapakita ang status kung may problema.','info');
  return recoveryReady;
