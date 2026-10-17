@@ -90,6 +90,7 @@
 <div class="project-editor-header"><span class="eyebrow">SK VASRA · PROJECT MANAGEMENT</span><h2 id="editor-heading">Bagong proyekto</h2><p>Idagdag ang impormasyon, progreso at mga larawan ng programa.</p></div>
 <p id="editor-message" role="status" aria-live="polite"></p>
 <form id="project-form">
+<div class="project-editor-scroll" id="project-editor-scroll">
 <div id="project-entry-mode" class="project-entry-mode" role="group" aria-label="Choose how to create a project">
  <button type="button" id="entry-mode-manual" class="project-mode-choice selected" data-entry-mode="manual" aria-pressed="true">
   <span class="project-mode-icon" aria-hidden="true">✎</span>
@@ -127,6 +128,7 @@
 <p class="editor-gallery-help">Hanggang <b>12 photos</b> (JPG, PNG o WebP, maximum 5 MB bawat isa). <b>Ang unang larawan ang cover</b> sa Mga proyekto; makikita ang lahat sa See More.</p>
 <label class="editor-upload-zone"><span class="editor-upload-icon" aria-hidden="true">＋</span><strong>Magdagdag ng mga larawan</strong><small>Click to choose photos · Maximum 12 images</small><input id="editor-files" name="image" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
 <div id="current-image" class="editor-image-grid" aria-live="polite"></div>
+<div class="editor-section-title"><span class="editor-section-number">03</span><strong>Publication settings</strong></div>
 <div class="editor-publish" id="project-publication-controls">
   <label for="project-publication-mode" class="publish-field-title">Publication ng proyekto</label>
   <p class="publish-field-description">Piliin kung kailan ito lalabas sa public Mga proyekto. Philippine Standard Time (PHT).</p>
@@ -142,8 +144,18 @@
   </div>
   <p id="project-publish-preview" role="status" aria-live="polite">Draft muna — hindi makikita sa public site.</p>
 </div>
-<div class="editor-footer"><span>Ang detalye at gallery ay isi-save sa SK VASRA.</span><button class="primary" type="submit" id="save-project">Save Project →</button></div>
+</div>
+<div class="editor-footer"><span id="project-save-note">Draft lamang — sa SK accounts lang makikita.</span><div class="editor-footer-actions"><button class="secondary" type="button" id="editor-cancel">Cancel</button><button class="primary" type="submit" id="save-project">Save as Draft →</button></div></div>
 </form></dialog>
+<dialog id="publish-project-dialog" class="publish-project-dialog" aria-labelledby="publish-project-heading">
+ <span class="publish-confirm-icon" aria-hidden="true">↗</span>
+ <span class="publish-confirm-kicker">SK VASRA · PROJECT PUBLICATION</span>
+ <h2 id="publish-project-heading">Publish this draft?</h2>
+ <p>Gagawing public ang <strong id="publish-project-title"></strong>, kasama ang approved project details at lahat ng naka-save na photos.</p>
+ <p class="publish-confirm-notice">Makikita agad ito sa public Mga proyekto pagkatapos ng matagumpay na pag-save. Hindi mababago ang project progress at existing images.</p>
+ <p id="publish-project-error" role="status" aria-live="polite"></p>
+ <div class="publish-confirm-actions"><button type="button" id="publish-project-cancel" class="secondary">Cancel</button><button type="button" id="publish-project-confirm" class="primary">Publish Now ↗</button></div>
+</dialog>
 <dialog id="progress-dialog" class="project-progress-dialog" aria-labelledby="progress-heading">
  <form id="progress-form">
   <div class="progress-dialog-header"><span class="eyebrow">SK VASRA · PROJECT TRACKING</span><h2 id="progress-heading">Update Project Progress</h2><p id="progress-project-title"></p></div>
