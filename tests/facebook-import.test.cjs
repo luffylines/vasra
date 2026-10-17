@@ -25,7 +25,7 @@ test('pasted caption basic autofill returns review-only draft without Facebook U
  },{apiKey:'',fetcher:()=>{throw Error('No network should be requested')}});
  assert.equal(result.ok,true);
  assert.equal(result.source,'pasted-caption');
- assert.equal(result.draft.category,'Edukasyon');
+ assert.equal(result.draft.category,'Pamamahala at Pakikilahok');
  assert.equal(result.draft.status,'Pinaplano');
  assert.equal(result.draft.progress,0);
  assert.doesNotMatch(result.draft.scope,/Facebook post: https/);
@@ -53,17 +53,19 @@ test('AI response is constrained to text fields, publication and progress remain
  assert.equal(res.draft.progress,0);assert.equal(res.draft.status,'Pinaplano');
  assert.doesNotMatch(res.draft.scope,/Facebook post:/);
 });
-test('UI provides caption-only and optional photo upload, without auto-saving drafts',()=>{
- for(const id of ['fb-import-panel','fb-post-caption','fb-import-screenshot','fb-analyze-post','fb-import-result'])assert.match(html,new RegExp('id="'+id+'"'));
+test('UI provides caption-only analysis without image input or automatic saving',()=>{
+ for(const id of ['fb-import-panel','fb-post-caption','fb-analyze-post','fb-import-result'])assert.match(html,new RegExp('id="'+id+'"'));
+ assert.doesNotMatch(html,/id="fb-import-screenshot"/);
+ assert.doesNotMatch(staff,/\$\('#fb-import-screenshot'\)/);
  assert.doesNotMatch(html,/id="fb-post-url"/);
  assert.match(staff,/JSON\.stringify\(\{caption\}\)/);
  assert.match(api,/if\(typeof b\.caption!=='string'\)/);
  assert.doesNotMatch(api,/typeof b\.url!=='string'/);
  assert.match(staff,/form\.elements\.publication_mode\.value='draft'/);
- assert.match(staff,/form\.elements\.status\.value=\['Pinaplano','Natapos','Isinasagawa'\]/);
+ assert.match(staff,/const status=\['Pinaplano','Natapos','Isinasagawa'\]\.includes\(draft\.status\)/);
  assert.match(staff,/appendProjectFiles\(files\)/);
  assert.match(staff,/\.\/api\/manage\/projects\/import-facebook/);
- assert.match(api,/await user\(\['chairman'\]\)/);
+ assert.match(api,/const actor=await user\(\['sk','chairman'\]\)/);
  assert.match(api,/limit\('facebook-import'/);
 });
 
@@ -76,7 +78,7 @@ test('new project has Manual Entry and Facebook Caption Analyzer modes',()=>{
  assert.match(html,/Facebook Caption Analyzer/);
  assert.match(html,/id="fb-import-panel"[^>]*hidden/);
  assert.match(staff,/function setProjectEntryMode\(mode\)/);
- assert.match(staff,/const facebook=mode==='facebook'&&!editing&&user\?\.role==='chairman'/);
+ assert.match(staff,/const facebook=mode==='facebook'&&!editing&&\['sk','chairman'\]\.includes\(user\?\.role\)/);
  assert.match(staff,/setProjectEntryMode\('manual'\)/);
  assert.match(staff,/button\.setAttribute\('aria-pressed',String\(active\)\)/);
 });
@@ -89,18 +91,22 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
   dataset:{entryMode:value},classList:{toggle(name,v){this.selected=v}},
   setAttribute(name,v){this[name]=v}
  }));
+ const footer={hidden:false};
  const nodes={
   '#project-entry-mode':{hidden:false,addEventListener(){}},
   '#manual-entry-help':{hidden:false},
-  '#fb-import-panel':{hidden:true,open:false}
+  '#fb-import-panel':{hidden:true,open:false},
+  '#project-review-fields':{hidden:false},
+  '#fb-review-hint':{hidden:true},
+  '#project-form':{querySelector:()=>footer}
  };
  const dom={querySelectorAll:()=>buttons};
  const $=id=>nodes[id];
- const build=new Function('$','document','getUser','getEditing',
-  'return function(mode){let user=getUser(),editing=getEditing();'+
+ const build=new Function('$','document','getUser','getEditing','getDraftReady',
+  'return function(mode){let user=getUser(),editing=getEditing(),facebookDraftReady=getDraftReady();'+
   block.slice(block.indexOf('const facebook='),block.indexOf("$('#project-entry-mode').addEventListener")).replace(/\}\s*$/,'')+
   '}');
- const chairman=build($,dom,()=>({role:'chairman'}),()=>null);
+ const chairman=build($,dom,()=>({role:'chairman'}),()=>null,()=>false);
  chairman('manual');
  assert.equal(nodes['#fb-import-panel'].hidden,true);
  assert.equal(nodes['#manual-entry-help'].hidden,false);
@@ -108,9 +114,21 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
  assert.equal(nodes['#fb-import-panel'].hidden,false);
  assert.equal(nodes['#fb-import-panel'].open,true);
  assert.equal(nodes['#manual-entry-help'].hidden,true);
+ assert.equal(nodes['#project-review-fields'].hidden,true);
+ assert.equal(footer.hidden,true);
  assert.equal(buttons[1]['aria-pressed'],'true');
- const officer=build($,dom,()=>({role:'sk'}),()=>null);
+ const analyzed=build($,dom,()=>({role:'chairman'}),()=>null,()=>true);
+ analyzed('facebook');
+ assert.equal(nodes['#project-review-fields'].hidden,false);
+ assert.equal(nodes['#fb-review-hint'].hidden,false);
+ assert.equal(footer.hidden,false);
+ const officer=build($,dom,()=>({role:'sk'}),()=>null,()=>false);
  officer('facebook');
+ assert.equal(nodes['#project-entry-mode'].hidden,false);
+ assert.equal(nodes['#fb-import-panel'].hidden,false);
+ assert.equal(nodes['#project-review-fields'].hidden,true);
+ const youth=build($,dom,()=>({role:'youth'}),()=>null,()=>false);
+ youth('facebook');
  assert.equal(nodes['#project-entry-mode'].hidden,true);
  assert.equal(nodes['#fb-import-panel'].hidden,true);
 });
@@ -213,13 +231,44 @@ test('AI output can improve summary while preserving confirmed classification/st
  assert.equal(result.draft.method,'ai');
  assert.match(result.draft.description,/Naganap/);
 });
-test('upload progress stays in an accessible fixed dialog toast until completion',()=>{
- assert.match(html,/id="project-upload-progress"[^>]*role="status"[^>]*hidden/);
- assert.match(staff,/function projectUploadStatus\(text\)/);
- assert.match(staff,/toast\.hidden=!text/);
- assert.match(staff,/projectUploadStatus\(progressText\)/);
- assert.match(staff,/projectUploadStatus\('Tapos na ang photo upload/);
- assert.match(staff,/projectUploadStatus\(''\)/);
- assert.match(staff,/success\(editing\?/);
- assert.doesNotMatch(staff,/setTimeout\([^)]*projectUploadStatus/);
+test('upload progress lives outside modal and remains until completion or error',()=>{
+ const toast=html.match(/<div id="project-upload-progress"[^>]*>/)?.[0]||'';
+ assert.match(toast,/popover="manual"/);
+ assert.match(toast,/role="status"/);
+ assert(html.indexOf('id="project-upload-progress"')<html.indexOf('<dialog id="editor"'));
+ assert.match(staff,/function projectUploadStatus\(text,state='uploading'\)/);
+ assert.match(staff,/toast\.showPopover\(\)/);
+ assert.match(toast,/data-state="uploading"/);
+ assert.match(staff,/projectUploadStatus\(notice\+' · '\+job\.photos\.length/);
+ assert.match(staff,/startProjectSave\(captureProjectSave\(true\)\)/);
+});
+test('GEAR UP road safety seminar uses educational category from full caption body',async()=>{
+ const caption='OCTOBER 10, 2026 | GEAR UP!\nNoong October 10, 2026, idinaos ang GEAR UP! Secured Kabataan: Road Safety Awareness Seminar sa 2nd Floor, Mines Multipurpose Building, sa pakikipagtulungan ng Automobile Association Philippines (AAP). Dinaluhan ito ng mga kabataang riders mula sa ride-hailing at delivery platforms. Tinuro ang mga traffic signs at road safety.';
+ const draft=await FB.importFacebookPost({caption},{aiKey:''});
+ assert.equal(draft.draft.category,'Edukasyon');
+ assert.equal(draft.draft.content_type,'project');
+ assert.equal(draft.draft.activity_date,'2026-10-10');
+});
+test('Groq cannot downgrade an evidence-supported education category to Iba pang programa',async()=>{
+ const caption='OCTOBER 10, 2026 | GEAR UP!\nNaganap ang Road Safety Awareness Seminar para sa mga kabataang riders. Tinuruan sila tungkol sa traffic signs.';
+ const result=await FB.importFacebookPost({caption},{aiKey:'test',fetcher:async()=>({
+  ok:true,json:async()=>({choices:[{message:{content:JSON.stringify({
+   title:'GEAR UP! Road Safety Seminar',category:'Iba pang programa',
+   description:'Road safety awareness seminar para sa youth riders.',
+   scope:'Road signs and safe riding.'
+  })}}]})
+ })});
+ assert.equal(result.draft.method,'ai');
+ assert.equal(result.draft.category,'Edukasyon');
+ assert.equal(result.draft.description,'Road safety awareness seminar para sa youth riders.');
+});
+test('Unrelated education mention does not turn an SK meeting into a project',async()=>{
+ const caption='OCTOBER 10, 2026 | SK VASRA REGULAR SESSION\nNaganap ang regular session ng SK council tungkol sa road safety seminar at mga educational plans.';
+ const result=await FB.importFacebookPost({caption},{aiKey:''});
+ assert.equal(result.draft.content_type,'meeting');
+ assert.equal(result.draft.category,'SK Regular Session');
+});
+test('Caption Analyzer disclosure uses modern SVG chevron with open-state rotation',()=>{
+ assert.match(html,/<span class="fb-import-chevron"[^>]*><svg/);
+ assert.doesNotMatch(html,/<span class="fb-import-chevron"[^>]*>⌄<\/span>/);
 });

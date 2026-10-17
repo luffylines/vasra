@@ -38,7 +38,7 @@ test('only assigned SK officers (plus existing chairman override) can manage dut
  assert.equal(allowed({role:'chairman',name:'Chairperson'},6), true);
  assert.equal(allowed({role:'chairman',name:'Chairperson',mustChange:true},6), false);
  assert(staff.includes("closed.disabled=true;auto.disabled=true;retry.hidden=false"));
- assert(staff.includes("if(result.mode!==mode)throw"));
+ assert(staff.includes("if(result.mode!==mode||result.date&&result.date!==manilaDutyDay().date"));
 });
 
 test('public SK duty uses local office hours and never claims unknown closures are confirmed', () => {
@@ -68,4 +68,78 @@ test('public SK duty uses local office hours and never claims unknown closures a
  assert.equal(fallback.label,'Scheduled open · 9 AM–6 PM');
  assert.match(fallback.title,/Live closure updates are temporarily unavailable/);
  assert(!duty.includes('Status unverified'));
+});
+
+test('duty status dashboard has modern icons, verified badge and limited controls',()=>{
+ for(const id of ['duty-controls','duty-mode-badge','duty-mode-text','duty-assigned-name',
+  'duty-control-date','duty-control-info','duty-set-closed','duty-set-auto','duty-retry']){
+  assert(markup.includes('id="'+id+'"'),id);
+ }
+ assert.match(markup,/<section id="duty-controls" class="duty-office-card"[^>]*hidden>/);
+ assert.match(markup,/class="duty-card-heading-icon"/);
+ assert.match(markup,/class="duty-card-info-icon"/);
+ assert.match(markup,/class="duty-action-button duty-action-close"/);
+ assert.match(markup,/class="duty-action-button duty-action-auto"/);
+ assert.match(staff,/setInterval\(\(\)=>\{if\(!document\.hidden&&user&&!user\.mustChange&&activeStaffTab==='overview'\)updateDutyControls\(\)\},60000\)/);
+ const css=fs.readFileSync(path.join(dist,'admin-dashboard.css'),'utf8');
+ assert.match(css,/#dashboard > #duty-controls\.duty-office-card\[hidden\]\{display:none!important\}/);
+ assert.match(css,/@media\(max-width:730px\)/);
+ assert.match(css,/data-state="open"/);
+ assert.match(css,/data-state="closed"/);
+ assert.match(css,/data-theme="dark".*#dashboard > #duty-controls\.duty-office-card/);
+});
+test('duty card appears only for scheduled officer or Chairman with office-hours awareness',async()=>{
+ const begin=staff.indexOf('function setDutyBadge('),end=staff.indexOf('async function setDutyMode(mode){',begin);
+ assert(begin!==-1&&end>begin);
+ const captured=staff.slice(begin,end);
+ const roster=[
+  {names:['Gel Bergonio'],day:'Lunes'},{names:['Ernest Bragais','Kristine De Ocampo'],day:'Martes'},
+  {names:['Sherwin Estanislao'],day:'Miyerkules'},{names:['Rembert Natividad'],day:'Huwebes'},
+  {names:['Arvin Capiral'],day:'Biyernes'},{names:['Kath Irag'],day:'Sabado'},
+  {names:['Roland Reyes'],day:'Linggo'}
+ ];
+ async function render(account,day,server={mode:'auto',date:'2026-10-17'},fail=false,tab='overview'){
+  const nodes=Object.fromEntries(['#duty-controls','#duty-mode-badge','#duty-mode-text',
+   '#duty-assigned-name','#duty-control-date','#duty-control-info',
+   '#duty-set-closed','#duty-set-auto','#duty-retry','#admin-office'].map(id=>[id,{
+    hidden:id==='#duty-controls',disabled:true,dataset:{},textContent:''
+   }]));
+  let requests=0;
+  const api=async()=>{requests++;if(fail)throw Error('offline');return server};
+  const eligibility=(u,index)=>u?.role==='chairman'||(u?.role==='sk'&&
+   (roster[index]?.names||[]).some(n=>n.toLowerCase()===u?.name?.toLowerCase()));
+  const run=new Function('$','days','user','activeStaffTab','manilaDutyDay',
+   'canManageDutyToday','api','Intl',
+   'let dutyReadSequence=0,dutyMutationBusy=false;\n'+captured+'\nreturn updateDutyControls;'
+  )(id=>nodes[id],roster,account,tab,()=>day,eligibility,api,Intl);
+  await run();
+  return {nodes,requests};
+ }
+ const sat={index:5,date:'2026-10-17',hour:10,minute:30};
+ const skip=await render({role:'sk',name:'Gel Bergonio'},sat);
+ assert.equal(skip.nodes['#duty-controls'].hidden,true);
+ assert.equal(skip.requests,0);
+ const officer=await render({role:'sk',name:'Kath Irag'},sat);
+ assert.equal(officer.nodes['#duty-controls'].hidden,false);
+ assert.equal(officer.nodes['#duty-assigned-name'].textContent,'Kath Irag');
+ assert.equal(officer.nodes['#duty-mode-badge'].dataset.state,'open');
+ assert.equal(officer.nodes['#duty-set-closed'].disabled,false);
+ assert.equal(officer.nodes['#duty-set-auto'].disabled,true);
+ const afterHours=await render({role:'sk',name:'Kath Irag'},{...sat,hour:18});
+ assert.equal(afterHours.nodes['#duty-mode-badge'].dataset.state,'closed');
+ assert.match(afterHours.nodes['#duty-control-info'].textContent,/6:00 PM/);
+ const manual=await render({role:'sk',name:'Kath Irag'},sat,{mode:'closed',date:sat.date});
+ assert.equal(manual.nodes['#duty-mode-badge'].dataset.state,'closed');
+ assert.equal(manual.nodes['#duty-set-closed'].disabled,true);
+ assert.equal(manual.nodes['#duty-set-auto'].disabled,false);
+ const offline=await render({role:'sk',name:'Kath Irag'},sat,undefined,true);
+ assert.equal(offline.nodes['#duty-mode-badge'].dataset.state,'unknown');
+ assert.equal(offline.nodes['#duty-set-closed'].disabled,true);
+ assert.equal(offline.nodes['#duty-set-auto'].disabled,true);
+ assert.equal(offline.nodes['#duty-retry'].hidden,false);
+ const chairman=await render({role:'chairman',name:'SK Chairman'},sat);
+ assert.equal(chairman.nodes['#duty-controls'].hidden,false);
+ const outsideDashboard=await render({role:'sk',name:'Kath Irag'},sat,undefined,false,'users');
+ assert.equal(outsideDashboard.nodes['#duty-controls'].hidden,true);
+ assert.equal(outsideDashboard.requests,0);
 });

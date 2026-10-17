@@ -18,7 +18,7 @@ test('SK staff can draft, publish now, schedule, and keep previous publication d
  assert.match(staffJs,/function updatePublicationFields\(/);
  assert.match(staffJs,/publishMode\.value='keep'/);
  assert.match(staffJs,/body\.publication_mode=mode/);
- assert.match(staffJs,/body\.publish_at=iso/);
+ assert.match(staffJs,/body\.publish_at=date/);
  assert.match(staffJs,/form\.elements\.publication_mode\.value='draft'/);
 });
 test('scheduled local time is interpreted as Philippine Standard Time, independent of browser zone',()=>{
@@ -83,4 +83,51 @@ test('picker suggests a future Philippine time and warns before saving if time a
  elements['#project-publish-datetime'].events.input();
  assert.match(elements['#project-publish-preview'].textContent,/Scheduled for/);
  assert(!elements['#project-publish-preview'].classList.flags.has('publication-time-error'));
+});
+
+test('editing: Publish Now, Draft, or Keep current ignore a stale scheduled date',()=>{
+ const start=staffJs.indexOf('const phtLocalInput='),end=staffJs.indexOf('let editorPhotos=[]',start);
+ assert(start>=0&&end>start);
+ const now=Date.parse('2026-10-16T14:09:00Z');
+ class FixedDate extends Date {static now(){return now;}}
+ const input={
+  value:'2026-10-15T10:00',min:'',required:false,disabled:false,customError:'',
+  events:{},addEventListener(n,fn){this.events[n]=fn;},
+  setCustomValidity(v){this.customError=v;},
+  checkValidity(){
+   return this.disabled||(!this.customError&&(!this.required||!!this.value)&&(!this.min||this.value>=this.min));
+  }
+ };
+ const selector={
+  '#project-publication-mode':{value:'keep',events:{},addEventListener(n,fn){this.events[n]=fn;}},
+  '#project-publish-datetime':input,
+  '#project-publish-datetime-wrap':{hidden:false},
+  '#project-publish-preview':{textContent:'',classList:{add(){},remove(){}}}
+ };
+ const $=key=>selector[key]||null;
+ const controller=new Function('$','Date','editing','phPublicationDate','projectPublishStatus',
+  staffJs.slice(start,end)+';return {updatePublicationFields};'
+ )($,FixedDate,{published:true},x=>x,()=> 'Published');
+ for(const mode of ['keep','now','draft']){
+  selector['#project-publication-mode'].value=mode;
+  controller.updatePublicationFields();
+  assert.equal(input.disabled,true,mode+' must disable scheduled input');
+  assert.equal(input.required,false,mode+' must not require a scheduled time');
+  assert.equal(input.min,'',mode+' must remove stale min constraint');
+  assert.equal(selector['#project-publish-datetime-wrap'].hidden,true,mode);
+  assert.equal(input.checkValidity(),true,mode+' must not block submit');
+ }
+ selector['#project-publication-mode'].value='schedule';
+ selector['#project-publication-mode'].events.change();
+ assert.equal(input.disabled,false);
+ assert.equal(input.required,true);
+ assert.equal(input.min,'2026-10-16T22:10');
+ assert.equal(input.value,'2026-10-16T22:25');
+ assert.equal(input.checkValidity(),true);
+ // The deadline is enforced again only while Schedule remains active.
+ input.value='2026-10-15T10:00';
+ assert.equal(input.checkValidity(),false);
+ selector['#project-publication-mode'].value='now';
+ selector['#project-publication-mode'].events.change();
+ assert.equal(input.checkValidity(),true);
 });

@@ -8,7 +8,7 @@ function renderHomeHighlights(){
  if(!homeProjects)return;
  const monthlyIds=new Set((homeReports||[]).filter(r=>String(r.month).slice(0,7)===homePeriod.year+'-'+homePeriod.month).map(r=>r.project_id));
  const list=[...homeProjects].sort((a,b)=>Number(monthlyIds.has(b.id))-Number(monthlyIds.has(a.id))||String(b.updated).localeCompare(String(a.updated))).slice(0,3);
- $('#home-highlights').innerHTML=list.length?list.map(p=>'<article class="home-project"><span class="badge-inline">'+esc(p.status)+'</span><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><small>'+esc(p.category)+' · '+esc(p.progress)+'% progreso</small><a href="./projects.html">Tingnan sa mga proyekto ↗</a></article>').join(''):'<div class="trans-empty">Wala pang inilathalang proyekto. Abangan ang mga bagong programa ng SK Vasra.</div>';
+ $('#home-highlights').innerHTML=list.length?list.map(p=>'<article class="home-project"><span class="badge-inline">'+esc(p.status)+'</span><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><small>'+esc(p.category)+' · '+esc(p.progress)+'% progreso</small><a href="./projects.html">Tingnan sa mga proyekto <svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></article>').join(''):'<div class="trans-empty">Wala pang inilathalang proyekto. Abangan ang mga bagong programa ng SK Vasra.</div>';
 }
 api('./api/projects').then(data=>{
  homeProjects=Array.isArray(data.projects)?data.projects:[];
