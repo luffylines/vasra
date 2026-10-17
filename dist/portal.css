@@ -242,10 +242,36 @@
 .portal-refresh #grid .cardbody .category{font-size:11px}
 .portal-refresh #grid .cardbody h3{font-size:17px;line-height:1.32;margin:6px 0;overflow-wrap:anywhere}
 .portal-refresh #grid .cardbody>p{font-size:12px;line-height:1.5;margin:4px 0 6px;min-height:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.portal-refresh #grid .progresslabel{margin-top:auto;padding-top:9px;font-size:11px}
+/* A consistent bottom section anchors progress, publication and CTA across
+   every card in the same row, regardless of title/summary wrapping. */
+.portal-refresh #grid .project-card-bottom{margin-top:auto;display:flex;flex-direction:column;gap:0;min-width:0}
+.portal-refresh #grid .project-card-progress{display:flex;flex-direction:column;min-width:0}
+.portal-refresh #grid .progresslabel{margin-top:0;padding-top:12px;font-size:11px}
 .portal-refresh #grid .track{margin-top:5px}
-.portal-refresh #grid .cardbottom{margin-top:12px;padding-top:10px;gap:8px;flex-wrap:wrap}
-.portal-refresh #grid .cardbottom button{font-size:11px;min-height:40px;padding:8px 10px}
+.portal-refresh #grid .cardbottom{display:flex;flex-direction:column;align-items:stretch;gap:11px;margin-top:13px;
+ padding-top:12px;border-top:1px solid #e5ebf4;min-width:0}
+.portal-refresh #grid .cardbottom .card-publish-date{display:flex;align-items:center;gap:7px;min-width:0;
+ width:100%;min-height:24px;flex-wrap:nowrap;color:#4e6688;font-size:11px;line-height:1.35}
+.portal-refresh #grid .cardbottom .card-publish-date>svg{width:16px;height:16px;flex:none;color:#4775b0}
+.portal-refresh #grid .project-card-published-at{flex:1;min-width:0;display:block}
+.portal-refresh #grid .project-card-published-at time{display:flex;gap:5px;align-items:center;
+ white-space:nowrap;overflow:hidden;font-size:11px;font-weight:650;letter-spacing:-.18px;
+ font-variant-numeric:tabular-nums}
+.portal-refresh #grid .project-card-date-day,.portal-refresh #grid .project-card-date-time{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.portal-refresh #grid .project-card-date-day{flex:none}
+.portal-refresh #grid .project-card-date-time{flex:1}
+.portal-refresh #grid .project-card-date-separator{flex:none;color:#8ba2c2}
+.portal-refresh #grid .project-see-more{display:flex;align-items:center;justify-content:space-between;gap:12px;
+ width:100%;min-height:42px;padding:7px 9px 7px 13px;background:#eaf2ff;color:#1d4e8c;
+ border:1px solid #d2e3fa;border-radius:10px;font-size:12px;font-weight:800;text-align:left;
+ transition:background-color .18s,border-color .18s,box-shadow .18s,transform .18s}
+.portal-refresh #grid .project-see-more:hover{background:#d9eaff;border-color:#9cc4f6;
+ box-shadow:0 3px 10px #1e559525;transform:translateY(-1px)}
+.portal-refresh #grid .project-see-more:focus-visible{outline:3px solid #84b5fb;outline-offset:2px}
+.portal-refresh #grid .project-see-more-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;
+ border-radius:8px;background:#d1e4ff;color:#265a9b}
+.portal-refresh #grid .project-see-more-icon svg{width:16px;height:16px}
+
 @media(max-width:1250px){
  .portal-refresh #grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
@@ -256,4 +282,5 @@
  .portal-refresh #grid{grid-template-columns:minmax(0,1fr);gap:12px}
  .portal-refresh #grid .cardbody{padding:13px}
  .portal-refresh #grid .cardbody h3{font-size:16px}
+ .portal-refresh #grid .project-card-published-at time{font-size:12px;gap:6px}
 }
