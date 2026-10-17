@@ -75,3 +75,45 @@ test('nonrecoverable upload errors cannot be silently swallowed',async()=>{
  assert.equal(requests,1);
  assert.equal(status.length,0);
 });
+
+
+test('newly uploaded September 12 activity never outranks October 10, October 3 or September 27',()=>{
+ const rows=[
+  {id:'sep12',title:'Sep 12, 2026 | RED FLAG OR RIGHT MOVE',publish_at:'2026-10-17T08:26:00Z'},
+  {id:'oct10gear',title:'OCTOBER 10, 2026 | GEAR UP',publish_at:'2026-10-17T01:31:00Z'},
+  {id:'oct10meeting',title:'OCTOBER 10, 2026 | 36TH SK VASRA REGULAR SESSION',publish_at:'2026-10-16T15:52:00Z'},
+  {id:'oct3',title:'OCTOBER 3, 2026 | HANDOG SA BALIK ESKWELA',publish_at:'2026-10-17T07:25:00Z'},
+  {id:'sep27',title:'SEPTEMBER 27, 2026 | AKLATANG BAYAN',publish_at:'2026-10-17T07:36:00Z'},
+  {id:'aug29',title:'AUGUST 29, 2026 | PROJECT NUTRIMAGINE',publish_at:'2026-10-17T08:03:00Z'},
+  {id:'aug27',title:'AUGUST 27, 2026 | FREE MEDICINES',publish_at:'2026-10-17T07:57:00Z'}
+ ];
+ assert.deepEqual(dates.sortProjectsNewestFirst(rows).map(p=>p.id),[
+  'oct10gear','oct10meeting','oct3','sep27','sep12','aug29','aug27'
+ ]);
+ // Rendering/sorting must never mutate the loaded API response array.
+ assert.equal(rows[0].id,'sep12');
+});
+test('abbreviated and localized dates are recognized, including Unicode bold headings',()=>{
+ for(const title of ['Sep 12, 2026 | Program','Sept. 12, 2026 | Program',
+   'September 12, 2026 | Program','𝐒𝐄𝐏 𝟏𝟐, 𝟐𝟎𝟐𝟔 | Program','12 Setyembre 2026 | Program']){
+  assert.equal(dates.projectActivityTimestamp({title}),Date.UTC(2026,8,12),title);
+ }
+ for(const title of ['Oct 10, 2026 | SK Program','October 10, 2026 | SK Program','10 Oktubre 2026 | SK Program'])
+  assert.equal(dates.projectActivityTimestamp({title}),Date.UTC(2026,9,10),title);
+ assert.equal(dates.projectActivityTimestamp({title:'2026-09-27 | Project'}),Date.UTC(2026,8,27));
+ assert(Number.isNaN(dates.projectActivityTimestamp({title:'February 31, 2026 | Invalid'})));
+});
+test('projects with unknown activity date sort after dated events, even when just published',()=>{
+ const rows=[
+  {id:'unknown',title:'SK Project',publish_at:'2026-10-17T12:00:00Z'},
+  {id:'known',title:'Sep 12, 2026 | Right Move',publish_at:'2026-10-10T12:00:00Z'}
+ ];
+ assert.deepEqual(dates.sortProjectsNewestFirst(rows).map(p=>p.id),['known','unknown']);
+});
+test('same activity day uses publish timestamp only as a stable tie breaker',()=>{
+ const rows=[
+  {id:'older',title:'OCTOBER 10, 2026 | Training',publish_at:'2026-10-11T00:00:00Z'},
+  {id:'newer',title:'OCTOBER 10, 2026 | Seminar',publish_at:'2026-10-17T01:00:00Z'}
+ ];
+ assert.deepEqual(dates.sortProjectsNewestFirst(rows).map(p=>p.id),['newer','older']);
+});
