@@ -152,7 +152,7 @@
 </div>
 </div><!-- project-review-fields -->
 </div><!-- project-editor-scroll -->
-<div class="editor-footer"><span id="project-save-note">Draft lamang — sa SK accounts lang makikita.</span><div class="editor-footer-actions"><button class="secondary" type="button" id="editor-cancel">Cancel</button><button class="primary" type="submit" id="save-project">Save as Draft →</button></div></div>
+<div class="editor-footer"><span id="project-save-note">Draft lamang — sa SK accounts lang makikita.</span><p id="project-save-feedback" class="project-save-feedback" role="status" aria-live="polite" hidden></p><div class="editor-footer-actions"><button class="secondary" type="button" id="editor-cancel">Cancel</button><button class="primary" type="submit" id="save-project">Save as Draft →</button></div></div>
 </form></dialog>
 <dialog id="publish-project-dialog" class="publish-project-dialog" aria-labelledby="publish-project-heading">
  <span class="publish-confirm-icon" aria-hidden="true">↗</span>
@@ -185,8 +185,10 @@
   <h2 id="delete-project-heading">I-delete ang proyekto?</h2>
   <p>Permanenteng mawawala ang proyektong <strong id="delete-project-title"></strong> sa SK VASRA at sa public website. Hindi ito maaaring i-undo.</p>
   <p class="delete-project-warning">Para maprotektahan ang pondo at financial history, hindi maaaring i-delete ang mga proyektong may naka-link na monthly reports.</p>
-  <label for="delete-project-input">Para kumpirmahin, i-type ang <strong id="delete-project-confirm-name"></strong>:</label>
-  <input id="delete-project-input" type="text" autocomplete="off" spellcheck="false" placeholder="I-type ang pangalan ng proyekto">
+  <label for="delete-project-input">Para kumpirmahin, i-type ang pangalan ng proyekto:</label>
+  <div class="delete-project-copy-row"><strong id="delete-project-confirm-name"></strong><button id="delete-project-copy-name" class="delete-project-copy-name" type="button" aria-label="Copy exact project name" title="Copy project name"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg> Copy Name</button></div>
+  <p id="delete-project-copy-status" role="status" aria-live="polite" hidden></p>
+  <input id="delete-project-input" type="text" autocomplete="off" spellcheck="false" placeholder="I-paste o i-type ang project name">
   <p id="delete-project-error" role="alert"></p>
   <div class="delete-project-actions">
     <button type="button" id="delete-project-cancel" class="secondary">Cancel</button>
