@@ -48,3 +48,54 @@ body.account-workspace[data-theme="dark"] .ui-action-icon{color:inherit}
  .ui-icon-link{gap:7px}
 }
 @media(prefers-reduced-motion:reduce){.ui-action-icon{transition:none!important}}
+
+/* Unified close controls. Keep the icon visible even on a dimmed modal,
+   browser dark color scheme and during long-running uploads. */
+#editor.project-editor-modal .close,
+body.account-workspace #editor.project-editor-modal .close{
+ width:40px;min-width:40px;height:40px;min-height:40px;
+ padding:0;display:grid;place-items:center;border-radius:11px;
+ border:1px solid #b5c8df;background:#e9f2ff;color:#153965;
+ opacity:1;visibility:visible;line-height:1;z-index:10;
+ box-shadow:0 2px 6px #102c481a;
+}
+#editor.project-editor-modal .close .ui-action-icon{width:21px;height:21px;stroke-width:2.4;color:inherit}
+#editor.project-editor-modal .close:hover{background:#d4e6ff;border-color:#6b9ddd;color:#123b73}
+#editor.project-editor-modal .close:focus-visible{outline:3px solid #86b7fa;outline-offset:3px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .close{
+ background:#29496e!important;border:1px solid #8aafd7!important;
+ color:#fff!important;opacity:1!important;visibility:visible!important;
+ box-shadow:0 3px 12px #050e1e78!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .close:hover{
+ background:#3b638e!important;border-color:#b1d7ff!important;color:#fff!important
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .close .ui-action-icon{
+ stroke:#fff!important;opacity:1!important;fill:none!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .close:disabled{
+ background:#36516f!important;color:#e3edff!important;
+ border-color:#7293bc!important;opacity:0.8!important
+}
+/* Rest of the interactive image/dialog X buttons use the same icon and touch size. */
+#staff-gallery-close,#poster-close,#lightbox-close,
+#detail .close,#installhelp .close{
+ display:inline-grid;place-items:center;min-width:36px;min-height:36px;
+ padding:7px;border-radius:10px;line-height:1;opacity:1;
+}
+#staff-gallery-close .ui-action-icon,
+#poster-close .ui-action-icon,#lightbox-close .ui-action-icon,
+#detail .close .ui-action-icon,#installhelp .close .ui-action-icon{
+ width:20px;height:20px;stroke-width:2.3;stroke:currentColor;opacity:1;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-gallery-close{
+ background:#2c4c76!important;color:#fff!important;border:1px solid #8db0dd!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #staff-gallery-close:hover{background:#3b6694!important}
+#detail .close,#installhelp .close{
+ background:#edf3fc;color:#193b66;border:1px solid #cbd8e8;
+}
+#detail .close:hover,#installhelp .close:hover{background:#dceafd}
+@media(max-width:600px){
+ #editor.project-editor-modal .close{width:42px;min-width:42px;height:42px;min-height:42px}
+}
