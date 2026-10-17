@@ -19,10 +19,17 @@ const message=(text,error=false)=>{
 };
 // A fixed, persistent side toast remains visible while photos are uploading.
 // Success/error toast resumes its normal 10-second timeout only on completion.
-function projectUploadStatus(text){
+let uploadToastTimer=null;
+function projectUploadStatus(text,state='uploading'){
  const toast=$('#project-upload-progress');
- toast.hidden=!text;
+ if(uploadToastTimer){clearTimeout(uploadToastTimer);uploadToastTimer=null;}
+ toast.dataset.state=state;toast.hidden=!text;
  $('#project-upload-progress-text').textContent=String(text||'');
+ if(!text){if(toast.matches?.(':popover-open'))toast.hidePopover();return;}
+ if(typeof toast.showPopover==='function'&&!toast.matches?.(':popover-open')){
+  try{toast.showPopover()}catch{/* fallback when unsupported */}
+ }
+ if(state!=='uploading')uploadToastTimer=setTimeout(()=>projectUploadStatus(''),14000);
 }
 // All confirmed staff mutations use the same 10-second green confirmation toast.
 const success=(text)=>message(text,false);
@@ -358,7 +365,7 @@ if(publicationChoices)publicationChoices.addEventListener('click',event=>{
 $('#project-publish-datetime').addEventListener('input',updatePublicationFields);
 $('#project-publish-datetime').addEventListener('focus',updatePublicationFields);
 
-let editorPhotos=[];
+let editorPhotos=[],editorBaseline='',projectSaveJob=null;
 function clearProjectPreviews(){for(const p of editorPhotos)if(p.url)URL.revokeObjectURL(p.url);editorPhotos=[];}
 function renderProjectPreviews(){
  const region=$('#current-image');
@@ -396,6 +403,7 @@ $('#project-entry-mode').addEventListener('click',e=>{
  setProjectEntryMode(button.dataset.entryMode);
 });
 function openEditor(project=null){
+ if(projectSaveJob){message('May project upload pang tumatakbo. Hintaying matapos bago mag-edit muli.',true);return;}
  clearProjectPreviews();editing=project;facebookDraftReady=false;
  const form=$('#project-form');form.reset();
  const publishMode=$('#project-publication-mode');
@@ -411,7 +419,6 @@ function openEditor(project=null){
  $('#editor-message').textContent='';
  $('#editor-message').classList.remove('error');
  projectSaveFeedback();
- projectUploadStatus('');
  $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
  if(project){
    for(const key of ['title','category','description','scope','status','progress'])form.elements[key].value=project[key];
@@ -427,6 +434,7 @@ function openEditor(project=null){
  }
  renderProjectPreviews();
  updatePublicationFields();
+ editorBaseline=editorFormSignature();
  $('#editor').showModal();
  $('#project-editor-scroll').scrollTop=0;
 }
@@ -636,8 +644,23 @@ $('#delete-project-button').onclick=async()=>{
   button.disabled=false;
  }
 };
-$('.close').onclick=()=>$('#editor').close();
-$('#editor-cancel').onclick=()=>$('#editor').close();
+function editorFormSignature(){
+ const form=$('#project-form'),fields={};
+ for(const k of ['title','category','description','scope','status','progress','publication_mode'])fields[k]=form.elements[k]?.value||'';
+ return JSON.stringify({fields,photos:editorPhotos.map(p=>p.id||(p.file?.name+':'+p.file?.size))});
+}
+function closeEditorSafely(){
+ if(projectSaveJob){$('#editor').close();return;}
+ if(editorFormSignature()===editorBaseline||$('#project-review-fields').hidden){$('#editor').close();return;}
+ if(!$('#project-form').reportValidity()){
+  projectSaveFeedback('Kumpletuhin ang required project details bago mag-auto-save.',true);return;
+ }
+ try{startProjectSave(captureProjectSave(true));$('#editor').close();}
+ catch(error){projectSaveFeedback(error?.message||'Hindi pa nai-save.',true);}
+}
+$('.close').onclick=closeEditorSafely;
+$('#editor-cancel').onclick=closeEditorSafely;
+$('#editor').addEventListener('cancel',e=>{e.preventDefault();closeEditorSafely()});
 $('#editor').addEventListener('close',clearProjectPreviews);
 function appendProjectFiles(files){
  if(files.length+editorPhotos.length>12){message('Maximum 12 photos per project.',true);return false;}
@@ -816,60 +839,87 @@ $('#project-form').addEventListener('input',e=>{
  if(!e.target.matches?.('input,select,textarea'))return;
  if($('#project-save-feedback').classList.contains('error'))projectSaveFeedback();
 });
-$('#project-form').onsubmit=async e=>{
- e.preventDefault();const form=e.target;
- const save=$('#save-project');
- if(save.disabled)return;
- save.disabled=true;
- projectSaveFeedback('Sine-save ang proyekto…');
- projectUploadStatus('Inihahanda ang pag-save ng proyekto…');
- try{
-   const body=Object.fromEntries(new FormData(form));
-   body.progress=Number(body.progress);
-   const mode=form.elements.publication_mode.value;
-   body.published=mode!=='draft';
-   body.publication_mode=mode;
-   body.publish_at=null;
-   if(mode==='schedule'){
-     const iso=scheduledDateIso($('#project-publish-datetime').value);
-     if(!iso)throw Error('Hindi valid ang publication date at oras. Pumili ng petsa at oras sa Philippine Time.');
-     if(Date.parse(iso)<=Date.now()+30000)throw Error('Lumipas na ang napiling publication time. Pumili ng oras sa hinaharap (PH time), o gamitin ang Publish Now.');
-     body.publish_at=iso;
-   }
-   body.version=editing?.version;
-   const ids=[];
-   for(let i=0;i<editorPhotos.length;i++){
-     const photo=editorPhotos[i];
-     const progressText=photo.file?'Uploading photo '+(i+1)+' of '+editorPhotos.length+'…':'Preparing gallery…';
-     $('#editor-message').textContent=progressText;
-     projectUploadStatus(progressText);
-     ids.push(photo.id||await uploadProjectPhoto(photo.file));
-   }
-   projectUploadStatus('Tapos na ang photo upload. Sine-save ang project details…');
-   body.image_ids=ids;body.image_id=ids[0]||null;
-   delete body.image;
-   if(editing&&!Number.isInteger(body.version))throw Error('Kulang ang version ng project. I-refresh ang Manage Projects bago mag-edit.');
-   const wasEditing=!!editing;
-   const result=await api('./api/manage/projects'+(editing?'/'+encodeURIComponent(editing.id):''),{
-     method:wasEditing?'PUT':'POST',body:JSON.stringify(body)
-   });
-   if(!result.project?.id)throw Error('Hindi nakumpirma ang pag-save.');
-   $('#editor').close();
-   projectUploadStatus('');
-   success(wasEditing?'Matagumpay na na-save ang mga pagbabago sa project.':'Matagumpay na na-create ang project.');
-   // Refresh failure must not turn a confirmed save into a misleading failure.
-   try{await loadProjects();}
-   catch{message('Na-save ang project, pero hindi na-refresh ang listahan. I-refresh ang page para makita ang latest changes.',true);}
- }catch(error){
-   projectUploadStatus('');
-   const detail=error?.message||'Hindi natuloy ang pag-save. Subukan muli.';
-   projectSaveFeedback(detail,true);
-   message(detail,true);
- }finally{
-   save.disabled=false;
-   updatePublicationFields();
+// Upload jobs own immutable input snapshots; closing a dialog cannot cancel them.
+function captureProjectSave(automatic=false){
+ const form=$('#project-form'),body=Object.fromEntries(new FormData(form));
+ const record=editing?{id:editing.id,version:editing.version,published:!!editing.published}:null;
+ body.progress=Number(body.progress);
+ const mode=automatic?(record?.published?'keep':'draft'):form.elements.publication_mode.value;
+ body.publication_mode=mode;body.published=mode!=='draft';body.publish_at=null;
+ if(mode==='schedule'){
+  const date=scheduledDateIso($('#project-publish-datetime').value);
+  if(!date||Date.parse(date)<=Date.now()+30000)throw Error('Pumili ng valid future publication date sa Philippine Time.');
+  body.publish_at=date;
  }
+ if(record&&!Number.isInteger(record.version))throw Error('Invalid project version. Refresh Manage Projects.');
+ body.version=record?.version;delete body.image;
+ return {body,record,photos:editorPhotos.map(x=>({id:x.id||null,file:x.file||null,source:x})),automatic};
+}
+async function saveProjectStage(job,mode,ids){
+ const data={...job.body,publication_mode:mode,published:mode!=='draft',
+  publish_at:mode==='schedule'?job.body.publish_at:null,
+  image_ids:ids,image_id:ids[0]||null,version:job.record?.version};
+ const path='./api/manage/projects'+(job.record?'/'+encodeURIComponent(job.record.id):'');
+ const res=await api(path,{method:job.record?'PUT':'POST',body:JSON.stringify(data)});
+ if(!res.project?.id||!Number.isInteger(res.project.version))throw Error('Hindi nakumpirma ang database project version.');
+ job.record={id:res.project.id,version:res.project.version,published:!!res.project.published};
+ // Retry a partial upload against the saved record rather than creating a duplicate.
+ if($('#editor').open){editing={...(editing||{}),...res.project};editorBaseline=editorFormSignature();}
+ return res.project;
+}
+function startProjectSave(job){
+ if(projectSaveJob)return projectSaveJob;
+ $('#save-project').disabled=true;projectSaveFeedback();
+ const running=(async()=>{
+  const uploads=job.photos.filter(x=>x.file&&!x.id).length;
+  const existingIds=job.photos.filter(x=>x.id).map(x=>x.id);
+  // Never publish a brand-new project until all photos have been linked.
+  const stage=uploads?(job.record?(job.record.published?'keep':'draft'):'draft'):job.body.publication_mode;
+  let linked=0;
+  projectUploadStatus(job.automatic?'Auto-saving project details…':'Saving project details…');
+  try{
+   await saveProjectStage(job,stage,existingIds);
+   for(const x of job.photos){
+    if(!x.file||x.id)continue;
+    projectUploadStatus('Uploading photo '+(linked+1)+' of '+uploads+'…');
+    x.id=await uploadProjectPhoto(x.file);
+    if(x.source)x.source.id=x.id;
+    projectUploadStatus('Saving photo '+(linked+1)+' of '+uploads+' to database…');
+    await saveProjectStage(job,stage,job.photos.filter(p=>p.id).map(p=>p.id));
+    linked++;
+   }
+   if(stage!==job.body.publication_mode){
+    projectUploadStatus('Finalizing publication settings…');
+    await saveProjectStage(job,job.body.publication_mode,job.photos.map(p=>p.id));
+   }
+   const notice=job.automatic?'Auto-saved project':job.body.publication_mode==='draft'?'Draft saved':'Project saved';
+   projectUploadStatus(notice+' · '+job.photos.length+' photo(s) linked','success');
+   success(notice+'.');
+   if($('#editor').open)$('#editor').close();
+   try{await loadProjects()}catch{message('Saved to database; refresh the project list to see changes.',true)}
+  }catch(error){
+   const detail=(error?.message||'Upload failed.')+
+     (job.record?' Project saved; '+linked+' new photo(s) linked. Reopen to retry missing photos.':' No database save confirmed.');
+   projectUploadStatus('Upload/save incomplete · '+detail,'error');
+   if($('#editor').open)projectSaveFeedback(detail,true);
+   message(detail,true);
+  }finally{
+   projectSaveJob=null;$('#save-project').disabled=false;
+   if($('#editor').open)updatePublicationFields();
+  }
+ })();
+ projectSaveJob=running;return running;
+}
+$('#project-form').onsubmit=e=>{
+ e.preventDefault();if(projectSaveJob)return;
+ try{startProjectSave(captureProjectSave(false))}
+ catch(error){projectSaveFeedback(error?.message||'Hindi na-save ang project.',true)}
 };
+// A tab/browser exit cannot continue FileReader and fetch: warn the user.
+window.addEventListener('beforeunload',e=>{
+ if(!projectSaveJob)return;
+ e.preventDefault();e.returnValue='';
+});
 async function loadUsers(){const b=await api('./api/users');$('#users-list').innerHTML=b.users.map(u=>`<article class="manage-row"><div><h3>${esc(u.name)}</h3><p>${esc(u.email)}</p><span>${roleText[u.role]}${u.role==='sk'?' · '+esc(({kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'})[u.position]||'SK Kagawad'):''}</span></div>${u.role==='chairman'?'<span class="badge-inline">Chairman</span>':`<form class="role-form" data-user="${esc(u.id)}"><label>Role para kay ${esc(u.name)}<select name="role"><option value="youth" ${u.role==='youth'?'selected':''}>Walang SK access</option><option value="sk" ${u.role==='sk'?'selected':''}>SK Officer</option></select></label><button class="secondary">Save Access</button><label>Designation<select name="position"><option value="kagawad" ${u.position==='kagawad'?'selected':''}>SK Kagawad</option><option value="treasurer" ${u.position==='treasurer'?'selected':''}>SK Treasurer</option><option value="secretary" ${u.position==='secretary'?'selected':''}>SK Secretary</option></select></label><button type="button" data-save-position="${esc(u.id)}" class="secondary">Save Position</button></form>`}</article>`).join('')}
 $('#users-list').onclick=async e=>{const btn=e.target.closest('[data-save-position]');if(!btn)return;const form=btn.closest('form');btn.disabled=true;try{await api('./api/users/'+btn.dataset.savePosition+'/position',{method:'PUT',body:JSON.stringify({position:form.elements.position.value})});success('Matagumpay na na-update ang posisyon ng SK officer.');await loadUsers()}catch(error){message(error.message,true)}finally{btn.disabled=false}};
 $('#users-list').onsubmit=async e=>{e.preventDefault();const form=e.target,b=form.querySelector('button');b.disabled=true;try{await api('./api/users/'+form.dataset.user+'/role',{method:'PUT',body:JSON.stringify({role:form.elements.role.value})});success('Matagumpay na na-update ang SK account access.');await loadUsers()}catch(error){message(error.message,true)}finally{b.disabled=false}};
