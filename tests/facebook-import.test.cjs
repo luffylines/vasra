@@ -53,8 +53,10 @@ test('AI response is constrained to text fields, publication and progress remain
  assert.equal(res.draft.progress,0);assert.equal(res.draft.status,'Pinaplano');
  assert.doesNotMatch(res.draft.scope,/Facebook post:/);
 });
-test('UI provides caption-only and optional photo upload, without auto-saving drafts',()=>{
- for(const id of ['fb-import-panel','fb-post-caption','fb-import-screenshot','fb-analyze-post','fb-import-result'])assert.match(html,new RegExp('id="'+id+'"'));
+test('UI provides caption-only analysis without image input or automatic saving',()=>{
+ for(const id of ['fb-import-panel','fb-post-caption','fb-analyze-post','fb-import-result'])assert.match(html,new RegExp('id="'+id+'"'));
+ assert.doesNotMatch(html,/id="fb-import-screenshot"/);
+ assert.doesNotMatch(staff,/\$\('#fb-import-screenshot'\)/);
  assert.doesNotMatch(html,/id="fb-post-url"/);
  assert.match(staff,/JSON\.stringify\(\{caption\}\)/);
  assert.match(api,/if\(typeof b\.caption!=='string'\)/);
@@ -92,7 +94,10 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
  const nodes={
   '#project-entry-mode':{hidden:false,addEventListener(){}},
   '#manual-entry-help':{hidden:false},
-  '#fb-import-panel':{hidden:true,open:false}
+  '#fb-import-panel':{hidden:true,open:false},
+  '#project-review-fields':{hidden:false},
+  '#fb-review-hint':{hidden:true},
+  '#project-form':{querySelector:()=>({hidden:false})}
  };
  const dom={querySelectorAll:()=>buttons};
  const $=id=>nodes[id];
@@ -108,6 +113,7 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
  assert.equal(nodes['#fb-import-panel'].hidden,false);
  assert.equal(nodes['#fb-import-panel'].open,true);
  assert.equal(nodes['#manual-entry-help'].hidden,true);
+ assert.equal(nodes['#project-review-fields'].hidden,true);
  assert.equal(buttons[1]['aria-pressed'],'true');
  const officer=build($,dom,()=>({role:'sk'}),()=>null);
  officer('facebook');
