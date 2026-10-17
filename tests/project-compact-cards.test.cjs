@@ -99,7 +99,7 @@ test('project editor scrolls internally while header and action footer stay visi
  assert.match(staffHtml,/id="project-editor-scroll"/);
  assert.match(staffHtml,/id="editor-cancel"/);
  assert.match(staffHtml,/id="project-save-note"/);
- assert.match(staff,/$('#editor-cancel').onclick=/);
+ assert.match(staff,/\$\('#editor-cancel'\)\.onclick=/);
  assert.match(staffCss,/#editor\.project-editor-modal\[open\]/);
  assert.match(staffCss,/#editor\.project-editor-modal #project-editor-scroll/);
  assert.match(staffCss,/overflow-y:auto;overscroll-behavior:contain/);
