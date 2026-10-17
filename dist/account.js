@@ -190,15 +190,19 @@ async function verifyEmailFromLink(token){
   user=null;await showDashboard();success('Verified na ang bagong email. Mag-login muli gamit ang bagong address.');
  }catch(e){user=null;await showDashboard();message('Hindi ma-verify ang email. '+e.message,true);}
 }
-async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Finance and project monitoring workspace.':user.position==='secretary'?'Documentation and project records workspace.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: monitor project updates and documentation. Budget reports are not yet enabled.':user.position==='secretary'?'Secretary workspace: organize project records and updates. Meeting minutes are not yet enabled.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
+async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Budget oversight, project expenses at verified financial reports.':user.position==='secretary'?'Meeting documentation, attendance, resolutions at SK project records.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;$('#secretary-overview').hidden=true;$('#treasurer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: Annual Finance at monthly expense reports ay available. I-base lang sa mga official financial document.':user.position==='secretary'?'Secretary workspace: i-review ang project records at monthly reports. Ang hiwalay na minutes/attendance registry ay hindi pa enabled.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
 let activeStaffTab='overview';
-async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;activeStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');$('#officer-overview').hidden=!(name==='overview'&&user?.role!=='chairman');
+async function selectTab(name){const tabs=['overview','projects','monthly','budget','roster','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;activeStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');const secretaryDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='secretary';
+ const treasurerDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='treasurer';
+ $('#secretary-overview').hidden=!secretaryDashboard;
+ $('#treasurer-overview').hidden=!treasurerDashboard;
+ $('#officer-overview').hidden=!(name==='overview'&&user?.role==='sk'&&!secretaryDashboard&&!treasurerDashboard);
  $('#dashboard-welcome').hidden=name!=='overview';
  const tabLabels={overview:'Dashboard',projects:'Manage Projects',monthly:'Monthly Updates',budget:'Annual Finance',roster:'SK Officials',users:'SK Accounts',audit:'Activity Log',settings:'Account Settings'};
  $('#account-breadcrumb').textContent=tabLabels[name];
  $('#header-settings').classList.toggle('active',name==='settings');
  $('#header-settings').setAttribute('aria-current',name==='settings'?'page':'false');
- document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
+ document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name)}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 // The gallery's first image is authoritative when an older record has no image_id.
@@ -219,6 +223,51 @@ async function loadProjects(){
    <div class="project-row-actions">${!p.published&&['sk','chairman'].includes(user?.role)?'<button type="button" class="project-publish-trigger" data-publish="'+esc(p.id)+'" aria-label="Publish now ang '+esc(p.title)+'">↗ Publish Now</button>':''}${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">▣ Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div>
   </article>`;
  }).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>';
+}
+
+/* Role dashboards show real existing database records. No invented minutes,
+   attendance, financial balance, or unsigned certification statistics. */
+let roleDashboardRequest=0;
+function cleanRoleOverview(){
+ const recordIds=['secretary-overview-records','treasurer-overview-records'];
+ for(const id of recordIds){const el=$('#'+id);if(el)el.textContent='Loading latest records…';}
+}
+function renderRoleRecords(records,role){
+ const target=$('#'+role+'-overview-records');
+ if(!target)return;
+ if(!records.length){
+  target.innerHTML='<div class="role-record-empty">Wala pang na-save na monthly report para sa napiling fiscal year.</div>';
+  return;
+ }
+ target.innerHTML=records.slice(0,5).map(item=>{
+  const amount=role==='treasurer'
+   ?'<span class="role-record-value">'+(item.expense==null?'Expense not reported':transMoney(item.expense))+'</span>'
+   :'<span class="role-record-value">'+(item.published?'Published':'Draft')+'</span>';
+  return '<div class="role-record-item"><div><strong>'+esc(String(item.title||'Project'))+
+   '</strong><small>'+esc(String(item.month||'').slice(0,7))+' · '+
+   esc(String(item.summary||'').slice(0,100))+'</small></div>'+amount+'</div>';
+ }).join('');
+}
+async function loadRoleOverview(){
+ const role=user?.role==='sk'?user.position:null;
+ if(role!=='secretary'&&role!=='treasurer')return;
+ const ticket=++roleDashboardRequest,year=transYearNow(),idPrefix=role;
+ const data=await api('./api/transparency/manage?year='+year);
+ if(ticket!==roleDashboardRequest||activeStaffTab!=='overview'||user?.position!==role)return;
+ if(data?.error)throw Error('Hindi ma-load ang report records para sa '+year+'.');
+ const reports=Array.isArray(data?.updates)?data.updates:[];
+ if(role==='secretary'){
+  $('#secretary-monthly-count').textContent=String(reports.length);
+  $('#secretary-draft-count').textContent=String(managed.filter(p=>!p.published).length);
+  $('#secretary-done-count').textContent=String(managed.filter(p=>p.status==='Natapos').length);
+ }else{
+  const amount=data?.budget?.amount;
+  $('#treasurer-budget-amount').textContent=amount===undefined||amount===null?'Not recorded':transMoney(amount);
+  const recorded=reports.filter(x=>x.expense!==null&&x.expense!==undefined&&Number.isFinite(Number(x.expense)));
+  $('#treasurer-reported-total').textContent=transMoney(recorded.reduce((sum,x)=>sum+Number(x.expense),0));
+  $('#treasurer-missing-count').textContent=String(reports.filter(x=>x.expense===null||x.expense===undefined).length);
+ }
+ renderRoleRecords(reports,role);
 }
 function updateChairmanMetrics(){if(!user||user.role!=='chairman')return;$('#admin-total').textContent=String(managed.length);$('#admin-published').textContent=String(managed.filter(p=>p.published&&(!p.publish_at||Date.parse(p.publish_at)<=Date.now())).length);$('#admin-active').textContent=String(managed.filter(p=>p.status==='Isinasagawa').length)}
 
