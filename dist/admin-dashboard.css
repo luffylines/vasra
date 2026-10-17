@@ -1642,3 +1642,27 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #proj
 body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-review-fields .form-row>label{
  color:#d6e6ff;
 }
+
+/* Modern circular disclosure chevron; native marker remains suppressed. */
+#editor #fb-import-panel>summary::marker{content:''}
+#editor #fb-import-panel>summary{padding-right:15px}
+#editor #fb-import-panel .fb-import-chevron{
+ display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;
+ margin-left:auto;border:1px solid #b8d3f2;border-radius:10px;
+ background:#e4efff;color:#2a609e;line-height:1;
+ transition:background .18s ease,border-color .18s ease;
+}
+#editor #fb-import-panel .fb-import-chevron svg{
+ display:block;transform:rotate(0deg);transition:transform .2s ease;
+}
+#editor #fb-import-panel[open] .fb-import-chevron{transform:none;background:#d9e9ff;border-color:#9fc5ef}
+#editor #fb-import-panel[open] .fb-import-chevron svg{transform:rotate(180deg)}
+#editor #fb-import-panel>summary:hover .fb-import-chevron{background:#d0e5ff;border-color:#78a8e5}
+#editor #fb-import-panel>summary:focus-visible{outline:3px solid #7caff5;outline-offset:-3px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-import-panel .fb-import-chevron{
+ background:#28496c;border-color:#557a9f;color:#eaf5ff;
+}
+@media(prefers-reduced-motion:reduce){
+ #editor #fb-import-panel .fb-import-chevron,
+ #editor #fb-import-panel .fb-import-chevron svg{transition:none}
+}
