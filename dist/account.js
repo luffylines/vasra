@@ -684,6 +684,16 @@ function applyFacebookDraft(result){
  for(const field of ['title','category','description','scope']){
   if(typeof draft[field]==='string')form.elements[field].value=draft[field];
  }
+ // Keep the event date in imported titles so public projects can be sorted
+ // by activity date, even for existing DB tables without activity_date column.
+ if(/^20\d{2}-\d{2}-\d{2}$/.test(String(draft.activity_date||''))){
+  const title=form.elements.title.value;
+  if(!/(?:20\d{2}[-/]\d{2}[-/]\d{2}|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{1,2},?\s+20\d{2})/i.test(title)){
+   const date=new Date(draft.activity_date+'T12:00:00Z');
+   const when=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).format(date);
+   form.elements.title.value=(when+' | '+title).slice(0,150);
+  }
+ }
  // Status/progress must always agree: completed=100, planned=0, active=1..99.
  const status=['Pinaplano','Natapos','Isinasagawa'].includes(draft.status)?draft.status:'Pinaplano';
  const raw=Number.isInteger(draft.progress)?draft.progress:0;
@@ -691,7 +701,7 @@ function applyFacebookDraft(result){
  form.elements.status.value=status;
  form.elements.progress.value=String(progress);
  const review=$('#fb-review-hint');
- review.textContent='✓ '+(draft.method==='ai'?'Groq AI summary generated':'Basic caption analysis (AI unavailable)')+
+ review.textContent=(draft.method==='ai'?'✓ Groq AI-assisted draft':'⚠ Basic rule-based draft (not AI). '+facebookAiStatus(result.ai))+
   ' · Category: '+(draft.category||'I-review')+
   ' · '+status+' / '+progress+'%. '+
   (draft.status_note||'I-review ang mga field bago i-save.')+
@@ -799,19 +809,45 @@ $('#project-form').elements.progress.addEventListener('change',e=>{
  if(!Number.isInteger(n)||n<0||n>100)return;
  form.elements.status.value=n===100?'Natapos':n===0?'Pinaplano':'Isinasagawa';
 });
-async function uploadProjectPhoto(file){
- const upload=await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'begin',size:file.size,mime:file.type})});
- for(let index=0,start=0;start<file.size;index++,start+=upload.chunkSize){
-   const piece=file.slice(start,start+upload.chunkSize);
-   const data=await new Promise((resolve,reject)=>{
-     const reader=new FileReader();
-     reader.onload=()=>resolve(String(reader.result).split(',')[1]);
-     reader.onerror=()=>reject(Error('Hindi mabasa ang larawan.'));
-     reader.readAsDataURL(piece);
-   });
-   await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'chunk',id:upload.id,index,data})});
+// Retry a transient upload API failure, preserving the same upload ID/chunk
+// so a temporary network interruption does not force all photos to restart.
+async function uploadPhotoRequest(data,stage){
+ const maxTries=3;
+ for(let attempt=1;attempt<=maxTries;attempt++){
+  try{return await api('./api/uploads',{method:'POST',body:JSON.stringify(data)})}
+  catch(error){
+   const msg=String(error?.message||'');
+   // Authentication, validation, integrity and missing images need a real fix,
+   // not an automatic retry that could conceal or repeat invalid requests.
+   const transient=/Hindi makonekta|server|timed?\\s*out|network|fetch|temporar|try again|retry|502|503|504/i.test(msg);
+   if(!transient||attempt===maxTries){
+    throw Error(stage+': '+(msg||'Hindi natuloy ang pag-upload.')+
+      ' Subukan muli kung stable na ang internet; hindi mabubura ang mga larawang na-save na.');
+   }
+   projectUploadStatus('May pansamantalang upload error. Retry '+(attempt+1)+'/'+maxTries+' · '+stage+'…');
+   await new Promise(resolve=>setTimeout(resolve,450*attempt*attempt));
+  }
  }
- return (await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'complete',id:upload.id})})).id;
+}
+async function uploadProjectPhoto(file){
+ if(!file||!Number.isFinite(file.size)||file.size<1||file.size>5242880||!['image/png','image/jpeg','image/webp'].includes(file.type))
+  throw Error('Photo must be PNG, JPG or WebP and no larger than 5 MB.');
+ const upload=await uploadPhotoRequest({action:'begin',size:file.size,mime:file.type},'Starting upload');
+ if(!upload?.id||!Number.isInteger(upload.chunkSize)||upload.chunkSize<1)
+  throw Error('Invalid upload session from server. Hindi pa na-upload ang larawan.');
+ for(let index=0,start=0;start<file.size;index++,start+=upload.chunkSize){
+  const piece=file.slice(start,start+upload.chunkSize);
+  const encoded=await new Promise((resolve,reject)=>{
+   const reader=new FileReader();
+   reader.onload=()=>resolve(String(reader.result).split(',')[1]);
+   reader.onerror=()=>reject(Error('Hindi mabasa ang photo file sa device.'));
+   reader.readAsDataURL(piece);
+  });
+  await uploadPhotoRequest({action:'chunk',id:upload.id,index,data:encoded},'Uploading photo part '+(index+1));
+ }
+ const completed=await uploadPhotoRequest({action:'complete',id:upload.id},'Finalizing image');
+ if(!completed?.id)throw Error('Hindi nakumpirma ang photo upload sa database.');
+ return completed.id;
 }
 function projectSaveFeedback(text='',error=false){
  const el=$('#project-save-feedback');
