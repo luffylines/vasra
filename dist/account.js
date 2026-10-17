@@ -260,11 +260,18 @@ function updatePublicationFields(){
  info.classList.remove('publication-time-error');
  // The main save action always reflects whether this change stays private or goes public.
  const save=$('#save-project'),note=$('#project-save-note');
- save.textContent=mode==='draft'?'Save as Draft →':mode==='now'?'Publish Project →':mode==='schedule'?'Schedule Project →':'Save Changes →';
- note.textContent=mode==='draft'?'Draft lamang — sa SK accounts lang makikita.':
+ if(save)save.textContent=mode==='draft'?'Save as Draft →':mode==='now'?'Publish Project →':mode==='schedule'?'Schedule Project →':'Save Changes →';
+ if(note)note.textContent=mode==='draft'?'Draft lamang — sa SK accounts lang makikita.':
   mode==='now'?'Magiging public ang project at mga larawan pagkatapos ma-save.':
   mode==='schedule'?'Mananatiling nakatago hanggang sa napiling oras sa Pilipinas.':
   'Mananatili ang kasalukuyang publication settings.';
+ // Mirror the value of the native select into the accessible option cards.
+ const choices=$('#project-publication-choices');
+ if(choices)for(const button of choices.querySelectorAll('[data-publication-option]')){
+  const active=button.dataset.publicationOption===mode;
+  button.classList.toggle('selected',active);
+  button.setAttribute('aria-pressed',String(active));
+ }
  if(mode==='draft')info.textContent='Draft — sa dashboard lang muna makikita.';
  else if(mode==='now')info.textContent='Publish Now — makikita agad sa public website pagkatapos ma-save.';
  else if(mode==='keep')info.textContent=editing?projectPublishStatus(editing)+' · Mananatili ang kasalukuyang publication schedule/petsa.':'';
@@ -284,6 +291,13 @@ $('#project-publication-mode').addEventListener('change',()=>{
    if(!iso||Date.parse(iso)<=Date.now()+30000)input.value=nextSchedulePHInput();
  }
  updatePublicationFields();
+});
+const publicationChoices=$('#project-publication-choices');
+if(publicationChoices)publicationChoices.addEventListener('click',event=>{
+ const card=event.target.closest('[data-publication-option]');
+ if(!card||card.hidden)return;
+ $('#project-publication-mode').value=card.dataset.publicationOption;
+ $('#project-publication-mode').dispatchEvent(new Event('change',{bubbles:true}));
 });
 $('#project-publish-datetime').addEventListener('input',updatePublicationFields);
 $('#project-publish-datetime').addEventListener('focus',updatePublicationFields);
@@ -325,6 +339,7 @@ function openEditor(project=null){
  const publishMode=$('#project-publication-mode');
  publishMode.querySelector('[value="keep"]')?.remove();
  publishMode.value='draft';
+ $('#publication-keep').hidden=!project?.published;
  $('#project-publish-datetime').value='';
  setProjectEntryMode('manual');
  $('#fb-import-result').hidden=true;$('#fb-import-result').textContent='';
