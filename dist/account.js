@@ -605,10 +605,18 @@ function applyFacebookDraft(result){
  for(const field of ['title','category','description','scope']){
   if(typeof draft[field]==='string')form.elements[field].value=draft[field];
  }
- // A completed SK meeting can be represented as completed only after Chairman
- // explicitly agrees to enter it in the PROJECT catalogue.
- form.elements.status.value=['Pinaplano','Natapos','Isinasagawa'].includes(draft.status)?draft.status:'Pinaplano';
- form.elements.progress.value=String(Number.isInteger(draft.progress)?draft.progress:0);
+ // Status/progress must always agree: completed=100, planned=0, active=1..99.
+ const status=['Pinaplano','Natapos','Isinasagawa'].includes(draft.status)?draft.status:'Pinaplano';
+ const raw=Number.isInteger(draft.progress)?draft.progress:0;
+ const progress=status==='Natapos'?100:status==='Pinaplano'?0:Math.min(99,Math.max(1,raw));
+ form.elements.status.value=status;
+ form.elements.progress.value=String(progress);
+ const review=$('#fb-review-hint');
+ review.textContent='✓ '+(draft.method==='ai'?'Groq AI summary generated':'Basic caption analysis (AI unavailable)')+
+  ' · Category: '+(draft.category||'I-review')+
+  ' · '+status+' / '+progress+'%. '+
+  (draft.status_note||'I-review ang mga field bago i-save.')+
+  (draft.progress_provisional?' Huwag ituring na actual percent ang provisional progress.':'');
  form.elements.publication_mode.value='draft';
  updatePublicationFields();
  facebookDraftReady=true;
@@ -662,6 +670,8 @@ $('#fb-analyze-post').addEventListener('click',async()=>{
    'AI status: '+facebookAiStatus(result.ai),
    'Title: '+(draft.title||''),
    'Category: '+(draft.category||''),
+   'Status: '+(draft.status||'')+' · Progreso: '+(Number.isInteger(draft.progress)?draft.progress:0)+'%',
+   'Status evidence: '+(draft.status_note||'I-review kung naganap na ang project.'),
    'Summary: '+(draft.description||''),
    'Details / Scope: '+(draft.scope||''),
    '',
@@ -699,8 +709,17 @@ $('#current-image').addEventListener('click',e=>{
  renderProjectPreviews();
 });
 $('#project-form').elements.status.onchange=e=>{
- if(e.target.value==='Natapos')$('#project-form').elements.progress.value=100;
+ const form=$('#project-form'),current=Number(form.elements.progress.value);
+ if(e.target.value==='Natapos')form.elements.progress.value=100;
+ else if(e.target.value==='Pinaplano')form.elements.progress.value=0;
+ else if(e.target.value==='Isinasagawa'&&(!Number.isInteger(current)||current<=0||current>=100))
+  form.elements.progress.value=1;
 };
+$('#project-form').elements.progress.addEventListener('change',e=>{
+ const form=$('#project-form'),n=Number(e.target.value);
+ if(!Number.isInteger(n)||n<0||n>100)return;
+ form.elements.status.value=n===100?'Natapos':n===0?'Pinaplano':'Isinasagawa';
+});
 async function uploadProjectPhoto(file){
  const upload=await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'begin',size:file.size,mime:file.type})});
  for(let index=0,start=0;start<file.size;index++,start+=upload.chunkSize){
