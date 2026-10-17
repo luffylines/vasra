@@ -1600,3 +1600,35 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publ
  #editor .publication-choice-keep{grid-column:1/-1;min-height:70px}
 }
 @media(prefers-reduced-motion:reduce){#editor .publication-choice{transition:none}}
+/* Facebook caption analyzer must not collapse inside the new flex scroll area. */
+#editor #project-editor-scroll>.fb-import-panel{
+ flex:0 0 auto;min-height:max-content;margin:4px 0 12px;
+}
+#editor #project-editor-scroll>.project-entry-mode,
+#editor #project-editor-scroll>.project-entry-helper,
+#editor #project-editor-scroll>.project-review-fields{flex:0 0 auto;min-width:0}
+#editor #project-review-fields[hidden],
+#editor #fb-review-hint[hidden],
+#editor.project-editor-modal .editor-footer[hidden]{display:none!important}
+#editor #project-review-fields{display:flex;flex-direction:column;gap:12px;min-width:0}
+#editor #fb-import-panel .fb-import-content{padding:18px;gap:13px}
+#editor #fb-import-panel #fb-post-caption{
+ display:block;box-sizing:border-box;width:100%;min-height:225px;
+ padding:14px;border:1px solid #b9d0ec;border-radius:11px;
+ background:#fff;color:#17385e;font-size:13px;line-height:1.65;resize:vertical;
+}
+#editor #fb-import-panel #fb-post-caption:focus-visible{outline:3px solid #a7caff;outline-offset:2px}
+#editor #fb-import-panel .fb-import-bottom{align-items:flex-start;flex-direction:column}
+#editor #fb-import-panel #fb-import-status{flex:none;width:100%;overflow-wrap:anywhere}
+#editor #fb-import-panel .fb-import-alert{white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow-y:auto}
+#editor .fb-review-hint{
+ padding:12px 14px;border-radius:11px;background:#e9f7ef;
+ border:1px solid #b9dfcd;color:#175d42;font-size:12px;font-weight:750;line-height:1.6;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-post-caption{background:#122641!important;border-color:#496b93!important;color:#eaf4ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-review-hint{background:#174133;border-color:#417d68;color:#cbf4df}
+@media(max-width:600px){
+ #editor #fb-import-panel .fb-import-content{padding:13px}
+ #editor #fb-import-panel #fb-post-caption{min-height:190px}
+ #editor #fb-import-panel #fb-analyze-post{width:100%;min-height:44px}
+}
