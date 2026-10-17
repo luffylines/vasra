@@ -238,7 +238,7 @@ test('upload progress stays in an accessible fixed dialog toast until completion
  assert.match(staff,/projectUploadStatus\(progressText\)/);
  assert.match(staff,/projectUploadStatus\('Tapos na ang photo upload/);
  assert.match(staff,/projectUploadStatus\(''\)/);
- assert.match(staff,/success\(editing\?/);
+ assert.match(staff,/success\(wasEditing\?/);
  assert.doesNotMatch(staff,/setTimeout\([^)]*projectUploadStatus/);
 });
 test('GEAR UP road safety seminar uses educational category from full caption body',async()=>{
