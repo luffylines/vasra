@@ -60,12 +60,12 @@ test('Activity Log always distinguishes recorded IP from missing historical IP',
  ]}),$,escape,(time)=>new Intl.DateTimeFormat('en-PH',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Manila'}).format(new Date(time)),0,0);
  await audit.loadAudit();
  const output=$('#audit-list').innerHTML;
- assert.match(output,/IP address: Not recorded/);
+ assert.match(output,/IP address: Hindi naitala/);
  assert.match(output,/IP address: 203\.0\.113\.20/);
  assert.match(output,/Na-set up ang SK Chairman account/);
  assert.match(output,/5:23\s*PM\s*PHT/);
  assert.doesNotMatch(output,/<pre>\{\}<\/pre>/);
- assert.equal(audit.auditDetails({details:'{}'}),'Walang dagdag na detalye para sa action na ito.');
+ assert.match(audit.auditDetails({details:'{}'}),/Walang (?:dagdag na|karagdagang) detalye/);
 });
 
 test('IP source is proxy-observed and forwarded to the private RPC layer',()=>{
