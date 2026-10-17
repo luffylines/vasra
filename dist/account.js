@@ -338,7 +338,7 @@ function openEditor(project=null){
  const form=$('#project-form');form.reset();
  const publishMode=$('#project-publication-mode');
  publishMode.querySelector('[value="keep"]')?.remove();
- publishMode.value='draft';
+ form.elements.publication_mode.value='draft';
  $('#publication-keep').hidden=!project?.published;
  $('#project-publish-datetime').value='';
  setProjectEntryMode('manual');
@@ -347,6 +347,7 @@ function openEditor(project=null){
  pendingImportedActivity=null;
  $('#fb-use-activity-as-project').hidden=true;
  $('#editor-message').textContent='';
+ $('#editor-message').classList.remove('error');
  projectUploadStatus('');
  $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
  if(project){
@@ -695,6 +696,7 @@ async function uploadProjectPhoto(file){
 $('#project-form').onsubmit=async e=>{
  e.preventDefault();const form=e.target;
  const save=$('#save-project');save.disabled=true;
+ $('#editor-message').classList.remove('error');
  $('#editor-message').textContent='Sine-save ang proyekto…';
  projectUploadStatus('Inihahanda ang pag-save ng proyekto…');
  try{
@@ -732,6 +734,7 @@ $('#project-form').onsubmit=async e=>{
    await loadProjects();
  }catch(error){
    projectUploadStatus('');
+   $('#editor-message').classList.add('error');
    $('#editor-message').textContent=error.message;message(error.message,true);
  }finally{save.disabled=false;}
 };
