@@ -1425,3 +1425,137 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-proj
  #staff-project-gallery .staff-gallery-footer{padding:12px;align-items:flex-start;flex-direction:column;gap:5px}
  #staff-project-gallery .staff-gallery-footer small{text-align:left}
 }
+
+/* Project editor: fixed header/actions with a single scrollable content area. */
+#editor.project-editor-modal[open]{
+ display:flex;flex-direction:column;
+ width:min(740px,calc(100vw - 24px));max-width:740px;
+ height:min(880px,calc(100dvh - 36px));max-height:calc(100dvh - 36px);
+ overflow:hidden;border-radius:20px;
+}
+#editor.project-editor-modal .project-editor-header{
+ flex:0 0 auto;padding:22px 30px 18px;padding-right:70px;
+ background:linear-gradient(115deg,#edf5ff,#fff);
+}
+#editor.project-editor-modal .project-editor-header h2{margin:6px 0;font-size:23px}
+#editor.project-editor-modal .project-editor-header p{font-size:12px}
+#editor.project-editor-modal .close{top:17px;right:18px;z-index:5;min-width:38px;min-height:38px}
+#editor.project-editor-modal #editor-message:not(:empty){flex:0 0 auto;margin:0;padding:9px 30px;font-size:12px;background:#fff3f3}
+#editor.project-editor-modal #project-form{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+ padding:0;gap:0;overflow:hidden;
+}
+#editor.project-editor-modal #project-editor-scroll{
+ flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+ display:flex;flex-direction:column;gap:12px;
+ padding:18px 30px 24px;scrollbar-gutter:stable;
+}
+#editor #project-editor-scroll>label:not(.editor-upload-zone),
+#editor #project-editor-scroll .form-row>label{
+ display:flex;flex-direction:column;gap:7px;margin:0;
+ font-size:12px;font-weight:750;color:#385475;
+}
+#editor #project-editor-scroll .form-row{gap:14px}
+#editor #project-editor-scroll .editor-section-title{
+ display:flex;align-items:center;gap:11px;
+ background:#edf4ff;border:1px solid #dce8f8;
+ border-radius:11px;padding:10px 12px;margin:10px 0 2px;
+ font-size:13px;letter-spacing:.1px;
+}
+#editor #project-editor-scroll .editor-section-number{
+ width:25px;height:25px;border-radius:8px;background:#d8e8ff;
+}
+#editor #project-editor-scroll .editor-gallery-help{margin:0;font-size:11px!important}
+#editor #project-editor-scroll .editor-upload-zone{min-height:96px;margin:0;padding:12px}
+#editor #project-editor-scroll .editor-upload-icon{width:29px;height:29px;font-size:21px}
+#editor #project-form :is(input,select,textarea){max-width:100%;box-sizing:border-box}
+#editor #project-form input:focus-visible,
+#editor #project-form select:focus-visible,
+#editor #project-form textarea:focus-visible{outline:2px solid #6395d2;outline-offset:2px}
+#editor #project-editor-scroll .editor-publish{
+ background:#f3f8ff;border:1px solid #cfe0f5;border-radius:12px;
+ padding:16px;margin:0;display:flex;flex-direction:column;gap:9px;
+}
+#editor #project-publication-controls .publish-field-title{margin:0;font-size:13px}
+#editor #project-publication-controls .publish-field-description{margin:0;font-size:11px}
+#editor #project-publication-mode{margin:0;width:100%;min-height:46px;font-size:13px;font-weight:700}
+#editor #project-publish-preview{
+ margin:0;min-height:0;padding:9px 11px;border-radius:9px;
+ background:#e4efff;color:#215590;font-size:11px;line-height:1.5;
+}
+#editor.project-editor-modal .editor-footer{
+ flex:0 0 auto;display:flex;flex-direction:row;align-items:center;justify-content:space-between;
+ gap:14px;margin:0;padding:13px 30px max(13px,env(safe-area-inset-bottom));
+ background:#fff;border-top:1px solid #dce7f4;box-shadow:0 -5px 18px #1836560c;
+}
+#editor.project-editor-modal .editor-footer span{flex:1;min-width:0;font-size:11px;line-height:1.45}
+#editor.project-editor-modal .editor-footer-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:none}
+#editor.project-editor-modal .editor-footer button{width:auto;min-width:112px;min-height:42px;margin:0;white-space:nowrap;font-size:12px}
+#editor.project-editor-modal .editor-footer #save-project{min-width:166px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-editor-scroll .editor-section-title{
+ background:#1d3757;border-color:#45658b;color:#e6f1ff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-editor-scroll>label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-editor-scroll .form-row>label{color:#d6e6ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-preview{background:#183d63;color:#d6e9ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .editor-footer{
+ background:#192a42;border-color:#45617e;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal #editor-message:not(:empty){background:#492b3a;color:#ffdbe3}
+@media(max-width:650px){
+ #editor.project-editor-modal[open]{
+  width:calc(100vw - 12px);height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);
+  border-radius:14px;
+ }
+ #editor.project-editor-modal .project-editor-header{padding:18px 16px 15px;padding-right:57px}
+ #editor.project-editor-modal .project-editor-header h2{font-size:20px}
+ #editor.project-editor-modal #project-editor-scroll{padding:14px 16px 20px;gap:11px;scrollbar-gutter:auto}
+ #editor.project-editor-modal .editor-footer{padding:11px 16px max(11px,env(safe-area-inset-bottom));gap:9px}
+ #editor.project-editor-modal .editor-footer span{display:none}
+ #editor.project-editor-modal .editor-footer-actions{width:100%}
+ #editor.project-editor-modal .editor-footer button{flex:1 1 30%;min-width:0}
+ #editor.project-editor-modal .editor-footer #save-project{flex:2 1 60%;min-width:0}
+ #editor #project-editor-scroll .editor-image-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:350px){
+ #editor.project-editor-modal .editor-footer #save-project{font-size:11px}
+}
+/* Publish Now directly on an unpublished draft card (with explicit confirmation). */
+#managed-projects .project-publish-trigger{
+ display:inline-flex;align-items:center;justify-content:center;min-height:38px;
+ padding:9px 13px;border-radius:9px;border:1px solid #1b7958;
+ background:#eaf9f1;color:#126146;font-size:12px;font-weight:800;cursor:pointer;
+}
+#managed-projects .project-publish-trigger:hover{background:#d8f2e6;border-color:#14734f}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-publish-trigger{
+ background:#163e36;border-color:#36886f;color:#b4f8d8;
+}
+#publish-project-dialog{
+ width:min(470px,calc(100vw - 24px));max-width:470px;max-height:calc(100dvh - 28px);
+ padding:28px;border:1px solid #d8e6f3;border-radius:19px;background:#fff;
+ color:#19395f;box-shadow:0 24px 70px #0a1e3a55;overflow:auto;
+}
+#publish-project-dialog::backdrop{background:#081a35ab;backdrop-filter:blur(4px)}
+#publish-project-dialog .publish-confirm-icon{
+ display:grid;place-items:center;width:44px;height:44px;border-radius:13px;
+ background:#e3f6ec;color:#14734f;font-size:27px;font-weight:800;margin-bottom:13px;
+}
+#publish-project-dialog .publish-confirm-kicker{display:block;color:#497ea9;font-size:10px;font-weight:800;letter-spacing:1.2px}
+#publish-project-dialog h2{margin:7px 0 10px;font-size:23px;color:inherit}
+#publish-project-dialog p{font-size:13px;line-height:1.65;color:#526b88}
+#publish-project-dialog p strong{color:#183d69;overflow-wrap:anywhere}
+#publish-project-dialog .publish-confirm-notice{padding:12px 14px;background:#eff7ff;border:1px solid #d6e7fa;border-radius:11px}
+#publish-project-dialog #publish-project-error{color:#b13442;font-weight:700;min-height:0}
+#publish-project-dialog .publish-confirm-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:16px}
+#publish-project-dialog .publish-confirm-actions button{min-height:43px;margin:0;min-width:112px;padding:10px 15px;border-radius:10px}
+#publish-project-dialog .publish-confirm-actions .primary{background:#1b7958;color:#fff;border:0}
+#publish-project-dialog .publish-confirm-actions .primary:hover{background:#126044}
+#publish-project-dialog .publish-confirm-actions .primary:disabled{opacity:.55;cursor:wait}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog{background:#182a43;color:#eef5ff;border-color:#4a6787}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog p strong{color:#d5e5f8}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog .publish-confirm-notice{background:#193858;border-color:#446689}
+@media(max-width:650px){
+ #publish-project-dialog{padding:22px 18px}
+ #publish-project-dialog .publish-confirm-actions button{flex:1}
+}
