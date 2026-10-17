@@ -112,7 +112,7 @@ test('publication choices use accessible buttons but preserve the existing selec
  assert.match(staff,/publicationChoices\.addEventListener\('click'/);
  assert.match(staff,/dataset\.publicationOption/);
  assert.match(staff,/dispatchEvent\(new Event\('change'/);
- assert.match(staff,/if\(save\)save\.textContent=/);
+ assert.match(staff,/save\.insertAdjacentHTML\('beforeend',managementActionIcon\('right'\)\)/);
  assert.match(staff,/if\(note\)note\.textContent=/);
  assert.match(staffCss,/#editor #project-publication-choices/);
 });
