@@ -77,9 +77,9 @@ test('edit errors and native invalid inputs are visible by Save, not silently di
  assert.match(js,/function projectSaveFeedback\(text='',error=false\)/);
  assert.match(js,/addEventListener\('invalid',e=>/);
  assert.match(js,/control\.validationMessage/);
- assert.match(js,/projectSaveFeedback\(detail,true\)/);
- assert.match(js,/method:wasEditing\?'PUT':'POST'/);
- assert.match(js,/if\(save\.disabled\)return;/);
+ assert.match(js,/if\(\$\('#editor'\)\.open\)projectSaveFeedback\(detail,true\)/);
+ assert.match(js,/method:job\.record\?'PUT':'POST'/);
+ assert.match(js,/if\(projectSaveJob\)return;/);
  assert.match(css,/#editor\.project-editor-modal \.project-save-feedback\.error/);
 });
 test('delete confirmation offers exact-name copy, without bypassing typed-name verification',()=>{
