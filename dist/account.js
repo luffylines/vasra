@@ -216,7 +216,7 @@ async function loadProjects(){
    <div class="project-manage-media">${thumbnail}<span class="project-manage-photo-count">${photoCount?photoCount+' '+(photoCount===1?'photo':'photos'):'No photos'}</span></div>
    <div class="project-manage-info"><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p>
    <div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div>
-   <div class="project-row-actions">${!p.published&&['sk','chairman'].includes(user?.role)?'<button type="button" class="project-publish-trigger" data-publish="'+esc(p.id)+'" aria-label="Publish now ang '+esc(p.title)+'">↗ Publish Now</button>':''}${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">▣ Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div>
+   <div class="project-row-actions">${!p.published&&['sk','chairman'].includes(user?.role)?'<button type="button" class="project-publish-trigger" data-publish="'+esc(p.id)+'" aria-label="Publish now ang '+esc(p.title)+'">↗ Publish Now</button>':''}${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">▣ Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div>
   </article>`;
  }).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>';
 }
@@ -318,8 +318,8 @@ function renderProjectPreviews(){
 // only when an analyzed caption has a draft ready for Chairman review.
 let facebookDraftReady=false;
 function setProjectEntryMode(mode){
- const facebook=mode==='facebook'&&!editing&&user?.role==='chairman';
- const visible=!editing&&user?.role==='chairman';
+ const facebook=mode==='facebook'&&!editing&&['sk','chairman'].includes(user?.role);
+ const visible=!editing&&['sk','chairman'].includes(user?.role);
  $('#project-entry-mode').hidden=!visible;
  $('#manual-entry-help').hidden=!visible||facebook;
  const panel=$('#fb-import-panel');
@@ -431,7 +431,7 @@ $('#progress-form').onsubmit=async e=>{
 };
 let pendingDeleteProject=null;
 function openDeleteProject(p){
- if(!p||user?.role!=='chairman')return;
+ if(!p||!['sk','chairman'].includes(user?.role))return;
  pendingDeleteProject={id:p.id,version:p.version,title:p.title};
  $('#delete-project-title').textContent=p.title;
  $('#delete-project-confirm-name').textContent=p.title;
@@ -564,7 +564,7 @@ $('#delete-project-cancel').onclick=()=>$('#delete-project-dialog').close();
 $('#delete-project-dialog').addEventListener('close',()=>{pendingDeleteProject=null;});
 $('#delete-project-button').onclick=async()=>{
  const p=pendingDeleteProject;
- if(!p||user?.role!=='chairman'||$('#delete-project-input').value.trim()!==p.title)return;
+ if(!p||!['sk','chairman'].includes(user?.role)||$('#delete-project-input').value.trim()!==p.title)return;
  const button=$('#delete-project-button');
  button.disabled=true;$('#delete-project-error').textContent='Deleting project…';
  try{
@@ -640,7 +640,7 @@ $('#fb-use-activity-as-project').addEventListener('click',()=>{
 $('#fb-analyze-post').addEventListener('click',async()=>{
  const button=$('#fb-analyze-post'),status=$('#fb-import-status'),resultBox=$('#fb-import-result');
  const caption=$('#fb-post-caption').value.trim();
- if(editing||user?.role!=='chairman')return;
+ if(editing||!['sk','chairman'].includes(user?.role))return;
  if(caption.length<15){status.textContent='I-paste ang buong caption (at least 15 characters) bago mag-analyze.';$('#fb-post-caption').focus();return;}
  pendingImportedActivity=null;$('#fb-use-activity-as-project').hidden=true;
  button.disabled=true;status.textContent='Sinusuri ang caption gamit ang Groq AI…';resultBox.hidden=true;
