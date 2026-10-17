@@ -216,7 +216,7 @@ async function loadProjects(){
    <div class="project-manage-media">${thumbnail}<span class="project-manage-photo-count">${photoCount?photoCount+' '+(photoCount===1?'photo':'photos'):'No photos'}</span></div>
    <div class="project-manage-info"><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p>
    <div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div>
-   <div class="project-row-actions">${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">▣ Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div>
+   <div class="project-row-actions">${!p.published&&['sk','chairman'].includes(user?.role)?'<button type="button" class="project-publish-trigger" data-publish="'+esc(p.id)+'" aria-label="Publish now ang '+esc(p.title)+'">↗ Publish Now</button>':''}${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">▣ Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">◉ Update Progress</button>':''}<button type="button" class="secondary" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">✎ Edit</button>${user?.role==='chairman'?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">🗑 Delete</button>':''}</div>
   </article>`;
  }).join('')||'<div class="empty">Wala pang proyekto. Pindutin ang “Bagong proyekto” para magsimula.</div>';
 }
@@ -258,6 +258,13 @@ function updatePublicationFields(){
  wrap.hidden=mode!=='schedule';
  input.required=mode==='schedule';
  info.classList.remove('publication-time-error');
+ // The main save action always reflects whether this change stays private or goes public.
+ const save=$('#save-project'),note=$('#project-save-note');
+ save.textContent=mode==='draft'?'Save as Draft →':mode==='now'?'Publish Project →':mode==='schedule'?'Schedule Project →':'Save Changes →';
+ note.textContent=mode==='draft'?'Draft lamang — sa SK accounts lang makikita.':
+  mode==='now'?'Magiging public ang project at mga larawan pagkatapos ma-save.':
+  mode==='schedule'?'Mananatiling nakatago hanggang sa napiling oras sa Pilipinas.':
+  'Mananatili ang kasalukuyang publication settings.';
  if(mode==='draft')info.textContent='Draft — sa dashboard lang muna makikita.';
  else if(mode==='now')info.textContent='Publish Now — makikita agad sa public website pagkatapos ma-save.';
  else if(mode==='keep')info.textContent=editing?projectPublishStatus(editing)+' · Mananatili ang kasalukuyang publication schedule/petsa.':'';
@@ -342,6 +349,7 @@ function openEditor(project=null){
  renderProjectPreviews();
  updatePublicationFields();
  $('#editor').showModal();
+ $('#project-editor-scroll').scrollTop=0;
 }
 $('#new-project').onclick=()=>openEditor();
 let activeProgressProject=null;
@@ -453,7 +461,51 @@ $('#managed-projects').addEventListener('error',e=>{
  if(e.target.matches?.('.project-manage-thumbnail img'))e.target.hidden=true;
 },true);
 
+// Publish a saved Draft without removing project details, cover, or gallery photos.
+// The existing secure PUT endpoint performs authorization and version checks.
+function draftPublishPayload(p){
+ const ids=managedGalleryIds(p);
+ return {title:p.title,category:p.category,description:p.description,scope:p.scope,
+  status:p.status,progress:Number(p.progress),image_ids:ids,image_id:ids[0]||null,
+  version:p.version,publication_mode:'now',published:true,publish_at:null};
+}
+let pendingPublishProject=null;
+function openPublishProject(p){
+ if(!p||p.published||!['sk','chairman'].includes(user?.role))return;
+ pendingPublishProject=p;
+ $('#publish-project-title').textContent=p.title;
+ $('#publish-project-error').textContent='';
+ $('#publish-project-confirm').disabled=false;
+ $('#publish-project-dialog').showModal();
+}
+$('#publish-project-cancel').onclick=()=>$('#publish-project-dialog').close();
+$('#publish-project-dialog').addEventListener('cancel',e=>{
+ if($('#publish-project-confirm').disabled)e.preventDefault();
+});
+$('#publish-project-dialog').addEventListener('close',()=>{pendingPublishProject=null;});
+$('#publish-project-confirm').onclick=async()=>{
+ const p=pendingPublishProject;
+ if(!p||p.published||!['sk','chairman'].includes(user?.role))return;
+ const button=$('#publish-project-confirm');
+ button.disabled=true;
+ $('#publish-project-error').textContent='Pina-publish ang proyekto…';
+ try{
+  const result=await api('./api/manage/projects/'+encodeURIComponent(p.id),{
+   method:'PUT',body:JSON.stringify(draftPublishPayload(p))
+  });
+  if(!result?.project?.id||result.project.published!==true)
+   throw Error('Hindi nakumpirma ang publication ng proyekto.');
+  $('#publish-project-dialog').close();
+  success('Published na ang '+p.title+'. Makikita na ito sa public Mga proyekto.');
+  await loadProjects();
+ }catch(error){
+  $('#publish-project-error').textContent=error.message||'Hindi na-publish. Subukan muli.';
+  message(error.message||'Hindi na-publish ang proyekto.',true);
+ }finally{button.disabled=false;}
+};
 $('#managed-projects').onclick=e=>{
+ const publishButton=e.target.closest('[data-publish]');
+ if(publishButton){openPublishProject(managed.find(p=>p.id===publishButton.dataset.publish));return;}
  const galleryButton=e.target.closest('[data-view-gallery]');
  if(galleryButton){openStaffGallery(managed.find(p=>p.id===galleryButton.dataset.viewGallery));return;}
  const progressButton=e.target.closest('[data-progress]');
@@ -488,6 +540,7 @@ $('#delete-project-button').onclick=async()=>{
  }
 };
 $('.close').onclick=()=>$('#editor').close();
+$('#editor-cancel').onclick=()=>$('#editor').close();
 $('#editor').addEventListener('close',clearProjectPreviews);
 function appendProjectFiles(files){
  if(files.length+editorPhotos.length>12){message('Maximum 12 photos per project.',true);return false;}
