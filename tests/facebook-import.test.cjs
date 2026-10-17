@@ -65,7 +65,7 @@ test('UI provides caption-only analysis without image input or automatic saving'
  assert.match(staff,/form\.elements\.status\.value=\['Pinaplano','Natapos','Isinasagawa'\]/);
  assert.match(staff,/appendProjectFiles\(files\)/);
  assert.match(staff,/\.\/api\/manage\/projects\/import-facebook/);
- assert.match(api,/await user\(\['chairman'\]\)/);
+ assert.match(api,/const actor=await user\(\['sk','chairman'\]\)/);
  assert.match(api,/limit\('facebook-import'/);
 });
 
@@ -78,7 +78,7 @@ test('new project has Manual Entry and Facebook Caption Analyzer modes',()=>{
  assert.match(html,/Facebook Caption Analyzer/);
  assert.match(html,/id="fb-import-panel"[^>]*hidden/);
  assert.match(staff,/function setProjectEntryMode\(mode\)/);
- assert.match(staff,/const facebook=mode==='facebook'&&!editing&&user\?\.role==='chairman'/);
+ assert.match(staff,/const facebook=mode==='facebook'&&!editing&&\['sk','chairman'\]\.includes\(user\?\.role\)/);
  assert.match(staff,/setProjectEntryMode\('manual'\)/);
  assert.match(staff,/button\.setAttribute\('aria-pressed',String\(active\)\)/);
 });
@@ -124,6 +124,11 @@ test('Manual mode is always the default; Facebook mode offers Groq and fallback 
  assert.equal(footer.hidden,false);
  const officer=build($,dom,()=>({role:'sk'}),()=>null,()=>false);
  officer('facebook');
+ assert.equal(nodes['#project-entry-mode'].hidden,false);
+ assert.equal(nodes['#fb-import-panel'].hidden,false);
+ assert.equal(nodes['#project-review-fields'].hidden,true);
+ const youth=build($,dom,()=>({role:'youth'}),()=>null,()=>false);
+ youth('facebook');
  assert.equal(nodes['#project-entry-mode'].hidden,true);
  assert.equal(nodes['#fb-import-panel'].hidden,true);
 });
