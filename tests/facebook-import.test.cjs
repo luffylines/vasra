@@ -25,7 +25,7 @@ test('pasted caption basic autofill returns review-only draft without Facebook U
  },{apiKey:'',fetcher:()=>{throw Error('No network should be requested')}});
  assert.equal(result.ok,true);
  assert.equal(result.source,'pasted-caption');
- assert.equal(result.draft.category,'Edukasyon');
+ assert.equal(result.draft.category,'Pamamahala at Pakikilahok');
  assert.equal(result.draft.status,'Pinaplano');
  assert.equal(result.draft.progress,0);
  assert.doesNotMatch(result.draft.scope,/Facebook post: https/);
@@ -62,7 +62,7 @@ test('UI provides caption-only analysis without image input or automatic saving'
  assert.match(api,/if\(typeof b\.caption!=='string'\)/);
  assert.doesNotMatch(api,/typeof b\.url!=='string'/);
  assert.match(staff,/form\.elements\.publication_mode\.value='draft'/);
- assert.match(staff,/form\.elements\.status\.value=\['Pinaplano','Natapos','Isinasagawa'\]/);
+ assert.match(staff,/const status=\['Pinaplano','Natapos','Isinasagawa'\]\.includes\(draft\.status\)/);
  assert.match(staff,/appendProjectFiles\(files\)/);
  assert.match(staff,/\.\/api\/manage\/projects\/import-facebook/);
  assert.match(api,/const actor=await user\(\['sk','chairman'\]\)/);
