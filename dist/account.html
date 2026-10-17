@@ -110,14 +110,14 @@
   <label for="fb-post-caption">Facebook caption <span aria-hidden="true">*</span></label>
   <textarea id="fb-post-caption" rows="8" minlength="15" maxlength="12000" placeholder="I-paste rito ang buong text o caption ng SK post. Hindi kailangan ng Facebook URL." aria-describedby="fb-caption-help"></textarea>
   <p id="fb-caption-help" class="fb-import-note">Susuriin ng Groq AI ang buong caption kung available; kung hindi, malinaw na ipapakita na basic draft lamang ang resulta. Review muna bago i-save.</p>
-  <label class="fb-screenshot-label" for="fb-import-screenshot"><span aria-hidden="true">▧</span> Optional: Magdagdag ng screenshot o post images sa gallery</label>
-  <input type="file" id="fb-import-screenshot" accept="image/png,image/jpeg,image/webp" multiple aria-describedby="fb-photo-note">
-  <p id="fb-photo-note" class="fb-import-note">Ang screenshots at photos ay idaragdag sa gallery (hanggang 12); hindi sila awtomatikong babasahin bilang caption. Pumili ng cover sa ibaba.</p>
+  <p class="fb-import-note">Caption text lang ang kailangan dito. Walang screenshot, photo, o Facebook URL na kailangang i-upload.</p>
   <div class="fb-import-bottom"><button type="button" id="fb-analyze-post" class="fb-import-action">✦ Analyze Caption & Autofill</button><span id="fb-import-status" role="status" aria-live="polite"></span></div>
   <div class="fb-import-alert" id="fb-import-result" hidden></div>
   <button type="button" id="fb-use-activity-as-project" class="fb-import-action fb-activity-confirm" hidden>Gamitin bilang project draft kahit SK activity ito</button>
  </div>
 </details>
+<div id="project-review-fields" class="project-review-fields">
+<div id="fb-review-hint" class="fb-review-hint" hidden>✓ Caption analysis complete. I-review at i-edit ang project details bago mag-save bilang Draft.</div>
 <div class="editor-section-title"><span class="editor-section-number">01</span><strong>Project information</strong></div>
 <label>Project Title<input name="title" required maxlength="150" placeholder="Hal. Youth Leadership Training"></label>
 <div class="form-row"><label>Category<input name="category" required maxlength="60" placeholder="Edukasyon, Palakasan..."></label><label>Status<select name="status"><option>Pinaplano</option><option>Isinasagawa</option><option>Natapos</option></select></label></div>
@@ -150,7 +150,8 @@
   </div>
   <p id="project-publish-preview" role="status" aria-live="polite">Draft muna — hindi makikita sa public site.</p>
 </div>
-</div>
+</div><!-- project-review-fields -->
+</div><!-- project-editor-scroll -->
 <div class="editor-footer"><span id="project-save-note">Draft lamang — sa SK accounts lang makikita.</span><div class="editor-footer-actions"><button class="secondary" type="button" id="editor-cancel">Cancel</button><button class="primary" type="submit" id="save-project">Save as Draft →</button></div></div>
 </form></dialog>
 <dialog id="publish-project-dialog" class="publish-project-dialog" aria-labelledby="publish-project-heading">
