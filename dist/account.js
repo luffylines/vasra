@@ -314,6 +314,9 @@ function renderProjectPreviews(){
  }).join('');
  region.hidden=editorPhotos.length===0;
 }
+// In Facebook mode, start with caption text only and reveal the editable form
+// only when an analyzed caption has a draft ready for Chairman review.
+let facebookDraftReady=false;
 function setProjectEntryMode(mode){
  const facebook=mode==='facebook'&&!editing&&user?.role==='chairman';
  const visible=!editing&&user?.role==='chairman';
@@ -322,6 +325,9 @@ function setProjectEntryMode(mode){
  const panel=$('#fb-import-panel');
  panel.hidden=!facebook;
  panel.open=facebook;
+ $('#project-review-fields').hidden=facebook&&!facebookDraftReady;
+ $('#fb-review-hint').hidden=!facebook||!facebookDraftReady;
+ $('#project-form').querySelector('.editor-footer').hidden=facebook&&!facebookDraftReady;
  for(const button of document.querySelectorAll('#project-entry-mode [data-entry-mode]')){
   const active=button.dataset.entryMode===(facebook?'facebook':'manual');
   button.setAttribute('aria-pressed',String(active));
@@ -334,7 +340,7 @@ $('#project-entry-mode').addEventListener('click',e=>{
  setProjectEntryMode(button.dataset.entryMode);
 });
 function openEditor(project=null){
- clearProjectPreviews();editing=project;
+ clearProjectPreviews();editing=project;facebookDraftReady=false;
  const form=$('#project-form');form.reset();
  const publishMode=$('#project-publication-mode');
  publishMode.querySelector('[value="keep"]')?.remove();
@@ -574,12 +580,6 @@ $('#editor-files').addEventListener('change',e=>{
  const input=e.target,files=[...(input.files||[])];input.value='';
  appendProjectFiles(files);
 });
-$('#fb-import-screenshot').addEventListener('change',e=>{
- const input=e.target,files=[...(input.files||[])];input.value='';
- if(appendProjectFiles(files)){
-  $('#fb-import-status').textContent=files.length+' larawan ang nadagdag sa gallery. I-review ang cover photo sa ibaba.';
- }
-});
 let pendingImportedActivity=null;
 function applyFacebookDraft(result){
  const draft=result.draft||{},form=$('#project-form');
@@ -592,7 +592,10 @@ function applyFacebookDraft(result){
  form.elements.progress.value=String(Number.isInteger(draft.progress)?draft.progress:0);
  form.elements.publication_mode.value='draft';
  updatePublicationFields();
+ facebookDraftReady=true;
+ setProjectEntryMode('facebook');
  $('#editor-heading').textContent='Review Imported '+(draft.content_type==='meeting'?'SK Activity':'Project');
+ $('#project-review-fields').scrollIntoView({block:'start',behavior:'smooth'});
  form.elements.title.focus();
 }
 function facebookAiStatus(info){
