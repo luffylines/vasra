@@ -20,7 +20,7 @@ const aiReply=data=>async()=>({
  ok:true,json:async()=>({choices:[{message:{content:JSON.stringify(data)}}]})
 });
 test('completed school supplies distribution -> Edukasyon, Natapos and 100%',async()=>{
- const r=await FB.importFacebookPost({caption:captionHSBE},{aiKey:''});
+ const r=await FB.importFacebookPost({caption:captionHSBE},{aiKey:'',fetcher:()=>{throw Error('No external fetch expected')}});
  assert.equal(r.draft.category,'Edukasyon');
  assert.equal(r.draft.status,'Natapos');
  assert.equal(r.draft.progress,100);
