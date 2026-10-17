@@ -231,15 +231,16 @@ test('AI output can improve summary while preserving confirmed classification/st
  assert.equal(result.draft.method,'ai');
  assert.match(result.draft.description,/Naganap/);
 });
-test('upload progress stays in an accessible fixed dialog toast until completion',()=>{
- assert.match(html,/id="project-upload-progress"[^>]*role="status"[^>]*hidden/);
- assert.match(staff,/function projectUploadStatus\(text\)/);
- assert.match(staff,/toast\.hidden=!text/);
- assert.match(staff,/projectUploadStatus\(progressText\)/);
- assert.match(staff,/projectUploadStatus\('Tapos na ang photo upload/);
- assert.match(staff,/projectUploadStatus\(''\)/);
- assert.match(staff,/success\(wasEditing\?/);
- assert.doesNotMatch(staff,/setTimeout\([^)]*projectUploadStatus/);
+test('upload progress lives outside modal and remains until completion or error',()=>{
+ const toast=html.match(/<div id="project-upload-progress"[^>]*>/)?.[0]||'';
+ assert.match(toast,/popover="manual"/);
+ assert.match(toast,/role="status"/);
+ assert(html.indexOf('id="project-upload-progress"')<html.indexOf('<dialog id="editor"'));
+ assert.match(staff,/function projectUploadStatus\(text,state='uploading'\)/);
+ assert.match(staff,/toast\.showPopover\(\)/);
+ assert.match(staff,/data-state="uploading"/);
+ assert.match(staff,/projectUploadStatus\(notice\+' · '\+job\.photos\.length/);
+ assert.match(staff,/startProjectSave\(captureProjectSave\(true\)\)/);
 });
 test('GEAR UP road safety seminar uses educational category from full caption body',async()=>{
  const caption='OCTOBER 10, 2026 | GEAR UP!\nNoong October 10, 2026, idinaos ang GEAR UP! Secured Kabataan: Road Safety Awareness Seminar sa 2nd Floor, Mines Multipurpose Building, sa pakikipagtulungan ng Automobile Association Philippines (AAP). Dinaluhan ito ng mga kabataang riders mula sa ride-hailing at delivery platforms. Tinuro ang mga traffic signs at road safety.';
