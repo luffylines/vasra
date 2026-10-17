@@ -354,6 +354,7 @@ function openEditor(project=null){
  $('#fb-use-activity-as-project').hidden=true;
  $('#editor-message').textContent='';
  $('#editor-message').classList.remove('error');
+ projectSaveFeedback();
  projectUploadStatus('');
  $('#editor-heading').textContent=project?'I-edit ang proyekto':'Bagong proyekto';
  if(project){
@@ -435,6 +436,8 @@ function openDeleteProject(p){
  $('#delete-project-title').textContent=p.title;
  $('#delete-project-confirm-name').textContent=p.title;
  $('#delete-project-input').value='';
+ $('#delete-project-copy-status').hidden=true;
+ $('#delete-project-copy-status').textContent='';
  $('#delete-project-button').disabled=true;
  $('#delete-project-error').textContent='';
  $('#delete-project-dialog').showModal();
@@ -536,6 +539,22 @@ $('#managed-projects').onclick=e=>{
  if(deleteButton){openDeleteProject(managed.find(p=>p.id===deleteButton.dataset.delete));return;}
  const editButton=e.target.closest('[data-edit]');
  if(editButton)openEditor(managed.find(p=>p.id===editButton.dataset.edit));
+};
+$('#delete-project-copy-name').onclick=async()=>{
+ const p=pendingDeleteProject;
+ if(!p)return;
+ const info=$('#delete-project-copy-status');
+ info.hidden=false;info.classList.remove('error');
+ try{
+  if(!navigator.clipboard?.writeText)throw Error('clipboard unavailable');
+  await navigator.clipboard.writeText(p.title);
+  info.textContent='Copied! I-paste ang pangalan sa confirmation field.';
+  $('#delete-project-input').focus();
+ }catch{
+  // Copy operations require browser permission and a secure context.
+  info.classList.add('error');
+  info.textContent='Hindi makopya sa browser na ito. Piliin ang pangalan sa itaas at i-copy nang manual.';
+ }
 };
 $('#delete-project-input').addEventListener('input',e=>{
  $('#delete-project-button').disabled=!pendingDeleteProject||
@@ -696,11 +715,36 @@ async function uploadProjectPhoto(file){
  }
  return (await api('./api/uploads',{method:'POST',body:JSON.stringify({action:'complete',id:upload.id})})).id;
 }
+function projectSaveFeedback(text='',error=false){
+ const el=$('#project-save-feedback');
+ el.textContent=String(text||'');
+ el.hidden=!text;
+ el.classList.toggle('error',error);
+ el.setAttribute('role',error?'alert':'status');
+ $('#editor-message').classList.toggle('error',error);
+ $('#editor-message').textContent=String(text||'');
+}
+// Native HTML form validation normally prevents submit without any useful
+// feedback when the invalid input is below the fold of our modal.
+$('#project-form').addEventListener('invalid',e=>{
+ const form=e.currentTarget;
+ if(!form||!form.contains(e.target))return;
+ const control=e.target;
+ const names={title:'Project Title',category:'Category',description:'Summary',scope:'Details / Scope',
+  status:'Status',progress:'Progreso (%)',publication_mode:'Publication'};
+ const field=names[control.name]||'required field';
+ projectSaveFeedback('Hindi pa ma-save: pakisuri ang '+field+'. '+(control.validationMessage||''),true);
+},true);
+$('#project-form').addEventListener('input',e=>{
+ if(!e.target.matches?.('input,select,textarea'))return;
+ if($('#project-save-feedback').classList.contains('error'))projectSaveFeedback();
+});
 $('#project-form').onsubmit=async e=>{
  e.preventDefault();const form=e.target;
- const save=$('#save-project');save.disabled=true;
- $('#editor-message').classList.remove('error');
- $('#editor-message').textContent='Sine-save ang proyekto…';
+ const save=$('#save-project');
+ if(save.disabled)return;
+ save.disabled=true;
+ projectSaveFeedback('Sine-save ang proyekto…');
  projectUploadStatus('Inihahanda ang pag-save ng proyekto…');
  try{
    const body=Object.fromEntries(new FormData(form));
@@ -727,19 +771,27 @@ $('#project-form').onsubmit=async e=>{
    projectUploadStatus('Tapos na ang photo upload. Sine-save ang project details…');
    body.image_ids=ids;body.image_id=ids[0]||null;
    delete body.image;
-   const result=await api('./api/manage/projects'+(editing?'/'+editing.id:''),{
-     method:editing?'PUT':'POST',body:JSON.stringify(body)
+   if(editing&&!Number.isInteger(body.version))throw Error('Kulang ang version ng project. I-refresh ang Manage Projects bago mag-edit.');
+   const wasEditing=!!editing;
+   const result=await api('./api/manage/projects'+(editing?'/'+encodeURIComponent(editing.id):''),{
+     method:wasEditing?'PUT':'POST',body:JSON.stringify(body)
    });
    if(!result.project?.id)throw Error('Hindi nakumpirma ang pag-save.');
    $('#editor').close();
    projectUploadStatus('');
-   success(editing?'Matagumpay na na-update ang proyekto at mga larawan.':'Matagumpay na nagawa ang proyekto at mga larawan.');
-   await loadProjects();
+   success(wasEditing?'Matagumpay na na-save ang mga pagbabago sa project.':'Matagumpay na na-create ang project.');
+   // Refresh failure must not turn a confirmed save into a misleading failure.
+   try{await loadProjects();}
+   catch{message('Na-save ang project, pero hindi na-refresh ang listahan. I-refresh ang page para makita ang latest changes.',true);}
  }catch(error){
    projectUploadStatus('');
-   $('#editor-message').classList.add('error');
-   $('#editor-message').textContent=error.message;message(error.message,true);
- }finally{save.disabled=false;}
+   const detail=error?.message||'Hindi natuloy ang pag-save. Subukan muli.';
+   projectSaveFeedback(detail,true);
+   message(detail,true);
+ }finally{
+   save.disabled=false;
+   updatePublicationFields();
+ }
 };
 async function loadUsers(){const b=await api('./api/users');$('#users-list').innerHTML=b.users.map(u=>`<article class="manage-row"><div><h3>${esc(u.name)}</h3><p>${esc(u.email)}</p><span>${roleText[u.role]}${u.role==='sk'?' · '+esc(({kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'})[u.position]||'SK Kagawad'):''}</span></div>${u.role==='chairman'?'<span class="badge-inline">Chairman</span>':`<form class="role-form" data-user="${esc(u.id)}"><label>Role para kay ${esc(u.name)}<select name="role"><option value="youth" ${u.role==='youth'?'selected':''}>Walang SK access</option><option value="sk" ${u.role==='sk'?'selected':''}>SK Officer</option></select></label><button class="secondary">Save Access</button><label>Designation<select name="position"><option value="kagawad" ${u.position==='kagawad'?'selected':''}>SK Kagawad</option><option value="treasurer" ${u.position==='treasurer'?'selected':''}>SK Treasurer</option><option value="secretary" ${u.position==='secretary'?'selected':''}>SK Secretary</option></select></label><button type="button" data-save-position="${esc(u.id)}" class="secondary">Save Position</button></form>`}</article>`).join('')}
 $('#users-list').onclick=async e=>{const btn=e.target.closest('[data-save-position]');if(!btn)return;const form=btn.closest('form');btn.disabled=true;try{await api('./api/users/'+btn.dataset.savePosition+'/position',{method:'PUT',body:JSON.stringify({position:form.elements.position.value})});success('Matagumpay na na-update ang posisyon ng SK officer.');await loadUsers()}catch(error){message(error.message,true)}finally{btn.disabled=false}};
