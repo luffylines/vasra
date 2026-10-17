@@ -1632,3 +1632,13 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-r
  #editor #fb-import-panel #fb-post-caption{min-height:190px}
  #editor #fb-import-panel #fb-analyze-post{width:100%;min-height:44px}
 }
+/* Maintain field labels after grouping them for caption-only AI review. */
+#editor #project-review-fields>label:not(.editor-upload-zone),
+#editor #project-review-fields .form-row>label{
+ display:flex;flex-direction:column;gap:7px;margin:0;
+ color:#385475;font-size:12px;font-weight:750;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-review-fields>label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-review-fields .form-row>label{
+ color:#d6e6ff;
+}
