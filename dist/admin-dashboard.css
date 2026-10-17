@@ -1973,3 +1973,106 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.proje
   width:min(310px,calc(100vw - 20px));
  }
 }
+
+/* Password + account settings: explicit high-contrast light/dark fields.
+   Includes forced first-login password change (outside the #dashboard). */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section.form-panel{
+ background:#192a42!important;border:1px solid #456384!important;color:#ebf4ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section :is(h2,#password-note){
+ color:#edf5ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section form label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card form label{
+ color:#d6e7ff!important;font-weight:750;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section .password-field input,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input{
+ color:#f8fbff!important;
+ -webkit-text-fill-color:#f8fbff!important;
+ background:#11213a!important;
+ border:1px solid #6685ab!important;
+ caret-color:#f8fbff!important;
+ opacity:1!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input::placeholder,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input::placeholder{
+ color:#becfe6!important;opacity:1!important;-webkit-text-fill-color:#becfe6!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:focus,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:focus{
+ outline:2px solid #87bbff!important;outline-offset:1px!important;
+ border-color:#94c2ff!important;box-shadow:0 0 0 3px #6aabff25!important;
+}
+/* Chrome/Brave password manager often forces a white autofill surface with
+   almost-white text; override both together, including focus and hover. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:-webkit-autofill,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:-webkit-autofill:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:-webkit-autofill:focus,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:-webkit-autofill,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:-webkit-autofill:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:-webkit-autofill:focus{
+ -webkit-text-fill-color:#f8fbff!important;
+ -webkit-box-shadow:0 0 0 1000px #11213a inset!important;
+ box-shadow:0 0 0 1000px #11213a inset!important;
+ caret-color:#f8fbff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section .password-toggle,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .password-toggle{
+ color:#f0f6ff!important;background:#2c4870!important;
+ border:1px solid #6688b7!important;border-radius:8px!important;
+ opacity:1!important;min-width:57px;min-height:32px;font-weight:750;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section .password-toggle:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .password-toggle:hover{
+ background:#365e8b!important;border-color:#a1c6ff!important;
+}
+#password-section .password-field,
+#panel-settings .settings-card .password-field{
+ display:flex;align-items:center;position:relative;width:100%;max-width:100%;
+}
+#password-section .password-field input,
+#panel-settings .settings-card .password-field input{
+ width:100%;padding-right:78px!important;
+}
+#password-section .password-field .password-toggle,
+#panel-settings .settings-card .password-field .password-toggle{
+ position:absolute;right:7px;top:50%;transform:translateY(-50%);
+ margin:0;min-height:30px;padding:5px 9px;cursor:pointer;
+ background:#eaf1ff;color:#224c85;border:1px solid #bfcfe6;border-radius:7px;
+}
+#panel-settings .settings-card input:not([type="checkbox"]){font-size:14px;color:#183b67;caret-color:#183b67}
+#panel-settings .settings-card input::placeholder{color:#617895;opacity:1}
+#panel-settings .settings-card .settings-help{
+ margin:10px 0 0;font-size:11px;line-height:1.55;color:#526d8d;
+}
+#panel-settings .settings-inline-status{
+ margin:12px 0 0;padding:12px 13px;line-height:1.5;
+ border-radius:10px;border:1px solid #c4d7eb;background:#eef5ff;color:#254b76;
+ font-weight:650;font-size:12px;overflow-wrap:anywhere;
+}
+#panel-settings .settings-inline-status[hidden]{display:none!important}
+#panel-settings .settings-inline-status[data-kind="success"]{
+ background:#e6f7ed;color:#166240;border-color:#aedec3;
+}
+#panel-settings .settings-inline-status[data-kind="error"]{
+ background:#fff0f1;color:#8e2634;border-color:#eab5be;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings :is(.settings-help,.settings-feature-note){
+ color:#d2e2f7!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-inline-status{
+ background:#203f63;border-color:#5d85b0;color:#f0f7ff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-inline-status[data-kind="success"]{
+ background:#184937;border-color:#419b70;color:#e0ffec;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-inline-status[data-kind="error"]{
+ background:#512a37;border-color:#b16c7d;color:#ffe2eb;
+}
+@media(max-width:520px){
+ #password-section .password-field .password-toggle,
+ #panel-settings .settings-card .password-field .password-toggle{min-width:56px;font-size:12px}
+ #panel-settings .settings-layout{min-width:0}
+ #panel-settings .settings-card{min-width:0}
+}
