@@ -108,7 +108,7 @@ test('Facebook caption analysis accepts SK officers, denies youth accounts',asyn
   assert.equal(response.status,200,role);
   const parsed=await response.json();
   assert.equal(parsed.ok,true);
-  assert.equal(parsed.draft.category,'Edukasyon');
+  assert.equal(parsed.draft.category,'Pamamahala at Pakikilahok');
  }
  const {handler}=createMock('youth');
  const response=await handler(new Request(base+'/api/manage/projects/import-facebook',{
