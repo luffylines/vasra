@@ -1211,6 +1211,47 @@ function fillMonthlyProjects(){
  select.innerHTML=managed.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.title)+(p.published?'':' (draft)')+'</option>').join('');
  if(managed.some(p=>p.id===current))select.value=current;
 }
+let rosterPhotoId=null,rosterPhotoFile=null,rosterPhotoPreviewURL=null,rosterProfilesReady=false;
+let rosterProfiles=new Map();
+function rosterPhotoPreview(){
+ const target=$('#roster-photo-preview');
+ if(rosterPhotoPreviewURL){URL.revokeObjectURL(rosterPhotoPreviewURL);rosterPhotoPreviewURL=null;}
+ if(rosterPhotoFile)rosterPhotoPreviewURL=URL.createObjectURL(rosterPhotoFile);
+ const source=rosterPhotoPreviewURL||(rosterPhotoId?'./api/images/'+encodeURIComponent(rosterPhotoId):null);
+ target.innerHTML=source?'<img src="'+esc(source)+'" alt="Selected officer profile photo">':
+  '<span class="roster-photo-placeholder" aria-hidden="true">SK</span>';
+}
+function resetRosterProfile(){
+ rosterPhotoId=null;rosterPhotoFile=null;$('#roster-photo-file').value='';
+ document.querySelectorAll('#roster-duty-days input').forEach(i=>{i.checked=false;});
+ rosterPhotoPreview();
+}
+function loadRosterProfile(item){
+ resetRosterProfile();
+ rosterPhotoId=item.photo_id||null;
+ const days=Array.isArray(item.duty_days)?item.duty_days:[];
+ document.querySelectorAll('#roster-duty-days input').forEach(i=>{i.checked=days.includes(Number(i.value));});
+ rosterPhotoPreview();
+}
+$('#roster-photo-file').addEventListener('change',e=>{
+ const photo=e.target.files?.[0]||null;
+ if(!photo)return;
+ if(photo.size<1||photo.size>5*1024*1024||!['image/jpeg','image/png','image/webp'].includes(photo.type)){
+  e.target.value='';message('JPEG, PNG o WebP lamang, maximum 5 MB.',true);return;
+ }
+ rosterPhotoFile=photo;rosterPhotoPreview();
+});
+$('#roster-photo-clear').onclick=()=>{rosterPhotoFile=null;rosterPhotoId=null;$('#roster-photo-file').value='';rosterPhotoPreview();};
+async function refreshRosterProfiles(){
+ try{
+  const res=await api('./api/officer-profiles/manage');
+  rosterProfiles=new Map((res.profiles||[]).map(p=>[p.id,p]));rosterProfilesReady=true;
+  $('#roster-profile-message').textContent='Profile photos at weekly duty assignments are ready. Chairman approval is required to publish.';
+ }catch(err){
+  rosterProfiles=new Map();rosterProfilesReady=false;
+  $('#roster-profile-message').textContent='Profile photo at duty editing ay unavailable hangga\'t hindi naka-apply ang database migration. Maaari pa ring mag-edit ng basic officer details.';
+ }
+}
 async function loadTransparencyEditor(tab){
  const budget=$('#budget-form'),monthly=$('#monthly-form');
  if(!budget.elements.year.value)budget.elements.year.value=String(transYearNow());
@@ -1230,7 +1271,9 @@ async function loadTransparencyEditor(tab){
   $('#monthly-manage-list').innerHTML=d.updates.length?d.updates.map(m=>'<article class="trans-report trans-spending"><div><strong>'+esc(m.title)+'</strong><small>'+esc(m.month)+' · '+(m.published?'Published':'Draft')+' · '+esc(m.summary)+'</small></div><div><strong>'+(m.expense===null?'Expense not reported':transMoney(m.expense))+'</strong><button type="button" class="secondary" data-month-id="'+esc(m.id)+'">Edit</button></div></article>').join(''):'<div class="trans-empty">No monthly updates saved for '+year+' yet.</div>';
  }
  if(tab==='roster'){
-  $('#roster-list').innerHTML=d.officials.length?d.officials.map(o=>'<article class="trans-report trans-spending admin-roster-row"><div><strong>'+esc(o.name)+'</strong><small>'+esc(({chairman:'SK Chairperson',treasurer:'SK Treasurer',secretary:'SK Secretary',kagawad:'SK Kagawad'})[o.position]||o.position)+'</small><span class="admin-roster-state '+(o.published?'is-live':'')+'">'+(o.published?'Published':'Draft')+'</span></div><div class="admin-roster-actions"><button class="secondary" type="button" data-official-id="'+esc(o.id)+'">Edit</button><button class="secondary admin-remove" type="button" data-official-remove="'+esc(o.id)+'" '+(d.directory_management_v2===true?'':'disabled title="Requires approved database migration"')+' aria-label="Alisin si '+esc(o.name)+' sa SK directory">Remove</button></div></article>').join(''):'<div class="trans-empty">Wala pang managed SK officials. Maaaring kumuha ng pangalan mula sa duty schedule at i-confirm bago i-publish.</div>';
+  await refreshRosterProfiles();
+  d.officials=d.officials.map(o=>({...o,...(rosterProfiles.get(o.id)||{})}));
+  $('#roster-list').innerHTML=d.officials.length?d.officials.map(o=>'<article class="trans-report trans-spending admin-roster-row"><div class="admin-roster-ident">'+(o.photo_id?'<img class="roster-list-photo" src="./api/images/'+esc(encodeURIComponent(o.photo_id))+'" alt="Larawan ni '+esc(o.name)+'">':'<span class="roster-list-photo roster-list-photo-fallback" aria-hidden="true">SK</span>')+'<span><strong>'+esc(o.name)+'</strong><small>'+esc(({chairman:'SK Chairperson',treasurer:'SK Treasurer',secretary:'SK Secretary',kagawad:'SK Kagawad'})[o.position]||o.position)+'</small><small>'+esc((Array.isArray(o.duty_days)&&o.duty_days.length?o.duty_days.map(d=>['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d-1]).join(', '):'No assigned duty days'))+'</small><span class="admin-roster-state '+(o.published?'is-live':'')+'">'+(o.published?'Published':'Draft')+'</span></span></div><div class="admin-roster-actions"><button class="secondary" type="button" data-official-id="'+esc(o.id)+'">Edit</button><button class="secondary admin-remove" type="button" data-official-remove="'+esc(o.id)+'" '+(d.directory_management_v2===true?'':'disabled title="Requires approved database migration"')+' aria-label="Alisin si '+esc(o.name)+' sa SK directory">Remove</button></div></article>').join(''):'<div class="trans-empty">Wala pang managed SK officials. Maaaring kumuha ng pangalan mula sa duty schedule at i-confirm bago i-publish.</div>';
   renderDutySuggestions();
  }
 }
@@ -1271,15 +1314,33 @@ $('#roster-suggestions').onclick=e=>{
  const btn=e.target.closest('[data-roster-name]');if(!btn||btn.disabled)return;
  const f=$('#roster-form').elements;
  f.id.value='';f.name.value=btn.dataset.rosterName;f.position.value=btn.dataset.rosterPosition;f.sort.value='10';f.published.checked=false;
+ resetRosterProfile();
  $('#roster-form-title').textContent='Review SK Duty officer';
  $('#roster-form').scrollIntoView({behavior:'smooth',block:'center'});f.name.focus();
 };
-$('#roster-form').onreset=()=>{$('#roster-form-title').textContent='Add SK official'};
+$('#roster-form').onreset=()=>{$('#roster-form-title').textContent='Add SK official';resetRosterProfile();};
 $('#roster-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
  if(user?.role!=='chairman')throw Error('Only the Chairman can manage the official directory.');
  const f=e.target.elements;
- await api('./api/transparency/official',{method:'POST',body:JSON.stringify({id:f.id.value||null,name:f.name.value,position:f.position.value,sort:Number(f.sort.value),published:f.published.checked})});
- success('Matagumpay na na-save ang SK official. Lalabas ang published records sa Youth Leaders.');e.target.reset();$('#roster-form-title').textContent='Add SK official';await loadTransparencyEditor('roster');
+ const previous=transparencyCache?.officials?.find(o=>o.id===f.id.value);
+ if(previous&&previous.name.trim().toLowerCase()!==f.name.value.trim().toLowerCase()){
+  throw Error('Para sa kapalit na SK officer, i-archive muna ang dating record at gumawa ng bagong officer. Huwag gamitin ang lumang larawan/history ng dating opisyal.');
+ }
+ const dutyDays=[...document.querySelectorAll('#roster-duty-days input:checked')].map(x=>Number(x.value));
+ if(!rosterProfilesReady&&(rosterPhotoFile||dutyDays.length))throw Error('Kailangang naka-apply muna ang roster database migration bago mag-upload ng profile photo o magtakda ng duty.');
+ const saved=await api('./api/transparency/official',{method:'POST',body:JSON.stringify({
+  id:f.id.value||null,name:f.name.value,position:f.position.value,
+  sort:Number(f.sort.value),published:f.published.checked
+ })});
+ if(rosterProfilesReady){
+  let imageId=rosterPhotoId;
+  if(rosterPhotoFile)imageId=await uploadProjectPhoto(rosterPhotoFile);
+  await api('./api/officer-profiles',{method:'POST',body:JSON.stringify({
+   id:saved.id,photo_id:imageId||null,duty_days:dutyDays
+  })});
+ }
+ success('Saved SK official'+(rosterProfilesReady?', portrait and duty schedule':'')+'. '+(f.published.checked?'Published to the public directory.':'Draft only.'));
+ e.target.reset();await loadTransparencyEditor('roster');
 })};
 $('#roster-list').onclick=async e=>{
  const remove=e.target.closest('[data-official-remove]');
@@ -1298,6 +1359,7 @@ $('#roster-list').onclick=async e=>{
  const btn=e.target.closest('[data-official-id]');if(!btn||!transparencyCache)return;
  const item=transparencyCache.officials.find(o=>o.id===btn.dataset.officialId);if(!item)return;
  const f=$('#roster-form').elements;f.id.value=item.id;f.name.value=item.name;f.position.value=item.position;f.sort.value=item.display_order;f.published.checked=!!item.published;
+ loadRosterProfile(item);
  $('#roster-form-title').textContent='Edit SK official';
  $('#roster-form').scrollIntoView({behavior:'smooth',block:'center'});
 };
