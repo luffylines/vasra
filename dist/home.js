@@ -1,4 +1,4 @@
-const homeNow=()=>Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
+const homeNow=()=>Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
 const homePeriod=homeNow();
 document.querySelectorAll('.home-year').forEach(el=>el.textContent=homePeriod.year);
 $('#home-month').textContent=new Intl.DateTimeFormat('fil-PH',{month:'long',timeZone:'Asia/Manila'}).format(new Date());
