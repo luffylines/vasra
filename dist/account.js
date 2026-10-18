@@ -1106,7 +1106,18 @@ $('#create-officer').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{con
 
 
 const dutyNames=[['gel bergonio'],['ernest bragais','kristine de ocampo'],['sherwin estanislao'],['rembert natividad'],['arvin capiral'],['kath irag'],['roland reyes']];
-let dutyReadSequence=0,dutyMutationBusy=false;
+let dutyReadSequence=0,dutyMutationBusy=false,liveAssignedNames=null;
+async function refreshStaffDutyRoster(){
+ try{
+  const res=await api('./api/officer-profiles');
+  if(res?.managed===true&&Array.isArray(res.profiles)){
+   liveAssignedNames=Array.from({length:7},(_,index)=>res.profiles
+     .filter(p=>Array.isArray(p.duty_days)&&p.duty_days.includes(index+1))
+     .map(p=>String(p.name||'').trim().toLocaleLowerCase()));
+  }else liveAssignedNames=null;
+ }catch{liveAssignedNames=null;}
+}
+
 function manilaDutyDay(){
  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{
   timeZone:'Asia/Manila',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',
@@ -1119,7 +1130,7 @@ function manilaDutyDay(){
 function canManageDutyToday(actor,dayIndex){
  if(!actor||actor.mustChange)return false;
  if(actor.role==='chairman')return true; // Chairman retains emergency override.
- return actor.role==='sk'&&dutyNames[dayIndex]?.includes(
+ return actor.role==='sk'&&(liveAssignedNames||dutyNames)[dayIndex]?.includes(
   String(actor.name||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase()
  )===true;
 }
@@ -1129,6 +1140,8 @@ function setDutyBadge(state,label){
 }
 async function updateDutyControls(){
  const ticket=++dutyReadSequence;
+ await refreshStaffDutyRoster();
+ if(ticket!==dutyReadSequence)return;
  const box=$('#duty-controls'),d=manilaDutyDay();
  const visible=activeStaffTab==='overview'&&canManageDutyToday(user,d.index);
  box.hidden=!visible;
@@ -1136,8 +1149,8 @@ async function updateDutyControls(){
  const info=$('#duty-control-info'),closed=$('#duty-set-closed'),
   auto=$('#duty-set-auto'),retry=$('#duty-retry');
  const roster=typeof days!=='undefined'&&Array.isArray(days)?days[d.index]:null;
- const assigned=roster?.names?.length?roster.names.join(' · '):
-  dutyNames[d.index]?.join(' · ')||'Walang nakatalagang SK officer';
+ const names=liveAssignedNames?liveAssignedNames[d.index]:roster?.names||dutyNames[d.index];
+ const assigned=names?.length?names.join(' · '):'Walang nakatalagang SK officer';
  $('#duty-assigned-name').textContent=assigned;
  $('#duty-control-date').textContent='Ngayong araw · '+new Intl.DateTimeFormat('fil-PH',{
   timeZone:'Asia/Manila',weekday:'long',month:'long',day:'numeric',year:'numeric'
