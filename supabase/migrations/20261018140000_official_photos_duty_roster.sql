@@ -31,6 +31,12 @@ begin
  select u.* into actor from vasra.users u join vasra.sessions s on u.id=s.user_id
  where s.token=session_hash and s.expires>clock_timestamp() and not u.must_change limit 1;
  if actor.id is null or actor.role<>'chairman' then return jsonb_build_object('error',403); end if;
+ if action='photo_manage' then
+  item:=(payload->>'id')::uuid;
+  return coalesce((select jsonb_build_object('storage_path',i.storage_path,'mime',i.mime)
+   from vasra.images i where i.id=item and i.ready and
+    (i.owner=actor.id or exists(select 1 from vasra.officials o where o.photo_id=item and not o.archived))),jsonb_build_object('error',404));
+ end if;
  if action='manage' then
   return jsonb_build_object('profiles',coalesce((select jsonb_agg(jsonb_build_object(
   'id',o.id,'name',o.name,'position',o.position,'photo_id',o.photo_id,'duty_days',o.duty_days,'published',o.published)
