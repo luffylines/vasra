@@ -284,3 +284,26 @@
  .portal-refresh #grid .cardbody h3{font-size:16px}
  .portal-refresh #grid .project-card-published-at time{font-size:12px;gap:6px}
 }
+
+/* Modern duty photos are authoritative after a managed roster is published. */
+.portal-refresh .duty-stage #poster-link[hidden]{display:none!important}
+.portal-refresh .duty-stage #duty-officer-portraits[hidden]{display:none!important}
+.portal-refresh .duty-officer-portraits{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;align-items:start;
+ padding:22px;min-width:0;background:linear-gradient(135deg,#e5f0ff,#f6faff);
+ border:1px solid #d1e2f6;border-radius:17px
+}
+.portal-refresh .duty-profile{display:flex;flex-direction:column;align-items:center;text-align:center;
+ padding:15px 12px;border:1px solid #d5e3f3;border-radius:14px;background:#fff;min-width:0}
+.portal-refresh .duty-profile-frame{width:min(170px,100%);aspect-ratio:4/5;display:grid;place-items:center;
+ position:relative;overflow:hidden;border:1px solid #d4e0f0;border-radius:13px;background:#dcecff;color:#2b5a8a}
+.portal-refresh .duty-profile-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.portal-refresh .duty-profile-fallback{font-size:34px;font-weight:850;letter-spacing:1.5px}
+.portal-refresh .duty-profile strong{font-size:14px;color:#1b4273;margin:13px 0 4px;overflow-wrap:anywhere}
+.portal-refresh .duty-profile small{font-size:11px;color:#58749a}
+.portal-refresh .duty-profile-empty{color:#496b93;text-align:center;align-self:center;font-size:13px;line-height:1.6}
+@media(max-width:650px){
+ .portal-refresh .duty-officer-portraits{padding:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .portal-refresh .duty-profile{padding:10px}
+ .portal-refresh .duty-profile-frame{max-width:130px}
+}
