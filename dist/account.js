@@ -1164,17 +1164,22 @@ async function updateDutyControls(){
   if(ticket!==dutyReadSequence||activeStaffTab!=='overview'||!canManageDutyToday(user,manilaDutyDay().index)||manilaDutyDay().date!==d.date)return;
   if(!['auto','closed'].includes(result.mode)||(result.date&&result.date!==d.date))
    throw Error('Invalid SK Duty status response.');
-  const hoursOpen=d.hour>=9&&d.hour<18;
+  const opens=/^([01]\d|2[0-3]):[0-5]\d$/.test(result.open_time||'')?result.open_time:'09:00';
+  const closes=/^([01]\d|2[0-3]):[0-5]\d$/.test(result.close_time||'')?result.close_time:'18:00';
+  const minutes=t=>{const [hour,minute]=t.split(':').map(Number);return hour*60+minute;};
+  const readable=t=>{const [hour,minute]=t.split(':').map(Number);return (hour%12||12)+':'+String(minute).padStart(2,'0')+' '+(hour<12?'AM':'PM');};
+  const present=d.hour*60+d.minute;
+  const hoursOpen=present>=minutes(opens)&&present<minutes(closes);
   const manualClosed=result.mode==='closed';
   const open=!manualClosed&&hoursOpen;
   setDutyBadge(open?'open':'closed',open?'Office Open':'Office Closed');
   info.textContent=manualClosed
    ?'Manually marked Closed for today. The public SK Duty page also reflects this status.'
    :hoursOpen
-    ?'Automatic Schedule · Open ngayon mula 9:00 AM hanggang 6:00 PM (PHT).'
-    :d.hour<9
-     ?'Automatic Schedule · Sarado pa ang opisina. Magbubukas ng 9:00 AM (PHT).'
-     :'Automatic Schedule · Tapos na ang office hours. Sarado mula 6:00 PM (PHT).';
+    ?'Automatic Schedule · Open ngayon mula '+readable(opens)+' hanggang '+readable(closes)+' (PHT).'
+    :present<minutes(opens)
+     ?'Automatic Schedule · Sarado pa ang opisina. Magbubukas ng '+readable(opens)+' (PHT).'
+     :'Automatic Schedule · Tapos na ang office hours. Sarado mula '+readable(closes)+' (PHT).';
   if(user.role==='chairman')$('#admin-office').textContent=open?'Open':manualClosed?'Manually closed':'Closed · Auto';
   retry.hidden=true;
   closed.disabled=dutyMutationBusy||manualClosed;
