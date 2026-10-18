@@ -6,10 +6,17 @@ function publishedOfficers(records){
 }
 // Portrait posters are cropped only inside the small portrait viewport.
 // A visible initials fallback remains when a poster cannot load (e.g. iOS network failure).
-function officerPortrait(name,position){
+function officerPortrait(name,position,photoId=null,managed=false){
  const safeName=String(name||'').trim();
  const initials=safeName.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toUpperCase()).join('');
  const fallback='<span class="officer-portrait-fallback" aria-hidden="true">'+esc(initials||'?')+'</span>';
+ if(photoId&&/^[0-9a-f-]{36}$/i.test(String(photoId))){
+  return '<span class="officer-portrait portrait-profile-photo">'+fallback+
+   '<img src="./api/images/'+encodeURIComponent(photoId)+'" alt="Larawan ni '+esc(safeName)+'" loading="eager" decoding="async"></span>';
+ }
+ // Never show the predecessor's static duty poster for a managed roster entry.
+ // When a new official has no portrait yet, show initials until Chairman uploads one.
+ if(managed)return '<span class="officer-portrait portrait-fallback-only">'+fallback+'</span>';
  const normalized=safeName.toLocaleLowerCase();
  if(typeof days==='undefined'||!Array.isArray(days))
   return '<span class="officer-portrait portrait-fallback-only">'+fallback+'</span>';
@@ -68,12 +75,12 @@ function officerChart(records, managed=false){
  const {roster,fromDuty}=displayedOfficerRoster(records, managed);
  if(!roster.length)return '<div class="trans-empty">Wala pang published SK officers. Ang SK Chairman lamang ang maaaring mag-publish ng official directory.</div>';
  const chairs=roster.filter(o=>o.position==='chairman'),support=roster.filter(o=>o.position==='treasurer'||o.position==='secretary'),members=roster.filter(o=>o.position==='kagawad');
- const card=(o,chair=false)=>'<article class="org-card'+(chair?' org-chair':'')+'">'+officerPortrait(o.name,o.position)+'<div class="org-person"><strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></div></article>';
+ const card=(o,chair=false)=>'<article class="org-card'+(chair?' org-chair':'')+'">'+officerPortrait(o.name,o.position,o.photo_id,!fromDuty)+'<div class="org-person"><strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></div></article>';
  const tier=(group,title,kicker)=>group.length?'<section class="org-tier" aria-label="'+esc(title)+'"><div class="org-tier-heading"><span>'+esc(kicker)+'</span><h3>'+esc(title)+'</h3></div><div class="org-tier-grid">'+group.map(o=>card(o)).join('')+'</div></section>':'';
  const top=chairs.length?'<div class="org-lead">'+chairs.map(o=>card(o,true)).join('')+'</div>':'<p class="org-note">Wala pang nakatalang SK Chairperson sa directory.</p>';
  return '<div class="org-chart'+(chairs.length?' has-chair':'')+'" aria-label="SK organizational hierarchy">'+top+tier(support,'SK Secretary at Treasurer','TANGGAPAN NG KONSEHO')+tier(members,'Mga SK Kagawad','MGA KASAPI NG KONSEHO')+'</div>';
 }
-function officerCard(o){return '<article class="trans-person">'+officerPortrait(o.name,o.position)+'<strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></article>'}
+function officerCard(o){return '<article class="trans-person">'+officerPortrait(o.name,o.position,o.photo_id,!fromDuty)+'<strong>'+esc(o.name)+'</strong><small>'+esc(officerRoles[o.position])+'</small></article>'}
 function officerDirectory(records,grouped=false,managed=false,showDutyNote=true){
  const {roster,fromDuty}=displayedOfficerRoster(records,managed);
  if(!roster.length)return '<div class="trans-empty">Wala pang available na verified officers.</div>';
