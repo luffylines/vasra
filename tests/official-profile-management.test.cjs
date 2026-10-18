@@ -7,9 +7,10 @@ const sql=read('supabase/migrations/20261018140000_official_photos_duty_roster.s
 test('Organizational photo and SK Duty photo are independent controls',()=>{
  assert.match(html,/id="roster-photo-file"/);
  assert.match(html,/Para sa SK Organizational Structure lang ito/);
- assert.match(html,/id="roster-open-duty"/);
+ assert.doesNotMatch(html,/id="roster-open-duty"/);
+ assert.doesNotMatch(html,/Separate ang SK Duty sa Organizational Structure/);
  assert.doesNotMatch(html,/id="roster-duty-days"/);
- assert.match(app,/roster-open-duty/);
+ assert.doesNotMatch(app,/roster-open-duty/);
  assert.match(app,/id:saved\.id,photo_id:imageId\|\|null/);
  assert.doesNotMatch(app,/duty_days:dutyDays/);
  assert.match(sql,/photo_id uuid references vasra\.images/);

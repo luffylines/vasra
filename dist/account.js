@@ -1276,14 +1276,14 @@ $('#roster-photo-file').addEventListener('change',e=>{
  rosterPhotoFile=photo;rosterPhotoPreview();
 });
 $('#roster-photo-clear').onclick=()=>{rosterPhotoFile=null;rosterPhotoId=null;$('#roster-photo-file').value='';rosterPhotoPreview();};
-$('#roster-open-duty').onclick=()=>selectTab('duty-manage');
+
 $('#roster-form').elements.name.addEventListener('input',()=>{if(!rosterPhotoFile&&!rosterPhotoId)rosterPhotoPreview()});
 $('#roster-form').elements.position.addEventListener('change',()=>{if(!rosterPhotoFile&&!rosterPhotoId)rosterPhotoPreview()});
 async function refreshRosterProfiles(){
  try{
   const res=await api('./api/officer-profiles/manage');
   rosterProfiles=new Map((res.profiles||[]).map(p=>[p.id,p]));rosterProfilesReady=true;
-  $('#roster-profile-message').textContent='Organizational photos are ready. Ang duty photo/day ay hiwalay sa SK Duty Management.';
+  $('#roster-profile-message').textContent='Profile photos are ready. Ang duty name, araw at picture ay pinipili sa SK Duty Management.';
  }catch(err){
   rosterProfiles=new Map();rosterProfilesReady=false;
   $('#roster-profile-message').textContent='Photo editing is awaiting database setup. Puwede pa ring mag-edit ng pangalan at posisyon.';
