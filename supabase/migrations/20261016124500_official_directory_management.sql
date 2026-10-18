@@ -76,7 +76,7 @@ begin
   return jsonb_build_object('ok',true);
  end if;
  return jsonb_build_object('error',404);
-end $function$
+end $function$;
 
 revoke all on function public.vasra_transparency(text,jsonb,text) from public,anon,authenticated;
 grant execute on function public.vasra_transparency(text,jsonb,text) to service_role;

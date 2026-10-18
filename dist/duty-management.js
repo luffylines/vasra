@@ -88,7 +88,7 @@ function dutyManageRenderSelected(){
  }).join('')+'<label class="duty-manager-day-chip duty-manager-day-clear"><input type="radio" name="sk-duty-day" value="0"'+(chosen===0?' checked':'')+'><span>None</span></label>';
  $('#duty-manage-selection-message').textContent=!dutyManagerReady?
   'Preview lamang. Hindi pa active ang duty-photo database migration, kaya disabled ang saving.':
-  !officer.canSave?'Nasa existing SK reference/directory ang pangalan ngunit hindi pa published ang saved profile. I-publish muna siya sa SK Youth Leaders Management.':
+  !officer.canSave?'Reference name pa lamang ito. I-save at i-publish muna ang officer sa SK Officials bago ma-enable ang duty photo at duty day.':
   'Ready. Ang pagbabago sa duty day o picture ay automatic na mase-save kapag kinumpirma ng server.';
 }
 function dutyManageRenderHours(){
@@ -119,7 +119,7 @@ async function loadDutyManagement(){
  dutyManageOfficers=dutyManageCollect(r,d);
  status.textContent=dutyManagerReady?
   'Pumili ng officer. Ang duty day at larawan ay mase-save nang hiwalay sa Organizational Structure.':
-  'Reference mode: maaaring pumili at makita ang existing SK names/photos, pero kailangan munang i-activate ang approved duty database migrations bago mag-save.';
+  'Hindi pa available ang saving. Kailangang i-apply ang officer-photo at office-hours migrations sa Supabase database.';
  dutyManageRenderOptions();dutyManageRenderHours();
  dutyManagerLoading=false;
 }
