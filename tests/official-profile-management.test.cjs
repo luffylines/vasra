@@ -59,7 +59,7 @@ test('SK Duty images use managed roster instead of obsolete poster after publica
  assert.match(duty,/poster\.hidden=!!managedDutyDays/);
  assert.match(duty,/photos\.hidden=!managedDutyDays/);
  assert.match(duty,/function loadManagedDutyRoster/);
- assert.match(duty,/res\.profiles/);
+ assert.match(duty,/result\.profiles/);
  assert.match(duty,/\.duty_days\.includes\(i\+1\)/);
  assert.match(css,/#duty-officer-portraits\[hidden\]/);
 });
@@ -86,6 +86,6 @@ test('server duty permissions change with published roster; old roster only lega
  assert.match(sql,/where o\.published and not o\.archived/);
  assert.match(sql,/if lower\(trim\(actor\.name\)\)<>all\(assigned_names\)/);
  assert.match(js,/refreshStaffDutyRoster/);
- assert.match(js,/liveAssignedNames\|\|dutyNames/);
+ assert.match(js,/typeof liveAssignedNames!=='undefined'/);
  assert.match(sql,/STAGED ONLY/);
 });
