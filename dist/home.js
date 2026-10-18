@@ -34,21 +34,36 @@ api('./api/transparency?year='+homePeriod.year).then(data=>{
  $('#home-budget-reference').textContent='Hindi ma-load ang transparency report. Subukan muli mamaya.';
  $('#home-officials').innerHTML='<div class="trans-empty">Hindi ma-check ang official SK directory sa ngayon. Subukan muli mamaya.</div>';
 });
-let homeDutyMode='unknown',homeDutyDate='';
+let homeDutyMode='unknown',homeDutyDate='',homeDutyOpen='09:00',homeDutyClose='18:00',homeManagedProfiles=null;
 function renderHomeDuty(){
  const now=homeNow(),date=now.year+'-'+now.month+'-'+now.day;
  const d=days.find(d=>d.short===now.weekday.toUpperCase());
  $('#home-duty-date').textContent=new Intl.DateTimeFormat('fil-PH',{month:'short',day:'numeric',timeZone:'Asia/Manila'}).format(new Date());
- $('#home-duty-officers').innerHTML=d?'<span class="eyebrow">'+esc(d.day.toUpperCase())+' · NAKATAKDA NGAYON</span>'+d.names.map((name,i)=>'<article class="home-officer">'+officerPortrait(name)+'<div><h3>'+esc(name)+'</h3><p>'+esc(d.roles[i])+'</p></div></article>').join(''):'Hindi available ang schedule.';
- const inHours=Number(now.hour)>=9&&Number(now.hour)<18,closed=homeDutyMode==='closed'&&homeDutyDate===date;
- const status=$('#home-duty-status');
- status.textContent=closed&&inHours?'Closed by SK on duty':inHours?(homeDutyMode==='unknown'?'Scheduled open · Status unverified':'Open · 9 AM–6 PM'):'Closed · Office hours 9 AM–6 PM';
+ const current=Array.isArray(homeManagedProfiles)?homeManagedProfiles.filter(p=>p.duty_days?.includes(['MON','TUE','WED','THU','FRI','SAT','SUN'].indexOf(now.weekday.toUpperCase())+1)):null;
+ const role={chairman:'SK Chairperson',kagawad:'SK Kagawad',secretary:'SK Secretary',treasurer:'SK Treasurer'};
+ const photos=current?current.map(p=>'<article class="home-officer">'+officerPortrait(p.name,p.position,p.photo_id,true)+'<div><h3>'+esc(p.name)+'</h3><p>'+esc(role[p.position]||'SK Officer')+'</p></div></article>').join(''):
+  d?.names.map((name,i)=>'<article class="home-officer">'+officerPortrait(name)+'<div><h3>'+esc(name)+'</h3><p>'+esc(d.roles[i])+'</p></div></article>').join('');
+ $('#home-duty-officers').innerHTML=d?'<span class="eyebrow">'+esc(d.day.toUpperCase())+' · NAKATAKDA NGAYON</span>'+(photos||'<p>Walang naka-assign na SK officer sa araw na ito.</p>'):'Hindi available ang schedule.';
+ const min=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+m;};
+ const fm=t=>{const [h,m]=String(t).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
+ const minutes=Number(now.hour)*60+Number(now.minute||0);
+ const inHours=minutes>=min(homeDutyOpen)&&minutes<min(homeDutyClose),closed=homeDutyMode==='closed'&&homeDutyDate===date;
+ const status=$('#home-duty-status'),label=fm(homeDutyOpen)+'–'+fm(homeDutyClose);
+ status.textContent=closed&&inHours?'Closed by SK on duty':inHours?(homeDutyMode==='unknown'?'Scheduled open · Status unverified':'Open · '+label):'Closed · Office hours '+label;
  status.className='home-status '+(inHours&&!closed&&homeDutyMode!=='unknown'?'is-open':'');
 }
 async function refreshHomeDuty(){
- try{const data=await api('./api/duty-status',{cache:'no-store'});homeDutyMode=data.mode==='closed'?'closed':'auto';homeDutyDate=data.date||'';}catch{homeDutyMode='unknown';homeDutyDate='';}
+ try{const data=await api('./api/duty-status',{cache:'no-store'});homeDutyMode=data.mode==='closed'?'closed':'auto';homeDutyDate=data.date||'';homeDutyOpen=data.open_time||'09:00';homeDutyClose=data.close_time||'18:00';}catch{homeDutyMode='unknown';homeDutyDate='';}
  renderHomeDuty();
 }
+async function refreshHomeOfficerRoster(){
+ try{
+  const result=await api('./api/officer-profiles');
+  homeManagedProfiles=result?.managed===true&&Array.isArray(result.profiles)?result.profiles:null;
+  renderHomeDuty();
+ }catch{ /* legacy duty roster fallback while migration is pending */ }
+}
 renderHomeDuty();refreshHomeDuty();setInterval(refreshHomeDuty,30000);
+refreshHomeOfficerRoster();setInterval(refreshHomeOfficerRoster,120000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshHomeDuty()});
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
