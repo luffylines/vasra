@@ -1226,13 +1226,30 @@ function fillMonthlyProjects(){
 }
 let rosterPhotoId=null,rosterPhotoFile=null,rosterPhotoPreviewURL=null,rosterProfilesReady=false;
 let rosterProfiles=new Map();
+function legacyOfficerPortrait(name,position){
+ const legacyRoles={chairman:'SK Chairman',treasurer:'SK Treasurer',secretary:'SK Secretary',kagawad:'SK Kagawad'};
+ if(typeof days==='undefined'||!Array.isArray(days)||!name)return null;
+ const normal=str=>String(str||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase();
+ for(const day of days){
+  const index=day.names.findIndex((candidate,i)=>normal(candidate)===normal(name)&&day.roles[i]===legacyRoles[position]);
+  if(index<0)continue;
+  return {file:day.file,crop:day.names.length>1?(index===0?'portrait-left':'portrait-right'):'portrait-single'};
+ }
+ return null;
+}
 function rosterPhotoPreview(){
  const target=$('#roster-photo-preview');
  if(rosterPhotoPreviewURL){URL.revokeObjectURL(rosterPhotoPreviewURL);rosterPhotoPreviewURL=null;}
  if(rosterPhotoFile)rosterPhotoPreviewURL=URL.createObjectURL(rosterPhotoFile);
- const source=rosterPhotoPreviewURL||(rosterPhotoId?'./api/images/'+encodeURIComponent(rosterPhotoId):null);
- target.innerHTML=source?'<img src="'+esc(source)+'" alt="Selected officer profile photo">':
+ const form=$('#roster-form').elements;
+ const legacy=(!rosterPhotoPreviewURL&&!rosterPhotoId)?legacyOfficerPortrait(form.name.value,form.position.value):null;
+ const source=rosterPhotoPreviewURL||(rosterPhotoId?'./api/officer-images/'+encodeURIComponent(rosterPhotoId):null);
+ target.className='roster-photo-preview'+(legacy?' roster-legacy-portrait '+legacy.crop:'');
+ target.innerHTML=source?'<img src="'+esc(source)+'" alt="Profile photo ni '+esc(form.name.value)+'">':
+  legacy?'<span class="roster-photo-placeholder" aria-hidden="true">SK</span><img src="./duty/'+encodeURIComponent(legacy.file)+'.jpg" alt="Existing poster portrait ni '+esc(form.name.value)+'">':
   '<span class="roster-photo-placeholder" aria-hidden="true">SK</span>';
+ const note=$('#roster-photo-source');
+ if(note)note.textContent=rosterPhotoFile?'New photo (preview before saving)':rosterPhotoId?'Saved profile photo':legacy?'Current photo from existing SK Duty poster (not yet an individual uploaded photo)':'No profile photo yet';
 }
 function resetRosterProfile(){
  rosterPhotoId=null;rosterPhotoFile=null;$('#roster-photo-file').value='';
@@ -1255,6 +1272,8 @@ $('#roster-photo-file').addEventListener('change',e=>{
  rosterPhotoFile=photo;rosterPhotoPreview();
 });
 $('#roster-photo-clear').onclick=()=>{rosterPhotoFile=null;rosterPhotoId=null;$('#roster-photo-file').value='';rosterPhotoPreview();};
+$('#roster-form').elements.name.addEventListener('input',()=>{if(!rosterPhotoFile&&!rosterPhotoId)rosterPhotoPreview()});
+$('#roster-form').elements.position.addEventListener('change',()=>{if(!rosterPhotoFile&&!rosterPhotoId)rosterPhotoPreview()});
 async function refreshRosterProfiles(){
  try{
   const res=await api('./api/officer-profiles/manage');
@@ -1329,6 +1348,7 @@ $('#roster-suggestions').onclick=e=>{
  f.id.value='';f.name.value=btn.dataset.rosterName;f.position.value=btn.dataset.rosterPosition;f.sort.value='10';f.published.checked=false;
  resetRosterProfile();
  $('#roster-form-title').textContent='Review SK Duty officer';
+ rosterPhotoPreview();
  $('#roster-form').scrollIntoView({behavior:'smooth',block:'center'});f.name.focus();
 };
 $('#roster-form').onreset=()=>{$('#roster-form-title').textContent='Add SK official';resetRosterProfile();};
