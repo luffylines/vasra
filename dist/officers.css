@@ -77,3 +77,7 @@
 .officer-portrait.portrait-error img{display:none}
 .officer-portrait.portrait-fallback-only{background:#e1ebf8}
 @media(prefers-reduced-motion:reduce){.officer-portrait img{transition:none}}
+
+/* Independently uploaded officer photos must never be cropped like 2026 collage posters. */
+.officer-portrait.portrait-profile-photo img{width:100%!important;height:100%!important;
+ left:0!important;top:0!important;object-fit:cover!important;max-width:100%!important;border-radius:0!important}
