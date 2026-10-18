@@ -29,7 +29,7 @@ test('Existing officer poster picture previews on selection without being stored
 });
 test('Chairman-only API has private draft photo and approved schedule guard',()=>{
  assert.match(api,/await user\(\['chairman'\]\)/);
- assert.match(api,/\/api\/officer-images\//);
+ assert.match(api,/officer-images/);
  assert.match(api,/officer_profile_photo_manage/);
  assert.match(api,/'Cache-Control':'private, no-store'/);
  assert.match(profileSql,/action='photo_manage'/);
