@@ -18,13 +18,16 @@ function selectDay(index){
    const list=managedDutyProfiles.filter(p=>Array.isArray(p.duty_days)&&p.duty_days.includes(index+1));
    photos.innerHTML=list.length?list.map(p=>{
     const initials=String(p.name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
-    const picture=p.photo_id?'<img src="./api/images/'+encodeURIComponent(p.photo_id)+'" alt="Larawan ni '+esc(p.name)+'" loading="eager" onerror="this.hidden=true">':'';
+    const picture=p.photo_id?'<img src="./api/images/'+encodeURIComponent(p.photo_id)+'" alt="Larawan ni '+esc(p.name)+'" loading="eager">':'';
     return '<article class="duty-profile"><span class="duty-profile-frame">'+
      '<span class="duty-profile-fallback" aria-hidden="true">'+esc(initials||'SK')+'</span>'+picture+
      '</span><strong>'+esc(p.name)+'</strong><small>'+esc(({
       chairman:'SK Chairperson',kagawad:'SK Kagawad',secretary:'SK Secretary',treasurer:'SK Treasurer'
      })[p.position]||'SK Officer')+'</small></article>';
    }).join(''):'<p class="duty-profile-empty">Walang naka-assign na officer sa araw na ito. Makipag-ugnay sa SK Office.</p>';
+   photos.querySelectorAll('img').forEach(img=>{
+    img.addEventListener('error',()=>{img.hidden=true;},{once:true});
+   });
   }else{
    const src='./duty/'+d.file+'.jpg';
    $('#day-poster').src=src;
