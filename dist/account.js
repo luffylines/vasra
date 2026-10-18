@@ -1130,7 +1130,7 @@ function manilaDutyDay(){
 function canManageDutyToday(actor,dayIndex){
  if(!actor||actor.mustChange)return false;
  if(actor.role==='chairman')return true; // Chairman retains emergency override.
- return actor.role==='sk'&&(liveAssignedNames||dutyNames)[dayIndex]?.includes(
+ return actor.role==='sk'&&((typeof liveAssignedNames!=='undefined'&&liveAssignedNames)||dutyNames)[dayIndex]?.includes(
   String(actor.name||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase()
  )===true;
 }
@@ -1140,7 +1140,7 @@ function setDutyBadge(state,label){
 }
 async function updateDutyControls(){
  const ticket=++dutyReadSequence;
- await refreshStaffDutyRoster();
+ if(typeof refreshStaffDutyRoster==='function')await refreshStaffDutyRoster();
  if(ticket!==dutyReadSequence)return;
  const box=$('#duty-controls'),d=manilaDutyDay();
  const visible=activeStaffTab==='overview'&&canManageDutyToday(user,d.index);
@@ -1149,7 +1149,7 @@ async function updateDutyControls(){
  const info=$('#duty-control-info'),closed=$('#duty-set-closed'),
   auto=$('#duty-set-auto'),retry=$('#duty-retry');
  const roster=typeof days!=='undefined'&&Array.isArray(days)?days[d.index]:null;
- const names=liveAssignedNames?liveAssignedNames[d.index]:roster?.names||dutyNames[d.index];
+ const names=typeof liveAssignedNames!=='undefined'&&liveAssignedNames?liveAssignedNames[d.index]:roster?.names||dutyNames[d.index];
  const assigned=names?.length?names.join(' · '):'Walang nakatalagang SK officer';
  $('#duty-assigned-name').textContent=assigned;
  $('#duty-control-date').textContent='Ngayong araw · '+new Intl.DateTimeFormat('fil-PH',{
