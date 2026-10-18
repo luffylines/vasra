@@ -137,5 +137,5 @@ test('SK officer deletion migration retains authorization, record version and fi
 });
 test('Project delete access is limited to SK role while account/roster management stays Chairman only',()=>{
  assert.match(source,/await user\(\['chairman'\]\); const b = await body\(\); if \(!\['sk','youth'\]\.includes\(b\.role\)\)/);
- assert.match(js,/if\(\['roster','users','audit'\]\.includes\(name\)&&user\?\.role!=='chairman'\)/);
+ assert.match(js,/if\(\['roster','duty-manage','users','audit'\]\.includes\(name\)&&user\?\.role!=='chairman'\)/);
 });
