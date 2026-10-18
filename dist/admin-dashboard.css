@@ -2076,3 +2076,46 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settin
  #panel-settings .settings-layout{min-width:0}
  #panel-settings .settings-card{min-width:0}
 }
+
+/* Published SK officials: chairman-managed portraits and weekly duty days. */
+#roster-form .roster-photo-editor{display:flex;align-items:center;gap:18px;min-width:0;padding:16px;
+ border:1px solid #d5e3f5;border-radius:14px;background:#f4f8ff}
+#roster-form .roster-photo-preview{width:108px;height:108px;flex:none;border-radius:16px;overflow:hidden;
+ background:#dbe9ff;display:grid;place-items:center;color:#2a5c99;border:1px solid #c3d7f0}
+#roster-form .roster-photo-preview img{width:100%;height:100%;object-fit:cover;display:block}
+#roster-form .roster-photo-placeholder{font-weight:850;font-size:28px;letter-spacing:2px}
+#roster-form .roster-photo-info{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+#roster-form .roster-photo-info>strong{font-size:14px;color:#224874}
+#roster-form .roster-photo-info small{font-size:11px;line-height:1.5;color:#627f9f}
+#roster-form .roster-photo-upload{position:relative;display:inline-block;cursor:pointer;
+ border:1px solid #aac9ef;border-radius:9px;background:#e9f3ff;color:#1c5490;padding:9px 12px;font-size:12px;font-weight:800}
+#roster-form .roster-photo-upload:hover{background:#daeaff;border-color:#73ade5}
+#roster-photo-file{position:absolute;width:100%;height:100%;opacity:0;inset:0;cursor:pointer}
+#roster-form #roster-photo-clear{min-height:34px;padding:6px 10px;margin:0;font-size:11px}
+#roster-form .roster-duty-days{border:1px solid #dae6f4;border-radius:13px;padding:14px 16px;min-width:0}
+#roster-form .roster-duty-days legend{font-weight:800;font-size:13px;color:#264e7e;padding:0 5px}
+#roster-form .roster-duty-days p{font-size:11px;color:#6b819f;margin:0 0 10px;line-height:1.5}
+#roster-form .roster-day-checkboxes{display:flex;gap:8px;flex-wrap:wrap}
+#roster-form .roster-day-checkboxes label{display:flex;gap:6px;align-items:center;margin:0;
+ font-size:12px;background:#eff5ff;border:1px solid #cddff4;border-radius:8px;padding:9px 11px;cursor:pointer}
+#roster-form .roster-day-checkboxes input{width:15px;height:15px;accent-color:#2a68ae;margin:0}
+#roster-form .roster-profile-message{font-size:11px;color:#557293;margin:0;line-height:1.55}
+.admin-roster-ident{display:flex!important;flex-direction:row!important;align-items:center;gap:12px;min-width:0}
+.admin-roster-ident>span:last-child{display:flex;flex-direction:column;gap:4px;min-width:0}
+.roster-list-photo{width:55px;height:55px;border-radius:12px;object-fit:cover;flex:none;border:1px solid #d6e4f6}
+.roster-list-photo-fallback{display:grid;place-items:center;background:#e4efff;color:#2f6095;font-size:15px;font-weight:800}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form :is(.roster-photo-editor,.roster-duty-days){
+ background:#203755!important;border-color:#52769f!important;color:#e7f1ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form :is(.roster-photo-info>strong,.roster-duty-days legend){
+ color:#f0f7ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form :is(.roster-photo-info small,.roster-duty-days p,.roster-profile-message){
+ color:#c0d5ef!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form .roster-day-checkboxes label{
+ background:#192e4c!important;border-color:#5c83b3!important;color:#e8f3ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form .roster-photo-upload{
+ background:#2c517a!important;color:#f2f8ff!important;border-color:#729aca!important}
+@media(max-width:650px){
+ #roster-form .roster-photo-editor{flex-wrap:wrap;padding:14px}
+ #roster-form .roster-photo-preview{width:92px;height:92px}
+ #roster-form .roster-day-checkboxes label{padding:8px}
+}
