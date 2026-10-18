@@ -40,7 +40,7 @@ begin
   item:=(payload->>'id')::uuid;
   select * into old_profile from vasra.officials where id=item and not archived for update;
   if not found then return jsonb_build_object('error',404); end if;
-  if jsonb_typeof(payload->'duty_days')<>'array' then return jsonb_build_object('error',400); end if;
+  if jsonb_typeof(payload->'duty_days') is distinct from 'array' then return jsonb_build_object('error',400); end if;
   if exists(select 1 from jsonb_array_elements_text(payload->'duty_days') v
     where v.value !~ '^[1-7]$') then return jsonb_build_object('error',400); end if;
   select coalesce(array_agg(distinct v.value::smallint order by v.value::smallint),'{}'::smallint[])
