@@ -21,7 +21,7 @@ function selectDay(index){
    const list=managedDutyProfiles.filter(p=>Array.isArray(p.duty_days)&&p.duty_days.includes(index+1));
    photos.innerHTML=list.length?list.map(p=>{
     const initials=String(p.name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
-    const picture=p.photo_id?'<img src="./api/images/'+encodeURIComponent(p.photo_id)+'" alt="Larawan ni '+esc(p.name)+'" loading="eager">':'';
+    const picture=p.duty_photo_id?'<img src="./api/images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager">':'';
     return '<article class="duty-profile"><span class="duty-profile-frame">'+
      '<span class="duty-profile-fallback" aria-hidden="true">'+esc(initials||'SK')+'</span>'+picture+
      '</span><strong>'+esc(p.name)+'</strong><small>'+esc(({
@@ -115,4 +115,4 @@ loadPublishedDutyHours();setInterval(loadPublishedDutyHours,120000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateSchedule()});
 
 refreshDutyOverride();setInterval(refreshDutyOverride,30000);
-loadManagedDutyRoster();setInterval(loadManagedDutyRoster,120000);
+loadManagedDutyRoster();setInterval(loadManagedDutyRoster,20000);

@@ -307,3 +307,30 @@
  .portal-refresh .duty-profile{padding:10px}
  .portal-refresh .duty-profile-frame{max-width:130px}
 }
+
+/* Public project image viewer: responsive laptop height + browser zoom. */
+#image-lightbox[open]{
+ box-sizing:border-box!important;position:fixed!important;inset:0!important;margin:auto!important;
+ display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;
+ width:min(1180px,calc(100vw - 24px))!important;
+ height:min(850px,calc(100dvh - 24px))!important;max-height:calc(100dvh - 24px)!important;
+ max-width:calc(100vw - 24px)!important;padding:0!important;overflow:hidden!important;
+}
+#image-lightbox[open] .lightbox-toolbar,#image-lightbox[open] .lightbox-tip{box-sizing:border-box;min-height:0!important}
+#image-lightbox[open] .lightbox-view{
+ box-sizing:border-box!important;height:auto!important;min-height:0!important;
+ max-height:100%!important;overflow:hidden!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+}
+#image-lightbox[open] .lightbox-view img{
+ display:block!important;max-width:100%!important;max-height:100%!important;
+ width:auto!important;height:auto!important;object-fit:contain!important;
+ min-height:0!important;
+}
+@media(max-height:650px), (max-width:650px){
+ #image-lightbox[open]{height:calc(100dvh - 12px)!important;max-height:calc(100dvh - 12px)!important}
+ #image-lightbox[open] .lightbox-toolbar{min-height:46px!important;padding:6px 10px!important}
+ #image-lightbox[open] .lightbox-view{grid-template-columns:32px minmax(0,1fr) 32px!important;gap:4px!important;padding:5px!important}
+ #image-lightbox[open] .lightbox-arrow{width:32px!important;height:40px!important}
+ #image-lightbox[open] .lightbox-tip{padding:5px 8px!important;margin:0!important;font-size:10px!important}
+}

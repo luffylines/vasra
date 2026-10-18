@@ -41,7 +41,7 @@ function renderHomeDuty(){
  $('#home-duty-date').textContent=new Intl.DateTimeFormat('fil-PH',{month:'short',day:'numeric',timeZone:'Asia/Manila'}).format(new Date());
  const current=Array.isArray(homeManagedProfiles)?homeManagedProfiles.filter(p=>p.duty_days?.includes(['MON','TUE','WED','THU','FRI','SAT','SUN'].indexOf(now.weekday.toUpperCase())+1)):null;
  const role={chairman:'SK Chairperson',kagawad:'SK Kagawad',secretary:'SK Secretary',treasurer:'SK Treasurer'};
- const photos=current?current.map(p=>'<article class="home-officer">'+officerPortrait(p.name,p.position,p.photo_id,true)+'<div><h3>'+esc(p.name)+'</h3><p>'+esc(role[p.position]||'SK Officer')+'</p></div></article>').join(''):
+ const photos=current?current.map(p=>'<article class="home-officer">'+officerPortrait(p.name,p.position,p.duty_photo_id,true)+'<div><h3>'+esc(p.name)+'</h3><p>'+esc(role[p.position]||'SK Officer')+'</p></div></article>').join(''):
   d?.names.map((name,i)=>'<article class="home-officer">'+officerPortrait(name)+'<div><h3>'+esc(name)+'</h3><p>'+esc(d.roles[i])+'</p></div></article>').join('');
  $('#home-duty-officers').innerHTML=d?'<span class="eyebrow">'+esc(d.day.toUpperCase())+' · NAKATAKDA NGAYON</span>'+(photos||'<p>Walang naka-assign na SK officer sa araw na ito.</p>'):'Hindi available ang schedule.';
  const min=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+m;};

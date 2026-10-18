@@ -2281,3 +2281,66 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-proj
  #managed-projects .project-row-actions{gap:7px!important}
  #managed-projects .project-row-actions button{min-height:38px!important}
 }
+
+/* Independent portrait workflows: SK Officials = org structure; SK Duty = duty photo/day. */
+#roster-form .roster-duty-link{display:flex;flex-direction:column;gap:7px;padding:14px;border:1px solid #c7ddf5;border-radius:12px;background:#eef5ff}
+#roster-form .roster-duty-link span{font-size:12px;color:#45668d;line-height:1.5}
+#roster-form .roster-duty-link button{align-self:flex-start;margin:4px 0 0}
+.duty-manager-officers{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.duty-manager-officer-card{display:flex;gap:13px;align-items:flex-start;padding:14px;border:1px solid #d1e2f4;border-radius:12px;background:#f7faff;min-width:0}
+.duty-manager-officer-card>.duty-manager-avatar{width:68px;height:78px;flex:0 0 68px}
+.duty-manager-person{display:flex;flex:1;min-width:0;flex-direction:column;gap:7px}
+.duty-manager-person>strong{font-size:13px;color:#234c7a}
+.duty-manager-person>small{font-size:11px;color:#617f9f}
+.duty-manager-person label{display:grid;gap:5px;color:#335a88;font-size:11px;font-weight:700}
+.duty-manager-person select{min-height:38px;width:100%;border:1px solid #abc7e8;border-radius:9px;padding:8px;background:#fff;color:#1e4677}
+.duty-manager-person input[type=file]{font-size:11px;width:100%;max-width:100%}
+.duty-manager-person .duty-photo-remove{align-self:flex-start;min-height:33px;padding:7px 10px}
+.duty-manager-update-status{font-size:10px;line-height:1.5;color:#57789b}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(#roster-form .roster-duty-link,.duty-manager-officer-card){background:#203754!important;border-color:#6587b2!important;color:#ecf5ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(.duty-manager-person>strong,.duty-manager-person label,#roster-form .roster-duty-link span){color:#f1f7ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-person select{background:#183153!important;color:#f5faff!important;border-color:#7399c5!important}
+@media(max-width:650px){
+ .duty-manager-officers{grid-template-columns:1fr}
+ .duty-manager-officer-card{padding:11px;gap:10px}
+}
+
+/* Shorter laptop screens and high browser zoom: image viewer stays within viewport.
+   The dialog is a 3-row grid so header/close button and footer never scroll away. */
+#staff-project-gallery[open]{
+ box-sizing:border-box!important;position:fixed!important;
+ inset:0!important;margin:auto!important;
+ display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;
+ width:min(950px,calc(100vw - 24px))!important;
+ height:min(740px,calc(100dvh - 24px))!important;
+ max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 24px)!important;
+ padding:0!important;overflow:hidden!important;overscroll-behavior:contain!important;
+}
+#staff-project-gallery[open] .staff-gallery-header,
+#staff-project-gallery[open] .staff-gallery-footer{
+ min-height:0!important;flex:0 0 auto!important;box-sizing:border-box!important;
+}
+#staff-project-gallery[open] .staff-gallery-stage{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ height:auto!important;min-height:0!important;max-height:100%!important;
+ overflow:hidden!important;align-items:center!important;
+}
+#staff-project-gallery[open] .staff-gallery-photo-wrap{
+ min-width:0!important;min-height:0!important;max-height:100%!important;
+ overflow:hidden!important;
+}
+#staff-project-gallery[open] .staff-gallery-photo-wrap img{
+ display:block;max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;width:auto!important;height:auto!important;
+}
+@media(max-height:650px), (max-width:650px){
+ #staff-project-gallery[open]{height:calc(100dvh - 12px)!important;max-height:calc(100dvh - 12px)!important;border-radius:12px!important}
+ #staff-project-gallery[open] .staff-gallery-header{padding:8px 12px!important}
+ #staff-project-gallery[open] .staff-gallery-footer{padding:7px 12px!important;font-size:10px!important}
+ #staff-project-gallery[open] .staff-gallery-stage{
+  grid-template-columns:32px minmax(0,1fr) 32px!important;gap:4px!important;padding:5px!important;
+ }
+ #staff-project-gallery[open] .staff-gallery-arrow{height:40px!important;width:32px!important;font-size:25px!important}
+ #staff-project-gallery[open] #staff-gallery-close{height:35px!important;width:35px!important}
+}

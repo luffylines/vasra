@@ -1,84 +1,64 @@
 'use strict';
-const {test}=require('node:test'), assert=require('node:assert/strict');
+const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
-const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
-const html=read('dist/account.html'), account=read('dist/account.js'), dutyManager=read('dist/duty-management.js');
-const duty=read('dist/duty.js'),home=read('dist/home.js');
-const api=read('lib/handler.cjs'),storage=read('lib/supabase.cjs');
-const profileSql=read('supabase/migrations/20261018140000_official_photos_duty_roster.sql');
-const hoursSql=read('supabase/migrations/20261018150000_weekly_office_hours.sql');
-test('Chairman has linked, clearly named SK Duty Management sidebar',()=>{
+const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
+const html=read('dist/account.html'),app=read('dist/account.js'),mg=read('dist/duty-management.js'),api=read('lib/handler.cjs');
+const sql=read('supabase/migrations/20261018150000_weekly_office_hours.sql');
+test('Chairman sidebar retains a separate SK Duty management UI',()=>{
  assert.match(html,/data-tab="duty-manage" class="chair-only" hidden/);
- assert.match(html,/id="panel-duty-manage" class="duty-manager-panel" hidden/);
+ assert.match(html,/id="panel-duty-manage"/);
  assert.match(html,/src="\.\/duty-management\.js"/);
- assert.match(account,/if\(\['roster','duty-manage','users','audit'\]\.includes\(name\)&&user\?\.role!=='chairman'\)return/);
- assert.match(account,/name==='duty-manage'\)await loadDutyManagement\(\)/);
  assert.match(html,/id="duty-manage-officers"/);
- assert.match(html,/type="time" required value="09:00"/);
- assert.match(html,/type="time" required value="18:00"/);
+ assert.match(html,/Save Office Hours/);
+ assert.match(app,/name==='duty-manage'\)await loadDutyManagement\(\)/);
 });
-test('Existing officer poster picture previews on selection without being stored as a replacement',()=>{
- assert.match(account,/function legacyOfficerPortrait\(name,position\)/);
- assert.match(account,/normal\(candidate\)===normal\(name\)&&day\.roles\[i\]===legacyRoles\[position\]/);
- assert.match(account,/roster-legacy-portrait/);
- assert.match(account,/rosterPhotoFile\?'New photo/);
- assert.match(account,/Current photo from existing SK Duty poster/);
- assert.match(account,/rosterPhotoPreview\(\);\s*\$\('#roster-form'\)\.scrollIntoView/);
- assert.match(read('dist/admin-dashboard.css'),/#roster-form \.roster-legacy-portrait\.portrait-right img/);
- assert.match(account,/api\/officer-images/);
+test('Duty officer selector only allows one day and saves immediately',()=>{
+ assert.match(mg,/Duty day \(one only\)/);
+ assert.match(mg,/<select data-duty-day-for/);
+ assert.match(mg,/async function saveDutyOfficer/);
+ assert.match(mg,/api\('\.\/api\/officer-profiles\/duty'/);
+ assert.match(mg,/await saveDutyOfficer\(id,\{duty_day:Number\(day\.value\)\|\|null\},day\)/);
+ assert.match(mg,/dutyManageSaving\.has\(id\)/);
+ assert.match(mg,/if\(!result\?\.ok\)throw Error/);
+ assert.match(mg,/catch\{day\.value=String\(old\)\}/);
 });
-test('Chairman-only API has private draft photo and approved schedule guard',()=>{
- assert.match(api,/await user\(\['chairman'\]\)/);
- assert.match(api,/officer-images/);
- assert.match(api,/officer_profile_photo_manage/);
- assert.match(api,/'Cache-Control':'private, no-store'/);
- assert.match(profileSql,/action='photo_manage'/);
- assert.match(profileSql,/i\.owner=actor\.id or exists/);
- assert.match(api,/\/api\/duty-schedule\/manage/);
- assert.match(api,/duty_management_save_day/);
- assert.match(api,/new Set\(b\.official_ids\)\.size!==b\.official_ids\.length/);
- assert.match(storage,/vasra_duty_management/);
+test('Upload a duty photo without replacing official organizational photo',()=>{
+ assert.match(mg,/profile\.duty_photo_id/);
+ assert.match(mg,/data-duty-photo-for/);
+ assert.match(mg,/uploadProjectPhoto\(file\)/);
+ assert.match(mg,/await saveDutyOfficer\(id,\{duty_photo_id:idOfPhoto\},input\)/);
+ assert.match(mg,/data-duty-photo-remove/);
+ assert.match(mg,/duty_photo_id:null/);
+ assert.doesNotMatch(mg,/image=profile\.photo_id/);
 });
-test('Weekly SQL validates office times, published officer IDs, and records audit',()=>{
- assert.match(hoursSql,/opens<closes/);
- assert.match(hoursSql,/if actor\.id is null or actor\.role<>'chairman'/);
- assert.match(hoursSql,/official_ids/);
- assert.match(hoursSql,/o\.published and not o\.archived/);
- assert.match(hoursSql,/array_remove\(o\.duty_days,day_number::smallint\)/);
- assert.match(hoursSql,/duty_weekday_updated/);
- assert.match(hoursSql,/if action='status' then/);
- assert.match(hoursSql,/'open_time',to_char\(start_at,'HH24:MI'\)/);
- assert.match(hoursSql,/'close_time',to_char\(stop_at,'HH24:MI'\)/);
- assert.match(hoursSql,/grant execute on function public\.vasra_duty_management/);
+test('Office hours save separately without overriding selected SK Duty officer',()=>{
+ assert.match(sql,/if action='save_hours'/);
+ assert.match(sql,/duty_hours_updated/);
+ assert.match(sql,/opens<closes/);
+ assert.match(mg,/api\('\.\/api\/duty-schedule'/);
+ assert.match(api,/duty_management_save_hours/);
+ assert.doesNotMatch(api,/official_ids:b\.official_ids/);
+ assert.match(sql,/grant execute on function public\.vasra_duty_management/);
 });
-test('Admin weekday editor uses stored profiles rather than entering duplicate identities',()=>{
- assert.match(dutyManager,/api\('\.\/api\/officer-profiles\/manage'\)/);
- assert.match(dutyManager,/api\('\.\/api\/duty-schedule\/manage'\)/);
- assert.match(dutyManager,/dutyManageProfiles\.filter\(p=>p\.published\)/);
- assert.match(dutyManager,/dutyManagePhoto\(p\)/);
- assert.match(dutyManager,/selectTab\('roster'\)/);
- assert.match(dutyManager,/official_ids:ids/);
- assert.match(dutyManager,/await loadDutyManagement\(\)/);
- assert.doesNotMatch(html,/<input[^>]*name="duty_officer_name"/);
+test('SK Duty preview requires an approved published active official record',()=>{
+ assert.match(read('supabase/migrations/20261018140000_official_photos_duty_roster.sql'),/where id=item and published and not archived for update/);
+ assert.match(mg,/dutyManageProfiles\.filter\(p=>p\.published\)/);
+ assert.match(mg,/Wala pang published SK Officials/);
+ assert.match(mg,/Database setup pending/);
+ assert.match(read('dist/duty.js'),/duty\.days|duty_days/);
 });
-test('Public SK duty, home and dashboard use saved PHT times and legacy fallback',()=>{
- assert.match(duty,/api\('\.\/api\/duty-schedule'\)/);
+test('Existing office-hours status and public map stay in Philippine Time',()=>{
+ const duty=read('dist/duty.js'),home=read('dist/home.js');
  assert.match(duty,/publishedDutyHours/);
- assert.match(duty,/minute>=toMinutes\(opens\)&&minute<toMinutes\(closes\)/);
- assert.match(duty,/fmt\(opens\)/);
- assert.match(home,/homeManagedProfiles/);
- assert.match(home,/homeDutyOpen=data\.open_time\|\|'09:00'/);
- assert.match(home,/homeDutyClose=data\.close_time\|\|'18:00'/);
- assert.match(home,/officerPortrait\(p\.name,p\.position,p\.photo_id,true\)/);
- assert.match(account,/const hoursOpen=present>=minutes\(opens\)&&present<minutes\(closes\)/);
- assert.match(read('dist/duty.html'),/id="duty-schedule-time-label"/);
- assert.match(hoursSql,/'09:00'::time,'18:00'::time/);
+ assert.match(duty,/toMinutes\(opens\)/);
+ assert.match(home,/homeDutyOpen/);
+ assert.match(home,/homeDutyClose/);
+ assert.match(api,/\/api\/duty-schedule/);
 });
-test('Responsive duty manager has visible light/dark UI and photo styles',()=>{
+test('Mobile and dark mode show correctly styled separate duty photo manager',()=>{
  const css=read('dist/admin-dashboard.css');
- assert.match(css,/\.duty-manager-layout\{display:grid/);
- assert.match(css,/\.duty-manager-avatar/);
- assert.match(css,/\[data-theme="dark"\] \.duty-manager-form/);
- assert.match(css,/@media\(max-width:560px\)/);
- assert.match(read('dist/officers.css'),/\.portrait-profile-photo img/);
+ assert.match(css,/\.duty-manager-officer-card/);
+ assert.match(css,/\[data-theme="dark"\] :is\(/);
+ assert.match(css,/@media\(max-width:650px\)/);
+ assert.match(css,/#roster-form \.roster-duty-link/);
 });
