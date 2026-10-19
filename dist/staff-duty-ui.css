@@ -60,3 +60,114 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(#duty-off
  .duty-manager-panel .duty-manager-day-chip span{font-size:11px;padding:9px 2px}
  .duty-manager-panel .duty-manager-hours-disclosure>summary{padding:14px}
 }
+
+/* SK Duty compact portrait-mobile UI. Loaded last, after the admin theme.
+   No wide circles, oversized warning banners or full-screen-height buttons. */
+@media screen and (max-width:820px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls.duty-office-card{
+  display:block;box-sizing:border-box;min-width:0;max-width:100%;
+  height:auto!important;min-height:0!important;padding:12px!important;
+  margin:0 0 13px!important;border-radius:13px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls.duty-office-card[hidden]{display:none!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading{
+  display:grid!important;grid-template-columns:32px minmax(0,1fr)!important;
+  align-items:start!important;justify-items:start!important;gap:5px 10px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-icon{
+  width:32px!important;height:32px!important;min-height:0!important;
+  border-radius:9px!important;grid-column:1!important;grid-row:1!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-icon svg{
+  width:17px!important;height:17px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-text{
+  min-width:0!important;grid-column:2!important;grid-row:1!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-eyebrow{
+  font-size:9px!important;line-height:1.3!important;letter-spacing:.5px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading h3{
+  font-size:16px!important;line-height:1.23!important;margin:3px 0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading p{
+  font-size:11px!important;line-height:1.4!important;margin:0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls #duty-mode-badge{
+  grid-column:1/-1!important;grid-row:2!important;justify-self:start!important;
+  display:inline-flex!important;position:static!important;
+  align-items:center!important;justify-content:flex-start!important;gap:7px!important;
+  box-sizing:border-box!important;overflow:visible!important;
+  width:fit-content!important;max-width:100%!important;
+  height:auto!important;min-height:28px!important;max-height:36px!important;
+  aspect-ratio:auto!important;flex:none!important;
+  margin:5px 0 0!important;padding:5px 10px!important;
+  border-radius:999px!important;font-size:11px!important;line-height:1.2!important;
+  text-align:left!important;white-space:normal!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls #duty-mode-badge .duty-status-dot{
+  width:7px!important;height:7px!important;min-width:7px!important;min-height:7px!important;
+  max-width:7px!important;max-height:7px!important;flex:0 0 7px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-metrics{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  gap:7px!important;margin:11px 0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info{
+  display:flex!important;align-items:center!important;gap:9px!important;
+  box-sizing:border-box!important;min-height:0!important;max-width:100%!important;
+  padding:8px 10px!important;border-radius:10px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info-icon{
+  flex:0 0 31px!important;width:31px!important;height:31px!important;
+  min-width:31px!important;min-height:31px!important;
+  border-radius:9px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info-icon svg{
+  width:17px!important;height:17px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-label{
+  font-size:10px!important;line-height:1.3!important;margin:0 0 3px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info strong{
+  font-size:12px!important;line-height:1.4!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls #duty-control-info{
+  font-size:11px!important;line-height:1.45!important;margin:7px 0 11px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-actions{
+  display:flex!important;flex-flow:row wrap!important;gap:7px!important;
+  align-items:stretch!important;min-height:0!important;margin:0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button{
+  box-sizing:border-box!important;display:inline-flex!important;position:static!important;
+  flex:1 1 138px!important;width:auto!important;min-width:0!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  aspect-ratio:auto!important;align-self:auto!important;justify-content:center!important;
+  align-items:center!important;gap:6px!important;
+  padding:8px!important;margin:0!important;border-radius:9px!important;
+  font-size:11px!important;line-height:1.2!important;text-align:center!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button svg{
+  width:15px!important;height:15px!important;flex:0 0 15px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button#duty-retry{
+  flex:1 1 100%!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button[hidden]{
+  display:none!important;
+ }
+ /* An unverified office status cannot be changed: show only the small Retry button. */
+ body.account-workspace[data-staff-mode="staff"] #duty-controls:has(#duty-mode-badge[data-state="unknown"])
+ .duty-card-actions :is(#duty-set-closed,#duty-set-auto){
+  display:none!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-note{
+  margin:9px 0 0!important;padding-top:8px!important;font-size:10px!important;
+ }
+}
+@media screen and (max-width:360px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button{
+  flex-basis:100%!important;
+ }
+}
