@@ -66,7 +66,7 @@ declare today date:=(clock_timestamp() at time zone 'Asia/Manila')::date;
  actor vasra.users; mode_value text; assigned_names text[]; has_schedule boolean;
  start_at time; stop_at time;
 begin
- select h.opens,h.closes into start_at,stop_at from vasra.duty_hours h where h.weekday=weekday;
+ select h.opens,h.closes into start_at,stop_at from vasra.duty_hours h where h.weekday=extract(isodow from (clock_timestamp() at time zone 'Asia/Manila'));
  start_at:=coalesce(start_at,'09:00'::time);stop_at:=coalesce(stop_at,'18:00'::time);
  if action='status' then
   select d.mode into mode_value from vasra.duty_overrides d where d.day=today;
