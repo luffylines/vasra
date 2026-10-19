@@ -59,7 +59,7 @@ test('staff thumbnails and public project cards stay dense and responsive',()=>{
  assert.doesNotMatch(publicCss,/\.portal-refresh #grid \.cover\{height:118px/);
  assert.match(publicCss,/grid-template-columns:minmax\(0,1fr\)/);
  assert.match(publicCss,/\.project-photo\[hidden\]\{display:none!important\}/);
- assert.match(worker,/vasra-v37-full-project-covers/);
+ assert.match(worker,/vasra-v38-official-sk-icons-20261019/);
 });
 
 test('scripts remain syntactically valid and images are accessed through existing routes',()=>{
