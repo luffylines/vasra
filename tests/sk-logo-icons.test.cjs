@@ -7,7 +7,7 @@ for(const page of pages)test(page+' uses the same official SK Vasra favicon and 
  assert.match(html,/rel="icon" type="image\/jpeg" href="\.\/sk%20logo\.jpg\?v=skvasra-20261019-v2"/);
  assert.match(html,/rel="apple-touch-icon" sizes="180x180" href="\.\/apple-touch-icon-vasra\.png\?v=skvasra-20261019-v2"/);
  assert.match(html,/rel="manifest"/);
- assert.match(html,/name="apple-mobile-web-app-title" content="SK Vasra"/);
+ assert.match(html,page==='account'?/name="apple-mobile-web-app-title" content="SK Vasra Account"/:/name="apple-mobile-web-app-title" content="SK Vasra"/);
 });
 test('Apple touch PNG is square, 180px, and all formerly generic PWA icons use official artwork',()=>{
  const read=p=>fs.readFileSync(path.join(root,'dist',p));
