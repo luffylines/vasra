@@ -18,6 +18,7 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION vasra.staff_session_seven_day_expiry() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION vasra.staff_session_seven_day_expiry() TO service_role;
 DROP TRIGGER IF EXISTS vasra_staff_session_seven_day_expiry ON vasra.sessions;
 CREATE TRIGGER vasra_staff_session_seven_day_expiry
 BEFORE INSERT ON vasra.sessions
