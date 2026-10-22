@@ -81,3 +81,8 @@
 /* Independently uploaded officer photos must never be cropped like 2026 collage posters. */
 .officer-portrait.portrait-profile-photo img{width:100%!important;height:100%!important;
  left:0!important;top:0!important;object-fit:cover!important;max-width:100%!important;border-radius:0!important}
+
+/* Clear, persistent upload feedback for SK Official organizational portraits. */
+.roster-upload-status{display:block;max-width:100%;overflow-wrap:anywhere;margin-top:9px;padding:9px 11px;border:1px solid #cee1f5;background:#f1f7ff;border-radius:10px;color:#315d88;font-size:12px;line-height:1.55}
+.roster-upload-status.is-error{border-color:#ebb2b2;background:#fff3f3;color:#993131}
+@media(max-width:690px){.roster-upload-status{font-size:12px;padding:9px 10px}}
