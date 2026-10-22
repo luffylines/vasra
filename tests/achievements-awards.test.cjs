@@ -157,7 +157,7 @@ test('SK awards photo gallery allows any thumbnail to become persisted cover',()
  const script=read('dist/awards-management.js'),markup=read('dist/account.html'),css=read('dist/awards-dashboard-modal.css');
  assert.match(markup,/Set as Cover/);
  assert.match(script,/awardCoverSelection/);
- assert.match(script,/data\.awardCover/);
+ assert.match(script,/dataset\.awardCover/);
  assert.match(script,/const chosen=typeof awardCoverSelection/);
  assert.match(script,/photos\.unshift\(\.\.\.photos\.splice\(i,1\)\)/);
  assert.match(script,/uploaded\.set\(awardPendingFiles\[i\],id\)/);
