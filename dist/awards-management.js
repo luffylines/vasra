@@ -209,17 +209,45 @@ document.querySelector('#award-analyze').onclick=async()=>{
  if(caption.length<15){status.textContent='Maglagay ng Facebook caption na may 15+ characters.';field.focus();return}
  button.disabled=true;status.textContent='Sinusuri ang caption gamit ang AI analyzer…';
  try{
-  const result=await api('./api/manage/projects/import-facebook',{method:'POST',body:JSON.stringify({caption})});
+  const result=await api('./api/manage/achievements/analyze-caption',{method:'POST',body:JSON.stringify({caption})});
   if(!result?.ok||!result.draft)throw Error(result?.message||'Walang available na AI draft.');
   const d=result.draft,f=awardForm.elements;
-  f.title.value=String(d.title||'').slice(0,180);
-  f.summary.value=String(d.summary||'').slice(0,350);
-  f.description.value=String(d.scope||d.description||caption).slice(0,2500);
+  const names=Array.isArray(d.recognitions)?d.recognitions:[];
+  const box=document.querySelector('#award-ai-recognitions'),select=document.querySelector('#award-recognition-select');
+  const evidence=document.querySelector('#award-ai-evidence');
+  select.replaceChildren();
+  function chooseAward(name){
+   f.title.value=String(name||'').slice(0,180);
+   f.category.value='Award';
+   f.issuer.value=String(d.issuer||'').slice(0,180);
+   // No reliable award date can be inferred from a Facebook posting date.
+   f.award_date.value='';
+   f.summary.value=String(d.summary||'').slice(0,350);
+   f.description.value=String(d.description||caption).slice(0,2500);
+   evidence.textContent='Pangalan mula sa caption: '+name+' · Kumpirmahin ang awarding organization at aktuwal na petsa bago mag-save.';
+  }
+  for(const name of names){
+   const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);
+  }
+  if(!names.length){
+   box.hidden=false;select.hidden=true;
+   f.title.value='';f.issuer.value='';f.award_date.value='';
+   f.summary.value='';f.description.value=caption.slice(0,2500);
+   evidence.textContent='Hindi matukoy ang eksaktong parangal sa caption. Ilagay ito nang manual; hindi gagawa ng pekeng award ang system.';
+  }else{
+   box.hidden=false;select.hidden=names.length<2;
+   chooseAward(names[0]);
+   select.onchange=()=>chooseAward(select.value);
+  }
   awardDraftReady=true;awardReviewVisibility();
-  document.querySelector('#award-facebook-panel').hidden=true;
-  status.textContent='Award draft is ready for review. Verify title, award category, issuer and date.';
+  // Keep recognition selector visible so users can choose among multiple
+  // real awards from the same Facebook post; show editable form underneath.
+  document.querySelector('#award-facebook-panel').hidden=false;
+  status.textContent=names.length>1?
+   'May '+names.length+' na magkahiwalay na pagkilala. Pumili ng isa sa bawat award record at i-review ang petsa at issuer.':
+   'Award draft para sa manual review. Kumpirmahin ang awarding organization at exact award date.';
   const scroll=awardDialog.querySelector('.award-modal-scroll');if(scroll)scroll.scrollTop=0;
-  message('AI draft filled in. Please review the award form before saving.');
+  message('Award-specific caption analysis complete. Confirm missing details before saving.');
  }catch(e){status.textContent='Hindi gumana ang AI analysis: '+(e.message||'Subukan muli.')+'. Puwede ang Manual Entry.';}
  finally{button.disabled=false}
 };
