@@ -206,6 +206,8 @@ document.querySelector('#award-manage-list').addEventListener('click',async e=>{
 document.querySelector('#award-analyze').onclick=async()=>{
  const field=document.querySelector('#award-caption'),status=document.querySelector('#award-ai-status'),button=document.querySelector('#award-analyze');
  const caption=field.value.trim();
+ const box=document.querySelector('#award-ai-recognitions');box.hidden=true;
+ document.querySelector('#award-ai-evidence').textContent='';
  if(caption.length<15){status.textContent='Maglagay ng Facebook caption na may 15+ characters.';field.focus();return}
  button.disabled=true;status.textContent='Sinusuri ang caption gamit ang AI analyzer…';
  try{
@@ -213,7 +215,7 @@ document.querySelector('#award-analyze').onclick=async()=>{
   if(!result?.ok||!result.draft)throw Error(result?.message||'Walang available na AI draft.');
   const d=result.draft,f=awardForm.elements;
   const names=Array.isArray(d.recognitions)?d.recognitions:[];
-  const box=document.querySelector('#award-ai-recognitions'),select=document.querySelector('#award-recognition-select');
+  const select=document.querySelector('#award-recognition-select');
   const evidence=document.querySelector('#award-ai-evidence');
   select.replaceChildren();
   function chooseAward(name){
@@ -239,12 +241,15 @@ document.querySelector('#award-analyze').onclick=async()=>{
    chooseAward(names[0]);
    select.onchange=()=>chooseAward(select.value);
   }
-  awardDraftReady=true;awardReviewVisibility();
+  awardDraftReady=names.length>0;awardReviewVisibility();
+  // Do not expose an empty fake award form when the AI found no award.
+  // Officers may correct the caption or switch to Manual Entry.
   // Keep recognition selector visible so users can choose among multiple
   // real awards from the same Facebook post; show editable form underneath.
   document.querySelector('#award-facebook-panel').hidden=false;
-  status.textContent=names.length>1?
-   'May '+names.length+' na magkahiwalay na pagkilala. Pumili ng isa sa bawat award record at i-review ang petsa at issuer.':
+  status.textContent=!names.length?
+   'Walang natukoy na award title. Suriin ang caption at pindutin ang Analyze muli; o piliin ang Manual Entry.':
+   names.length>1?'May '+names.length+' na magkahiwalay na pagkilala. Pumili ng isa sa bawat award record at i-review ang petsa at issuer.':
    'Award draft para sa manual review. Kumpirmahin ang awarding organization at exact award date.';
   const scroll=awardDialog.querySelector('.award-modal-scroll');if(scroll)scroll.scrollTop=0;
   message('Award-specific caption analysis complete. Confirm missing details before saving.');
