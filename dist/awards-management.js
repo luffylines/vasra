@@ -29,7 +29,7 @@ function awardClear(){
  awardEditing=null;awardForm.reset();awardForm.elements.id.value='';
  for(const item of awardPendingFiles)URL.revokeObjectURL(item.url);
  awardClearPhotos();awardMode('manual');
- document.querySelector('#award-save').textContent='Save Award Draft';
+ document.querySelector('#award-save').textContent='Save as Draft';
  document.querySelector('#award-publish').hidden=true;
  awardStatus.textContent='Bagong award draft. Lahat ng SK officers ay puwedeng mag-submit; Chairman ang mag-aapruba.';
 }
@@ -53,7 +53,7 @@ function awardEdit(a){
  awardClear();awardEditing=a.id;
  const f=awardForm.elements;
  f.id.value=a.id;f.title.value=a.title;f.category.value=a.category;f.issuer.value=a.issuer;f.award_date.value=a.award_date;
- f.description.value=a.description||'';f.reference_url.value=a.reference_url||'';
+ f.summary.value='';f.description.value=a.description||'';f.reference_url.value=a.reference_url||'';
  awardImageList=Array.isArray(a.image_ids)?[...a.image_ids]:a.image_id?[a.image_id]:[];
  renderAwardPhotos();
  document.querySelector('#award-save').textContent=a.published?'Save Changes':'Update Draft';
@@ -105,9 +105,11 @@ async function awardSave(publish=false){
    uploadedCount++;
   }
   awardStatus.textContent='Saving '+(publish?'published award':'award draft')+' to database…';
+  const combinedDescription=[f.summary.value.trim(),f.description.value.trim()].filter(Boolean).join('\n\n');
+  if(combinedDescription.length>3000)throw Error('Summary + details cannot exceed 3000 characters.');
   const data={id:awardEditing||null,title:f.title.value.trim(),category:f.category.value,
    issuer:f.issuer.value.trim(),award_date:f.award_date.value,
-   description:f.description.value.trim(),reference_url:f.reference_url.value.trim()||null,
+   description:combinedDescription,reference_url:f.reference_url.value.trim()||null,
    image_ids:photos,published:publish||(user?.role==='chairman'&&awardMine(awardEditing)?.published===true)};
   const result=await api('./api/manage/achievements',{method:'POST',body:JSON.stringify(data)});
   if(result?.ok!==true)throw Error('Database did not confirm saving the award.');
@@ -160,7 +162,8 @@ document.querySelector('#award-analyze').onclick=async()=>{
   if(!result?.ok||!result.draft)throw Error(result?.message||'Walang available na AI draft.');
   const d=result.draft,f=awardForm.elements;
   f.title.value=String(d.title||'').slice(0,180);
-  f.description.value=String(d.scope||d.summary||caption).slice(0,3000);
+  f.summary.value=String(d.summary||'').slice(0,350);
+  f.description.value=String(d.scope||d.description||caption).slice(0,2500);
   status.textContent='AI-assisted draft lamang. I-review ang title, category, issuer at petsa; hindi ito automatic na ipo-publish.';
   awardMode('manual');
  }catch(e){status.textContent='Hindi gumana ang AI analysis: '+(e.message||'Subukan muli.')+'. Puwede ang Manual Entry.';}
