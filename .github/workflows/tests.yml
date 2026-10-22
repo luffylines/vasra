@@ -13,6 +13,7 @@ on:
       - feature/awards-dashboard-modal-clean-routes-20261022
       - fix/awards-modal-viewport-mobile-20261022
       - fix/awards-photo-preview-modal-shift-20261022
+      - feature/awards-cover-caption-first-20261022
 
 permissions:
   contents: read
