@@ -16,7 +16,7 @@ test('Staff thumbnails load valid image IDs eagerly and keep a fallback',()=>{
  assert.match(js,/\.project-manage-thumbnail img/);
 });
 test('Image API handles JSON error responses without handing them to Storage',()=>{
- assert.match(server,/for\(const action of \['image','gallery_image','officer_profile_photo'\]\)/);
+ assert.match(server,/for\(const action of \['image','gallery_image','awards_image','awards_image_manage','officer_profile_photo'\]\)/);
  assert.match(server,/found && !found\.error/);
  assert.match(server,/typeof found\.storage_path==='string'/);
  assert.match(server,/if\(!img\)S\.fail\(404/);

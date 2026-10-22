@@ -27,6 +27,6 @@ test('Manifest and service worker use only current SK logo assets',()=>{
  assert.equal(m.icons[0].sizes,'180x180');
  assert(m.icons.some(x=>x.src.startsWith('./sk%20logo.jpg')));
  const sw=fs.readFileSync(path.join(root,'dist/sw.js'),'utf8');
- assert.match(sw,/vasra-v39-square-sk-vasra-home-icons-20261019/);
+ assert.match(sw,/vasra-v40-square-sk-vasra-home-icons-20261022/);
  assert.match(sw,/\.\/apple-touch-icon-vasra\.png/);
 });
