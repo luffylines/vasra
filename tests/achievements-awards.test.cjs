@@ -171,7 +171,7 @@ test('Facebook Caption + AI presents only caption first, then human-reviewed awa
  assert.match(markup,/Analyze Caption &amp; Create Award Draft/);
  assert.match(script,/awardDraftReady=!facebook/);
  assert.match(script,/awardReviewVisibility\(\)/);
- assert.match(script,/awardDraftReady=true;awardReviewVisibility\(\)/);
+ assert.match(script,/awardDraftReady=names\.length>0;awardReviewVisibility\(\)/);
  assert.match(script,/awardMode\('manual'\)/);
  assert.match(css,/#award-review-fields\[hidden\]/);
 });
