@@ -42,3 +42,69 @@
 #panel-awards .award-manage-row-buttons button{font-size:12px;padding:8px 11px;border-radius:8px}
 #panel-awards .award-manage-row-buttons .award-archive{background:#fff1f1;border:1px solid #f3cece;color:#ad2940}
 @media(max-width:650px){.award-dashboard-dialog{max-width:calc(100vw - 12px);max-height:96dvh;border-radius:13px}.award-modal-form{max-height:calc(96dvh - 92px)}.award-modal-header{padding:17px 55px 14px 16px}.award-modal-header h2{font-size:19px}.award-modal-scroll{padding:15px}.award-modal-modes{gap:8px}.award-mode-choice{grid-template-columns:1fr;padding:10px;min-height:110px}.award-mode-choice>span{grid-row:auto}.award-mode-choice small{grid-column:1}.award-modal-form .award-form-row{grid-template-columns:1fr;gap:0}.award-modal-form input:not([type=file]),.award-modal-form select,.award-modal-form textarea{font-size:16px}.award-modal-footer{padding:10px 14px;align-items:stretch;flex-direction:column}.award-modal-footer .award-form-status{max-width:none}.award-modal-footer .award-actions{justify-content:flex-start}#panel-awards .award-manage-row{grid-template-columns:60px minmax(0,1fr);gap:10px;padding:9px}#panel-awards .award-manage-row>img,#panel-awards .award-manage-placeholder{width:60px;height:60px}#panel-awards .award-manage-row-buttons{grid-column:2}#panel-awards .award-manage-row-buttons button{font-size:11px;padding:7px}}
+
+
+/* FIX: the dialog must not render as a block when closed. Its previous fixed height
+   and auto-centered CSS left a large white void under the inner form. */
+.award-dashboard-dialog:not([open]){display:none!important}
+.award-dashboard-dialog[open]{
+ box-sizing:border-box;display:flex;flex-direction:column;
+ position:fixed;inset:0;margin:auto;
+ width:min(700px,calc(100vw - 24px));max-width:700px;
+ height:min(88dvh,850px);max-height:88dvh;
+ padding:0;overflow:hidden;
+}
+.award-dashboard-dialog .award-modal-header{flex:0 0 auto;padding:20px 56px 17px 23px}
+.award-dashboard-dialog .award-modal-form{
+ flex:1 1 auto;min-height:0;height:auto;max-height:none;
+ display:grid;grid-template-rows:minmax(0,1fr) auto;
+ overflow:hidden;
+}
+.award-dashboard-dialog .award-modal-scroll{
+ min-height:0;max-height:none;overflow-y:auto;overflow-x:hidden;
+ overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+ padding:18px 23px 22px;
+}
+.award-dashboard-dialog .award-modal-footer{
+ position:relative;bottom:auto;z-index:2;flex:0 0 auto;
+ background:#f6f9ff;box-shadow:0 -4px 12px #133d7310;
+}
+.award-dashboard-dialog .award-mode-choice{grid-template-columns:34px minmax(0,1fr);grid-template-rows:auto auto}
+.award-dashboard-dialog .award-mode-choice>span{grid-row:1/3;grid-column:1}
+.award-dashboard-dialog .award-mode-choice strong{grid-column:2;grid-row:1}
+.award-dashboard-dialog .award-mode-choice small{grid-column:2;grid-row:2;margin:0}
+.award-dashboard-dialog .award-dialog-close{z-index:10}
+.award-dashboard-dialog .award-modal-form input:not([type=file]),
+.award-dashboard-dialog .award-modal-form select,
+.award-dashboard-dialog .award-modal-form textarea{box-sizing:border-box}
+@media(max-width:700px){
+ .award-dashboard-dialog[open]{
+  inset:0;width:100vw;max-width:100vw;
+  height:100dvh;max-height:100dvh;
+  margin:0;border:0;border-radius:0;
+ }
+ .award-dashboard-dialog .award-modal-header{padding:14px 54px 12px 15px}
+ .award-dashboard-dialog .award-modal-header h2{font-size:19px}
+ .award-dashboard-dialog .award-modal-scroll{padding:14px 14px 20px}
+ .award-dashboard-dialog .award-modal-modes{grid-template-columns:1fr;gap:8px}
+ .award-dashboard-dialog .award-mode-choice{min-height:0;grid-template-columns:32px minmax(0,1fr);padding:10px 12px}
+ .award-dashboard-dialog .award-form-row{grid-template-columns:minmax(0,1fr);gap:0}
+ .award-dashboard-dialog .award-modal-form input:not([type=file]),
+ .award-dashboard-dialog .award-modal-form select,
+ .award-dashboard-dialog .award-modal-form textarea{font-size:16px!important;min-width:0}
+ .award-dashboard-dialog .award-modal-footer{
+  display:flex;flex-direction:column;align-items:stretch;gap:8px;
+  padding:10px 13px calc(10px + env(safe-area-inset-bottom));
+ }
+ .award-dashboard-dialog .award-modal-footer .award-form-status{max-width:100%;font-size:11px}
+ .award-dashboard-dialog .award-modal-footer .award-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+ .award-dashboard-dialog .award-modal-footer .award-actions button{min-width:0;min-height:42px;width:100%;font-size:12px}
+ .award-dashboard-dialog .award-modal-footer #award-publish:not([hidden]){grid-column:1/-1}
+ #panel-awards .award-manage-row{grid-template-columns:58px minmax(0,1fr)}
+ #panel-awards .award-manage-row>img,#panel-awards .award-manage-placeholder{width:58px;height:58px}
+ #panel-awards .award-manage-row-buttons{grid-column:1/-1}
+}
+@media(max-height:520px) and (min-width:701px){
+ .award-dashboard-dialog[open]{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px)}
+ .award-dashboard-dialog .award-modal-header{padding-top:10px;padding-bottom:9px}
+}
