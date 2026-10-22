@@ -263,3 +263,151 @@ html body dialog#award-dialog .award-upload-control svg{width:24px!important;hei
   font-size:11px!important;
  }
 }
+
+
+/* 2026-10-22: Complete dark-mode contrast for the Achievements & Awards editor.
+   Keep all rules dialog-scoped so other staff panels and light mode are untouched. */
+body.account-workspace[data-theme="dark"] dialog#award-dialog.award-dashboard-dialog{
+ color-scheme:dark!important;
+ background:#111f33!important;
+ color:#edf4ff!important;
+ border-color:#527295!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-header{
+ background:linear-gradient(135deg,#1a3150,#203c60)!important;
+ border-bottom-color:#476c95!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-header>span{
+ color:#a9cbff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-header h2{
+ color:#f4f8ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-header p{
+ color:#c9dcf4!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-dialog-close{
+ background:#29476d!important;
+ color:#f3f8ff!important;
+ border-color:#6c91bc!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-scroll{
+ background:#111f33!important;
+ color:#eaf3ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form{
+ background:#111f33!important;
+ border-color:#527295!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-mode-choice{
+ background:#1c304b!important;
+ border-color:#527298!important;
+ color:#eef5ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-mode-choice.selected{
+ background:#294d78!important;
+ border-color:#90c0ff!important;
+ box-shadow:inset 0 0 0 1px #90c0ff33!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-mode-choice>span{
+ background:#335c8b!important;
+ color:#f4f8ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-mode-choice strong{
+ color:#f3f8ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-mode-choice small{
+ color:#c4d8f1!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-facebook-panel{
+ background:#1b304d!important;
+ border-color:#597ca3!important;
+ color:#f0f6ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-facebook-panel label,
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form label,
+body.account-workspace[data-theme="dark"] #award-dialog .award-image-editor strong{
+ color:#eef5ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-facebook-panel p,
+body.account-workspace[data-theme="dark"] #award-dialog #award-ai-status,
+body.account-workspace[data-theme="dark"] #award-dialog #award-ai-evidence,
+body.account-workspace[data-theme="dark"] #award-dialog .award-image-editor p{
+ color:#c4d8ef!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-section{
+ background:#294669!important;
+ color:#edf5ff!important;
+ border:1px solid #527398!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form :is(
+ input:not([type="file"]),textarea,select
+){
+ background:#12243c!important;
+ color:#eef5ff!important;
+ border-color:#6a8cb5!important;
+ -webkit-text-fill-color:#eef5ff;
+ caret-color:#b6d8ff;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form :is(
+ input:not([type="file"]),textarea
+)::placeholder{
+ color:#bacee7!important;
+ opacity:1!important;
+ -webkit-text-fill-color:#bacee7;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form select option{
+ background:#12243c;
+ color:#eef5ff;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form :is(
+ input:not([type="file"]),textarea,select
+):focus-visible{
+ outline:2px solid #9dc9ff!important;
+ outline-offset:2px!important;
+ border-color:#9dc9ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form button:focus-visible{
+ outline:2px solid #9dc9ff!important;
+ outline-offset:2px!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-image-editor{
+ background:transparent!important;
+ color:#eaf3ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-upload-control{
+ background:#223d61!important;
+ border-color:#779bc7!important;
+ color:#edf5ff!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog #award-photo-thumbs .award-thumb{
+ background:#203755!important;
+ border-color:#6688ad!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-footer{
+ background:#172b45!important;
+ border-top-color:#4c7097!important;
+ box-shadow:0 -4px 14px #07132155!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-footer .award-form-status{
+ color:#cbddf5!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-footer .award-actions .secondary{
+ background:#2a4160!important;
+ color:#f0f6ff!important;
+ border-color:#7295be!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-footer .award-actions .primary,
+body.account-workspace[data-theme="dark"] #award-dialog #award-analyze{
+ background:#315fbd!important;
+ color:#fff!important;
+ border-color:#679cfa!important;
+}
+body.account-workspace[data-theme="dark"] #award-dialog .award-modal-form :is(button,input,select,textarea):disabled{
+ opacity:.58;
+}
+@media(max-width:700px){
+ body.account-workspace[data-theme="dark"] #award-dialog .award-modal-footer{
+  border-top-color:#6385ac!important;
+ }
+}
