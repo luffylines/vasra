@@ -125,3 +125,18 @@ test('SK officers access project-style awards editor in their sidebar with secur
  assert.match(css,/@media\(max-width:650px\)/);
  assert.match(css,/\.award-modal-form #award-photo-thumbs/);
 });
+
+test('Award dialog has one viewport with fixed header/footer, scrollable content and responsive phone layout',()=>{
+ const css=read('dist/awards-dashboard-modal.css'),js=read('dist/awards-management.js'),html=read('dist/account.html');
+ assert.match(css,/\.award-dashboard-dialog:not\(\[open\]\)\{display:none!important\}/);
+ assert.match(css,/\.award-dashboard-dialog\[open\]\{/);
+ assert.match(css,/display:flex;flex-direction:column/);
+ assert.match(css,/grid-template-rows:minmax\(0,1fr\) auto/);
+ assert.match(css,/\.award-modal-scroll\{/);
+ assert.match(css,/overflow-y:auto;overflow-x:hidden/);
+ assert.match(css,/@media\(max-width:700px\)/);
+ assert.match(css,/height:100dvh;max-height:100dvh/);
+ assert.match(css,/font-size:16px!important/);
+ assert.match(html,/id="award-dialog"/);
+ assert.match(js,/scroll\.scrollTop=0/);
+});
