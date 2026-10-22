@@ -235,3 +235,21 @@ test('No recognized award keeps AI review fields and save hidden',()=>{
  assert.match(js,/Walang natukoy na award title/);
  assert.match(css,/grid-template-rows:auto 1fr!important/);
 });
+
+test('real Facebook Unicode-bold caption with linked emoji yields all three awards',()=>{
+ const {fromCaption}=require('../lib/award-caption.cjs');
+ const caption=[
+ '𝐒𝐊 𝐕𝐀𝐒𝐑𝐀, 𝐖𝐀𝐆𝐈 𝐒𝐀 𝟐𝟎𝟐𝟔 𝐐𝐂 𝐒𝐆𝐘𝐆!',
+ 'Nakamit ng Sangguniang Kabataan ng Barangay VASRA ang mga sumusunod na parangal sa 𝟮𝟬𝟮𝟲 𝗤𝘂𝗲𝘇𝗼𝗻 𝗖𝗶𝘁𝘆 𝗦𝗲𝗮𝗹 𝗼𝗳 𝗚𝗼𝗼𝗱 𝗬𝗼𝘂𝘁𝗵 𝗚𝗼𝘃𝗲𝗿𝗻𝗮𝗻𝗰𝗲 (𝗦𝗚𝗬𝗚):',
+ '[🏆](https://static.xx.fbcdn.net/images/emoji.php/v9/tbe/1/16/1f3c6.png) 𝗢𝘂𝘁𝘀𝘁𝗮𝗻𝗱𝗶𝗻𝗴 𝗦𝗞 𝗖𝗼𝘂𝗻𝗰𝗶𝗹',
+ '[🏆](https://static.xx.fbcdn.net/images/emoji.php/v9/tbe/1/16/1f3c6.png) 𝗢𝘂𝘁𝘀𝘁𝗮𝗻𝗱𝗶𝗻𝗴 𝗦𝗞 𝗣𝗿𝗼𝗷𝗲𝗰𝘁: Health Empowerment for Youth (HEY) Program',
+ '[🏅](https://static.xx.fbcdn.net/images/emoji.php/v9/t3d/1/16/1f3c5.png) 𝗦𝗽𝗲𝗰𝗶𝗮𝗹 𝗖𝗶𝘁𝗮𝘁𝗶𝗼𝗻 𝗳𝗼𝗿 𝗛𝗜𝗩/𝗔𝗜𝗗𝗦 𝗔𝘄𝗮𝗿𝗲𝗻𝗲𝘀𝘀 𝗣𝗿𝗼𝗷𝗲𝗰𝘁: Health Empowerment for Youth (HEY) Program',
+ 'Ang mga parangal na ito ay para sa lahat ng Kabataang VASRA!'
+ ].join('\n');
+ const result=fromCaption(caption).draft;
+ assert.equal(result.recognitions.length,3,JSON.stringify(result.recognitions));
+ assert.equal(result.recognitions[0],'Outstanding SK Council');
+ assert.match(result.recognitions[1],/^Outstanding SK Project: Health Empowerment for Youth/);
+ assert.match(result.recognitions[2],/^Special Citation for HIV\/AIDS Awareness Project: Health Empowerment/);
+ assert.equal(result.issuer,'');assert.equal(result.award_date,'');
+});
