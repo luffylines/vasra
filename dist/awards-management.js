@@ -85,10 +85,14 @@ async function awardSave(publish=false){
  const f=awardForm.elements,photos=[...awardImageList],btn=publish?document.querySelector('#award-publish'):document.querySelector('#award-save');
  if(!awardForm.reportValidity())return;
  awardBusy=true;btn.disabled=true;
+ let uploadedCount=0;
  try{
   for(let i=0;i<awardPendingFiles.length;i++){
-   awardStatus.textContent='Uploading award photo '+(i+1)+' of '+awardPendingFiles.length+'…';
+   const progress='Uploading award photo '+(i+1)+' of '+awardPendingFiles.length+'…';
+   awardStatus.textContent=progress;
+   projectUploadStatus(progress);
    photos.push(await uploadProjectPhoto(awardPendingFiles[i].file));
+   uploadedCount++;
   }
   awardStatus.textContent='Saving '+(publish?'published award':'award draft')+' to database…';
   const data={id:awardEditing||null,title:f.title.value.trim(),category:f.category.value,
@@ -97,14 +101,20 @@ async function awardSave(publish=false){
    image_ids:photos,published:publish||(user?.role==='chairman'&&awardMine(awardEditing)?.published===true)};
   const result=await api('./api/manage/achievements',{method:'POST',body:JSON.stringify(data)});
   if(result?.ok!==true)throw Error('Database did not confirm saving the award.');
-  success(publish?'Award is now published on Home and Achievements page.':'Award saved as draft for Chairman approval.');
+  const notice=publish?'Award is now published on Home and Achievements page.':'Award saved as draft for Chairman approval.';
+  projectUploadStatus(notice,'success');
+  success(notice);
   awardClear();await loadAwards();
  }catch(e){
-  // Keep uploaded IDs so a retry does not upload the same image again.
+  // Preserve the current draft AND every pending file that has not uploaded yet.
+  // Only completed uploads are moved into the saved IDs list; retry resumes at
+  // the failed photo rather than losing selections or re-uploading completed ones.
   awardImageList=photos;
-  for(const item of awardPendingFiles)URL.revokeObjectURL(item.url);
-  awardPendingFiles=[];renderAwardPhotos();
-  awardStatus.textContent='Hindi na-save: '+e.message;
+  const completedFiles=awardPendingFiles.splice(0,uploadedCount);
+  for(const item of completedFiles)URL.revokeObjectURL(item.url);
+  renderAwardPhotos();
+  awardStatus.textContent='Hindi pa kumpleto ang award save. '+awardPendingFiles.length+' photo(s) pending · Pindutin ulit ang Save Award Draft. '+e.message;
+  projectUploadStatus('Award upload needs retry: '+e.message,'error');
   message(e.message,true);
  }finally{awardBusy=false;btn.disabled=false;}
 }
