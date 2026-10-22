@@ -1,0 +1,44 @@
+/* Achievements dashboard — project-like modal, small award covers and responsive editing */
+.award-dashboard-dialog{position:fixed;inset:0;margin:auto;max-width:min(690px,calc(100vw - 22px));width:690px;max-height:min(88dvh,850px);height:auto;border:1px solid #cbdcf0;border-radius:18px;background:#fff;color:#12315a;box-shadow:0 24px 80px #071b3a70;padding:0;overflow:hidden}
+.award-dashboard-dialog::backdrop{background:#071b366c;backdrop-filter:blur(5px)}
+.award-dialog-close{position:absolute;z-index:5;top:17px;right:17px;border:1px solid #bfd2ea;background:#e9f3ff;color:#174a85;font-size:22px;border-radius:9px;width:36px;height:36px;display:grid;place-items:center;padding:0}
+.award-modal-header{padding:22px 26px 19px;background:linear-gradient(135deg,#f7faff,#e7f1ff);border-bottom:1px solid #dbe5f2}
+.award-modal-header>span{display:block;font-weight:800;font-size:10px;letter-spacing:.12em;color:#275eae}
+.award-modal-header h2{margin:7px 0;font-size:22px;letter-spacing:-.5px;color:#11376a}
+.award-modal-header p{margin:0;font-size:12px;color:#6983a5}
+.award-modal-form{display:flex;flex-direction:column;max-height:calc(min(88dvh,850px) - 105px);margin:0;min-height:0}
+.award-modal-scroll{overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0;padding:22px 26px}
+.award-modal-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:22px}
+.award-mode-choice{display:grid;grid-template-columns:32px 1fr;align-content:start;align-items:center;column-gap:11px;row-gap:4px;text-align:left;border:1px solid #d0def1;border-radius:13px;background:#f9fbff;padding:15px 13px;min-height:100px;color:#173963}
+.award-mode-choice.selected{border:2px solid #2467dc;background:#edf5ff;box-shadow:0 1px 7px #2267d124}
+.award-mode-choice>span{grid-row:1/3;display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#e2edff;color:#215eb5;font-size:21px}
+.award-mode-choice strong{font-size:12px}
+.award-mode-choice small{grid-column:2;font-size:10px;line-height:1.5;color:#617b9c}
+.award-modal-section{font-weight:800;font-size:12px;margin:19px 0 15px;padding:10px 13px;border-radius:9px;background:#eaf2fd;color:#153b70}
+.award-modal-form label{display:block;font-size:11px;font-weight:700;color:#325379;margin-bottom:13px}
+.award-modal-form input:not([type=file]),.award-modal-form select,.award-modal-form textarea{display:block;width:100%;min-width:0;margin-top:6px;border:1px solid #d0dff1;border-radius:9px;background:#f8faff;padding:10px 12px;color:#18375c;min-height:41px;font-size:14px}
+.award-modal-form textarea{resize:vertical;min-height:72px}
+.award-modal-form input:focus,.award-modal-form textarea:focus,.award-modal-form select:focus{outline:2px solid #3a7bd5;outline-offset:0}
+.award-modal-form .award-form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.award-facebook-panel{margin:-2px 0 17px;padding:16px;border:1px solid #bdd3f0;border-radius:12px;background:#f4f8fe}
+.award-facebook-panel[hidden]{display:none}
+.award-facebook-panel p{font-size:11px;line-height:1.5;color:#426387}
+.award-modal-form .award-image-editor{border:0;background:transparent;padding:0;margin-top:0}
+.award-modal-form #award-photo-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:9px;margin:10px 0}
+.award-modal-form .award-thumb{position:relative;overflow:hidden;width:100%;aspect-ratio:1.15;border-radius:10px;border:1px solid #c6d8eb;background:#e9f3ff}
+.award-modal-form .award-thumb img{height:100%;width:100%;object-fit:cover;display:block}
+.award-modal-form .award-thumb button{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:26px;height:26px;border-radius:7px;border:1px solid #efc0c0;background:#fff;color:#b72335;font-size:19px;cursor:pointer}
+.award-modal-form .award-thumb span{position:absolute;left:4px;bottom:4px;border-radius:5px;padding:2px 5px;background:#133e73;color:white;font-size:9px}
+.award-modal-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 21px;background:#f6f9ff;border-top:1px solid #d6e1ef;flex-shrink:0}
+.award-modal-footer .award-form-status{max-width:55%;margin:0;font-size:11px;line-height:1.5;color:#53749c}
+.award-modal-footer .award-actions{display:flex;justify-content:flex-end;align-items:center;gap:7px;flex-wrap:wrap}
+.award-modal-footer button{border-radius:9px;font-size:12px;white-space:nowrap}
+#award-manage-list{display:grid;gap:10px;margin:12px 0 24px}
+#panel-awards .award-manage-row{display:grid;grid-template-columns:84px minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid #dbe6f5;border-radius:12px;background:#fff;padding:11px 14px}
+#panel-awards .award-manage-row>img,#panel-awards .award-manage-placeholder{width:84px;height:65px;object-fit:cover;border-radius:8px}
+#panel-awards .award-manage-row>div:nth-child(2){min-width:0;overflow:hidden}
+#panel-awards .award-manage-row strong,#panel-awards .award-manage-row small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#panel-awards .award-manage-row-buttons{display:flex;gap:7px;flex-wrap:wrap}
+#panel-awards .award-manage-row-buttons button{font-size:12px;padding:8px 11px;border-radius:8px}
+#panel-awards .award-manage-row-buttons .award-archive{background:#fff1f1;border:1px solid #f3cece;color:#ad2940}
+@media(max-width:650px){.award-dashboard-dialog{max-width:calc(100vw - 12px);max-height:96dvh;border-radius:13px}.award-modal-form{max-height:calc(96dvh - 92px)}.award-modal-header{padding:17px 55px 14px 16px}.award-modal-header h2{font-size:19px}.award-modal-scroll{padding:15px}.award-modal-modes{gap:8px}.award-mode-choice{grid-template-columns:1fr;padding:10px;min-height:110px}.award-mode-choice>span{grid-row:auto}.award-mode-choice small{grid-column:1}.award-modal-form .award-form-row{grid-template-columns:1fr;gap:0}.award-modal-form input:not([type=file]),.award-modal-form select,.award-modal-form textarea{font-size:16px}.award-modal-footer{padding:10px 14px;align-items:stretch;flex-direction:column}.award-modal-footer .award-form-status{max-width:none}.award-modal-footer .award-actions{justify-content:flex-start}#panel-awards .award-manage-row{grid-template-columns:60px minmax(0,1fr);gap:10px;padding:9px}#panel-awards .award-manage-row>img,#panel-awards .award-manage-placeholder{width:60px;height:60px}#panel-awards .award-manage-row-buttons{grid-column:2}#panel-awards .award-manage-row-buttons button{font-size:11px;padding:7px}}
