@@ -152,3 +152,26 @@ test('Award file picker keeps dialog anchored and thumbnails limited to scroll a
  assert.match(js,/awardDialog\.scrollTop=0/);
  assert.match(js,/requestAnimationFrame\(\(\)=>/);
 });
+
+test('SK awards photo gallery allows any thumbnail to become persisted cover',()=>{
+ const script=read('dist/awards-management.js'),markup=read('dist/account.html'),css=read('dist/awards-dashboard-modal.css');
+ assert.match(markup,/Set as Cover/);
+ assert.match(script,/awardCoverSelection/);
+ assert.match(script,/data\.awardCover/);
+ assert.match(script,/const chosen=typeof awardCoverSelection/);
+ assert.match(script,/photos\.unshift\(\.\.\.photos\.splice\(i,1\)\)/);
+ assert.match(script,/uploaded\.set\(awardPendingFiles\[i\],id\)/);
+ assert.match(css,/\.award-thumb\.cover-selected/);
+ assert.match(css,/\.award-set-cover/);
+});
+test('Facebook Caption + AI presents only caption first, then human-reviewed award fields',()=>{
+ const script=read('dist/awards-management.js'),markup=read('dist/account.html'),css=read('dist/awards-dashboard-modal.css');
+ assert.match(markup,/id="award-review-fields"/);
+ assert.match(markup,/id="award-facebook-panel"/);
+ assert.match(markup,/Analyze Caption &amp; Create Award Draft/);
+ assert.match(script,/awardDraftReady=!facebook/);
+ assert.match(script,/awardReviewVisibility\(\)/);
+ assert.match(script,/awardDraftReady=true;awardReviewVisibility\(\)/);
+ assert.match(script,/awardMode\('manual'\)/);
+ assert.match(css,/#award-review-fields\[hidden\]/);
+});
