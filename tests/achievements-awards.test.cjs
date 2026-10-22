@@ -175,3 +175,5 @@ test('Facebook Caption + AI presents only caption first, then human-reviewed awa
  assert.match(script,/awardMode\('manual'\)/);
  assert.match(css,/#award-review-fields\[hidden\]/);
 });
+
+test('award photo cards are large on desktop and phone',()=>{const css=read('dist/awards-dashboard-modal.css');assert.match(css,/height:196px!important/);assert.match(css,/height:181px!important/);assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/);assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/);assert.match(css,/\.award-set-cover/);});
