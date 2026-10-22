@@ -140,3 +140,15 @@ test('Award dialog has one viewport with fixed header/footer, scrollable content
  assert.match(html,/id="award-dialog"/);
  assert.match(js,/scroll\.scrollTop=0/);
 });
+
+test('Award file picker keeps dialog anchored and thumbnails limited to scroll area',()=>{
+ const css=read('dist/awards-dashboard-modal.css'),js=read('dist/awards-management.js');
+ assert.match(css,/dialog#award-dialog\.award-dashboard-dialog\[open\]/);
+ assert.match(css,/overflow:hidden!important;overflow-x:hidden!important;overflow-y:hidden!important/);
+ assert.match(css,/dialog#award-dialog form#award-form\.award-modal-form/);
+ assert.match(css,/grid-template-rows:minmax\(0,1fr\) auto!important/);
+ assert.match(css,/dialog#award-dialog #award-photo-thumbs/);
+ assert.match(js,/const oldScrollTop=scroll\?\.scrollTop\|\|0/);
+ assert.match(js,/awardDialog\.scrollTop=0/);
+ assert.match(js,/requestAnimationFrame\(\(\)=>/);
+});

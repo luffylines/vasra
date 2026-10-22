@@ -39,8 +39,21 @@ document.querySelector('#award-photos').addEventListener('change',e=>{
  const good=files.filter(f=>['image/jpeg','image/png','image/webp'].includes(f.type)&&f.size>0&&f.size<=5*1024*1024);
  if(good.length!==files.length)message('JPG, PNG o WebP lang at hanggang 5 MB bawat photo.',true);
  if(good.length+awardImageList.length+awardPendingFiles.length>12){message('Maximum 12 award photos lamang.',true);return}
+ const scroll=awardDialog.querySelector('.award-modal-scroll');
+ const oldScrollTop=scroll?.scrollTop||0;
  for(const file of good)awardPendingFiles.push({file,url:URL.createObjectURL(file)});
  renderAwardPhotos();
+ // Native file pickers may scroll the <dialog> itself into view when focus
+ // returns, moving its header offscreen and leaving empty space underneath.
+ // Preserve the form's scroll only, never allow the outer dialog to scroll.
+ e.currentTarget.blur();
+ awardDialog.scrollTop=0;
+ if(scroll)scroll.scrollTop=oldScrollTop;
+ requestAnimationFrame(()=>{
+  if(!awardDialog.open)return;
+  awardDialog.scrollTop=0;
+  if(scroll)scroll.scrollTop=oldScrollTop;
+ });
 });
 document.querySelector('#award-photo-thumbs').addEventListener('click',e=>{
  const saved=e.target.closest('[data-award-drop-saved]'),newfile=e.target.closest('[data-award-drop-new]');
