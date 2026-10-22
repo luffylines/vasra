@@ -216,3 +216,22 @@ test('SK awards use dedicated caption API and allow choosing among multiple evid
  assert.match(handler,/AwardCaption\.fromCaption/);
  assert.match(handler,/await user\(\['sk','chairman'\]\)/);
 });
+
+test('Facebook award parser tolerates decorated or concatenated recognitions',()=>{
+ const {fromCaption}=require('../lib/award-caption.cjs');
+ const caption='SK VASRA WAGI SA 2026 QC SGYG! Nakamit na mga parangal: 🏆 Outstanding SK Council 🏆 Outstanding SK Project: Health Empowerment for Youth (HEY) Program 🥇 Special Citation for HIV/AIDS Awareness Project: HEY Program';
+ const d=fromCaption(caption).draft;
+ assert.equal(d.recognitions.length,3);
+ assert.match(d.recognitions[0],/Outstanding SK Council/);
+ assert.match(d.recognitions[1],/Outstanding SK Project/);
+ assert.match(d.recognitions[2],/Special Citation/);
+ assert.equal(d.award_date,'');
+ assert.equal(d.issuer,'');
+});
+test('No recognized award keeps AI review fields and save hidden',()=>{
+ const js=read('dist/awards-management.js');
+ const css=read('dist/awards-dashboard-modal.css');
+ assert.match(js,/awardDraftReady=names\.length>0;awardReviewVisibility\(\)/);
+ assert.match(js,/Walang natukoy na award title/);
+ assert.match(css,/grid-template-rows:auto 1fr!important/);
+});
