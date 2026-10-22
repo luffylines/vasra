@@ -16,6 +16,7 @@ on:
       - feature/awards-cover-caption-first-20261022
       - fix/awards-large-cover-gallery-20261022
       - fix/award-caption-accuracy-20261022
+      - fix/award-caption-picker-validation-ui-20261022
 
 permissions:
   contents: read

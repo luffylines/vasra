@@ -263,3 +263,25 @@ html body dialog#award-dialog .award-upload-control svg{width:24px!important;hei
   font-size:11px!important;
  }
 }
+
+
+/* Aligned editor mode buttons and readable award-only AI review. */
+html body dialog#award-dialog .award-modal-modes{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch!important;gap:10px!important}
+html body dialog#award-dialog .award-modal-modes .award-mode-choice{
+ display:grid!important;grid-template-columns:35px minmax(0,1fr)!important;
+ grid-template-rows:auto 1fr!important;align-content:start!important;
+ gap:3px 10px!important;min-height:96px!important;height:100%!important;
+ padding:14px!important;box-sizing:border-box!important
+}
+html body dialog#award-dialog .award-modal-modes .award-mode-choice>span{grid-area:1/1/3/2!important}
+html body dialog#award-dialog .award-modal-modes .award-mode-choice strong{grid-area:1/2!important;align-self:end!important}
+html body dialog#award-dialog .award-modal-modes .award-mode-choice small{grid-area:2/2!important;align-self:start!important;line-height:1.45!important}
+html body dialog#award-dialog #award-ai-recognitions:not([hidden]){display:block;margin-top:13px;padding:12px;border:1px solid #c4d7ee;border-radius:9px;background:#fff}
+html body dialog#award-dialog #award-recognition-select{width:100%;min-width:0;font-size:14px;line-height:1.4}
+html body dialog#award-dialog #award-recognition-select[hidden]{display:none!important}
+html body dialog#award-dialog #award-ai-evidence{font-size:11px;color:#476d9b;line-height:1.5}
+@media(max-width:700px){
+ html body dialog#award-dialog .award-modal-modes{grid-template-columns:minmax(0,1fr)!important}
+ html body dialog#award-dialog .award-modal-modes .award-mode-choice{min-height:78px!important;padding:11px!important}
+ html body dialog#award-dialog #award-recognition-select{font-size:16px!important}
+}
