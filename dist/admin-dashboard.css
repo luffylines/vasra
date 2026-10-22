@@ -2453,3 +2453,41 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager
  .duty-manager-hours-inner .duty-manager-week{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(prefers-reduced-motion:reduce){.duty-manager-chevron{transition:none}}
+
+/* Private SK awards uploader: supports SK drafts + Chairman approval. */
+.award-editor-form{display:grid;gap:15px;margin:15px 0 24px;padding:23px;background:#fff;border:1px solid #d3e0f0;border-radius:16px;box-sizing:border-box}
+.award-editor-form label{font-size:12px;font-weight:760;color:#294c77;display:grid;gap:7px;min-width:0}
+.award-form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.award-editor-form :is(input:not([type=file]),select,textarea){min-height:43px;border:1px solid #cbdcf1;border-radius:10px;padding:10px 12px;background:#f8fbff;color:#163960;font-family:inherit;font-size:14px;box-sizing:border-box;width:100%}
+.award-editor-form textarea{min-height:100px;resize:vertical}
+.award-image-editor{border:1px dashed #b9d2ef;padding:17px;border-radius:12px;background:#f4f8fe}
+.award-image-editor strong{font-size:13px;color:#234e83}.award-image-editor p{font-size:11px;color:#617b9d;margin:8px 0}
+.award-upload-control{display:inline-flex!important;align-items:center;justify-content:center;gap:8px;background:#e1eeff;padding:12px 16px;border-radius:9px;border:1px solid #a4c3eb;color:#1e4f8b!important;cursor:pointer}
+.award-upload-control input{position:absolute!important;width:1px;height:1px;opacity:0}
+.award-photo-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:9px;margin-top:15px}
+.award-thumb{height:103px;min-width:0;position:relative;border:1px solid #d3e1f2;border-radius:9px;overflow:hidden;background:#f1f5fb}
+.award-thumb img{width:100%;height:100%;object-fit:cover}
+.award-thumb button{position:absolute;right:4px;top:4px;background:#1b2d48;color:white;width:24px;height:24px;border-radius:7px;border:0}
+.award-thumb>span{position:absolute;bottom:3px;left:3px;background:#1f56a9;color:white;border-radius:5px;padding:4px 6px;font-size:9px}
+.award-form-status{font-size:11px;color:#6480a0;margin:0}
+.award-actions{display:flex;flex-wrap:wrap;gap:10px}
+.awards-manage-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.awards-manage-head h3{font-size:17px}.awards-manage-head small{font-size:11px;color:#6681a1}
+.award-manage-list{display:grid;gap:10px;margin:14px 0}
+.award-manage-row{display:grid;grid-template-columns:90px minmax(0,1fr) auto;gap:13px;align-items:center;background:#fff;border:1px solid #d8e5f4;padding:12px;border-radius:13px}
+.award-manage-row>img,.award-manage-placeholder{width:90px;height:74px;object-fit:contain;border-radius:9px;background:#eaf2fb}
+.award-manage-placeholder{display:grid;place-items:center;font-size:30px}
+.award-manage-row>div:nth-child(2){display:grid;gap:5px;min-width:0}
+.award-manage-row strong{font-size:13px;color:#1d406e;overflow-wrap:anywhere}
+.award-manage-row small{font-size:11px;color:#7087a4}
+.award-manage-status{font-size:10px;font-weight:800;letter-spacing:.04em}
+.award-manage-status.draft{color:#a05a13}.award-manage-status.published{color:#217a52}
+.award-manage-row-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.award-manage-row-buttons button{padding:9px 12px;border-radius:8px;font-size:11px;background:#ebf3ff;color:#225397;border:1px solid #cadff8;font-weight:800}
+.award-manage-row-buttons .award-archive{color:#a33845;background:#fff3f5;border-color:#edcbd1}
+.award-empty{padding:24px;border:1px dashed #b9cde4;border-radius:12px;color:#6a85a0}
+body.account-workspace[data-theme="dark"] :is(.award-editor-form,.award-manage-row){background:#1d324f!important;border-color:#52749c!important}
+body.account-workspace[data-theme="dark"] :is(.award-editor-form label,.award-manage-row strong,.award-image-editor strong){color:#ecf5ff!important}
+body.account-workspace[data-theme="dark"] :is(.award-image-editor,.award-thumb){background:#162943!important;border-color:#4b6d93!important}
+body.account-workspace[data-theme="dark"] .award-editor-form :is(input:not([type=file]),select,textarea){background:#132641!important;color:#f0f7ff!important;border-color:#6687ad!important}
+@media(max-width:750px){.award-editor-form{padding:13px}.award-form-row{grid-template-columns:1fr}.award-manage-row{grid-template-columns:66px minmax(0,1fr)}.award-manage-row>img,.award-manage-placeholder{width:66px;height:68px}.award-manage-row-buttons{grid-column:1/-1}}

@@ -171,3 +171,32 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(#duty-off
   flex-basis:100%!important;
  }
 }
+
+/* iPhone SK Duty compact controls and status: no large stretched blocks. */
+@media(max-width:850px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard #duty-controls.duty-office-card{width:100%!important;max-width:100%!important;min-height:0!important;height:auto!important;padding:14px!important;border-radius:15px!important;box-sizing:border-box!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading{display:flex!important;align-items:flex-start!important;flex-wrap:wrap!important;gap:10px!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-text{flex:1 1 160px!important;min-width:0!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-mode-badge{display:inline-flex!important;width:auto!important;height:auto!important;min-height:27px!important;min-width:0!important;max-width:100%!important;padding:5px 10px!important;border-radius:999px!important;font-size:11px!important;line-height:1.4!important;flex:0 1 auto!important;position:static!important;aspect-ratio:auto!important;box-shadow:none!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info{min-height:58px!important;height:auto!important;padding:10px!important;border-radius:10px!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-metrics{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin:10px 0!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-action-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:1 1 142px!important;width:auto!important;height:42px!important;min-height:42px!important;max-height:42px!important;min-width:0!important;padding:6px 11px!important;border-radius:9px!important;font-size:12px!important;line-height:1.25!important;white-space:normal!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-action-button svg{width:17px!important;height:17px!important;flex:none}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-note{font-size:11px!important;line-height:1.5!important;margin-top:8px!important}
+}
+
+@media(max-width:850px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button{
+  flex:1 1 138px!important;height:42px!important;min-height:42px!important;max-height:42px!important;
+  width:auto!important;min-width:0!important;padding:6px 10px!important;
+  border-radius:9px!important;font-size:12px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button[hidden]{display:none!important}
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls #duty-mode-badge{
+  width:auto!important;height:auto!important;min-width:0!important;min-height:27px!important;
+  max-width:100%!important;aspect-ratio:auto!important;border-radius:999px!important;
+  padding:5px 10px!important;box-shadow:none!important;font-size:11px!important;
+  display:inline-flex!important;position:static!important;
+ }
+}

@@ -132,3 +132,9 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .a
  body.mobile-menu-ready .page-top{font-size:9px}
  body.mobile-menu-ready .page-top .ph-live-clock{font-size:10px}
 }
+
+/* iPhone Safari does not auto-zoom inputs at 16px or above; do not disable pinch-zoom. */
+@media(max-width:850px){
+ body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea,[contenteditable="true"]){font-size:16px!important;-webkit-text-size-adjust:100%}
+ body .auth-form-card :is(input,select,textarea),body .account-workspace :is(input,select,textarea){font-size:16px!important}
+}
