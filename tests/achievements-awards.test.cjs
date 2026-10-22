@@ -120,7 +120,7 @@ test('SK officers access project-style awards editor in their sidebar with secur
  assert.match(js,/awardDialog\.showModal\(\)/);
  assert.match(js,/data-award-edit/);
  assert.match(js,/data-award-archive/);
- assert.match(js,/api\/manage\/projects\/import-facebook/);
+ assert.match(js,/api\/manage\/achievements\/analyze-caption/);
  assert.match(js,/const archive=user\?\.role==='chairman'/);
  assert.match(css,/@media\(max-width:650px\)/);
  assert.match(css,/\.award-modal-form #award-photo-thumbs/);
@@ -177,3 +177,42 @@ test('Facebook Caption + AI presents only caption first, then human-reviewed awa
 });
 
 test('award photo cards are large on desktop and phone',()=>{const css=read('dist/awards-dashboard-modal.css');assert.match(css,/height:196px!important/);assert.match(css,/height:181px!important/);assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/);assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/);assert.match(css,/\.award-set-cover/);});
+
+test('Award Facebook caption extracts three separate QC recognitions without inventing date or issuer',()=>{
+ const {fromCaption}=require('../lib/award-caption.cjs');
+ const sample=[
+ 'SK VASRA, WAGI SA 2026 QC SGYG!',
+ 'Nakamit ng Sangguniang Kabataan ng Barangay VASRA ang mga sumusunod na parangal sa 2026 Quezon City Seal of Good Youth Governance (SGYG):',
+ '🏆 Outstanding SK Council',
+ '🏆 Outstanding SK Project: Health Empowerment for Youth (HEY) Program',
+ '🥇 Special Citation for HIV/AIDS Awareness Project: Health Empowerment for Youth (HEY) Program',
+ 'Ang mga parangal na ito ay para sa lahat ng Kabataang VASRA.',
+ 'Maraming salamat sa ating Mayor Joy Belmonte.',
+ ].join('\n');
+ const result=fromCaption(sample);
+ assert.equal(result.ok,true);
+ assert.equal(result.analysis_type,'achievements');
+ assert.equal(result.draft.recognitions.length,3);
+ assert.equal(result.draft.recognitions[0],'Outstanding SK Council');
+ assert.match(result.draft.recognitions[1],/Outstanding SK Project/);
+ assert.match(result.draft.recognitions[2],/Special Citation for HIV\/AIDS Awareness/);
+ assert.equal(result.draft.issuer,'');
+ assert.equal(result.draft.award_date,'');
+ assert.equal(result.draft.date_requires_confirmation,true);
+ assert.equal(result.draft.evidence.length,3);
+ assert.doesNotMatch(result.draft.description,/Maraming salamat/);
+ assert.throws(()=>fromCaption('Too short'),/caption/);
+});
+test('SK awards use dedicated caption API and allow choosing among multiple evidence-backed recognitions',()=>{
+ const script=read('dist/awards-management.js');
+ const markup=read('dist/account.html');
+ const handler=read('lib/handler.cjs');
+ assert.match(script,/api\/manage\/achievements\/analyze-caption/);
+ assert.doesNotMatch(script,/api\/manage\/projects\/import-facebook/);
+ assert.match(script,/award-recognition-select/);
+ assert.match(script,/f\.award_date\.value=''/);
+ assert.match(script,/f\.issuer\.value=String\(d\.issuer\|\|''\)/);
+ assert.match(markup,/id="award-ai-recognitions"/);
+ assert.match(handler,/AwardCaption\.fromCaption/);
+ assert.match(handler,/await user\(\['sk','chairman'\]\)/);
+});
