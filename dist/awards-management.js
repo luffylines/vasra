@@ -1,10 +1,20 @@
 'use strict';
 // SK officers submit drafts with up to 12 award photos. Only Chairman can publish.
-let staffAwards=[],awardImageList=[],awardPendingFiles=[],awardEditing=null,awardBusy=false;
+let staffAwards=[],awardImageList=[],awardPendingFiles=[],awardEditing=null,awardBusy=false,awardCoverSelection=null,awardDraftReady=true;
 const awardDialog=document.querySelector('#award-dialog');
 function awardOpen(){if(!awardDialog.open)awardDialog.showModal();const scroll=awardDialog.querySelector('.award-modal-scroll');if(scroll)scroll.scrollTop=0;}
 function awardClose(){if(!awardBusy&&awardDialog.open)awardDialog.close()}
-function awardMode(v){document.querySelector('#award-facebook-panel').hidden=v!=='facebook';for(const mode of ['manual','facebook']){const b=document.querySelector('#award-mode-'+mode);b.classList.toggle('selected',mode===v);b.setAttribute('aria-pressed',String(mode===v))}}
+function awardReviewVisibility(){const hidden=!awardDraftReady;document.querySelector('#award-review-fields').hidden=hidden;document.querySelector('#award-modal-footer').hidden=hidden;}
+function awardMode(v){
+ const facebook=v==='facebook';
+ awardDraftReady=!facebook;
+ document.querySelector('#award-facebook-panel').hidden=!facebook;
+ for(const mode of ['manual','facebook']){
+  const b=document.querySelector('#award-mode-'+mode);b.classList.toggle('selected',mode===v);b.setAttribute('aria-pressed',String(mode===v));
+ }
+ awardReviewVisibility();
+ const scroll=awardDialog.querySelector('.award-modal-scroll');if(scroll)scroll.scrollTop=0;
+}
 document.querySelector('#award-new').onclick=()=>{awardClear();awardOpen()};
 document.querySelector('#award-dialog-close').onclick=awardClose;
 awardDialog.addEventListener('click',e=>{if(e.target===awardDialog)awardClose()});
@@ -16,18 +26,36 @@ const awardStatus=document.querySelector('#award-form-status');
 const awardMine=id=>staffAwards.find(a=>a.id===id);
 const awardEsc=s=>esc(String(s||''));
 const awardCanEdit=a=>user?.role==='chairman'||(!a.published&&a.created_by===user?.id);
-function awardClearPhotos(){awardPendingFiles=[];awardImageList=[];document.querySelector('#award-photos').value='';renderAwardPhotos()}
+function awardClearPhotos(){
+ for(const item of awardPendingFiles)URL.revokeObjectURL(item.url);
+ awardPendingFiles=[];awardImageList=[];awardCoverSelection=null;
+ document.querySelector('#award-photos').value='';renderAwardPhotos();
+}
 function renderAwardPhotos(){
+ const root=document.querySelector('#award-photo-thumbs');
  const total=awardImageList.length+awardPendingFiles.length;
- document.querySelector('#award-photo-thumbs').innerHTML=[
-  ...awardImageList.map((id,i)=>'<div class="award-thumb"><img src="./api/images/'+encodeURIComponent(id)+'" alt="Saved award image '+(i+1)+'"><button type="button" data-award-drop-saved="'+i+'" aria-label="Remove image '+(i+1)+'">×</button>'+(i===0?'<span>Cover</span>':'')+'</div>'),
-  ...awardPendingFiles.map((item,i)=>'<div class="award-thumb"><img src="'+item.url+'" alt="New award image '+(i+1)+'"><button type="button" data-award-drop-new="'+i+'" aria-label="Remove new image '+(i+1)+'">×</button>'+(i===0&&!awardImageList.length?'<span>Cover</span>':'')+'</div>')
- ].join('');
- awardStatus.textContent=total+' / 12 photos. Ang unang larawan ang public cover pagkatapos ma-publish.';
+ if(total&&!awardCoverSelection)awardCoverSelection=awardImageList[0]||awardPendingFiles[0];
+ const items=[
+  ...awardImageList.map((id,i)=>({saved:true,id,i,url:'./api/images/'+encodeURIComponent(id)})),
+  ...awardPendingFiles.map((item,i)=>({saved:false,item,i,url:item.url}))
+ ];
+ root.replaceChildren();
+ for(const photo of items){
+  const selected=photo.saved?awardCoverSelection===photo.id:awardCoverSelection===photo.item;
+  const holder=document.createElement('div');holder.className='award-thumb'+(selected?' cover-selected':'');
+  const img=document.createElement('img');img.src=photo.url;img.alt='Award photo '+(photo.i+1);img.loading='lazy';
+  const cover=document.createElement('button');cover.type='button';cover.className='award-set-cover';
+  cover.textContent=selected?'✓ Cover':'Set as Cover';cover.setAttribute('aria-pressed',String(selected));
+  cover.dataset.awardCover=photo.saved?'saved':'pending';cover.dataset.index=String(photo.i);
+  const del=document.createElement('button');del.type='button';del.className='award-remove-photo';
+  del.textContent='×';del.setAttribute('aria-label','Remove award photo '+(photo.i+1));
+  del.dataset[photo.saved?'awardDropSaved':'awardDropNew']=String(photo.i);
+  holder.append(img,cover,del);root.append(holder);
+ }
+ awardStatus.textContent=total+' / 12 photos. '+(total?'Napili na ang cover; maaari mong palitan sa Set as Cover.':'Pumili ng mga larawan at itakda ang cover.');
 }
 function awardClear(){
  awardEditing=null;awardForm.reset();awardForm.elements.id.value='';
- for(const item of awardPendingFiles)URL.revokeObjectURL(item.url);
  awardClearPhotos();awardMode('manual');
  document.querySelector('#award-save').textContent='Save as Draft';
  document.querySelector('#award-publish').hidden=true;
@@ -56,9 +84,14 @@ document.querySelector('#award-photos').addEventListener('change',e=>{
  });
 });
 document.querySelector('#award-photo-thumbs').addEventListener('click',e=>{
+ const cover=e.target.closest('[data-award-cover]');
+ if(cover){
+  awardCoverSelection=cover.dataset.awardCover==='saved'?awardImageList[Number(cover.dataset.index)]:awardPendingFiles[Number(cover.dataset.index)];
+  renderAwardPhotos();return;
+ }
  const saved=e.target.closest('[data-award-drop-saved]'),newfile=e.target.closest('[data-award-drop-new]');
- if(saved)awardImageList.splice(Number(saved.dataset.awardDropSaved),1);
- if(newfile){const [item]=awardPendingFiles.splice(Number(newfile.dataset.awardDropNew),1);if(item)URL.revokeObjectURL(item.url)}
+ if(saved){const [id]=awardImageList.splice(Number(saved.dataset.awardDropSaved),1);if(awardCoverSelection===id)awardCoverSelection=null;}
+ if(newfile){const [item]=awardPendingFiles.splice(Number(newfile.dataset.awardDropNew),1);if(item){if(awardCoverSelection===item)awardCoverSelection=null;URL.revokeObjectURL(item.url)}}
  renderAwardPhotos();
 });
 function awardEdit(a){
@@ -68,7 +101,7 @@ function awardEdit(a){
  f.id.value=a.id;f.title.value=a.title;f.category.value=a.category;f.issuer.value=a.issuer;f.award_date.value=a.award_date;
  f.summary.value='';f.description.value=a.description||'';f.reference_url.value=a.reference_url||'';
  awardImageList=Array.isArray(a.image_ids)?[...a.image_ids]:a.image_id?[a.image_id]:[];
- renderAwardPhotos();
+ awardCoverSelection=awardImageList[0]||null;renderAwardPhotos();
  document.querySelector('#award-save').textContent=a.published?'Save Changes':'Update Draft';
  document.querySelector('#award-publish').hidden=user?.role!=='chairman'||a.published;
  awardStatus.textContent=a.published?'Published award · editing requires Chairman approval.':'Draft for review before publishing.';
@@ -110,13 +143,17 @@ async function awardSave(publish=false){
  awardBusy=true;btn.disabled=true;
  let uploadedCount=0;
  try{
+  const uploaded=new Map();
   for(let i=0;i<awardPendingFiles.length;i++){
    const progress='Uploading award photo '+(i+1)+' of '+awardPendingFiles.length+'…';
    awardStatus.textContent=progress;
    projectUploadStatus(progress);
-   photos.push(await uploadProjectPhoto(awardPendingFiles[i].file));
+   const id=await uploadProjectPhoto(awardPendingFiles[i].file);
+   photos.push(id);uploaded.set(awardPendingFiles[i],id);
    uploadedCount++;
   }
+  const chosen=typeof awardCoverSelection==='string'?awardCoverSelection:uploaded.get(awardCoverSelection);
+  if(chosen){const i=photos.indexOf(chosen);if(i>0)photos.unshift(...photos.splice(i,1));}
   awardStatus.textContent='Saving '+(publish?'published award':'award draft')+' to database…';
   const combinedDescription=[f.summary.value.trim(),f.description.value.trim()].filter(Boolean).join('\n\n');
   if(combinedDescription.length>3000)throw Error('Summary + details cannot exceed 3000 characters.');
@@ -135,6 +172,7 @@ async function awardSave(publish=false){
   // Only completed uploads are moved into the saved IDs list; retry resumes at
   // the failed photo rather than losing selections or re-uploading completed ones.
   awardImageList=photos;
+  if(uploaded.has(awardCoverSelection))awardCoverSelection=uploaded.get(awardCoverSelection);
   const completedFiles=awardPendingFiles.splice(0,uploadedCount);
   for(const item of completedFiles)URL.revokeObjectURL(item.url);
   renderAwardPhotos();
@@ -177,8 +215,10 @@ document.querySelector('#award-analyze').onclick=async()=>{
   f.title.value=String(d.title||'').slice(0,180);
   f.summary.value=String(d.summary||'').slice(0,350);
   f.description.value=String(d.scope||d.description||caption).slice(0,2500);
-  status.textContent='AI-assisted draft lamang. I-review ang title, category, issuer at petsa; hindi ito automatic na ipo-publish.';
-  awardMode('manual');
+  awardDraftReady=true;awardReviewVisibility();
+  document.querySelector('#award-facebook-panel').hidden=true;
+  status.textContent='Award draft is ready for review. Verify title, award category, issuer and date.';
+  const scroll=awardDialog.querySelector('.award-modal-scroll');if(scroll)scroll.scrollTop=0;
   message('AI draft filled in. Please review the award form before saving.');
  }catch(e){status.textContent='Hindi gumana ang AI analysis: '+(e.message||'Subukan muli.')+'. Puwede ang Manual Entry.';}
  finally{button.disabled=false}
