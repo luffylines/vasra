@@ -66,3 +66,38 @@ test('Mobile form inputs avoid iOS focus zoom and SK Duty buttons stay compact',
  assert.match(staff,/height:42px!important;min-height:42px!important;max-height:42px!important/);
  assert.match(staff,/border-radius:999px!important/);
 });
+
+test('Achievements navigation selects the awards page and offers retry when API is unreachable',()=>{
+ const html=read('dist/achievements.html');
+ const js=read('dist/achievements.js');
+ const css=read('dist/achievements.css');
+ assert.match(html,/href="\.\/achievements\.html" aria-current="page"/);
+ assert.doesNotMatch(html,/href="\.\/youth-leaders" aria-current="page"/);
+ assert.match(js,/id="awards-retry"/);
+ assert.match(js,/loadAwardsPublic\(\)/);
+ assert.match(css,/\.awards-retry-button/);
+});
+test('Chairman organizational portrait uploads keep the officer ID and selected photo on network failures',()=>{
+ const markup=read('dist/account.html'),client=read('dist/account.js'),css=read('dist/officers.css');
+ assert.match(markup,/id="roster-photo-file"[^>]*type="file"/);
+ assert.match(markup,/id="roster-upload-status"/);
+ assert.match(css,/\.roster-upload-status\.is-error/);
+ assert.match(client,/rosterSaveInProgress/);
+ assert.match(client,/f\.id\.value=saved\.id;[\s\S]*?detailsSaved=true;/);
+ assert.match(client,/rosterPhotoId=imageId;[\s\S]*?rosterPhotoFile=null;/);
+ assert.match(client,/form\.reset\(\);[\s\S]*?await loadTransparencyEditor\('roster'\)/);
+ assert.match(client,/src="\.\/api\/officer-images\//);
+ assert.match(client,/Hindi pa kumpleto ang photo save/);
+ const endpoint=api;
+ assert.match(endpoint,/path === '\/api\/officer-profiles' && method === 'POST'/);
+ assert.match(endpoint,/await user\(\['chairman'\]\)/);
+});
+test('SK officer award uploads retain unuploaded photos for retry and show persistent progress',()=>{
+ const awards=read('dist/awards-management.js');
+ assert.match(awards,/let uploadedCount=0/);
+ assert.match(awards,/uploadedCount\+\+/);
+ assert.match(awards,/const completedFiles=awardPendingFiles\.splice\(0,uploadedCount\)/);
+ assert.match(awards,/projectUploadStatus\(progress\)/);
+ assert.match(awards,/projectUploadStatus\('Award upload needs retry:/);
+ assert.match(awards,/Only your own unpublished draft or Chairman-managed awards can be edited/);
+});
