@@ -26,6 +26,14 @@
     {
       "source": "/youth-leaders",
       "destination": "/youth-leaders.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/projects.html"
+    },
+    {
+      "source": "/achievements",
+      "destination": "/achievements.html"
     }
   ],
   "redirects": [
@@ -52,6 +60,21 @@
     {
       "source": "/youth-leaders.html",
       "destination": "/youth-leaders",
+      "permanent": true
+    },
+    {
+      "source": "/projects.html",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/achievements.html",
+      "destination": "/achievements",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
       "permanent": true
     }
   ]
