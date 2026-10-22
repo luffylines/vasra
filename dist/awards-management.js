@@ -116,7 +116,7 @@ async function awardSave(publish=false){
   const notice=publish?'Award is now published on Home and Achievements page.':'Award saved as draft for Chairman approval.';
   projectUploadStatus(notice,'success');
   success(notice);
-  awardClear();awardClose();await loadAwards();
+  awardClear();awardDialog.close();await loadAwards();
  }catch(e){
   // Preserve the current draft AND every pending file that has not uploaded yet.
   // Only completed uploads are moved into the saved IDs list; retry resumes at
@@ -166,6 +166,7 @@ document.querySelector('#award-analyze').onclick=async()=>{
   f.description.value=String(d.scope||d.description||caption).slice(0,2500);
   status.textContent='AI-assisted draft lamang. I-review ang title, category, issuer at petsa; hindi ito automatic na ipo-publish.';
   awardMode('manual');
+  message('AI draft filled in. Please review the award form before saving.');
  }catch(e){status.textContent='Hindi gumana ang AI analysis: '+(e.message||'Subukan muli.')+'. Puwede ang Manual Entry.';}
  finally{button.disabled=false}
 };
