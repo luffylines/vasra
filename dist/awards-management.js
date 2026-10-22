@@ -2,7 +2,7 @@
 // SK officers submit drafts with up to 12 award photos. Only Chairman can publish.
 let staffAwards=[],awardImageList=[],awardPendingFiles=[],awardEditing=null,awardBusy=false;
 const awardDialog=document.querySelector('#award-dialog');
-function awardOpen(){if(!awardDialog.open)awardDialog.showModal()}
+function awardOpen(){if(!awardDialog.open)awardDialog.showModal();const scroll=awardDialog.querySelector('.award-modal-scroll');if(scroll)scroll.scrollTop=0;}
 function awardClose(){if(!awardBusy&&awardDialog.open)awardDialog.close()}
 function awardMode(v){document.querySelector('#award-facebook-panel').hidden=v!=='facebook';for(const mode of ['manual','facebook']){const b=document.querySelector('#award-mode-'+mode);b.classList.toggle('selected',mode===v);b.setAttribute('aria-pressed',String(mode===v))}}
 document.querySelector('#award-new').onclick=()=>{awardClear();awardOpen()};

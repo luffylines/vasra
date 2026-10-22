@@ -11,6 +11,7 @@ on:
       - fix/compact-project-cover-cards-20261017
       - fix/achievements-and-officer-photo-upload-20261022
       - feature/awards-dashboard-modal-clean-routes-20261022
+      - fix/awards-modal-viewport-mobile-20261022
 
 permissions:
   contents: read
