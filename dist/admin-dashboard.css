@@ -1258,9 +1258,8 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-u
 }
 
 
-/* Sticky project upload toast: a child of <dialog> so it stays above its modal backdrop.
-   It is independent from the auto-dismiss success/error notifications. */
-#editor .project-upload-toast{
+/* Persistent top-layer upload popover, independent of editor dialog. */
+#project-upload-progress.project-upload-toast{
   position:fixed;top:max(18px,env(safe-area-inset-top));right:max(22px,env(safe-area-inset-right));
   z-index:1000;display:flex;align-items:center;gap:12px;
   width:min(340px,calc(100vw - 36px));min-height:60px;box-sizing:border-box;
@@ -1268,17 +1267,17 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-u
   border-left:4px solid #2f69c5;border-radius:14px;box-shadow:0 14px 40px rgba(18,46,88,.20);
   color:#1a457c;font-size:13px;font-weight:750;line-height:1.5;pointer-events:none;
 }
-#editor .project-upload-toast[hidden]{display:none!important}
-#editor .project-upload-spinner{flex:0 0 22px;width:22px;height:22px;border:3px solid #cbdcf4;border-top-color:#235cb4;border-radius:50%;animation:vasra-upload-spin .8s linear infinite}
+#project-upload-progress.project-upload-toast[hidden]{display:none!important}
+#project-upload-progress .project-upload-spinner{flex:0 0 22px;width:22px;height:22px;border:3px solid #cbdcf4;border-top-color:#235cb4;border-radius:50%;animation:vasra-upload-spin .8s linear infinite}
 @keyframes vasra-upload-spin{to{transform:rotate(360deg)}}
-body.account-workspace[data-theme="dark"] #editor .project-upload-toast{
+body.account-workspace[data-theme="dark"] #project-upload-progress.project-upload-toast{
   background:#193653;color:#e5f3ff;border-color:#517dae;border-left-color:#77b6fb;
 }
-body.account-workspace[data-theme="dark"] #editor .project-upload-spinner{border-color:#3d5b81;border-top-color:#80c3ff}
+body.account-workspace[data-theme="dark"] #project-upload-progress .project-upload-spinner{border-color:#3d5b81;border-top-color:#80c3ff}
 @media(max-width:600px){
- #editor .project-upload-toast{top:max(10px,env(safe-area-inset-top));right:10px;width:min(310px,calc(100vw - 20px));padding:11px 12px;font-size:12px}
+ #project-upload-progress.project-upload-toast{top:max(10px,env(safe-area-inset-top));right:10px;width:min(310px,calc(100vw - 20px));padding:11px 12px;font-size:12px}
 }
-@media(prefers-reduced-motion:reduce){#editor .project-upload-spinner{animation:none;border-top-color:#235cb4}}
+@media(prefers-reduced-motion:reduce){#project-upload-progress .project-upload-spinner{animation:none;border-top-color:#235cb4}}
 
 
 /* Dedicated, compact and responsive SK Vasra password-recovery experience. */
@@ -1349,3 +1348,1146 @@ body.account-workspace #recovery-section.account-recovery{
  #recovery-section .recovery-content{padding:24px 18px}
 }
 @media(prefers-reduced-motion:reduce){#recovery-section .recovery-submit:hover{transform:none}}
+
+/* Dense staff project rows: visible small cover and secure photo viewer. */
+#managed-projects .project-manage-row{
+ display:grid;grid-template-columns:104px minmax(0,1fr) auto;align-items:center;
+ column-gap:18px;row-gap:10px;padding:16px 18px;min-width:0;
+}
+#managed-projects .project-manage-media{display:flex;flex-direction:column;gap:6px;align-items:center;min-width:0}
+#managed-projects .project-manage-thumbnail{
+ position:relative;display:block;width:104px;height:78px;flex:none;padding:0;
+ border:1px solid #d2e1f2;border-radius:10px;overflow:hidden;
+ background:#eaf1fb;cursor:pointer;
+}
+#managed-projects .project-manage-thumbnail.is-empty{cursor:default}
+#managed-projects .project-manage-thumbnail img{
+ display:block;position:absolute;inset:0;width:100%;height:100%;
+ object-fit:cover;z-index:1;
+}
+#managed-projects .project-manage-thumbnail img[hidden]{display:none!important}
+#managed-projects .project-thumb-fallback{
+ display:grid;place-items:center;position:absolute;inset:0;
+ color:#4d76a4;font-weight:850;letter-spacing:.1em;font-size:16px;
+ background:linear-gradient(135deg,#e2edfb,#f3f7ff);
+}
+#managed-projects button.project-manage-thumbnail:hover,
+#managed-projects button.project-manage-thumbnail:focus-visible{border-color:#316ebc;outline-offset:2px}
+#managed-projects .project-manage-photo-count{font-size:11px;font-weight:700;color:#657f9e;text-align:center}
+#managed-projects .project-manage-info{min-width:0}
+#managed-projects .project-manage-info h3{margin:7px 0;font-size:16px;line-height:1.35;overflow-wrap:anywhere}
+#managed-projects .project-manage-info p{margin:3px 0;font-size:11px;line-height:1.45}
+#managed-projects .project-manage-row .badge-inline{font-size:10px;line-height:1.45;padding:5px 8px}
+#managed-projects .project-manage-info .project-quick-progress{margin-top:8px;max-width:300px}
+#managed-projects .project-manage-info .project-progress-caption{margin-bottom:5px;font-size:11px}
+#managed-projects .project-manage-info .project-progress-caption strong{font-size:12px}
+#managed-projects .project-manage-info .project-progress-bar{height:6px}
+#managed-projects .project-manage-row .project-row-actions{max-width:305px;justify-content:flex-end;gap:7px}
+#managed-projects .project-manage-row .project-row-actions button{min-height:36px;padding:8px 10px;font-size:11px;white-space:nowrap}
+#managed-projects .project-view-photos{color:#2457a0;border-color:#bad3f3;background:#f1f7ff}
+#staff-project-gallery{
+ width:min(950px,calc(100vw - 24px));height:min(740px,calc(100dvh - 24px));
+ max-width:950px;max-height:calc(100dvh - 24px);padding:0;border-radius:18px;
+ border:1px solid #40536c;background:#101d30;color:#f4f8ff;overflow:hidden;
+ box-shadow:0 30px 80px #0008;
+}
+#staff-project-gallery::backdrop{background:rgba(5,14,29,.8);backdrop-filter:blur(4px)}
+#staff-project-gallery .staff-gallery-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #ffffff26}
+#staff-project-gallery .staff-gallery-kicker{display:block;color:#9ebbe4;font-size:10px;font-weight:800;letter-spacing:1.2px;margin-bottom:4px}
+#staff-project-gallery h2{font-size:17px;line-height:1.35;color:#fff;margin:0;overflow-wrap:anywhere}
+#staff-project-gallery #staff-gallery-close{width:40px;height:40px;flex:none;border:1px solid #ffffff40;border-radius:10px;background:#ffffff15;color:#fff;font-size:17px}
+#staff-project-gallery .staff-gallery-stage{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:10px;align-items:center;height:calc(100% - 143px);min-height:0;padding:14px}
+#staff-project-gallery .staff-gallery-photo-wrap{height:100%;width:100%;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
+#staff-project-gallery .staff-gallery-photo-wrap img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+#staff-project-gallery .staff-gallery-photo-wrap p{color:#fbd2d2;text-align:center;font-size:13px;line-height:1.5}
+#staff-project-gallery .staff-gallery-arrow{width:44px;height:52px;border:1px solid #ffffff3a;border-radius:10px;background:#ffffff16;color:white;font-size:34px}
+#staff-project-gallery .staff-gallery-arrow:disabled{opacity:.3;cursor:default}
+#staff-project-gallery .staff-gallery-footer{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid #ffffff24;color:#d0dcf1;font-size:12px}
+#staff-project-gallery .staff-gallery-footer small{color:#a9bdd7;text-align:right;font-size:11px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-manage-photo-count{color:#b4c9e5}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-view-photos{color:#d8eaff;background:#234064;border-color:#4d78a8}
+@media(max-width:1050px){
+ #managed-projects .project-manage-row{grid-template-columns:92px minmax(0,1fr)}
+ #managed-projects .project-manage-thumbnail{width:92px;height:69px}
+ #managed-projects .project-manage-row .project-row-actions{grid-column:2;max-width:none;justify-content:flex-start}
+}
+@media(max-width:650px){
+ #managed-projects .project-manage-row{grid-template-columns:72px minmax(0,1fr);gap:8px 12px;padding:12px}
+ #managed-projects .project-manage-thumbnail{width:72px;height:56px}
+ #managed-projects .project-manage-info h3{font-size:14px}
+ #managed-projects .project-manage-info p{font-size:10px}
+ #managed-projects .project-manage-row .project-row-actions{grid-column:1/-1;justify-content:flex-start;width:100%;max-width:100%;gap:6px}
+ #managed-projects .project-manage-row .project-row-actions button{flex:1 1 auto;min-width:0;font-size:11px;white-space:normal}
+ #staff-project-gallery .staff-gallery-stage{grid-template-columns:32px minmax(0,1fr) 32px;gap:4px;padding:6px;height:calc(100% - 145px)}
+ #staff-project-gallery .staff-gallery-arrow{width:32px;height:46px;font-size:25px}
+ #staff-project-gallery .staff-gallery-header{padding:13px}
+ #staff-project-gallery .staff-gallery-footer{padding:12px;align-items:flex-start;flex-direction:column;gap:5px}
+ #staff-project-gallery .staff-gallery-footer small{text-align:left}
+}
+
+/* Project editor: fixed header/actions with a single scrollable content area. */
+#editor.project-editor-modal[open]{
+ display:flex;flex-direction:column;
+ width:min(740px,calc(100vw - 24px));max-width:740px;
+ height:min(880px,calc(100dvh - 36px));max-height:calc(100dvh - 36px);
+ overflow:hidden;border-radius:20px;
+}
+#editor.project-editor-modal .project-editor-header{
+ flex:0 0 auto;padding:22px 30px 18px;padding-right:70px;
+ background:linear-gradient(115deg,#edf5ff,#fff);
+}
+#editor.project-editor-modal .project-editor-header h2{margin:6px 0;font-size:23px}
+#editor.project-editor-modal .project-editor-header p{font-size:12px}
+#editor.project-editor-modal .close{top:17px;right:18px;z-index:5;min-width:38px;min-height:38px}
+#editor.project-editor-modal #editor-message:not(:empty){flex:0 0 auto;margin:0;padding:9px 30px;font-size:12px;background:#fff3f3}
+#editor.project-editor-modal #project-form{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+ padding:0;gap:0;overflow:hidden;
+}
+#editor.project-editor-modal #project-editor-scroll{
+ flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+ display:flex;flex-direction:column;gap:12px;
+ padding:18px 30px 24px;scrollbar-gutter:stable;
+}
+#editor #project-editor-scroll>label:not(.editor-upload-zone),
+#editor #project-editor-scroll .form-row>label{
+ display:flex;flex-direction:column;gap:7px;margin:0;
+ font-size:12px;font-weight:750;color:#385475;
+}
+#editor #project-editor-scroll .form-row{gap:14px}
+#editor #project-editor-scroll .editor-section-title{
+ display:flex;align-items:center;gap:11px;
+ background:#edf4ff;border:1px solid #dce8f8;
+ border-radius:11px;padding:10px 12px;margin:10px 0 2px;
+ font-size:13px;letter-spacing:.1px;
+}
+#editor #project-editor-scroll .editor-section-number{
+ width:25px;height:25px;border-radius:8px;background:#d8e8ff;
+}
+#editor #project-editor-scroll .editor-gallery-help{margin:0;font-size:11px!important}
+#editor #project-editor-scroll .editor-upload-zone{min-height:96px;margin:0;padding:12px}
+#editor #project-editor-scroll .editor-upload-icon{width:29px;height:29px;font-size:21px}
+#editor #project-form :is(input,select,textarea){max-width:100%;box-sizing:border-box}
+#editor #project-form input:focus-visible,
+#editor #project-form select:focus-visible,
+#editor #project-form textarea:focus-visible{outline:2px solid #6395d2;outline-offset:2px}
+#editor #project-editor-scroll .editor-publish{
+ background:#f3f8ff;border:1px solid #cfe0f5;border-radius:12px;
+ padding:16px;margin:0;display:flex;flex-direction:column;gap:9px;
+}
+#editor #project-publication-controls .publish-field-title{margin:0;font-size:13px}
+#editor #project-publication-controls .publish-field-description{margin:0;font-size:11px}
+#editor #project-publication-mode{margin:0;width:100%;min-height:46px;font-size:13px;font-weight:700}
+#editor #project-publish-preview{
+ margin:0;min-height:0;padding:9px 11px;border-radius:9px;
+ background:#e4efff;color:#215590;font-size:11px;line-height:1.5;
+}
+#editor.project-editor-modal .editor-footer{
+ flex:0 0 auto;display:flex;flex-direction:row;align-items:center;justify-content:space-between;
+ gap:14px;margin:0;padding:13px 30px max(13px,env(safe-area-inset-bottom));
+ background:#fff;border-top:1px solid #dce7f4;box-shadow:0 -5px 18px #1836560c;
+}
+#editor.project-editor-modal .editor-footer span{flex:1;min-width:0;font-size:11px;line-height:1.45}
+#editor.project-editor-modal .editor-footer-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:none}
+#editor.project-editor-modal .editor-footer button{width:auto;min-width:112px;min-height:42px;margin:0;white-space:nowrap;font-size:12px}
+#editor.project-editor-modal .editor-footer #save-project{min-width:166px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-editor-scroll .editor-section-title{
+ background:#1d3757;border-color:#45658b;color:#e6f1ff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-editor-scroll>label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-editor-scroll .form-row>label{color:#d6e6ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-publish-preview{background:#183d63;color:#d6e9ff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .editor-footer{
+ background:#192a42;border-color:#45617e;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal #editor-message:not(:empty){background:#492b3a;color:#ffdbe3}
+@media(max-width:650px){
+ #editor.project-editor-modal[open]{
+  width:calc(100vw - 12px);height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);
+  border-radius:14px;
+ }
+ #editor.project-editor-modal .project-editor-header{padding:18px 16px 15px;padding-right:57px}
+ #editor.project-editor-modal .project-editor-header h2{font-size:20px}
+ #editor.project-editor-modal #project-editor-scroll{padding:14px 16px 20px;gap:11px;scrollbar-gutter:auto}
+ #editor.project-editor-modal .editor-footer{padding:11px 16px max(11px,env(safe-area-inset-bottom));gap:9px}
+ #editor.project-editor-modal .editor-footer span{display:none}
+ #editor.project-editor-modal .editor-footer-actions{width:100%}
+ #editor.project-editor-modal .editor-footer button{flex:1 1 30%;min-width:0}
+ #editor.project-editor-modal .editor-footer #save-project{flex:2 1 60%;min-width:0}
+ #editor #project-editor-scroll .editor-image-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:350px){
+ #editor.project-editor-modal .editor-footer #save-project{font-size:11px}
+}
+/* Publish Now directly on an unpublished draft card (with explicit confirmation). */
+#managed-projects .project-publish-trigger{
+ display:inline-flex;align-items:center;justify-content:center;min-height:38px;
+ padding:9px 13px;border-radius:9px;border:1px solid #1b7958;
+ background:#eaf9f1;color:#126146;font-size:12px;font-weight:800;cursor:pointer;
+}
+#managed-projects .project-publish-trigger:hover{background:#d8f2e6;border-color:#14734f}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-publish-trigger{
+ background:#163e36;border-color:#36886f;color:#b4f8d8;
+}
+#publish-project-dialog{
+ width:min(470px,calc(100vw - 24px));max-width:470px;max-height:calc(100dvh - 28px);
+ padding:28px;border:1px solid #d8e6f3;border-radius:19px;background:#fff;
+ color:#19395f;box-shadow:0 24px 70px #0a1e3a55;overflow:auto;
+}
+#publish-project-dialog::backdrop{background:#081a35ab;backdrop-filter:blur(4px)}
+#publish-project-dialog .publish-confirm-icon{
+ display:grid;place-items:center;width:44px;height:44px;border-radius:13px;
+ background:#e3f6ec;color:#14734f;font-size:27px;font-weight:800;margin-bottom:13px;
+}
+#publish-project-dialog .publish-confirm-kicker{display:block;color:#497ea9;font-size:10px;font-weight:800;letter-spacing:1.2px}
+#publish-project-dialog h2{margin:7px 0 10px;font-size:23px;color:inherit}
+#publish-project-dialog p{font-size:13px;line-height:1.65;color:#526b88}
+#publish-project-dialog p strong{color:#183d69;overflow-wrap:anywhere}
+#publish-project-dialog .publish-confirm-notice{padding:12px 14px;background:#eff7ff;border:1px solid #d6e7fa;border-radius:11px}
+#publish-project-dialog #publish-project-error{color:#b13442;font-weight:700;min-height:0}
+#publish-project-dialog .publish-confirm-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:16px}
+#publish-project-dialog .publish-confirm-actions button{min-height:43px;margin:0;min-width:112px;padding:10px 15px;border-radius:10px}
+#publish-project-dialog .publish-confirm-actions .primary{background:#1b7958;color:#fff;border:0}
+#publish-project-dialog .publish-confirm-actions .primary:hover{background:#126044}
+#publish-project-dialog .publish-confirm-actions .primary:disabled{opacity:.55;cursor:wait}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog{background:#182a43;color:#eef5ff;border-color:#4a6787}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog p strong{color:#d5e5f8}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #publish-project-dialog .publish-confirm-notice{background:#193858;border-color:#446689}
+@media(max-width:650px){
+ #publish-project-dialog{padding:22px 18px}
+ #publish-project-dialog .publish-confirm-actions button{flex:1}
+}
+
+/* Visual publication choice tiles (the original select remains the form source). */
+#editor #project-publication-controls{position:relative}
+#editor #project-publication-choices{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;
+}
+#editor .publication-choice{
+ display:flex;flex-direction:column;align-items:flex-start;text-align:left;
+ gap:5px;min-width:0;min-height:112px;margin:0;padding:13px 11px;
+ border:1px solid #cfdef0;border-radius:11px;background:#fff;
+ color:#385578;cursor:pointer;transition:border-color .15s,background .15s;
+}
+#editor .publication-choice strong{color:#284c78;font-size:12px;font-weight:800;line-height:1.35}
+#editor .publication-choice small{font-size:10px;line-height:1.45;color:#6982a1}
+#editor .publication-choice-icon{
+ display:grid;place-items:center;width:27px;height:27px;border-radius:9px;
+ background:#e6effd;color:#285fab;font-size:16px;font-weight:800;
+}
+#editor .publication-choice.selected{background:#e8f2ff;border:2px solid #3169b4;padding:12px 10px}
+#editor .publication-choice.selected .publication-choice-icon{background:#2c64b1;color:#fff}
+#editor .publication-choice:focus-visible{outline:3px solid #75a7e4;outline-offset:2px}
+#editor .publication-choice[hidden]{display:none!important}
+#editor #project-publication-mode{
+ position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;
+ padding:0!important;margin:0!important;border:0!important;clip-path:inset(50%);
+ overflow:hidden!important;opacity:0;pointer-events:none;
+}
+#editor .publication-choice-keep{grid-column:1/-1;min-height:76px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice{
+ background:#142c47;color:#e1efff;border-color:#4c6c94;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice strong{color:#e4efff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice small{color:#b4ccec}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .publication-choice.selected{background:#1d4670;border-color:#82bbff}
+@media(max-width:540px){
+ #editor #project-publication-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #editor .publication-choice{min-height:102px;padding:11px 9px}
+ #editor .publication-choice.selected{padding:10px 8px}
+ #editor .publication-choice-keep{grid-column:1/-1;min-height:70px}
+}
+@media(prefers-reduced-motion:reduce){#editor .publication-choice{transition:none}}
+/* Facebook caption analyzer must not collapse inside the new flex scroll area. */
+#editor #project-editor-scroll>.fb-import-panel{
+ flex:0 0 auto;min-height:max-content;margin:4px 0 12px;
+}
+#editor #project-editor-scroll>.project-entry-mode,
+#editor #project-editor-scroll>.project-entry-helper,
+#editor #project-editor-scroll>.project-review-fields{flex:0 0 auto;min-width:0}
+#editor #project-review-fields[hidden],
+#editor #fb-review-hint[hidden],
+#editor.project-editor-modal .editor-footer[hidden]{display:none!important}
+#editor #project-review-fields{display:flex;flex-direction:column;gap:12px;min-width:0}
+#editor #fb-import-panel .fb-import-content{padding:18px;gap:13px}
+#editor #fb-import-panel #fb-post-caption{
+ display:block;box-sizing:border-box;width:100%;min-height:225px;
+ padding:14px;border:1px solid #b9d0ec;border-radius:11px;
+ background:#fff;color:#17385e;font-size:13px;line-height:1.65;resize:vertical;
+}
+#editor #fb-import-panel #fb-post-caption:focus-visible{outline:3px solid #a7caff;outline-offset:2px}
+#editor #fb-import-panel .fb-import-bottom{align-items:flex-start;flex-direction:column}
+#editor #fb-import-panel #fb-import-status{flex:none;width:100%;overflow-wrap:anywhere}
+#editor #fb-import-panel .fb-import-alert{white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow-y:auto}
+#editor .fb-review-hint{
+ padding:12px 14px;border-radius:11px;background:#e9f7ef;
+ border:1px solid #b9dfcd;color:#175d42;font-size:12px;font-weight:750;line-height:1.6;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-post-caption{background:#122641!important;border-color:#496b93!important;color:#eaf4ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor .fb-review-hint{background:#174133;border-color:#417d68;color:#cbf4df}
+@media(max-width:600px){
+ #editor #fb-import-panel .fb-import-content{padding:13px}
+ #editor #fb-import-panel #fb-post-caption{min-height:190px}
+ #editor #fb-import-panel #fb-analyze-post{width:100%;min-height:44px}
+}
+/* Maintain field labels after grouping them for caption-only AI review. */
+#editor #project-review-fields>label:not(.editor-upload-zone),
+#editor #project-review-fields .form-row>label{
+ display:flex;flex-direction:column;gap:7px;margin:0;
+ color:#385475;font-size:12px;font-weight:750;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-review-fields>label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #project-review-fields .form-row>label{
+ color:#d6e6ff;
+}
+
+/* Modern circular disclosure chevron; native marker remains suppressed. */
+#editor #fb-import-panel>summary::marker{content:''}
+#editor #fb-import-panel>summary{padding-right:15px}
+#editor #fb-import-panel .fb-import-chevron{
+ display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;
+ margin-left:auto;border:1px solid #b8d3f2;border-radius:10px;
+ background:#e4efff;color:#2a609e;line-height:1;
+ transition:background .18s ease,border-color .18s ease;
+}
+#editor #fb-import-panel .fb-import-chevron svg{
+ display:block;transform:rotate(0deg);transition:transform .2s ease;
+}
+#editor #fb-import-panel[open] .fb-import-chevron{transform:none;background:#d9e9ff;border-color:#9fc5ef}
+#editor #fb-import-panel[open] .fb-import-chevron svg{transform:rotate(180deg)}
+#editor #fb-import-panel>summary:hover .fb-import-chevron{background:#d0e5ff;border-color:#78a8e5}
+#editor #fb-import-panel>summary:focus-visible{outline:3px solid #7caff5;outline-offset:-3px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor #fb-import-panel .fb-import-chevron{
+ background:#28496c;border-color:#557a9f;color:#eaf5ff;
+}
+@media(prefers-reduced-motion:reduce){
+ #editor #fb-import-panel .fb-import-chevron,
+ #editor #fb-import-panel .fb-import-chevron svg{transition:none}
+}
+/* Persistent save feedback beside the action; works for native validation and API errors. */
+#editor.project-editor-modal .project-save-feedback{
+ flex:1 1 100%;min-width:0;margin:0;padding:9px 11px;line-height:1.5;
+ font-size:12px;font-weight:750;color:#1a674b;background:#e6f6ec;
+ border:1px solid #b6decb;border-radius:9px;overflow-wrap:anywhere;
+}
+#editor.project-editor-modal .project-save-feedback.error{
+ color:#9e2538;background:#fff0f1;border-color:#f0c3cb;
+}
+#editor.project-editor-modal .project-save-feedback[hidden]{display:none!important}
+#editor.project-editor-modal .editor-footer:has(.project-save-feedback:not([hidden])){flex-wrap:wrap}
+#editor.project-editor-modal .editor-footer .project-save-feedback:not([hidden]){order:-1}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .project-save-feedback.error{
+ background:#482636;border-color:#a45566;color:#ffd4de;
+}
+@media(max-width:650px){
+ #editor.project-editor-modal .editor-footer .project-save-feedback:not([hidden]){flex:1 1 100%}
+}
+/* Chairman delete confirmation: copy the exact name, then manually paste to confirm. */
+#delete-project-dialog .delete-project-copy-row{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:10px 12px;margin:7px 0;border:1px solid #d3e1f2;border-radius:10px;
+ background:#f3f7fd;
+}
+#delete-project-dialog .delete-project-copy-row strong{
+ font-size:13px;line-height:1.4;overflow-wrap:anywhere;min-width:0;color:#214b79;
+}
+#delete-project-dialog .delete-project-copy-name{
+ display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;
+ background:#e7effd;border:1px solid #aac4e8;border-radius:9px;color:#225a9c;
+ min-height:38px;padding:8px 10px;font-weight:750;font-size:11px;cursor:pointer;
+}
+#delete-project-dialog .delete-project-copy-name:hover{background:#d8e9ff}
+#delete-project-dialog .delete-project-copy-name:focus-visible{outline:3px solid #8db5ef;outline-offset:2px}
+#delete-project-dialog #delete-project-copy-status{
+ margin:3px 0 10px;font-size:11px;font-weight:750;color:#186549;
+}
+#delete-project-dialog #delete-project-copy-status[hidden]{display:none!important}
+#delete-project-dialog #delete-project-copy-status.error{color:#aa303b}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog .delete-project-copy-row{
+ background:#142740;border-color:#4d698a;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog .delete-project-copy-row strong{color:#e1eeff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog .delete-project-copy-name{
+ color:#d9eaff;background:#23466c;border-color:#5379a6;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #delete-project-dialog #delete-project-copy-status{color:#9fefd1}
+@media(max-width:420px){
+ #delete-project-dialog .delete-project-copy-row{flex-direction:column;align-items:stretch}
+ #delete-project-dialog .delete-project-copy-name{width:100%}
+}
+
+/* Duty status dashboard card – compact, icon-led, responsive, light/dark. */
+#dashboard > #duty-controls.duty-office-card{
+ padding:22px 24px!important;margin:0 0 22px!important;
+ background:linear-gradient(120deg,#fff 0%,#f7faff 100%)!important;
+ border:1px solid #dce7f5!important;border-radius:18px!important;
+ box-shadow:0 12px 32px rgba(19,45,88,.065)!important;
+ color:#17365b;min-width:0;
+}
+#dashboard > #duty-controls.duty-office-card[hidden]{display:none!important}
+#duty-controls .duty-card-heading{display:flex;align-items:center;gap:13px;min-width:0}
+#duty-controls .duty-card-heading-icon{display:grid;place-items:center;width:46px;height:46px;flex:none;
+ border-radius:14px;background:#e7f0fe;color:#2762af}
+#duty-controls :is(.duty-card-heading-icon,.duty-card-info-icon,.duty-card-note,.duty-action-button) svg{width:20px;height:20px;flex:none}
+#duty-controls .duty-card-heading-text{flex:1;min-width:0}
+#duty-controls .duty-card-eyebrow{font-size:10px;font-weight:850;letter-spacing:1.05px;color:#6585af}
+#duty-controls .duty-card-heading h3{font-size:17px;line-height:1.35;letter-spacing:-.2px;color:#173b68;margin:3px 0}
+#dashboard > #duty-controls .duty-card-heading p{margin:0;font-size:12px;line-height:1.5;color:#6883a5}
+#duty-controls .duty-mode-badge{display:inline-flex;align-items:center;gap:8px;flex:none;white-space:nowrap;
+ padding:9px 13px;border-radius:999px;font-size:11px;font-weight:800;
+ border:1px solid #dae5f1;background:#edf3fa;color:#536e91}
+#duty-controls .duty-mode-badge .duty-status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+ background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 12%,transparent)}
+#duty-controls .duty-mode-badge[data-state="open"]{background:#e5f7ee;border-color:#b4dfc9;color:#176847}
+#duty-controls .duty-mode-badge[data-state="closed"]{background:#fff0f0;border-color:#efc5c8;color:#a23541}
+#duty-controls .duty-mode-badge[data-state="unknown"]{background:#fff7e8;border-color:#edd8b0;color:#85611d}
+#duty-controls .duty-card-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 14px}
+#duty-controls .duty-card-info{display:flex;gap:12px;align-items:center;min-width:0;padding:13px 14px;
+ border:1px solid #e1eaf5;border-radius:12px;background:#f5f8ff}
+#duty-controls .duty-card-info-icon{display:grid;place-items:center;width:38px;height:38px;flex:none;
+ color:#2c69b6;background:#e3efff;border-radius:11px}
+#duty-controls .duty-card-info>div{min-width:0}
+#duty-controls .duty-card-label{display:block;font-size:11px;color:#667f9f;font-weight:650;margin-bottom:4px}
+#duty-controls .duty-card-info strong{display:block;font-size:13px;line-height:1.45;color:#173d68;overflow-wrap:anywhere}
+#dashboard > #duty-controls .duty-card-description{font-size:12px;color:#456487;line-height:1.55;margin:0 0 16px}
+#duty-controls .duty-card-actions{display:flex;gap:10px;flex-wrap:wrap}
+#dashboard > #duty-controls button.duty-action-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+ min-height:44px!important;border:1px solid transparent;border-radius:11px;
+ padding:11px 16px!important;margin:0;font-size:12px;font-weight:800;line-height:1.2;
+ cursor:pointer;transition:background-color .15s,border-color .15s,transform .15s,box-shadow .15s}
+#duty-controls .duty-action-close{color:#fff;background:#c62f43;border-color:#a92536!important}
+#duty-controls .duty-action-close:hover:not(:disabled){background:#aa2537;transform:translateY(-1px)}
+#duty-controls .duty-action-auto{color:#225da7;background:#eaf2ff;border-color:#bfd7f8!important}
+#duty-controls .duty-action-auto:hover:not(:disabled){background:#dceaff;transform:translateY(-1px)}
+#duty-controls .duty-action-retry{color:#6c4f17;background:#fff5dc;border-color:#e9d196!important}
+#dashboard > #duty-controls button.duty-action-button:disabled{opacity:.46;cursor:not-allowed;transform:none}
+#dashboard > #duty-controls button.duty-action-button[hidden]{display:none!important}
+#dashboard > #duty-controls button.duty-action-button:focus-visible{outline:3px solid #88b4f3;outline-offset:3px}
+#dashboard > #duty-controls .duty-card-note{display:flex;align-items:center;gap:8px;margin:17px 0 0;
+ padding-top:13px;border-top:1px solid #e0eaf4;color:#7088a5;font-size:10px;line-height:1.5}
+#duty-controls .duty-card-note svg{width:15px!important;height:15px!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard > #duty-controls.duty-office-card{
+ background:linear-gradient(120deg,#182a42,#1b3350)!important;border-color:#45607e!important;color:#e9f4ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls :is(.duty-card-heading h3,.duty-card-info strong){color:#e4efff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls :is(.duty-card-eyebrow,.duty-card-heading p,.duty-card-label,.duty-card-note){color:#b6cbe7!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls :is(.duty-card-heading-icon,.duty-card-info-icon){background:#244669;color:#a8cffc}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-card-info{background:#213954;border-color:#405d80}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-card-description{color:#c9d9ee!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="open"]{color:#b6f4d3;background:#164635;border-color:#337d63}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="closed"]{color:#ffcbd1;background:#522d38;border-color:#915064}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="unknown"]{color:#f6d995;background:#493f2d;border-color:#716341}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-mode-badge[data-state="checking"]{color:#d4e6fa;background:#28405c;border-color:#48698c}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-action-auto{color:#e1f0ff;background:#28486b;border-color:#4d769f!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-action-auto:hover:not(:disabled){background:#325981}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #duty-controls .duty-card-note{border-top-color:#45617f}
+@media(max-width:730px){
+ #dashboard > #duty-controls.duty-office-card{padding:16px!important}
+ #duty-controls .duty-card-heading{flex-wrap:wrap;gap:10px}
+ #duty-controls .duty-card-heading-icon{width:40px;height:40px}
+ #duty-controls .duty-mode-badge{margin-left:0}
+ #duty-controls .duty-card-metrics{grid-template-columns:1fr;gap:8px;margin:14px 0}
+ #duty-controls .duty-card-actions{flex-direction:column;gap:9px}
+ #dashboard > #duty-controls button.duty-action-button{width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){#dashboard > #duty-controls button.duty-action-button{transition:none}}
+
+/* Dedicated Secretary and Treasurer dashboards – intentionally distinct from Kagawad. */
+body.account-workspace #secretary-overview[hidden],
+body.account-workspace #treasurer-overview[hidden]{display:none!important}
+#dashboard .role-overview{margin:0 0 24px;min-width:0}
+#dashboard .role-dashboard-hero{
+ display:flex;gap:16px;align-items:center;padding:23px 24px;border-radius:18px;
+ background:linear-gradient(115deg,#16345e,#285e94);color:#fff;margin:0 0 16px;
+ box-shadow:0 12px 30px rgba(25,63,112,.12);min-width:0;
+}
+#dashboard #treasurer-overview .role-dashboard-hero{background:linear-gradient(115deg,#183f51,#297d87)}
+#dashboard .role-hero-icon{width:56px;height:56px;display:grid;place-items:center;
+ flex:none;border:1px solid #ffffff38;border-radius:15px;background:#ffffff20}
+#dashboard .role-hero-icon svg{width:27px;height:27px}
+#dashboard .role-dashboard-hero>div{flex:1;min-width:0}
+#dashboard .role-kicker{display:block;color:#c4dcfb;letter-spacing:1.4px;font-size:10px;font-weight:850}
+#dashboard .role-dashboard-hero h2{color:#fff!important;font-size:23px;line-height:1.25;margin:7px 0}
+#dashboard .role-dashboard-hero p{color:#d8e8fa!important;line-height:1.55;font-size:12px;margin:0}
+#dashboard .role-hero-tag{flex:none;white-space:nowrap;border-radius:999px;border:1px solid #ffffff52;background:#ffffff16;
+ padding:8px 11px;color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px}
+#dashboard .role-dashboard-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:19px}
+#dashboard .role-metric{border:1px solid #deebf5;background:#fff;border-radius:15px;
+ padding:18px;min-width:0;display:flex;gap:12px;align-items:flex-start;box-shadow:0 5px 17px #152b5010}
+#dashboard .role-metric-icon{display:grid;place-items:center;flex:none;width:40px;height:40px;
+ background:#eaf2ff;color:#2763a9;border-radius:12px}
+#dashboard #treasurer-overview .role-metric-icon{background:#e3f7f4;color:#26756f}
+#dashboard .role-metric-icon svg{width:21px;height:21px}
+#dashboard .role-metric>div{min-width:0}
+#dashboard .role-metric-label{display:block;font-size:10px;line-height:1.3;color:#607e9e;font-weight:800}
+#dashboard .role-metric strong{display:block;margin:6px 0;font-size:23px;line-height:1.2;overflow-wrap:anywhere;color:#193e68}
+#dashboard .role-metric small{display:block;color:#6d85a0;font-size:10px;line-height:1.45}
+#dashboard .role-dashboard-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:17px;align-items:start}
+#dashboard .role-dashboard-layout>div{min-width:0}
+#dashboard .role-section-header{margin:0 0 12px}
+#dashboard .role-section-header h3{font-size:16px;color:#20456c;margin:0 0 5px}
+#dashboard .role-section-header p{color:#6e819b;font-size:11px;margin:0;line-height:1.45}
+#dashboard .role-workflows{display:grid;gap:10px}
+#dashboard .role-workflow-card{
+ display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px 12px;align-items:start;
+ padding:17px;border-radius:14px;border:1px solid #dce6f4;background:#fff;min-width:0;
+ box-shadow:0 3px 13px #16315b09;
+}
+#dashboard .role-workflow-icon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+ background:#e9f2ff;color:#2868ac}
+#dashboard #treasurer-overview .role-workflow-icon{background:#e6f5f1;color:#28796d}
+#dashboard .role-workflow-icon svg{width:21px;height:21px}
+#dashboard .role-workflow-card h3{font-size:13px;color:#19406b;margin:2px 0 6px}
+#dashboard .role-workflow-card p{font-size:11px;color:#6a829d;line-height:1.55;margin:0}
+#dashboard .role-workflow-card button{
+ grid-column:2;justify-self:start;border:1px solid #c4daf2;color:#245c9b;
+ background:#edf5ff;border-radius:9px;padding:9px 12px;font-size:11px;font-weight:800;
+ cursor:pointer;display:flex;align-items:center;gap:10px;min-height:37px}
+#dashboard .role-workflow-card button:hover{background:#e0efff}
+#dashboard .role-workflow-card button:focus-visible{outline:3px solid #9fc9f8;outline-offset:2px}
+#dashboard .role-records{border:1px solid #dce7f5;background:#fff;border-radius:14px;
+ min-height:96px;padding:7px 15px;font-size:12px;color:#677f9d}
+#dashboard .role-record-item{display:flex;gap:10px;align-items:center;justify-content:space-between;
+ padding:13px 0;border-bottom:1px solid #e9eef5}
+#dashboard .role-record-item:last-child{border-bottom:0}
+#dashboard .role-record-item>div{min-width:0}
+#dashboard .role-record-item strong{display:block;color:#204b7b;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+#dashboard .role-record-item small{display:block;font-size:10px;color:#6b829d;line-height:1.5;margin-top:3px;
+ overflow-wrap:anywhere}
+#dashboard .role-record-value{font-size:10px;font-weight:800;color:#316eaa;white-space:nowrap}
+#dashboard .role-record-empty{padding:24px 8px;text-align:center;color:#677f9d;font-size:12px;line-height:1.5}
+#dashboard .role-workflow-note{display:flex;gap:10px;align-items:flex-start;margin:11px 0 0;
+ background:#f0f6ff;border:1px solid #d7e6f9;color:#456888;
+ border-radius:11px;padding:12px;font-size:11px;line-height:1.5}
+#dashboard .role-workflow-note svg{width:18px;height:18px;flex:none;color:#3170b0;margin-top:1px}
+#dashboard .role-workflow-note strong{color:#235083}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-metric,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-records{
+ background:#1d324d!important;border-color:#425e82!important;color:#d5e6fa!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-metric :is(strong,.role-metric-label),
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card h3,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-record-item strong,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-section-header h3{
+ color:#e3f0ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-section-header p,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-record-item small,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-metric small{
+ color:#b0c7e4!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-note{
+ background:#263e5b;border-color:#4b6d97;color:#c8def5}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-note strong{color:#e0eeff}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-record-item{border-bottom-color:#385373}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #dashboard .role-workflow-card button{
+ background:#2a4a70;border-color:#4b759f;color:#e5f2ff}
+@media(max-width:1050px){
+ #dashboard .role-dashboard-layout{grid-template-columns:1fr}
+ #dashboard .role-dashboard-metrics{gap:9px}
+ #dashboard .role-metric{padding:15px;gap:9px}
+}
+@media(max-width:710px){
+ #dashboard .role-dashboard-hero{padding:18px;flex-wrap:wrap;gap:12px}
+ #dashboard .role-dashboard-hero h2{font-size:20px}
+ #dashboard .role-hero-tag{margin-left:0}
+ #dashboard .role-dashboard-metrics{grid-template-columns:1fr;gap:9px}
+ #dashboard .role-metric strong{font-size:21px}
+ #dashboard .role-workflow-card{padding:14px}
+ #dashboard .role-record-item{align-items:flex-start;flex-wrap:wrap}
+ #dashboard .role-record-value{white-space:normal}
+}
+
+/* Top-layer progress persists after X; success/error remain visible for 14 s. */
+#project-upload-progress.project-upload-toast{
+ inset:auto;top:max(18px,env(safe-area-inset-top));right:max(22px,env(safe-area-inset-right));
+ bottom:auto;left:auto;margin:0;max-width:calc(100vw - 24px);
+ z-index:2147483640;isolation:isolate;
+}
+#project-upload-progress.project-upload-toast:popover-open{display:flex!important}
+#project-upload-progress.project-upload-toast[data-state="success"]{
+ background:#e7f8f0;border-color:#9ccdb6;border-left-color:#22845d;color:#195d40;
+}
+#project-upload-progress.project-upload-toast[data-state="error"]{
+ background:#fff0f2;border-color:#e6aeb8;border-left-color:#b3394e;color:#8f233c;
+}
+#project-upload-progress.project-upload-toast[data-state="success"] .project-upload-spinner,
+#project-upload-progress.project-upload-toast[data-state="error"] .project-upload-spinner{display:none}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #project-upload-progress.project-upload-toast[data-state="success"]{
+ background:#123c30;color:#d8ffec;border-color:#327b61;border-left-color:#7be6b5;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #project-upload-progress.project-upload-toast[data-state="error"]{
+ background:#4c2635;color:#ffe4e8;border-color:#925168;border-left-color:#ffa4b0;
+}
+/* Fix weak contrast on dark modal and misleading mint saving banner. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .project-save-feedback:not(.error){
+ background:#133f34!important;color:#e3ffef!important;border:1px solid #398265!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .project-save-feedback.error{
+ background:#512a37!important;color:#ffe4ec!important;border:1px solid #a66174!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-footer #project-save-note{
+ color:#d1e2fa!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal :is(
+ .editor-gallery-help,.editor-gallery-help b,.editor-upload-zone small,
+ .editor-upload-zone strong,.publish-field-description,.publish-field-title,
+ #project-publish-preview,.publication-choice small,.publication-choice strong,
+ #fb-import-status,#fb-review-hint,.fb-import-note
+){color:#e2efff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal :is(.editor-photo-cover,.editor-set-cover){
+ background:#113e7b!important;color:#fff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-upload-zone{
+ background:#213b5a!important;border-color:#5b86b1!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-photo{
+ background:#182e4d!important;border-color:#567396!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-section-title{
+ background:#294667!important;color:#f2f7ff!important;border-color:#55789c!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .publication-choice{
+ background:#132c48!important;color:#e2efff!important;border-color:#6b91bb!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .publication-choice.selected{
+ background:#234f80!important;color:#fff!important;border-color:#9cc7ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-footer button.secondary{
+ background:#2a4365!important;color:#edf5ff!important;border:1px solid #6689b3!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal .editor-footer button.primary:disabled{
+ background:#3a537a!important;color:#d7e5f8!important;opacity:.85;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #editor.project-editor-modal #editor-message:not(:empty):not(.error){
+ background:#203a56!important;color:#e2efff!important;
+}
+#editor.project-editor-modal #project-save-feedback[hidden],
+#editor.project-editor-modal #editor-message:empty{display:none!important}
+#editor.project-editor-modal .editor-photo-remove{background:#112742!important;color:#fff!important}
+#editor.project-editor-modal .editor-footer .project-save-feedback:not([hidden]){
+ flex:1 1 100%;max-width:100%;font-size:12px!important;line-height:1.55!important;padding:10px 12px;
+}
+@media(max-width:600px){
+ #project-upload-progress.project-upload-toast{
+  inset:auto;top:max(10px,env(safe-area-inset-top));right:10px;left:auto;bottom:auto;
+  width:min(310px,calc(100vw - 20px));
+ }
+}
+
+/* Password + account settings: explicit high-contrast light/dark fields.
+   Includes forced first-login password change (outside the #dashboard). */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section.form-panel{
+ background:#192a42!important;border:1px solid #456384!important;color:#ebf4ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section :is(h2,#password-note){
+ color:#edf5ff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section form label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card form label{
+ color:#d6e7ff!important;font-weight:750;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section .password-field input,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input{
+ color:#f8fbff!important;
+ -webkit-text-fill-color:#f8fbff!important;
+ background:#11213a!important;
+ border:1px solid #6685ab!important;
+ caret-color:#f8fbff!important;
+ opacity:1!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input::placeholder,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input::placeholder{
+ color:#becfe6!important;opacity:1!important;-webkit-text-fill-color:#becfe6!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:focus,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:focus{
+ outline:2px solid #87bbff!important;outline-offset:1px!important;
+ border-color:#94c2ff!important;box-shadow:0 0 0 3px #6aabff25!important;
+}
+/* Chrome/Brave password manager often forces a white autofill surface with
+   almost-white text; override both together, including focus and hover. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:-webkit-autofill,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:-webkit-autofill:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section input:-webkit-autofill:focus,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:-webkit-autofill,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:-webkit-autofill:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-card input:-webkit-autofill:focus{
+ -webkit-text-fill-color:#f8fbff!important;
+ -webkit-box-shadow:0 0 0 1000px #11213a inset!important;
+ box-shadow:0 0 0 1000px #11213a inset!important;
+ caret-color:#f8fbff!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section .password-toggle,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .password-toggle{
+ color:#f0f6ff!important;background:#2c4870!important;
+ border:1px solid #6688b7!important;border-radius:8px!important;
+ opacity:1!important;min-width:57px;min-height:32px;font-weight:750;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #password-section .password-toggle:hover,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .password-toggle:hover{
+ background:#365e8b!important;border-color:#a1c6ff!important;
+}
+#password-section .password-field,
+#panel-settings .settings-card .password-field{
+ display:flex;align-items:center;position:relative;width:100%;max-width:100%;
+}
+#password-section .password-field input,
+#panel-settings .settings-card .password-field input{
+ width:100%;padding-right:78px!important;
+}
+#password-section .password-field .password-toggle,
+#panel-settings .settings-card .password-field .password-toggle{
+ position:absolute;right:7px;top:50%;transform:translateY(-50%);
+ margin:0;min-height:30px;padding:5px 9px;cursor:pointer;
+ background:#eaf1ff;color:#224c85;border:1px solid #bfcfe6;border-radius:7px;
+}
+#panel-settings .settings-card input:not([type="checkbox"]){font-size:14px;color:#183b67;caret-color:#183b67}
+#panel-settings .settings-card input::placeholder{color:#617895;opacity:1}
+#panel-settings .settings-card .settings-help{
+ margin:10px 0 0;font-size:11px;line-height:1.55;color:#526d8d;
+}
+#panel-settings .settings-inline-status{
+ margin:12px 0 0;padding:12px 13px;line-height:1.5;
+ border-radius:10px;border:1px solid #c4d7eb;background:#eef5ff;color:#254b76;
+ font-weight:650;font-size:12px;overflow-wrap:anywhere;
+}
+#panel-settings .settings-inline-status[hidden]{display:none!important}
+#panel-settings .settings-inline-status[data-kind="success"]{
+ background:#e6f7ed;color:#166240;border-color:#aedec3;
+}
+#panel-settings .settings-inline-status[data-kind="error"]{
+ background:#fff0f1;color:#8e2634;border-color:#eab5be;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings :is(.settings-help,.settings-feature-note){
+ color:#d2e2f7!important;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-inline-status{
+ background:#203f63;border-color:#5d85b0;color:#f0f7ff;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-inline-status[data-kind="success"]{
+ background:#184937;border-color:#419b70;color:#e0ffec;
+}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #panel-settings .settings-inline-status[data-kind="error"]{
+ background:#512a37;border-color:#b16c7d;color:#ffe2eb;
+}
+@media(max-width:520px){
+ #password-section .password-field .password-toggle,
+ #panel-settings .settings-card .password-field .password-toggle{min-width:56px;font-size:12px}
+ #panel-settings .settings-layout{min-width:0}
+ #panel-settings .settings-card{min-width:0}
+}
+
+/* Published SK officials: chairman-managed portraits and weekly duty days. */
+#roster-form .roster-photo-editor{display:flex;align-items:center;gap:18px;min-width:0;padding:16px;
+ border:1px solid #d5e3f5;border-radius:14px;background:#f4f8ff}
+#roster-form .roster-photo-preview{width:108px;height:108px;flex:none;border-radius:16px;overflow:hidden;
+ background:#dbe9ff;display:grid;place-items:center;color:#2a5c99;border:1px solid #c3d7f0}
+#roster-form .roster-photo-preview img{width:100%;height:100%;object-fit:cover;display:block}
+#roster-form .roster-photo-placeholder{font-weight:850;font-size:28px;letter-spacing:2px}
+#roster-form .roster-photo-info{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+#roster-form .roster-photo-info>strong{font-size:14px;color:#224874}
+#roster-form .roster-photo-info small{font-size:11px;line-height:1.5;color:#627f9f}
+#roster-form .roster-photo-upload{position:relative;display:inline-block;cursor:pointer;
+ border:1px solid #aac9ef;border-radius:9px;background:#e9f3ff;color:#1c5490;padding:9px 12px;font-size:12px;font-weight:800}
+#roster-form .roster-photo-upload:hover{background:#daeaff;border-color:#73ade5}
+#roster-photo-file{position:absolute;width:100%;height:100%;opacity:0;inset:0;cursor:pointer}
+#roster-form #roster-photo-clear{min-height:34px;padding:6px 10px;margin:0;font-size:11px}
+#roster-form .roster-duty-days{border:1px solid #dae6f4;border-radius:13px;padding:14px 16px;min-width:0}
+#roster-form .roster-duty-days legend{font-weight:800;font-size:13px;color:#264e7e;padding:0 5px}
+#roster-form .roster-duty-days p{font-size:11px;color:#6b819f;margin:0 0 10px;line-height:1.5}
+#roster-form .roster-day-checkboxes{display:flex;gap:8px;flex-wrap:wrap}
+#roster-form .roster-day-checkboxes label{display:flex;gap:6px;align-items:center;margin:0;
+ font-size:12px;background:#eff5ff;border:1px solid #cddff4;border-radius:8px;padding:9px 11px;cursor:pointer}
+#roster-form .roster-day-checkboxes input{width:15px;height:15px;accent-color:#2a68ae;margin:0}
+#roster-form .roster-profile-message{font-size:11px;color:#557293;margin:0;line-height:1.55}
+.admin-roster-ident{display:flex!important;flex-direction:row!important;align-items:center;gap:12px;min-width:0}
+.admin-roster-ident>span:last-child{display:flex;flex-direction:column;gap:4px;min-width:0}
+.roster-list-photo{width:55px;height:55px;border-radius:12px;object-fit:cover;flex:none;border:1px solid #d6e4f6}
+.roster-list-photo-fallback{display:grid;place-items:center;background:#e4efff;color:#2f6095;font-size:15px;font-weight:800}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form :is(.roster-photo-editor,.roster-duty-days){
+ background:#203755!important;border-color:#52769f!important;color:#e7f1ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form :is(.roster-photo-info>strong,.roster-duty-days legend){
+ color:#f0f7ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form :is(.roster-photo-info small,.roster-duty-days p,.roster-profile-message){
+ color:#c0d5ef!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form .roster-day-checkboxes label{
+ background:#192e4c!important;border-color:#5c83b3!important;color:#e8f3ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form .roster-photo-upload{
+ background:#2c517a!important;color:#f2f8ff!important;border-color:#729aca!important}
+@media(max-width:650px){
+ #roster-form .roster-photo-editor{flex-wrap:wrap;padding:14px}
+ #roster-form .roster-photo-preview{width:92px;height:92px}
+ #roster-form .roster-day-checkboxes label{padding:8px}
+}
+
+/* Chairman-only SK Duty Management — linked to active SK Officials. */
+.duty-manager-panel .panel-heading{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap}
+.duty-manager-panel .panel-heading h2{margin:5px 0 7px}
+.duty-manager-panel .panel-heading p{font-size:12px}
+.duty-manager-status{margin:16px 0;padding:12px 14px;border:1px solid #cbdef5;
+ border-radius:12px;background:#eaf3ff;color:#254d7d;font-size:12px;line-height:1.6}
+.duty-manager-layout{display:grid;grid-template-columns:minmax(215px,.85fr) minmax(0,1.65fr);
+ align-items:start;gap:18px;margin-top:18px}
+.duty-manager-layout>div:first-child,.duty-manager-form{
+ border:1px solid #d5e3f3;background:#fff;border-radius:16px;padding:18px;min-width:0}
+.duty-manager-layout h3{font-size:16px;color:#214774;margin:0 0 15px}
+.duty-manager-week{display:grid;gap:9px}
+.duty-manager-weekday{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;
+ padding:12px 14px;border-radius:12px;border:1px solid #d0e1f4;background:#f6f9fe;color:#244e7e;
+ text-align:left;cursor:pointer}
+.duty-manager-weekday strong{grid-row:span 2;font-size:13px}
+.duty-manager-weekday small{font-size:11px;color:#54779b}
+.duty-manager-weekday.selected{background:#e4efff;border-color:#4587de;box-shadow:0 0 0 1px #4587de}
+.duty-manager-form .duty-manager-hours{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:12px 0 22px}
+.duty-manager-hours label{display:grid;gap:8px;margin:0;font-size:12px;font-weight:700;color:#234879}
+.duty-manager-hours input{min-width:0;padding:12px;border-radius:10px;border:1px solid #bbcee6;
+ background:#f8fbff;color:#17385e;font:inherit}
+.duty-manager-officers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.duty-manager-officer{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #d0e1f2;
+ border-radius:13px;background:#f5f9ff;cursor:pointer;min-width:0}
+.duty-manager-officer input{flex:none;width:17px;height:17px;accent-color:#2864b4}
+.duty-manager-officer>span:last-child{display:grid;min-width:0;gap:4px}
+.duty-manager-officer strong{font-size:12px;color:#214775;overflow-wrap:anywhere}
+.duty-manager-officer small{font-size:10px;color:#63809e}
+.duty-manager-avatar{width:48px;height:54px;position:relative;overflow:hidden;flex:none;display:grid;place-items:center;
+ border:1px solid #bbd0ec;border-radius:10px;background:#dceaff;color:#2c5a91;font-weight:800}
+.duty-manager-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.duty-manager-avatar.duty-manager-legacy img{height:auto;object-fit:initial;max-width:none}
+.duty-manager-avatar.duty-manager-legacy.portrait-single img{width:300%;left:-100%;top:-72%}
+.duty-manager-avatar.duty-manager-legacy.portrait-left img{width:333.333%;left:-50%;top:-79%}
+.duty-manager-avatar.duty-manager-legacy.portrait-right img{width:333.333%;left:-193%;top:-79%}
+.duty-manager-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:20px}
+.duty-manager-actions button{min-height:42px}
+#roster-form .roster-legacy-portrait{position:relative;isolation:isolate}
+#roster-form .roster-legacy-portrait>img{position:absolute;max-width:none!important;height:auto!important;object-fit:initial!important}
+#roster-form .roster-legacy-portrait.portrait-single img{width:300%!important;left:-100%;top:-72%}
+#roster-form .roster-legacy-portrait.portrait-left img{width:333.333%!important;left:-50%;top:-79%}
+#roster-form .roster-legacy-portrait.portrait-right img{width:333.333%!important;left:-193%;top:-79%}
+#roster-form .roster-legacy-portrait>span{position:absolute;inset:0;display:grid;place-items:center}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-layout>div:first-child,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-form{
+ background:#1b2d49!important;border-color:#5378a2!important;color:#e8f2ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-layout h3,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-hours label,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-officer strong{
+ color:#f0f6ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-weekday,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-officer,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-status{
+ background:#223d60!important;border-color:#537ba6!important;color:#e4f0ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-weekday.selected{
+ background:#305a8f!important;border-color:#a1c9ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-weekday small,
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-officer small{color:#cbddf5!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-hours input{
+ background:#132845!important;border-color:#7393bd!important;color:#f2f8ff!important}
+@media(max-width:980px){.duty-manager-layout{grid-template-columns:1fr}.duty-manager-week{grid-template-columns:repeat(4,minmax(0,1fr))}.duty-manager-weekday{grid-template-columns:1fr}.duty-manager-weekday strong{grid-row:auto}}
+@media(max-width:560px){.duty-manager-week{grid-template-columns:repeat(2,minmax(0,1fr))}.duty-manager-officers{grid-template-columns:1fr}.duty-manager-layout>div:first-child,.duty-manager-form{padding:14px}.duty-manager-form .duty-manager-hours{gap:9px}}
+
+/* Mobile SK Duty: compact status badge and touch-sized actions, not giant tiles.
+   Target the dashboard specifically so other admin primary buttons are untouched. */
+@media(max-width:730px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls.duty-office-card{
+  padding:14px!important;margin:0 0 14px!important;border-radius:15px!important;
+  min-height:0!important;height:auto!important;overflow:visible!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading{
+  display:grid!important;grid-template-columns:36px minmax(0,1fr)!important;
+  align-items:start!important;gap:6px 11px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-icon{
+  width:36px!important;height:36px!important;border-radius:10px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-text{min-width:0!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-eyebrow{
+  font-size:9px!important;line-height:1.3!important;letter-spacing:.6px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading h3{
+  font-size:16px!important;line-height:1.25!important;margin:4px 0 3px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading p{
+  font-size:11px!important;line-height:1.4!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-mode-badge{
+  grid-column:2!important;grid-row:2!important;justify-self:start!important;
+  display:inline-flex!important;align-items:center!important;gap:7px!important;
+  width:max-content!important;max-width:100%!important;
+  height:30px!important;min-height:30px!important;max-height:30px!important;
+  aspect-ratio:auto!important;flex:0 0 auto!important;align-self:start!important;
+  padding:5px 11px!important;margin:3px 0 0!important;
+  border-radius:999px!important;font-size:11px!important;line-height:1!important;
+  white-space:nowrap!important;box-sizing:border-box!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-mode-badge .duty-status-dot{
+  width:7px!important;height:7px!important;flex:0 0 7px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-metrics{
+  grid-template-columns:1fr!important;gap:8px!important;margin:12px 0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info{
+  display:flex!important;gap:10px!important;align-items:center!important;
+  padding:9px 11px!important;border-radius:11px!important;min-height:58px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info-icon{
+  width:33px!important;height:33px!important;flex:0 0 33px!important;
+  border-radius:9px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info-icon svg{
+  width:17px!important;height:17px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-label{
+  font-size:10px!important;margin:0 0 3px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info strong{
+  font-size:12px!important;line-height:1.35!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-description{
+  font-size:11px!important;line-height:1.5!important;margin:0 0 12px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-actions{
+  display:grid!important;grid-template-columns:1fr!important;
+  align-items:stretch!important;gap:8px!important;margin:0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls button.duty-action-button{
+  box-sizing:border-box!important;display:inline-flex!important;
+  width:100%!important;height:44px!important;min-height:44px!important;max-height:44px!important;
+  min-width:0!important;aspect-ratio:auto!important;flex:0 0 44px!important;
+  justify-content:center!important;align-items:center!important;align-self:start!important;
+  font-size:12px!important;line-height:1.2!important;
+  padding:9px 12px!important;margin:0!important;border-radius:10px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls button.duty-action-button[hidden]{
+  display:none!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls button.duty-action-button svg{
+  width:17px!important;height:17px!important;flex:none!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-note{
+  margin:12px 0 0!important;padding-top:10px!important;font-size:10px!important;
+ }
+}
+/* Keep the small mobile icons and project management edit actions readable in dark mode. */
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #managed-projects .project-edit-trigger{
+ color:#eaf3ff!important;border-color:#527ba8!important;
+ background:#223b5d!important;
+}
+#managed-projects .project-edit-trigger{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:7px;
+}
+#managed-projects .project-edit-trigger svg{width:16px;height:16px;flex:none}
+@media(max-width:600px){
+ #managed-projects .project-manage-thumbnail{width:78px!important;height:67px!important}
+ #managed-projects .project-manage-photo-count{font-size:10px!important}
+ #managed-projects .project-row-actions{gap:7px!important}
+ #managed-projects .project-row-actions button{min-height:38px!important}
+}
+
+/* Independent portrait workflows: SK Officials = org structure; SK Duty = duty photo/day. */
+#roster-form .roster-duty-link{display:flex;flex-direction:column;gap:7px;padding:14px;border:1px solid #c7ddf5;border-radius:12px;background:#eef5ff}
+#roster-form .roster-duty-link span{font-size:12px;color:#45668d;line-height:1.5}
+#roster-form .roster-duty-link button{align-self:flex-start;margin:4px 0 0}
+.duty-manager-officers{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.duty-manager-officer-card{display:flex;gap:13px;align-items:flex-start;padding:14px;border:1px solid #d1e2f4;border-radius:12px;background:#f7faff;min-width:0}
+.duty-manager-officer-card>.duty-manager-avatar{width:68px;height:78px;flex:0 0 68px}
+.duty-manager-person{display:flex;flex:1;min-width:0;flex-direction:column;gap:7px}
+.duty-manager-person>strong{font-size:13px;color:#234c7a}
+.duty-manager-person>small{font-size:11px;color:#617f9f}
+.duty-manager-person label{display:grid;gap:5px;color:#335a88;font-size:11px;font-weight:700}
+.duty-manager-person select{min-height:38px;width:100%;border:1px solid #abc7e8;border-radius:9px;padding:8px;background:#fff;color:#1e4677}
+.duty-manager-person input[type=file]{font-size:11px;width:100%;max-width:100%}
+.duty-manager-person .duty-photo-remove{align-self:flex-start;min-height:33px;padding:7px 10px}
+.duty-manager-update-status{font-size:10px;line-height:1.5;color:#57789b}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(#roster-form .roster-duty-link,.duty-manager-officer-card){background:#203754!important;border-color:#6587b2!important;color:#ecf5ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(.duty-manager-person>strong,.duty-manager-person label,#roster-form .roster-duty-link span){color:#f1f7ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-person select{background:#183153!important;color:#f5faff!important;border-color:#7399c5!important}
+@media(max-width:650px){
+ .duty-manager-officers{grid-template-columns:1fr}
+ .duty-manager-officer-card{padding:11px;gap:10px}
+}
+
+/* Shorter laptop screens and high browser zoom: image viewer stays within viewport.
+   The dialog is a 3-row grid so header/close button and footer never scroll away. */
+#staff-project-gallery[open]{
+ box-sizing:border-box!important;position:fixed!important;
+ inset:0!important;margin:auto!important;
+ display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;
+ width:min(950px,calc(100vw - 24px))!important;
+ height:min(740px,calc(100dvh - 24px))!important;
+ max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 24px)!important;
+ padding:0!important;overflow:hidden!important;overscroll-behavior:contain!important;
+}
+#staff-project-gallery[open] .staff-gallery-header,
+#staff-project-gallery[open] .staff-gallery-footer{
+ min-height:0!important;flex:0 0 auto!important;box-sizing:border-box!important;
+}
+#staff-project-gallery[open] .staff-gallery-stage{
+ box-sizing:border-box!important;display:grid!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+ height:auto!important;min-height:0!important;max-height:100%!important;
+ overflow:hidden!important;align-items:center!important;
+}
+#staff-project-gallery[open] .staff-gallery-photo-wrap{
+ min-width:0!important;min-height:0!important;max-height:100%!important;
+ overflow:hidden!important;
+}
+#staff-project-gallery[open] .staff-gallery-photo-wrap img{
+ display:block;max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;width:auto!important;height:auto!important;
+}
+@media(max-height:650px), (max-width:650px){
+ #staff-project-gallery[open]{height:calc(100dvh - 12px)!important;max-height:calc(100dvh - 12px)!important;border-radius:12px!important}
+ #staff-project-gallery[open] .staff-gallery-header{padding:8px 12px!important}
+ #staff-project-gallery[open] .staff-gallery-footer{padding:7px 12px!important;font-size:10px!important}
+ #staff-project-gallery[open] .staff-gallery-stage{
+  grid-template-columns:32px minmax(0,1fr) 32px!important;gap:4px!important;padding:5px!important;
+ }
+ #staff-project-gallery[open] .staff-gallery-arrow{height:40px!important;width:32px!important;font-size:25px!important}
+ #staff-project-gallery[open] #staff-gallery-close{height:35px!important;width:35px!important}
+}
+
+/* One-person SK Duty editor: directory select -> duty photo -> single weekday.
+   Organization hierarchy image remains on SK Officials only. */
+.duty-manager-panel .panel-heading{margin-bottom:16px}
+.duty-manager-panel .duty-manager-status{font-size:12px;line-height:1.6;padding:12px 15px;margin:14px 0}
+.duty-manager-single{max-width:920px;background:#fff;border:1px solid #d4e4f5;
+ border-radius:18px;padding:24px;box-shadow:0 7px 28px rgba(30,65,115,.035)}
+.duty-manager-single-heading{display:flex;justify-content:space-between;align-items:center;
+ gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.duty-manager-single-heading h3{font-size:21px;color:#183f72;margin:5px 0 0}
+.duty-manager-help{font-size:11px;color:#41699c;background:#e9f2fe;
+ border-radius:999px;padding:7px 11px}
+.duty-manager-pick-label{display:block;font-size:12px;font-weight:800;color:#294d79;margin:0 0 8px}
+#duty-officer-select{display:block;width:100%;min-height:48px;border:1px solid #bdcfe7;
+ background:#f8fbff;color:#1d3c67;border-radius:11px;padding:10px 13px;
+ font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+#duty-officer-select:focus-visible{outline:3px solid #76a9f6;outline-offset:2px}
+.duty-manager-source{color:#657f9f;font-size:11px;line-height:1.55;margin:8px 0 0}
+.duty-manager-selected{display:grid;grid-template-columns:158px minmax(0,1fr);
+ gap:20px;align-items:center;background:#f4f8ff;border:1px solid #d7e6f7;
+ border-radius:14px;padding:16px;margin-top:19px}
+.duty-manager-selected[hidden]{display:none!important}
+.duty-manager-photo-preview{width:158px;max-width:100%;height:174px;
+ position:relative;overflow:hidden;display:grid;place-items:center;
+ background:#dbe9fa;border:1px solid #b9d1ee;border-radius:14px;color:#2e609e}
+.duty-manager-photo-initials{position:absolute;inset:0;display:grid;place-items:center;
+ font-size:36px;font-weight:850;letter-spacing:1px}
+.duty-manager-photo-preview img{position:absolute;inset:0;width:100%;
+ height:100%;max-width:none;object-fit:cover}
+.duty-manager-photo-preview.duty-manager-legacy img{height:auto;object-fit:initial}
+.duty-manager-photo-preview.duty-manager-legacy.portrait-single img{width:300%;left:-100%;top:-72%}
+.duty-manager-photo-preview.duty-manager-legacy.portrait-left img{width:333.333%;left:-50%;top:-79%}
+.duty-manager-photo-preview.duty-manager-legacy.portrait-right img{width:333.333%;left:-193%;top:-79%}
+.duty-manager-selected-detail{display:flex;align-items:flex-start;flex-direction:column;gap:7px;min-width:0}
+.duty-manager-selected-detail>strong{font-size:18px;line-height:1.3;color:#153b6c}
+.duty-manager-selected-detail>small{color:#4f74a0;font-size:12px}
+.duty-manager-photo-upload{position:relative;display:inline-flex;align-items:center;
+ gap:7px;min-height:42px;border-radius:10px;padding:10px 12px;
+ border:1px solid #95bbf0;background:#e6f1ff;color:#1c5396;
+ font-size:12px;font-weight:800;cursor:pointer;margin-top:5px}
+.duty-manager-photo-upload svg{width:17px;height:17px;flex:none}
+.duty-manager-photo-upload input{position:absolute;inset:0;width:100%;height:100%;
+ opacity:0;cursor:pointer}
+.duty-manager-photo-upload:has(input:disabled){opacity:.55;cursor:not-allowed}
+.duty-manager-photo-upload input:focus-visible{outline:3px solid #76a9f6;outline-offset:2px;opacity:.08}
+.duty-manager-photo-remove{min-height:34px;font-size:11px;margin-top:0;padding:7px 10px}
+.duty-manager-single-week{padding:17px 0 0;margin:22px 0 0;border:0;
+ border-top:1px solid #e0eafa;min-width:0}
+.duty-manager-single-week legend{font-weight:850;color:#224c80;padding:0 0 5px;font-size:13px}
+.duty-manager-single-week p{font-size:11px;line-height:1.5;color:#637fa0;margin:0 0 12px}
+.duty-manager-day-choices{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}
+.duty-manager-day-chip{position:relative;margin:0;min-width:0}
+.duty-manager-day-chip input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0}
+.duty-manager-day-chip span{display:flex;align-items:center;justify-content:center;
+ min-height:42px;padding:9px 3px;font-size:12px;font-weight:750;
+ border:1px solid #ccdff5;border-radius:10px;background:#f6f9ff;color:#315989}
+.duty-manager-day-chip input:checked+span{background:#255bb3;color:#fff;border-color:#245cb0}
+.duty-manager-day-chip input:focus-visible+span{outline:3px solid #88bbff;outline-offset:2px}
+.duty-manager-day-clear span{font-size:10px}
+.duty-manager-single-week:disabled .duty-manager-day-chip span{opacity:.5}
+.duty-manager-selection-message{font-size:11px;color:#51739a;line-height:1.5;margin-top:14px;min-height:18px}
+.duty-manager-hours-disclosure{max-width:920px;margin-top:16px;
+ background:#fff;border:1px solid #d4e4f5;border-radius:16px;overflow:hidden}
+.duty-manager-hours-disclosure>summary{display:flex;align-items:center;gap:12px;
+ padding:16px 20px;cursor:pointer;list-style:none;color:#254b7a}
+.duty-manager-hours-disclosure>summary::-webkit-details-marker{display:none}
+.duty-manager-hours-disclosure>summary>svg:first-child{width:24px;height:24px;flex:none;color:#2c6caf}
+.duty-manager-hours-disclosure>summary>span{display:flex;flex-direction:column;gap:4px;flex:1}
+.duty-manager-hours-disclosure>summary strong{font-size:14px}
+.duty-manager-hours-disclosure>summary small{font-size:11px;color:#6682a0}
+.duty-manager-chevron{height:18px;width:18px;flex:none;transition:transform .16s}
+.duty-manager-hours-disclosure[open] .duty-manager-chevron{transform:rotate(180deg)}
+.duty-manager-hours-inner{display:grid;grid-template-columns:minmax(200px,.9fr) minmax(0,1fr);
+ gap:16px;border-top:1px solid #e1ecf9;padding:18px}
+.duty-manager-hours-inner .duty-manager-week{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.duty-manager-hours-inner .duty-manager-weekday{padding:10px;min-height:66px}
+.duty-manager-hours-inner .duty-manager-form{padding:0;box-shadow:none;border:0}
+.duty-manager-hours-inner .duty-manager-form h3{font-size:15px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(.duty-manager-single,.duty-manager-hours-disclosure){
+ background:#1b2e49!important;border-color:#5277a3!important;color:#f2f8ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(.duty-manager-single-heading h3,.duty-manager-selected-detail>strong,.duty-manager-single-week legend,.duty-manager-pick-label,.duty-manager-hours-disclosure>summary){
+ color:#f1f8ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(.duty-manager-selected,#duty-officer-select){
+ background:#172b49!important;border-color:#5b7faf!important;color:#f2f7ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(.duty-manager-source,.duty-manager-selected-detail>small,.duty-manager-selection-message,.duty-manager-single-week p,.duty-manager-hours-disclosure>summary small){
+ color:#bdd3ef!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-day-chip span{
+ background:#233e60!important;border-color:#6084b2!important;color:#e8f3ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-day-chip input:checked+span{
+ background:#3371d0!important;border-color:#88b6ff!important;color:#fff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .duty-manager-photo-upload{
+ background:#264e7d!important;border-color:#6998d3!important;color:#fff!important}
+@media(max-width:750px){
+ .duty-manager-single{padding:16px}
+ .duty-manager-selected{grid-template-columns:112px minmax(0,1fr);gap:12px;padding:12px}
+ .duty-manager-photo-preview{width:112px;height:132px}
+ .duty-manager-selected-detail>strong{font-size:15px}
+ .duty-manager-day-choices{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .duty-manager-hours-inner{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+ .duty-manager-selected{grid-template-columns:1fr}
+ .duty-manager-photo-preview{width:124px;height:144px}
+ .duty-manager-selected-detail{width:100%}
+ .duty-manager-photo-upload{max-width:100%;font-size:11px}
+ .duty-manager-single-heading h3{font-size:18px}
+ .duty-manager-hours-inner .duty-manager-week{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){.duty-manager-chevron{transition:none}}
+
+/* Private SK awards uploader: supports SK drafts + Chairman approval. */
+.award-editor-form{display:grid;gap:15px;margin:15px 0 24px;padding:23px;background:#fff;border:1px solid #d3e0f0;border-radius:16px;box-sizing:border-box}
+.award-editor-form label{font-size:12px;font-weight:760;color:#294c77;display:grid;gap:7px;min-width:0}
+.award-form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.award-editor-form :is(input:not([type=file]),select,textarea){min-height:43px;border:1px solid #cbdcf1;border-radius:10px;padding:10px 12px;background:#f8fbff;color:#163960;font-family:inherit;font-size:14px;box-sizing:border-box;width:100%}
+.award-editor-form textarea{min-height:100px;resize:vertical}
+.award-image-editor{border:1px dashed #b9d2ef;padding:17px;border-radius:12px;background:#f4f8fe}
+.award-image-editor strong{font-size:13px;color:#234e83}.award-image-editor p{font-size:11px;color:#617b9d;margin:8px 0}
+.award-upload-control{display:inline-flex!important;align-items:center;justify-content:center;gap:8px;background:#e1eeff;padding:12px 16px;border-radius:9px;border:1px solid #a4c3eb;color:#1e4f8b!important;cursor:pointer}
+.award-upload-control input{position:absolute!important;width:1px;height:1px;opacity:0}
+.award-photo-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:9px;margin-top:15px}
+.award-thumb{height:103px;min-width:0;position:relative;border:1px solid #d3e1f2;border-radius:9px;overflow:hidden;background:#f1f5fb}
+.award-thumb img{width:100%;height:100%;object-fit:cover}
+.award-thumb button{position:absolute;right:4px;top:4px;background:#1b2d48;color:white;width:24px;height:24px;border-radius:7px;border:0}
+.award-thumb>span{position:absolute;bottom:3px;left:3px;background:#1f56a9;color:white;border-radius:5px;padding:4px 6px;font-size:9px}
+.award-form-status{font-size:11px;color:#6480a0;margin:0}
+.award-actions{display:flex;flex-wrap:wrap;gap:10px}
+.awards-manage-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.awards-manage-head h3{font-size:17px}.awards-manage-head small{font-size:11px;color:#6681a1}
+.award-manage-list{display:grid;gap:10px;margin:14px 0}
+.award-manage-row{display:grid;grid-template-columns:90px minmax(0,1fr) auto;gap:13px;align-items:center;background:#fff;border:1px solid #d8e5f4;padding:12px;border-radius:13px}
+.award-manage-row>img,.award-manage-placeholder{width:90px;height:74px;object-fit:contain;border-radius:9px;background:#eaf2fb}
+.award-manage-placeholder{display:grid;place-items:center;font-size:30px}
+.award-manage-row>div:nth-child(2){display:grid;gap:5px;min-width:0}
+.award-manage-row strong{font-size:13px;color:#1d406e;overflow-wrap:anywhere}
+.award-manage-row small{font-size:11px;color:#7087a4}
+.award-manage-status{font-size:10px;font-weight:800;letter-spacing:.04em}
+.award-manage-status.draft{color:#a05a13}.award-manage-status.published{color:#217a52}
+.award-manage-row-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.award-manage-row-buttons button{padding:9px 12px;border-radius:8px;font-size:11px;background:#ebf3ff;color:#225397;border:1px solid #cadff8;font-weight:800}
+.award-manage-row-buttons .award-archive{color:#a33845;background:#fff3f5;border-color:#edcbd1}
+.award-empty{padding:24px;border:1px dashed #b9cde4;border-radius:12px;color:#6a85a0}
+body.account-workspace[data-theme="dark"] :is(.award-editor-form,.award-manage-row){background:#1d324f!important;border-color:#52749c!important}
+body.account-workspace[data-theme="dark"] :is(.award-editor-form label,.award-manage-row strong,.award-image-editor strong){color:#ecf5ff!important}
+body.account-workspace[data-theme="dark"] :is(.award-image-editor,.award-thumb){background:#162943!important;border-color:#4b6d93!important}
+body.account-workspace[data-theme="dark"] .award-editor-form :is(input:not([type=file]),select,textarea){background:#132641!important;color:#f0f7ff!important;border-color:#6687ad!important}
+@media(max-width:750px){.award-editor-form{padding:13px}.award-form-row{grid-template-columns:1fr}.award-manage-row{grid-template-columns:66px minmax(0,1fr)}.award-manage-row>img,.award-manage-placeholder{width:66px;height:68px}.award-manage-row-buttons{grid-column:1/-1}}

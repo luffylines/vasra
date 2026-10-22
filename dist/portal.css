@@ -218,3 +218,119 @@
  .portal-refresh .cardbottom .card-publish-date{flex:1 1 100%}
  .portal-refresh #detail .detail-publication-meta{align-items:flex-start;flex-direction:column;gap:3px}
 }
+
+/* Four-column public catalogue, with the FULL original cover visible (no crop).
+   Narrower card width, not a sliced image, is the intended compact layout. */
+.portal-refresh #grid{gap:14px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.portal-refresh #grid .card{min-width:0;border-radius:13px;display:flex;flex-direction:column}
+.portal-refresh #grid .cover{
+ width:100%;height:auto;min-height:0;aspect-ratio:16 / 9;
+ position:relative;background:#e5edfa;isolation:isolate;
+}
+.portal-refresh #grid .cover::after{display:none}
+.portal-refresh #grid .cover .project-placeholder{
+ position:absolute;inset:0;display:grid;place-items:center;font-size:14px;
+ font-weight:850;letter-spacing:.15em;color:#5c7dab;
+}
+.portal-refresh #grid .cover .project-photo{
+ position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:contain;object-position:center;
+}
+.portal-refresh #grid .cover .project-photo[hidden]{display:none!important}
+.portal-refresh #grid .cover .badge{z-index:2}
+.portal-refresh #grid .cover .project-photo-badge{bottom:8px;right:8px;font-size:10px;padding:5px 9px}
+.portal-refresh #grid .cardbody{padding:15px;display:flex;flex-direction:column;flex:1;min-width:0}
+.portal-refresh #grid .cardbody .category{font-size:11px}
+.portal-refresh #grid .cardbody h3{font-size:17px;line-height:1.32;margin:6px 0;overflow-wrap:anywhere}
+.portal-refresh #grid .cardbody>p{font-size:12px;line-height:1.5;margin:4px 0 6px;min-height:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* A consistent bottom section anchors progress, publication and CTA across
+   every card in the same row, regardless of title/summary wrapping. */
+.portal-refresh #grid .project-card-bottom{margin-top:auto;display:flex;flex-direction:column;gap:0;min-width:0}
+.portal-refresh #grid .project-card-progress{display:flex;flex-direction:column;min-width:0}
+.portal-refresh #grid .progresslabel{margin-top:0;padding-top:12px;font-size:11px}
+.portal-refresh #grid .track{margin-top:5px}
+.portal-refresh #grid .cardbottom{display:flex;flex-direction:column;align-items:stretch;gap:11px;margin-top:13px;
+ padding-top:12px;border-top:1px solid #e5ebf4;min-width:0}
+.portal-refresh #grid .cardbottom .card-publish-date{display:flex;align-items:center;gap:7px;min-width:0;
+ width:100%;min-height:24px;flex-wrap:nowrap;color:#4e6688;font-size:11px;line-height:1.35}
+.portal-refresh #grid .cardbottom .card-publish-date>svg{width:16px;height:16px;flex:none;color:#4775b0}
+.portal-refresh #grid .project-card-published-at{flex:1;min-width:0;display:block}
+.portal-refresh #grid .project-card-published-at time{display:flex;gap:5px;align-items:center;
+ white-space:nowrap;overflow:hidden;font-size:11px;font-weight:650;letter-spacing:-.18px;
+ font-variant-numeric:tabular-nums}
+.portal-refresh #grid .project-card-date-day,.portal-refresh #grid .project-card-date-time{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.portal-refresh #grid .project-card-date-day{flex:none}
+.portal-refresh #grid .project-card-date-time{flex:1}
+.portal-refresh #grid .project-card-date-separator{flex:none;color:#8ba2c2}
+.portal-refresh #grid .project-see-more{display:flex;align-items:center;justify-content:space-between;gap:12px;
+ width:100%;min-height:42px;padding:7px 9px 7px 13px;background:#eaf2ff;color:#1d4e8c;
+ border:1px solid #d2e3fa;border-radius:10px;font-size:12px;font-weight:800;text-align:left;
+ transition:background-color .18s,border-color .18s,box-shadow .18s,transform .18s}
+.portal-refresh #grid .project-see-more:hover{background:#d9eaff;border-color:#9cc4f6;
+ box-shadow:0 3px 10px #1e559525;transform:translateY(-1px)}
+.portal-refresh #grid .project-see-more:focus-visible{outline:3px solid #84b5fb;outline-offset:2px}
+.portal-refresh #grid .project-see-more-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;
+ border-radius:8px;background:#d1e4ff;color:#265a9b}
+.portal-refresh #grid .project-see-more-icon svg{width:16px;height:16px}
+
+@media(max-width:1250px){
+ .portal-refresh #grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:950px){
+ .portal-refresh #grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ .portal-refresh #grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ .portal-refresh #grid .cardbody{padding:13px}
+ .portal-refresh #grid .cardbody h3{font-size:16px}
+ .portal-refresh #grid .project-card-published-at time{font-size:12px;gap:6px}
+}
+
+/* Modern duty photos are authoritative after a managed roster is published. */
+.portal-refresh .duty-stage #poster-link[hidden]{display:none!important}
+.portal-refresh .duty-stage #duty-officer-portraits[hidden]{display:none!important}
+.portal-refresh .duty-officer-portraits{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;align-items:start;
+ padding:22px;min-width:0;background:linear-gradient(135deg,#e5f0ff,#f6faff);
+ border:1px solid #d1e2f6;border-radius:17px
+}
+.portal-refresh .duty-profile{display:flex;flex-direction:column;align-items:center;text-align:center;
+ padding:15px 12px;border:1px solid #d5e3f3;border-radius:14px;background:#fff;min-width:0}
+.portal-refresh .duty-profile-frame{width:min(170px,100%);aspect-ratio:4/5;display:grid;place-items:center;
+ position:relative;overflow:hidden;border:1px solid #d4e0f0;border-radius:13px;background:#dcecff;color:#2b5a8a}
+.portal-refresh .duty-profile-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.portal-refresh .duty-profile-fallback{font-size:34px;font-weight:850;letter-spacing:1.5px}
+.portal-refresh .duty-profile strong{font-size:14px;color:#1b4273;margin:13px 0 4px;overflow-wrap:anywhere}
+.portal-refresh .duty-profile small{font-size:11px;color:#58749a}
+.portal-refresh .duty-profile-empty{color:#496b93;text-align:center;align-self:center;font-size:13px;line-height:1.6}
+@media(max-width:650px){
+ .portal-refresh .duty-officer-portraits{padding:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .portal-refresh .duty-profile{padding:10px}
+ .portal-refresh .duty-profile-frame{max-width:130px}
+}
+
+/* Public project image viewer: responsive laptop height + browser zoom. */
+#image-lightbox[open]{
+ box-sizing:border-box!important;position:fixed!important;inset:0!important;margin:auto!important;
+ display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;
+ width:min(1180px,calc(100vw - 24px))!important;
+ height:min(850px,calc(100dvh - 24px))!important;max-height:calc(100dvh - 24px)!important;
+ max-width:calc(100vw - 24px)!important;padding:0!important;overflow:hidden!important;
+}
+#image-lightbox[open] .lightbox-toolbar,#image-lightbox[open] .lightbox-tip{box-sizing:border-box;min-height:0!important}
+#image-lightbox[open] .lightbox-view{
+ box-sizing:border-box!important;height:auto!important;min-height:0!important;
+ max-height:100%!important;overflow:hidden!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+}
+#image-lightbox[open] .lightbox-view img{
+ display:block!important;max-width:100%!important;max-height:100%!important;
+ width:auto!important;height:auto!important;object-fit:contain!important;
+ min-height:0!important;
+}
+@media(max-height:650px), (max-width:650px){
+ #image-lightbox[open]{height:calc(100dvh - 12px)!important;max-height:calc(100dvh - 12px)!important}
+ #image-lightbox[open] .lightbox-toolbar{min-height:46px!important;padding:6px 10px!important}
+ #image-lightbox[open] .lightbox-view{grid-template-columns:32px minmax(0,1fr) 32px!important;gap:4px!important;padding:5px!important}
+ #image-lightbox[open] .lightbox-arrow{width:32px!important;height:40px!important}
+ #image-lightbox[open] .lightbox-tip{padding:5px 8px!important;margin:0!important;font-size:10px!important}
+}

@@ -63,3 +63,15 @@
 @media(max-width:1150px){.home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-columns{grid-template-columns:1fr}.home-seal{flex-basis:140px}.home-about{gap:25px}.home-highlights{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.home-seal{display:none}.home-panel{padding:25px}.home-about{grid-template-columns:1fr}.home-contact{flex-wrap:wrap}}
 @media(max-width:600px){.home-shortcuts{gap:10px;margin-bottom:20px}.home-shortcuts a{padding:17px;gap:9px}.home-shortcuts strong{font-size:15px}.home-shortcuts span{font-size:8px}.home-shortcuts small{font-size:11px}.home-panel{padding:22px;border-radius:16px}.home-panel h2{font-size:22px}.home-sectionhead{align-items:flex-start;flex-direction:column}.home-metrics,.home-highlights{grid-template-columns:1fr}.home-metrics article{gap:8px}.home-metrics strong{font-size:28px}.home-columns{gap:0}.home-officials{grid-template-columns:repeat(2,minmax(0,1fr))}.home-officials .trans-person{padding:20px 10px}.home-officials strong{font-size:12px}.home-contact-links a{font-size:13px}.home-actions{align-items:stretch}.home-actions a{width:100%;justify-content:center}.portal-refresh .site-header nav{flex-wrap:wrap}.portal-refresh .site-header nav a{min-width:0;flex-basis:28%}}
+
+/* Verified SK VASRA awards preview in Home. */
+.home-awards-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.home-award{display:flex;align-items:flex-start;gap:12px;min-width:0;border:1px solid #d8e6f6;border-radius:14px;padding:17px;background:#f5f9ff;transition:transform .2s,box-shadow .2s}
+.home-award:hover{transform:translateY(-2px);box-shadow:0 10px 18px #122e5320}
+.home-award-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:12px;background:#e2eeff;color:#265eac}
+.home-award-icon svg{width:24px;height:24px}
+.home-award>span:last-child{display:grid;gap:6px;min-width:0}
+.home-award small{color:#41699d;font-size:10px;font-weight:800}
+.home-award strong{color:#173b70;font-size:14px;line-height:1.4}
+.home-award>span:last-child>span{color:#617d9e;font-size:11px}
+@media(max-width:780px){.home-awards-list{grid-template-columns:1fr}.home-award{padding:13px}}

@@ -1,5 +1,6 @@
 const MANILA='Asia/Manila';
 let selected=-1, manualSelection=false, observedDate='', dutyOverride='auto', overrideDate='';
+let managedDutyDays=null,managedDutyProfiles=[],publishedDutyHours=null;
 async function refreshDutyOverride(){try{const r=await fetch('./api/duty-status',{cache:'no-store'});if(!r.ok)throw Error('status unavailable');const data=await r.json();dutyOverride=data.mode==='closed'?'closed':'auto';overrideDate=data.date||'';}catch{dutyOverride='unknown';overrideDate='';}updateSchedule();}
 function manilaNow(){
   const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:MANILA,weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
@@ -7,15 +8,36 @@ function manilaNow(){
 }
 function selectDay(index){
   selected=index;
-  const d=days[index];
+  const d=managedDutyDays?managedDutyDays[index]:days[index];
   document.querySelectorAll('[data-day]').forEach((b,i)=>{b.classList.toggle('selected',i===index);b.setAttribute('aria-pressed',String(i===index))});
   $('#day-kicker').textContent=d.day.toUpperCase()+' / OFFICER'+(d.names.length>1?'S':'')+' OF THE DAY';
-  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(name)}<small>${esc(d.roles[i])}</small></span>`).join('');
-  const src='./duty/'+d.file+'.jpg';
-  $('#day-poster').src=src;
-  $('#day-poster').alt=d.day+': '+d.names.join(' at ');
-  $('#poster-full').src=src;
-  $('#poster-full').alt=$('#day-poster').alt;
+  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(name)}<small>${esc(d.roles[i])}</small></span>`).join('')||'Walang naka-assign';
+  const times=publishedDutyHours?.find(h=>h.weekday===index+1);
+  const fmt=clock=>{const [h,m]=String(clock).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
+  $('#officer-role').textContent='Office hours · '+fmt(times?.open_time||'09:00')+'–'+fmt(times?.close_time||'18:00')+' (PHT)';
+  const poster=$('#poster-link'),photos=$('#duty-officer-portraits');
+  poster.hidden=!!managedDutyDays;photos.hidden=!managedDutyDays;
+  if(managedDutyDays){
+   const list=managedDutyProfiles.filter(p=>Array.isArray(p.duty_days)&&p.duty_days.includes(index+1));
+   photos.innerHTML=list.length?list.map(p=>{
+    const initials=String(p.name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
+    const picture=p.duty_photo_id?'<img src="./api/images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager">':'';
+    return '<article class="duty-profile"><span class="duty-profile-frame">'+
+     '<span class="duty-profile-fallback" aria-hidden="true">'+esc(initials||'SK')+'</span>'+picture+
+     '</span><strong>'+esc(p.name)+'</strong><small>'+esc(({
+      chairman:'SK Chairperson',kagawad:'SK Kagawad',secretary:'SK Secretary',treasurer:'SK Treasurer'
+     })[p.position]||'SK Officer')+'</small></article>';
+   }).join(''):'<p class="duty-profile-empty">Walang naka-assign na officer sa araw na ito. Makipag-ugnay sa SK Office.</p>';
+   photos.querySelectorAll('img').forEach(img=>{
+    img.addEventListener('error',()=>{img.hidden=true;},{once:true});
+   });
+  }else{
+   const src='./duty/'+d.file+'.jpg';
+   $('#day-poster').src=src;
+   $('#day-poster').alt=d.day+': '+d.names.join(' at ');
+   $('#poster-full').src=src;
+   $('#poster-full').alt=$('#day-poster').alt;
+  }
 }
 $('.day-switch').innerHTML=days.map((d,i)=>`<button type="button" data-day="${i}" aria-pressed="false"><small>${d.short}</small><span>${d.day}</span><i hidden aria-label="Ngayong araw"></i></button>`).join('');
 $('.day-switch').onclick=e=>{
@@ -35,17 +57,62 @@ function updateSchedule(){
     marker.hidden=i!==today;
     el.classList.toggle('today',i===today);
   });
-  const hoursOpen=now.hour>=9 && now.hour<18;
+  const configured=(typeof publishedDutyHours!=='undefined'&&Array.isArray(publishedDutyHours))?
+   publishedDutyHours.find(h=>h.weekday===today):null;
+  const opens=configured?.open_time||'09:00',closes=configured?.close_time||'18:00';
+  const minute=now.hour*60+now.minute;
+  const toMinutes=t=>{const p=String(t).split(':').map(Number);return p[0]*60+p[1];};
+  const hoursOpen=minute>=toMinutes(opens)&&minute<toMinutes(closes);
+  const fmt=t=>{const p=String(t).split(':').map(Number);return (p[0]%12||12)+(p[1]?':'+String(p[1]).padStart(2,'0'):'')+(p[0]<12?' AM':' PM');};
+  const labelHours=fmt(opens)+'–'+fmt(closes);
   const manualClosed=overrideDate===now.date&&dutyOverride==='closed';
   const open=hoursOpen&&!manualClosed;
   const label=$('#office-status-label'),pill=$('#office-status');
-  label.textContent=manualClosed?'Closed by SK on duty':open?(dutyOverride==='unknown'?'Scheduled open · 9 AM–6 PM':'Open · 9 AM–6 PM'):(now.hour>=18?'Closed · Office hours ended':'Closed · Opens 9 AM');
+  label.textContent=manualClosed?'Closed by SK on duty':open?(dutyOverride==='unknown'?'Scheduled open · '+labelHours:'Open · '+labelHours):
+    (minute>=toMinutes(closes)?'Closed · Office hours ended':'Closed · Opens '+fmt(opens));
   pill.classList.toggle('is-open',open);
   pill.classList.toggle('is-closed',!open);
-  pill.title=dutyOverride==='unknown'?'Schedule only · 9 AM–6 PM Philippine Time. Live closure updates are temporarily unavailable.':'Philippine Time · 9 AM–6 PM. SK staff manual closure takes priority.';
+  pill.title=dutyOverride==='unknown'?'Schedule only · '+labelHours+' Philippine Time. Live closure updates are temporarily unavailable.':'Philippine Time · '+labelHours+'. SK staff manual closure takes priority.';
+}
+async function loadManagedDutyRoster(){
+ try{
+  const result=await api('./api/officer-profiles');
+  if(result?.managed!==true||!Array.isArray(result.profiles))return;
+  const valid=result.profiles.filter(p=>p&&Array.isArray(p.duty_days)&&
+    p.duty_days.every(v=>Number.isInteger(v)&&v>=1&&v<=7));
+  managedDutyProfiles=valid;
+  managedDutyDays=days.map((d,i)=>{
+    const assigned=valid.filter(p=>p.duty_days.includes(i+1));
+    const names=assigned.map(p=>p.name),roles=assigned.map(p=>({
+      chairman:'SK Chairperson',secretary:'SK Secretary',treasurer:'SK Treasurer',kagawad:'SK Kagawad'
+    })[p.position]||'SK Officer');
+    return {...d,names,roles};
+  });
+  if(selected>=0)selectDay(selected);
+  else updateSchedule();
+ }catch{
+  // Migration not installed or temporarily unavailable: keep historical
+  // poster schedule. Do not invent the existence of new published officers.
+ }
+}
+async function loadPublishedDutyHours(){
+ try{
+  const result=await api('./api/duty-schedule');
+  if(!Array.isArray(result.days)||result.days.length!==7)return;
+  publishedDutyHours=result.days;
+  const today=days.findIndex(d=>d.short===manilaNow().short);
+  const time=publishedDutyHours.find(d=>d.weekday===today+1);
+  const fm=t=>{const [h,m]=String(t).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
+  const el=document.getElementById('duty-schedule-time-label');
+  if(el&&time)el.textContent='Philippine Time · '+fm(time.open_time)+'–'+fm(time.close_time)+' today';
+  if(selected>=0)selectDay(selected);
+  updateSchedule();
+ }catch{ /* Before migration use the existing verified 9 AM–6 PM schedule. */ }
 }
 updateSchedule();
 setInterval(updateSchedule,30000);
+loadPublishedDutyHours();setInterval(loadPublishedDutyHours,120000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateSchedule()});
 
 refreshDutyOverride();setInterval(refreshDutyOverride,30000);
+loadManagedDutyRoster();setInterval(loadManagedDutyRoster,20000);
