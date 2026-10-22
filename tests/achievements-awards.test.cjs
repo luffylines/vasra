@@ -120,7 +120,7 @@ test('SK officers access project-style awards editor in their sidebar with secur
  assert.match(js,/awardDialog\.showModal\(\)/);
  assert.match(js,/data-award-edit/);
  assert.match(js,/data-award-archive/);
- assert.match(js,/api\/manage\/projects\/import-facebook/);
+ assert.match(js,/api\/manage\/achievements\/analyze-caption/);
  assert.match(js,/const archive=user\?\.role==='chairman'/);
  assert.match(css,/@media\(max-width:650px\)/);
  assert.match(css,/\.award-modal-form #award-photo-thumbs/);
