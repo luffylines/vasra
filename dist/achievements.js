@@ -23,7 +23,13 @@ async function loadAwardsPublic(){
   publicAwards.sort((a,b)=>String(b.award_date).localeCompare(String(a.award_date)));
   renderAwards();
  }catch(e){
-  document.querySelector('#awards-public-grid').innerHTML='<div class="awards-empty" role="alert">Hindi pa available ang Achievements database. Subukan muli kapag na-activate na ito.</div>';
+  document.querySelector('#awards-public-total').textContent='';
+  const grid=document.querySelector('#awards-public-grid');
+  grid.innerHTML='<div class="awards-empty" role="alert"><strong>Hindi ma-load ang Achievements ngayon.</strong><p>Maaaring pansamantalang problema sa koneksyon. Subukan ulit o i-refresh ang page.</p><button type="button" id="awards-retry" class="awards-retry-button">Subukan ulit</button></div>';
+  document.querySelector('#awards-retry').addEventListener('click',()=>{
+   grid.textContent='Kinukuha ang mga published achievements…';
+   loadAwardsPublic();
+  },{once:true});
  }
 }
 function showAwardGallery(){

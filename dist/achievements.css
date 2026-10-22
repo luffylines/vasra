@@ -39,3 +39,7 @@
 .awards-gallery-arrow:disabled{opacity:.3}
 @media(max-width:1050px){.awards-public-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.awards-intro{margin:16px 0;padding:24px 20px;border-radius:15px}.awards-public-grid{grid-template-columns:1fr;gap:12px}.award-card-cover{height:185px}.awards-toolbar h2{font-size:17px}.awards-gallery-view{grid-template-columns:30px minmax(0,1fr) 30px;gap:4px;padding:5px}.awards-gallery-arrow{width:30px;height:38px}.awards-gallery-head{padding:7px 11px}#awards-gallery[open]{height:calc(100dvh - 10px);max-height:calc(100dvh - 10px)}}
+
+/* The awards endpoint can be retried without reloading the whole portal. */
+.awards-retry-button{margin-top:13px;border:1px solid #b3caed;border-radius:10px;padding:10px 17px;background:#fff;color:#173d74;font-size:13px;font-weight:700;cursor:pointer}
+.awards-retry-button:hover,.awards-retry-button:focus-visible{background:#eaf3ff;border-color:#5e8fc3}
