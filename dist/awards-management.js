@@ -1,6 +1,16 @@
 'use strict';
 // SK officers submit drafts with up to 12 award photos. Only Chairman can publish.
 let staffAwards=[],awardImageList=[],awardPendingFiles=[],awardEditing=null,awardBusy=false;
+const awardDialog=document.querySelector('#award-dialog');
+function awardOpen(){if(!awardDialog.open)awardDialog.showModal()}
+function awardClose(){if(!awardBusy&&awardDialog.open)awardDialog.close()}
+function awardMode(v){document.querySelector('#award-facebook-panel').hidden=v!=='facebook';for(const mode of ['manual','facebook']){const b=document.querySelector('#award-mode-'+mode);b.classList.toggle('selected',mode===v);b.setAttribute('aria-pressed',String(mode===v))}}
+document.querySelector('#award-new').onclick=()=>{awardClear();awardOpen()};
+document.querySelector('#award-dialog-close').onclick=awardClose;
+awardDialog.addEventListener('click',e=>{if(e.target===awardDialog)awardClose()});
+awardDialog.addEventListener('cancel',e=>{if(awardBusy)e.preventDefault()});
+document.querySelector('#award-mode-manual').onclick=()=>awardMode('manual');
+document.querySelector('#award-mode-facebook').onclick=()=>awardMode('facebook');
 const awardForm=document.querySelector('#award-form');
 const awardStatus=document.querySelector('#award-form-status');
 const awardMine=id=>staffAwards.find(a=>a.id===id);
@@ -18,8 +28,8 @@ function renderAwardPhotos(){
 function awardClear(){
  awardEditing=null;awardForm.reset();awardForm.elements.id.value='';
  for(const item of awardPendingFiles)URL.revokeObjectURL(item.url);
- awardClearPhotos();
- document.querySelector('#award-save').textContent='Save Award Draft';
+ awardClearPhotos();awardMode('manual');
+ document.querySelector('#award-save').textContent='Save as Draft';
  document.querySelector('#award-publish').hidden=true;
  awardStatus.textContent='Bagong award draft. Lahat ng SK officers ay puwedeng mag-submit; Chairman ang mag-aapruba.';
 }
@@ -43,13 +53,13 @@ function awardEdit(a){
  awardClear();awardEditing=a.id;
  const f=awardForm.elements;
  f.id.value=a.id;f.title.value=a.title;f.category.value=a.category;f.issuer.value=a.issuer;f.award_date.value=a.award_date;
- f.description.value=a.description||'';f.reference_url.value=a.reference_url||'';
+ f.summary.value='';f.description.value=a.description||'';f.reference_url.value=a.reference_url||'';
  awardImageList=Array.isArray(a.image_ids)?[...a.image_ids]:a.image_id?[a.image_id]:[];
  renderAwardPhotos();
  document.querySelector('#award-save').textContent=a.published?'Save Changes':'Update Draft';
  document.querySelector('#award-publish').hidden=user?.role!=='chairman'||a.published;
  awardStatus.textContent=a.published?'Published award · editing requires Chairman approval.':'Draft for review before publishing.';
- awardForm.scrollIntoView({behavior:'smooth',block:'start'});
+ awardOpen();
 }
 function awardRenderList(){
  const root=document.querySelector('#award-manage-list');
@@ -58,7 +68,7 @@ function awardRenderList(){
   const canEdit=awardCanEdit(a);
   const btn=canEdit?'<button type="button" data-award-edit="'+awardEsc(a.id)+'">Edit</button>':'';
   const publish=!a.published&&user?.role==='chairman'?'<button type="button" data-award-approve="'+awardEsc(a.id)+'">Publish Now</button>':'';
-  const archive=user?.role==='chairman'?'<button type="button" class="award-archive" data-award-archive="'+awardEsc(a.id)+'">Archive</button>':'';
+  const archive=user?.role==='chairman'?'<button type="button" class="award-archive" data-award-archive="'+awardEsc(a.id)+'">Delete</button>':'';
   return '<article class="award-manage-row">'+
    (photo?'<img src="./api/images/'+encodeURIComponent(photo)+'" alt="Award cover" loading="lazy">':'<span class="award-manage-placeholder" aria-hidden="true">🏆</span>')+
    '<div><span class="award-manage-status '+(a.published?'published':'draft')+'">'+(a.published?'Published':'Draft · Pending Chairman approval')+'</span>'+
@@ -95,16 +105,18 @@ async function awardSave(publish=false){
    uploadedCount++;
   }
   awardStatus.textContent='Saving '+(publish?'published award':'award draft')+' to database…';
+  const combinedDescription=[f.summary.value.trim(),f.description.value.trim()].filter(Boolean).join('\n\n');
+  if(combinedDescription.length>3000)throw Error('Summary + details cannot exceed 3000 characters.');
   const data={id:awardEditing||null,title:f.title.value.trim(),category:f.category.value,
    issuer:f.issuer.value.trim(),award_date:f.award_date.value,
-   description:f.description.value.trim(),reference_url:f.reference_url.value.trim()||null,
+   description:combinedDescription,reference_url:f.reference_url.value.trim()||null,
    image_ids:photos,published:publish||(user?.role==='chairman'&&awardMine(awardEditing)?.published===true)};
   const result=await api('./api/manage/achievements',{method:'POST',body:JSON.stringify(data)});
   if(result?.ok!==true)throw Error('Database did not confirm saving the award.');
   const notice=publish?'Award is now published on Home and Achievements page.':'Award saved as draft for Chairman approval.';
   projectUploadStatus(notice,'success');
   success(notice);
-  awardClear();await loadAwards();
+  awardClear();awardDialog.close();await loadAwards();
  }catch(e){
   // Preserve the current draft AND every pending file that has not uploaded yet.
   // Only completed uploads are moved into the saved IDs list; retry resumes at
@@ -140,4 +152,22 @@ document.querySelector('#award-manage-list').addEventListener('click',async e=>{
   }catch(e){message(e.message,true)}finally{archive.disabled=false;}
  }
 });
+document.querySelector('#award-analyze').onclick=async()=>{
+ const field=document.querySelector('#award-caption'),status=document.querySelector('#award-ai-status'),button=document.querySelector('#award-analyze');
+ const caption=field.value.trim();
+ if(caption.length<15){status.textContent='Maglagay ng Facebook caption na may 15+ characters.';field.focus();return}
+ button.disabled=true;status.textContent='Sinusuri ang caption gamit ang AI analyzer…';
+ try{
+  const result=await api('./api/manage/projects/import-facebook',{method:'POST',body:JSON.stringify({caption})});
+  if(!result?.ok||!result.draft)throw Error(result?.message||'Walang available na AI draft.');
+  const d=result.draft,f=awardForm.elements;
+  f.title.value=String(d.title||'').slice(0,180);
+  f.summary.value=String(d.summary||'').slice(0,350);
+  f.description.value=String(d.scope||d.description||caption).slice(0,2500);
+  status.textContent='AI-assisted draft lamang. I-review ang title, category, issuer at petsa; hindi ito automatic na ipo-publish.';
+  awardMode('manual');
+  message('AI draft filled in. Please review the award form before saving.');
+ }catch(e){status.textContent='Hindi gumana ang AI analysis: '+(e.message||'Subukan muli.')+'. Puwede ang Manual Entry.';}
+ finally{button.disabled=false}
+};
 awardClear();

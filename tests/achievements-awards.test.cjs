@@ -7,7 +7,7 @@ const api=read('lib/handler.cjs'),db=read('lib/supabase.cjs');
 const schema=read('supabase/migrations/20261022170000_achievements_awards.sql');
 test('Achievements is a public page and a consistent SK VASRA sidebar link',()=>{
  const pages=['index','projects','duty','youth-leaders','contacts','transparency','account','achievements'];
- for(const p of pages)assert.match(read('dist/'+p+'.html'),/href="\.\/achievements\.html"/);
+ for(const p of pages)assert.match(read('dist/'+p+'.html'),/href="\.\/achievements(?:\.html)?"/);
  assert.match(read('dist/shell.js'),/key:'awards'/);
  assert.match(read('dist/index.html'),/id="home-awards-list"/);
  assert.match(read('dist/home-awards.js'),/api\('\.\/api\/achievements'\)/);
@@ -100,4 +100,28 @@ test('SK officer award uploads retain unuploaded photos for retry and show persi
  assert.match(awards,/projectUploadStatus\(progress\)/);
  assert.match(awards,/projectUploadStatus\('Award upload needs retry:/);
  assert.match(awards,/Only your own unpublished draft or Chairman-managed awards can be edited/);
+});
+
+test('All portal public routes have extensionless Vercel rewrites and old URL redirects',()=>{
+ const cfg=JSON.parse(read('vercel.json'));
+ for(const route of ['account','projects','achievements','duty','contacts','transparency','youth-leaders']){
+   assert(cfg.rewrites.some(r=>r.source==='/'+route&&r.destination==='/'+route+'.html'),route+' rewrite');
+   assert(cfg.redirects.some(r=>r.source==='/'+route+'.html'&&r.destination==='/'+route),route+' redirect');
+ }
+});
+test('SK officers access project-style awards editor in their sidebar with secure submission',()=>{
+ const html=read('dist/account.html'),js=read('dist/awards-management.js'),css=read('dist/awards-dashboard-modal.css');
+ assert.match(html,/data-tab="awards"/);
+ for(const id of ['award-new','award-dialog','award-mode-manual','award-mode-facebook','award-caption','award-analyze','award-photo-thumbs','award-manage-list']){
+  assert(html.includes('id="'+id+'"'),id);
+ }
+ assert.match(html,/Manual Entry/);
+ assert.match(html,/Facebook Caption \+ AI/);
+ assert.match(js,/awardDialog\.showModal\(\)/);
+ assert.match(js,/data-award-edit/);
+ assert.match(js,/data-award-archive/);
+ assert.match(js,/api\/manage\/projects\/import-facebook/);
+ assert.match(js,/const archive=user\?\.role==='chairman'/);
+ assert.match(css,/@media\(max-width:650px\)/);
+ assert.match(css,/\.award-modal-form #award-photo-thumbs/);
 });

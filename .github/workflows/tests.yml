@@ -5,10 +5,12 @@ on:
     branches:
       - migration/vercel-supabase
       - fix/compact-project-cover-cards-20261017
+      - fix/achievements-and-officer-photo-upload-20261022
   push:
     branches:
       - fix/compact-project-cover-cards-20261017
       - fix/achievements-and-officer-photo-upload-20261022
+      - feature/awards-dashboard-modal-clean-routes-20261022
 
 permissions:
   contents: read
