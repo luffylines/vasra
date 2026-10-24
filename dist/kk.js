@@ -1,0 +1,380 @@
+'use strict';
+(async()=>{
+ const view=document.body.dataset.view;
+ const $=s=>document.querySelector(s);
+ const feedback=(message,kind='info')=>{const el=$('#kk-feedback');if(!el)return;el.textContent=message;el.dataset.kind=kind;el.hidden=!message;};
+ const busy=(form,on)=>{const btn=form.querySelector('[type="submit"]');if(btn){btn.disabled=on;btn.setAttribute('aria-busy',String(on));}};
+ // Fixed +63 9 is outside the editable box. Paste supports 09..., +639... or
+ // the remaining nine digits, while typed content never exceeds nine digits.
+ const kkMobileTail=value=>{
+  let digits=String(value||'').replace(/\D/g,'');
+  if(digits.startsWith('63')&&digits.length>=12)digits=digits.slice(2);
+  if(digits.startsWith('0')&&digits.length>=11)digits=digits.slice(1);
+  if(digits.startsWith('9')&&digits.length>=10)digits=digits.slice(1);
+  return digits.slice(0,9);
+ };
+ const kkNormalizePhoneInput=input=>{
+  if(!input||!input.matches('input[name="phone"]'))return;
+  const tail=kkMobileTail(input.value);
+  if(input.value!==tail)input.value=tail;
+ };
+ const kkPhilippineMobile=value=>'+639'+kkMobileTail(value);
+ const getApi=async path=>api('./api/kk/'+path);
+ const send=async(path,data)=>api('./api/kk/'+path,{method:'POST',body:JSON.stringify(data)});
+ if(view==='login'){
+  const google=$('#kk-google-login'),note=$('#kk-google-note');
+  // Password visibility for KK youth only; independent of the SK staff login.
+  const password=$('#kk-login-password'),reveal=$('.kk-password-toggle');
+  if(password&&reveal)reveal.addEventListener('click',()=>{
+   const visible=password.type==='text';
+   password.type=visible?'password':'text';
+   reveal.textContent=visible?'Show':'Hide';
+   reveal.setAttribute('aria-label',visible?'Show password':'Hide password');
+   reveal.setAttribute('aria-pressed',String(!visible));
+  });
+
+  try{
+   const status=await getApi('google/status');
+   if(status.enabled===true){google.href='./api/kk/google/start';google.classList.remove('disabled');google.setAttribute('aria-disabled','false');note.textContent='Google account login is available for KK members.';}
+   else note.textContent='Google Sign-In needs a dedicated youth OAuth configuration. Email/password login works independently.';
+  }catch{note.textContent='Hindi ma-check ang Google Sign-In ngayon. Gamitin muna ang email/password.';}
+  const query=new URLSearchParams(location.search);
+  if(query.get('google_error'))feedback(query.get('google_error')==='link_required'?'May existing password account sa email na ito. Mag-login gamit ang password; hindi awtomatikong ili-link ang Google.':'Hindi natuloy ang Google Sign-In.','error');
+  const form=$('#kk-login-form');
+  form.addEventListener('submit',async e=>{
+   e.preventDefault();if(!form.reportValidity())return;
+   busy(form,true);feedback('Verifying your KK account…');
+   try{
+    const b=await send('login',{email:form.email.value.trim(),password:form.password.value});
+    if(b.ok)location.assign('./kk-profile');
+   }catch(err){feedback(err.message,'error');}finally{busy(form,false);}
+  });
+ }
+ if(view==='register'){
+  const form=$('#kk-registration-form');
+  const submit=form.querySelector('button[type="submit"]');
+  const readiness=$('#kk-registration-readiness');
+  const readinessTitle=$('#kk-readiness-title');
+  const readinessDescription=$('#kk-readiness-description');
+  const retry=$('#kk-readiness-retry');
+  let databaseReady=false,checking=false;
+  async function checkKKRegistration(){
+   if(checking)return;
+   checking=true;databaseReady=false;
+   submit.disabled=true;submit.setAttribute('aria-disabled','true');
+   submit.textContent='Checking KK Registration…';
+   readiness.hidden=true;  // Only errors need a visible status card.
+   readiness.dataset.status='checking';
+   readinessTitle.textContent='Checking registration service…';
+   readinessDescription.textContent='Tinitingnan kung active ang secure KK registration database.';
+   retry.hidden=true;
+   try{
+    // This is a public, non-sensitive directory lookup and verifies that the
+    // dedicated KK database RPC actually exists. A READY HTML preview alone
+    // does NOT mean the KK migration has been applied.
+    const result=await getApi('sitios');
+    if(!Array.isArray(result?.sitios))throw Error('Invalid KK service response.');
+    databaseReady=true;readiness.dataset.status='ready';
+    readiness.hidden=true;
+    readinessTitle.textContent='KK registration service is available';
+    readinessDescription.textContent=result.sitios.length?
+      'Available ang secure KK database. Maaari nang gumawa ng account.':
+      'Available ang KK database; kailangan pang ilagay ng SK ang official Sitio/Purok list bago makumpleto ang profiling.';
+    submit.disabled=false;submit.removeAttribute('aria-disabled');
+    submit.textContent='Create KK Account →';
+   }catch{
+    readiness.dataset.status='unavailable';
+    readiness.hidden=false;
+    readinessTitle.textContent='KK registration is not yet available';
+    readinessDescription.textContent='Hindi pa available ang KK database migration. Walang registration na mai-save sa preview. Hindi ka pa nakagawa ng account. Ipa-activate muna ito sa authorized SK administrator.';
+    submit.textContent='Registration temporarily unavailable';
+    retry.hidden=false;
+   }finally{checking=false;}
+  }
+  retry.addEventListener('click',checkKKRegistration);
+  checkKKRegistration();
+  const phone=form.elements.namedItem('phone');
+  phone.addEventListener('input',()=>kkNormalizePhoneInput(phone));
+  phone.addEventListener('paste',e=>{
+   const pasted=e.clipboardData?.getData('text')||'';
+   if(pasted && (pasted.replace(/\D/g,'').length>=10)){
+    e.preventDefault();phone.value=kkMobileTail(pasted);
+   }
+  });
+  form.addEventListener('submit',async e=>{
+   e.preventDefault();
+   if(!databaseReady){feedback('Hindi pa active ang KK database. Walang na-create na account. Pindutin ang Retry o ipaalam sa SK administrator.','error');return;}
+   if(!form.reportValidity())return;
+   const f=Object.fromEntries(new FormData(form));
+   if(f.email.trim().toLowerCase()!==f.confirm_email.trim().toLowerCase())return feedback('Hindi magkatugma ang email at confirm email.','error');
+   if(f.password!==f.confirm_password)return feedback('Hindi magkatugma ang password.','error');
+   const data={...f,email:f.email.trim().toLowerCase(),confirm_email:f.confirm_email.trim().toLowerCase(),phone:kkPhilippineMobile(f.phone),agree:form.agree.checked,confirm_email_correct:form.confirm_email_correct.checked};
+   busy(form,true);feedback('Creating your protected KK account…');
+   try{const r=await send('register',data);if(r.ok)location.assign('./kk-profile');}
+   catch(err){feedback(err.message,'error');}finally{busy(form,false);}
+  });
+ }
+ if(view!=='profile')return;
+ const loading=$('#kk-loading'),content=$('#kk-content');
+ let account=null,profile={},data={},current=1,sitios=[];
+ const titles=['Personal Information','Education','Additional Information','Emergency Contact','Review & Submit'];
+ const field=(name,label,opt={})=>{
+  const value=data[name]??'',req=opt.required?' required':'';
+  if(opt.select){
+   return '<label>'+esc(label)+(opt.required?' *':'')+'<select name="'+name+'"'+req+'><option value="">Pumili…</option>'+
+    opt.select.map(v=>{const [val,text]=Array.isArray(v)?v:[v,v];return '<option value="'+esc(val)+'"'+(value===val?' selected':'')+'>'+esc(text)+'</option>';}).join('')+'</select></label>';
+  }
+  if(name==='phone'){
+   const tail=kkMobileTail(value);
+   return '<label>'+esc(label)+' *<span class="kk-ph-number"><span class="kk-ph-prefix" aria-hidden="true">+63 9</span><input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="9" minlength="9" pattern="[0-9]{9}" placeholder="XXXXXXXXX" value="'+esc(tail)+'" required></span></label>';
+  }
+  const type=opt.type||'text';
+  return '<label>'+esc(label)+(opt.required?' *':'')+'<input name="'+name+'" type="'+type+'" maxlength="'+(opt.max||150)+'" placeholder="'+esc(opt.placeholder||'')+'" value="'+esc(value)+'"'+req+'></label>';
+ };
+ const sitioSelect=()=>{
+  const current=String(data.sitio_id||'');
+  const selectedExists=sitios.some(x=>String(x.id)===current);
+  return '<label>Sitio / Purok *<select name="sitio_id" required>'+
+   '<option value="">'+(sitios.length?'Piliin ang inyong Sitio / Purok':'Wala pang sitio na nilagay ang SK')+'</option>'+
+   sitios.map(s=>'<option value="'+esc(s.id)+'"'+(current===String(s.id)?' selected':'')+'>'+esc(s.name)+'</option>').join('')+
+   (!selectedExists&&current?'<option value="'+esc(current)+'" selected disabled>Hindi na available ang dating sitio — makipag-ugnay sa SK</option>':'')+
+   '</select></label>';
+ };
+ const options={
+  civil:[['single','Single'],['married','Married'],['other','Other / prefer not to say']],
+  gender:[['male','Male'],['female','Female'],['other','Other'],['undisclosed','Prefer not to say']],
+  solo:[['no','No'],['yes','Yes'],['undisclosed','Prefer not to say']],
+  edu:[['no-formal','No Formal Schooling'],['elementary','Elementary'],['junior-high','Junior High School'],['senior-high','Senior High School'],['als','Alternative Learning System (ALS)'],['vocational','TVET / Vocational'],['college','College / Undergraduate'],['graduate','Postgraduate (Masteral / Doctoral)'],['out-of-school','Out-of-School Youth']],
+  employment:[['student','Student'],['employed','Employed'],['self-employed','Self-employed'],['unemployed','Unemployed'],['other','Other']],
+  voter:[['yes','Yes'],['no','No'],['unsure','Not sure']]
+ };
+ // DepEd school grades; college/postgraduate durations vary by degree program.
+ const yearLevelOptions={
+  'no-formal':[['na','Not Applicable']],
+  elementary:[['grade-1','Grade 1'],['grade-2','Grade 2'],['grade-3','Grade 3'],['grade-4','Grade 4'],['grade-5','Grade 5'],['grade-6','Grade 6'],['completed','Elementary Graduate / Completed']],
+  'junior-high':[['grade-7','Grade 7'],['grade-8','Grade 8'],['grade-9','Grade 9'],['grade-10','Grade 10'],['completed','Junior High Graduate / Completed']],
+  'senior-high':[['grade-11','Grade 11'],['grade-12','Grade 12'],['completed','Senior High Graduate / Completed']],
+  als:[['elementary','ALS Elementary'],['junior-high','ALS Junior High'],['senior-high','ALS Senior High'],['completed','ALS Completed']],
+  vocational:[['level-1','1st Year / Level 1'],['level-2','2nd Year / Level 2'],['level-3','3rd Year / Level 3'],['completed','NC / TVET Completed']],
+  college:[['year-1','1st Year College'],['year-2','2nd Year College'],['year-3','3rd Year College'],['year-4','4th Year College'],['year-5','5th Year College'],['year-6','6th Year (when applicable)'],['completed','College Graduate / Completed']],
+  graduate:[['master-1','Masteral 1st Year'],['master-2','Masteral 2nd Year'],['doctorate-1','Doctoral 1st Year'],['doctorate-2','Doctoral 2nd Year'],['doctorate-3','Doctoral 3rd Year or Higher'],['completed','Postgraduate Completed']],
+  'out-of-school':[['na','Not Currently Enrolled']]
+ };
+ // Optional current Metro Manila address. This never changes verified
+ // Barangay Vasra jurisdiction; SK officers decide residency eligibility.
+ // PSA 2026 PSGC 10-digit NCR locality codes (16 cities + Pateros).
+ const metroCities=['Caloocan','Las Piñas','Makati','Malabon','Mandaluyong','Manila',
+  'Marikina','Muntinlupa','Navotas','Parañaque','Pasay','Pasig','Pateros',
+  'Quezon City','San Juan','Taguig','Valenzuela'];
+ const metroCodes={'Caloocan':'1380100000','Las Piñas':'1380200000',
+  'Makati':'1380300000','Malabon':'1380400000','Mandaluyong':'1380500000',
+  'Manila':'1380600000','Marikina':'1380700000','Muntinlupa':'1380800000',
+  'Navotas':'1380900000','Parañaque':'1381000000','Pasay':'1381100000',
+  'Pasig':'1381200000','Quezon City':'1381300000','San Juan':'1381400000',
+  'Taguig':'1381500000','Valenzuela':'1381600000','Pateros':'1381700000'};
+ const metroCache=new Map();
+ let metroBarangays=[['Vasra','Vasra']],metroLoading=false,metroError=false;
+ const metroAreaSelection=()=>{
+  const city=data.residence_city||'Quezon City',current=String(data.residence_barangay||'');
+  const area=city==='Quezon City'&&!metroBarangays.some(([v])=>v==='Vasra')
+   ?[['Vasra','Vasra'],...metroBarangays]:metroBarangays;
+  return '<label>Current Barangay in Metro Manila (Optional)<select name="residence_barangay" aria-label="Select Metro Manila residential barangay">'+
+   '<option value="">'+(metroLoading?'Loading PSGC barangays…':
+     metroError?'Unable to load directory — tap Retry':'Select barangay')+'</option>'+
+   area.map(([val,label])=>'<option value="'+esc(val)+'"'+(current===val?' selected':'')+'>'+esc(label)+'</option>').join('')+
+   (current&&!area.some(([v])=>v===current)?'<option selected value="'+esc(current)+'">'+esc(current)+' (saved for SK review)</option>':'')+
+   '</select></label><button class="kk-retry-barangays" type="button" id="kk-refresh-barangays">'+
+   (metroError?'Retry Barangay List':'Reload Barangay List')+'</button>';
+ };
+ const extractRows=json=>{
+  const rows=Array.isArray(json)?json:Array.isArray(json?.data)?json.data:
+   Array.isArray(json?.items)?json.items:[];
+  return rows.map(row=>({name:String(row.name||'').trim(),
+   city:String(row.city_municipality?.name||row.cityMunicipality?.name||
+    (typeof row.city_municipality==='string'?row.city_municipality:'')||'')}))
+   .filter(row=>row.name);
+ };
+ const cleanArea=name=>String(name||'').toLocaleLowerCase().replace(/^(city of |city )/,'')
+  .replace(/ city$/,'').normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+ async function refreshMetroBarangays(force=false){
+  if(metroLoading)return;
+  const city=data.residence_city||'Quezon City',code=metroCodes[city];
+  if(!code)return;
+  if(!force&&metroCache.has(code)){
+   metroBarangays=metroCache.get(code).map(n=>[n,n]);metroError=false;
+   if(current===1)renderStep();
+   return;
+  }
+  metroLoading=true;metroError=false;
+  try{
+   // Public PSGC 10-digit locality code only. No resident information is sent.
+   let response=await fetch('https://psgc.cloud/api/v2/cities-municipalities/'+code+'/barangays',
+    {mode:'cors',credentials:'omit'});
+   let items=response.ok?extractRows(await response.json()):[];
+   if(items.length===0){
+    response=await fetch('https://psgc.cloud/api/v2/regions/1300000000/barangays',
+     {mode:'cors',credentials:'omit'});
+    if(!response.ok)throw Error('PSGC is temporarily unavailable');
+    items=extractRows(await response.json()).filter(v=>cleanArea(v.city)===cleanArea(city));
+   }
+   if(!items.length)throw Error('No matching NCR barangay results');
+   const names=[...new Set(items.map(item=>item.name))].sort((a,b)=>a.localeCompare(b));
+   metroCache.set(code,names);
+   metroBarangays=names.map(n=>[n,n]);
+  }catch{
+   metroError=true;
+   metroBarangays=city==='Quezon City'?[['Vasra','Vasra']]:[];
+  }finally{
+   metroLoading=false;
+   if(data.residence_city!==city){refreshMetroBarangays();return;}
+   if(current===1){
+    const form=$('#kk-step-form');
+    if(form&&form.querySelector('select[name="residence_city"]')){savedFields(form);renderStep();}
+   }
+  }
+ }
+ const values=(container)=>Object.fromEntries(new FormData(container));
+ const render=()=>{
+  $('#kk-status').textContent=(profile.status||'draft').toUpperCase();
+  $('#kk-id').textContent=profile.kk_id||'After verification';
+  $('#kk-points').textContent=String(account.points||0);
+  const review=$('#kk-review-note');review.hidden=!profile.review_note;
+  if(profile.review_note){review.textContent=profile.review_note;review.dataset.kind=profile.status==='rejected'?'error':'info';}
+  const edit=profile.status!=='pending'&&profile.status!=='verified';
+  $('#kk-profile-area').hidden=!edit;
+  if(edit){renderStep();if(current===1)refreshMetroBarangays();}
+ };
+ const savedFields=(form)=>{
+  for(const [name,value] of new FormData(form)){
+   if(name==='consent'||name==='guardian_consent')continue;
+   data[name]=String(value);
+  }
+  if(current===5){data.consent=!!form.querySelector('[name="consent"]')?.checked;data.guardian_consent=!!form.querySelector('[name="guardian_consent"]')?.checked;}
+ };
+ const stepBody=()=>{
+  if(!account.member.first_name||!account.member.birthdate){
+   current=0;$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';
+   return '<p class="kk-helper">Ilagay muna ang iyong personal identity. Hindi ito kinukuha mula sa public Google profile.</p><div class="kk-form-fields">'+
+    field('first_name','First Name',{required:true})+field('middle_name','Middle Name (Optional)')+
+    field('last_name','Last Name',{required:true})+field('birthdate','Birthdate',{type:'date',required:true})+
+    field('phone','Phone Number',{required:true,placeholder:'+639XXXXXXXXX'})+'</div>';
+  }
+  $('#kk-step-label').textContent='STEP '+current+' OF 5';
+  $('#kk-step-title').textContent=titles[current-1];
+  if(current===1)return '<div class="kk-form-fields">'+
+   field('religion','Religion (Optional)')+field('civil_status','Civil Status',{select:options.civil})+
+   field('gender','Gender (Optional)',{select:options.gender})+field('solo_parent','Solo parent?',{select:options.solo})+
+   field('family_count','Number of family members',{type:'number'})+field('siblings','Number of siblings',{type:'number'})+
+   field('region','Region',{select:[['NCR','National Capital Region (NCR)']],required:true})+
+   field('province','Province / Area',{select:[['N/A (NCR)','Not Applicable — Metro Manila (NCR)']],required:true})+
+   field('city','City / Municipality',{select:[['Quezon City','Quezon City']],required:true})+
+   field('barangay','Barangay',{select:[['Vasra','Barangay Vasra']],required:true})+
+   sitioSelect()+
+   field('street','Street / House Number (Optional)',{placeholder:'Address detail, kung mayroon'})+
+   '<div class="kk-address-note"><strong>Current residence within Metro Manila (Optional)</strong><span>Ang official KK registration ay para sa Barangay Vasra. Kung kasalukuyan kang nakatira sa ibang NCR city, maaari mong ilagay rito para sa SK residency review. Hindi nito awtomatikong binabago ang Barangay Vasra eligibility.</span></div>'+
+   field('residence_city','Current City / Municipality in Metro Manila',{select:metroCities.map(c=>[c,c])})+
+   metroAreaSelection()+
+   '</div><p class="kk-helper">Sensitibong personal details ay para lamang sa authorized SK validation.</p>';
+  if(current===2)return '<div class="kk-form-fields">'+
+   field('education','Educational Level',{select:options.edu,required:true})+
+   field('year_level','Year / Grade Level',{select:yearLevelOptions[data.education]||[],required:true})+
+   field('school_name','School / Institution (Optional)')+'</div>'+
+   '<p class="kk-helper">Piliin ang Educational Level muna; ang Year / Grade Level dropdown ay aayon sa napili. Para sa mga graduate, piliin ang Completed.</p>';
+  if(current===3)return '<div class="kk-form-fields">'+field('employment','Occupation / Status',{select:options.employment})+
+   field('voter','Registered voter? (Optional)',{select:options.voter})+
+   field('interests','Interests / skills / youth organization (Optional)')+'</div>';
+  if(current===4)return '<div class="kk-form-fields">'+
+   field('emergency_name','Emergency contact full name',{required:true})+
+   field('emergency_phone','Emergency contact number',{required:true,placeholder:'+639XXXXXXXXX'})+
+   field('emergency_relation','Relationship',{required:true})+'</div>'+
+   '<p class="kk-helper">Ito ay gagamitin lamang sa naaangkop na emergency at hindi ilalathala.</p>';
+  const items=[['Full Name',[account.member.first_name,account.member.middle_name,account.member.last_name].filter(Boolean).join(' ')],['Birthdate',account.member.birthdate],
+   ['Email',account.member.email],['Barangay','Barangay Vasra'],['Sitio / Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name||'—'],['Street',data.street||'—'],['Education',data.education||'—'],['Year / Grade Level',data.year_level||'—'],
+   ['Emergency Contact',data.emergency_name||'—']];
+  const age=(()=>{const now=new Date(),bd=new Date(account.member.birthdate+'T00:00:00Z');return now.getUTCFullYear()-bd.getUTCFullYear()-Number((now.getUTCMonth()*100+now.getUTCDate())<(bd.getUTCMonth()*100+bd.getUTCDate()));})();
+  return '<div class="kk-review">'+items.map(([k,v])=>'<div><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join('')+'</div>'+
+  '<label class="kk-checkbox"><input name="consent" type="checkbox"'+(data.consent?' checked':'')+' required><span>I certify that the details are accurate and consent to confidential SK KK profiling verification.</span></label>'+
+  (age<18?'<label class="kk-checkbox"><input name="guardian_consent" type="checkbox"'+(data.guardian_consent?' checked':'')+' required><span>I confirm that a parent or legal guardian has permitted this minor’s KK registration.</span></label>':'')+
+  '<p class="kk-helper">Magtatapos ito sa Pending status. SK Officers lamang ang maaaring mag-verify o mag-reject.</p>';
+ };
+ const renderStep=()=>{
+  $('#kk-steps').innerHTML=titles.map((title,i)=>'<div class="kk-step '+(current===i+1?'active':current>i+1?'done':'')+'"><span>'+(i+1)+'</span>'+esc(title)+'</div>').join('');
+  $('#kk-step-fields').innerHTML=stepBody();
+  $('#kk-back').disabled=current<=1;
+  $('#kk-next').textContent=current===5?'Submit for SK Review →':'Save & Next →';
+  if(current===0){$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';$('#kk-next').textContent='Save & Continue →';}
+ };
+ async function load(){
+  let result;
+  try{result=await getApi('me');}
+  catch(err){
+   loading.innerHTML='<div class="kk-load-error"><strong>Hindi ma-load ang KK profile</strong><p>'+esc(err.message)+
+   '</p><p>Siguraduhing sa iisang preview domain ka nag-login. Kung expired ang session, mag-login muli.</p>'+
+   '<a href="./kk-login">Go to KK Login</a> · <button type="button" id="kk-retry-load">Retry</button></div>';
+   $('#kk-retry-load')?.addEventListener('click',()=>{loading.textContent='Checking your KK account…';load();});
+   return;
+  }
+  if(!result.member){location.replace('./kk-login');return;}
+  account=result;profile=result.profile||{};data={...(profile.data||{})};
+  data.region='NCR';data.province='N/A (NCR)';data.city='Quezon City';data.barangay='Vasra';
+  data.residence_city=data.residence_city||'Quezon City';
+  try{const directory=await getApi('sitios');sitios=Array.isArray(directory.sitios)?directory.sitios:[];}
+  catch{sitios=[];}
+
+  current=Math.max(1,Math.min(5,Number(profile.step)||1));
+  loading.hidden=true;content.hidden=false;render();
+ }
+ $('#kk-logout').onclick=async()=>{try{await send('logout',{});}finally{location.replace('./kk-login');}};
+ $('#kk-back').onclick=()=>{if(current>1){savedFields($('#kk-step-form'));current--;feedback('');renderStep();}};
+ $('#kk-step-form').addEventListener('click',event=>{
+  if(event.target.closest('#kk-refresh-barangays')){
+   savedFields($('#kk-step-form'));refreshMetroBarangays(true);
+  }
+ });
+ $('#kk-step-form').addEventListener('input',event=>{
+  if(event.target.matches('input[name="phone"]'))kkNormalizePhoneInput(event.target);
+ });
+ $('#kk-step-form').addEventListener('paste',event=>{
+  if(!event.target.matches('input[name="phone"]'))return;
+  const pasted=event.clipboardData?.getData('text')||'';
+  if(pasted && pasted.replace(/\D/g,'').length>=10){
+   event.preventDefault();event.target.value=kkMobileTail(pasted);
+  }
+ });
+ $('#kk-step-form').addEventListener('change',event=>{
+  if(current===1 && event.target.name==='residence_city'){
+   savedFields($('#kk-step-form'));data.residence_city=event.target.value;
+   data.residence_barangay='';metroBarangays=[];
+   renderStep();refreshMetroBarangays();return;
+  }
+  if(current!==2 || event.target.name!=='education')return;
+  savedFields($('#kk-step-form'));
+  data.education=event.target.value;
+  data.year_level='';
+  renderStep(); // Recreate the grade/year dropdown using the chosen education level.
+ });
+ $('#kk-step-form').addEventListener('submit',async e=>{
+  e.preventDefault();const form=e.currentTarget;
+  if(!form.reportValidity())return;
+  const identityRequired=!account.member.first_name||!account.member.birthdate;
+  const identity=identityRequired?values(form):{};
+  if(identityRequired && identity.phone)identity.phone=kkPhilippineMobile(identity.phone);
+  savedFields(form);
+  busy(form,true);feedback('Saving securely to your KK account…');
+  try{
+   const step=current===0?1:current;
+   data.region='NCR';data.province='Metro Manila';data.city='Quezon City';data.barangay='Vasra';
+   if(current===1&&!sitios.some(s=>String(s.id)===String(data.sitio_id))){
+    throw Error('Pumili ng Sitio / Purok na nasa opisyal na listahan ng SK. Kung wala pa, ipalagay muna sa SK Sitio Management.');
+   }
+   if(current===2 && (!yearLevelOptions[data.education] ||
+      !yearLevelOptions[data.education].some(([value])=>value===data.year_level))){
+     throw Error('Pumili ng Year / Grade Level na tugma sa iyong Educational Level.');
+   }
+   await send('profile',{profile:data,step,...identity});
+   if(current===5){await send('submit',{});await load();feedback('Profile submitted for SK Officer verification.','success');}
+   else{if(current===0){await load();}else{current=Math.min(5,current+1);profile.step=current;renderStep();feedback('Step saved to your account.','success');}}
+  }catch(err){feedback(err.message,'error');}finally{busy(form,false);}
+ });
+ load();
+})();

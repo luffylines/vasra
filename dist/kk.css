@@ -1,0 +1,262 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--navy:#162d52;--blue:#2b5eaa;--soft:#f3f7fd;--muted:#617896;--line:#dce6f2;--ink:#203e63}
+*{box-sizing:border-box}body.kk-body{margin:0;min-height:100vh;background:#f3f6fb;color:var(--ink);font:14px/1.6 'DM Sans',sans-serif}button,input,select,textarea{font:inherit}a{color:#2865b2}button{cursor:pointer}
+.kk-header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:17px max(20px,calc((100vw - 1220px)/2));background:#fff;border-bottom:1px solid var(--line);min-height:82px}
+.kk-brand{display:flex;gap:11px;align-items:center;text-decoration:none;color:#143154}.kk-brand img{width:43px;height:43px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.kk-brand b{display:block;font:800 15px Manrope;letter-spacing:.4px}.kk-brand small{display:block;font-size:10px;color:#6e85a4}.kk-header nav{display:flex;gap:19px;align-items:center}.kk-header nav a{text-decoration:none;font-size:12px;font-weight:800;color:#315b8f}.kk-header nav a:hover{text-decoration:underline}
+.kk-main{max-width:1230px;margin:0 auto;padding:35px 20px 48px;min-height:calc(100vh - 150px)}.kk-footer{border-top:1px solid var(--line);max-width:1210px;margin:auto;padding:20px 10px;display:flex;justify-content:space-between;color:#7187a5;font-size:11px;gap:16px}
+.kk-tag{font-size:10px;letter-spacing:1.5px;font-weight:800;color:#5a7fb4}.kk-sub,.kk-page-heading p{color:#7689a4;margin:7px 0 22px}.kk-auth-layout{max-width:1020px;display:grid;grid-template-columns:1fr .9fr;margin:23px auto 30px;border-radius:23px;background:white;border:1px solid var(--line);overflow:hidden;box-shadow:0 18px 55px #1d42640c}
+.kk-auth-story{background:radial-gradient(ellipse at 100% 0%,#5986c249,transparent 60%),#152d51;min-height:510px;color:white;padding:50px 39px;display:flex;flex-direction:column;justify-content:center;position:relative}.kk-auth-story .kk-tag{color:#b0cef4}.kk-auth-story h1{font:800 clamp(26px,3.4vw,40px)/1.28 Manrope;letter-spacing:-1.1px;margin:20px 0}.kk-auth-story h1 em{font-style:normal;color:#92bbf1}.kk-auth-story p{font-size:13px;color:#c0d4eb;line-height:1.9;max-width:370px}.kk-story-logo{width:82px;height:82px;object-fit:cover;border:7px solid white;border-radius:24px;margin-top:30px;box-shadow:0 8px 30px #001c443d}.kk-story-footer{font-size:10px;letter-spacing:1px;color:#aac6e8;margin-top:60px}
+.kk-auth-card{padding:48px 38px;min-width:0}.kk-auth-card h2,.kk-page-heading h1,.kk-dashboard-head h1{font:800 31px/1.3 Manrope;letter-spacing:-.8px;color:#183d6b;margin:10px 0 6px}
+.kk-form{display:flex;flex-direction:column;gap:17px}.kk-form label:not(.kk-checkbox){display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:700;color:#304d72}.kk-form .kk-required{color:#c14952}.kk-form input:not([type=checkbox]),.kk-form select,.kk-form textarea{width:100%;min-height:45px;padding:11px 13px;border:1px solid #cdd9e8;border-radius:10px;outline:none;background:#fbfcff;color:#223e64;font:500 16px 'DM Sans',sans-serif}.kk-form textarea{resize:vertical;min-height:110px}.kk-form input:focus,.kk-form select:focus,.kk-form textarea:focus{border-color:#5086cc;box-shadow:0 0 0 3px #2e79b522;background:white}.kk-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;background:#2b5eaa;color:white;padding:12px 19px;font-size:13px;font-weight:800;min-height:45px;cursor:pointer;text-decoration:none}.kk-btn:hover{background:#1d4c94}.kk-btn:disabled{opacity:.62;cursor:wait}.kk-btn-quiet{background:#edf3fc;color:#315b92;border:1px solid #cfe0f4}.kk-btn-quiet:hover{background:#dceafb}
+.kk-or{display:flex;align-items:center;gap:15px;margin:25px 0 15px;text-align:center;color:#8796aa;font-size:11px}.kk-or:before,.kk-or:after{content:'';height:1px;background:#dce5f1;flex:1}.kk-google{display:flex;align-items:center;justify-content:center;gap:11px;border:1px solid #cbd7e8;border-radius:10px;padding:10px;color:#304d75;font-weight:800;font-size:12px;text-decoration:none;background:#fff}.kk-google.disabled{opacity:.54;pointer-events:none;cursor:not-allowed}.kk-google-g{font:bold 18px Arial;color:#4285f4}
+.kk-switch{text-align:center;margin:23px 0 0;font-size:12px;color:#7187a3}.kk-switch a{font-weight:800}.kk-notice{font-size:11px;color:#7c8fa8;text-align:center;margin-top:21px;background:#f5f8fd;border:1px solid var(--line);padding:12px;border-radius:9px}
+.kk-helper{color:#7386a0;font-size:11px;line-height:1.7;margin:4px 0}.kk-feedback{padding:13px 15px;margin:8px 0;background:#edf4ff;border:1px solid #cdddff;border-radius:10px;color:#315f94;font-size:12px;line-height:1.7}.kk-feedback[data-kind=error]{background:#fff5f5;color:#a33333;border-color:#efc6c6}.kk-feedback[data-kind=success]{background:#f0fbf6;color:#19714a;border-color:#b7e5cf}.kk-feedback[hidden],#kk-content[hidden]{display:none}
+.kk-registration{max-width:730px;background:white;margin:12px auto;border:1px solid var(--line);border-radius:19px;padding:30px 33px;box-shadow:0 13px 38px #153b6510}.kk-page-heading{text-align:center;margin-bottom:24px}.kk-field-section{padding:20px 0 27px;border-bottom:1px solid var(--line)}.kk-field-section h2{font:800 12px Manrope;letter-spacing:1px;color:#5d7594;margin:0 0 21px}.kk-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.kk-grid-span{grid-column:1/-1}.kk-checkbox{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:#49627e;cursor:pointer}.kk-checkbox input{width:17px;height:17px;margin:2px 0 0;flex:none;accent-color:var(--blue)}.kk-privacy{padding:14px;border:1px solid var(--line);border-radius:10px;background:#f7faff;font-size:12px;color:#637c9d}.kk-privacy summary{font-weight:700;color:#35629a;cursor:pointer}.kk-privacy p{margin:10px 0 0}
+.kk-dashboard{max-width:1100px;margin:auto}.kk-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}.kk-dashboard-head p{font-size:12px;color:#667f9b}.kk-loading{padding:25px;text-align:center;color:#6080a7}.kk-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 22px}.kk-summary article{padding:19px 22px;border:1px solid #d6e3f5;border-radius:16px;background:#fff;box-shadow:0 5px 18px #173d5c08;min-width:0}.kk-summary span{display:block;color:#7a90a9;font-size:11px;margin-bottom:7px}.kk-summary strong{font:800 18px Manrope;color:#1b4b83;overflow-wrap:anywhere}
+.kk-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0 20px}.kk-step{display:grid;justify-items:center;gap:5px;text-align:center;border:1px solid #dce6f3;border-radius:13px;background:white;padding:14px 5px;color:#7b91ad;font-size:10px}.kk-step span{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#edf3fb;color:#6787b1;font:800 12px Manrope}.kk-step.active{border-color:#77a7e5;background:#eaf3ff;color:#285ea4}.kk-step.active span{background:#2e62ae;color:white}.kk-step.done span{background:#daf0e6;color:#1f855a}
+.kk-profile-sheet,.kk-perks{border:1px solid var(--line);border-radius:17px;background:white;padding:26px;margin-bottom:24px}.kk-profile-sheet h2,.kk-perks h2{font:800 22px Manrope;letter-spacing:-.6px;margin:7px 0 20px}.kk-profile-sheet-head{border-bottom:1px solid var(--line);margin-bottom:20px}.kk-form-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.kk-step-actions{display:flex;justify-content:space-between;gap:12px;margin-top:8px}.kk-step-actions .kk-btn{min-width:125px}
+.kk-profile-sheet .kk-radio-line{display:flex;align-items:center;gap:18px;font-size:12px}.kk-profile-sheet .kk-radio-line label{flex-direction:row;align-items:center;gap:5px}.kk-profile-sheet .kk-radio-line input{min-height:0;width:auto}.kk-review{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.kk-review>div{padding:12px;border-radius:9px;background:#f4f8fd}.kk-review span{display:block;font-size:10px;color:#728aaa;text-transform:uppercase}.kk-review strong{font-size:12px;overflow-wrap:anywhere}.kk-perks>div>p{font-size:12px;color:#6a82a1}.kk-perk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:13px}.kk-perk{padding:16px;background:#f6f9fe;border:1px solid var(--line);border-radius:13px}.kk-perk h3{font:800 14px Manrope;color:#264d7d}.kk-perk p{font-size:12px;color:#6a81a0}.kk-perk button{width:100%}.kk-perks h3{font:800 15px Manrope;color:#2d5786}
+@media(max-width:760px){.kk-auth-layout{grid-template-columns:1fr}.kk-auth-story{min-height:0;padding:27px}.kk-auth-story h1{font-size:26px}.kk-story-logo,.kk-story-footer{display:none}.kk-auth-card{padding:29px 23px}.kk-registration{margin:0;padding:23px 19px}.kk-summary{grid-template-columns:1fr}.kk-steps{gap:5px}.kk-step{padding:8px 2px;font-size:9px}.kk-step span{width:25px;height:25px;font-size:10px}.kk-profile-sheet,.kk-perks{padding:20px}.kk-form-fields,.kk-field-grid{grid-template-columns:1fr}.kk-review{grid-template-columns:1fr}.kk-header{padding:14px 17px}.kk-header nav{gap:9px}.kk-header nav a{font-size:10px}.kk-brand small{display:none}.kk-main{padding:22px 13px}.kk-dashboard-head h1{font-size:24px}.kk-footer{padding:14px}.kk-grid-span{grid-column:auto}}
+@media(max-width:380px){.kk-header nav a:nth-child(3){display:none}.kk-step{font-size:8px}.kk-step-actions .kk-btn{min-width:0;flex:1}}
+
+/* 2026-10-24: unified KK authentication design, no external top navbar. */
+.kk-auth-page{min-width:0}
+.kk-auth-page .kk-main{display:flex;justify-content:center;align-items:center;width:100%;max-width:none;min-height:calc(100svh - 53px);padding:25px 20px 20px}
+.kk-auth-page .kk-auth-layout{
+ width:100%;max-width:950px;min-width:0;min-height:635px;
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.96fr);
+ overflow:hidden;margin:0;border-radius:22px;border:1px solid #dbe6f2;
+ background:#fff;box-shadow:0 24px 54px #16345717
+}
+.kk-auth-page .kk-auth-story{
+ display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;
+ min-height:635px;padding:37px 38px 35px;
+ background:radial-gradient(circle at 115% 100%,#4b82bd70 0%,#1a416e88 42%,transparent 68%),linear-gradient(148deg,#172f55,#1e4775);
+ isolation:isolate;overflow:hidden;position:relative
+}
+.kk-auth-page .kk-auth-story:before,
+.kk-auth-page .kk-auth-story:after{
+ content:"";position:absolute;z-index:-1;border:1px solid #a3c0e629;border-radius:50%;pointer-events:none
+}
+.kk-auth-page .kk-auth-story:before{height:470px;width:470px;bottom:-135px;right:-235px}
+.kk-auth-page .kk-auth-story:after{height:340px;width:340px;bottom:-69px;right:-161px}
+.kk-story-brand{display:flex;align-items:center;gap:12px}
+.kk-story-brand-logo{width:44px;height:44px;border:1px solid #ffffff48;border-radius:13px;background:white;padding:4px;flex:none;overflow:hidden}
+.kk-story-brand-logo img{display:block;width:100%;height:100%;object-fit:contain;border-radius:7px}
+.kk-story-brand strong{display:block;font:800 15px/1.3 Manrope,sans-serif;letter-spacing:.2px;color:#fff}
+.kk-story-brand small{display:block;color:#b8d5f6;font-size:10px}
+.kk-story-center{margin:auto 0;max-width:405px;padding:22px 0}
+.kk-auth-page .kk-story-center .kk-tag{color:#a9cdfc}
+.kk-auth-page .kk-auth-story h1{font:800 clamp(29px,3.2vw,41px)/1.22 Manrope,sans-serif;letter-spacing:-1.2px;margin:19px 0 21px;color:white}
+.kk-auth-page .kk-auth-story h1 em{color:#99c3ff;font-style:normal}
+.kk-auth-page .kk-auth-story p{font-size:13px;line-height:1.85;max-width:370px;color:#d6e7ff;margin:0}
+.kk-story-features{display:flex;flex-wrap:wrap;gap:7px;margin-top:25px}
+.kk-story-features span{font:600 10px/1.5 'DM Sans',sans-serif;color:#d5e7ff;border:1px solid #bad8f743;background:#ffffff0c;border-radius:999px;padding:7px 10px}
+.kk-story-bottom{display:flex;align-items:center;justify-content:space-between;gap:14px;color:#d6e7fd;font-size:10px}
+.kk-online-dot{width:6px;height:6px;display:inline-block;border-radius:100%;background:#86d6b1;vertical-align:middle;margin-right:5px}
+.kk-story-home{display:inline-flex;align-items:center;gap:8px;justify-content:center;min-height:39px;padding:7px 11px;color:#1a467e!important;text-decoration:none;background:#e9f3ff;border:1px solid #dceafa;border-radius:10px;font-size:11px;font-weight:800}
+.kk-story-home:hover{background:#fff}
+.kk-story-home svg{width:17px;height:17px}
+.kk-story-home svg:last-child{width:15px}
+.kk-auth-page .kk-auth-card{min-width:0;padding:38px clamp(26px,3.2vw,46px);display:flex;flex-direction:column;justify-content:center}
+.kk-auth-icon{display:grid;place-items:center;width:42px;height:42px;background:#eaf2ff;color:#2c65ab;border-radius:13px;margin:0 0 16px}
+.kk-auth-icon svg{width:22px;height:22px}
+.kk-auth-page .kk-auth-card>.kk-tag{letter-spacing:1.2px;color:#5b7cb2}
+.kk-auth-page .kk-auth-card h2{font:800 29px/1.2 Manrope,sans-serif;letter-spacing:-.8px;color:#173e6c;margin:12px 0 6px}
+.kk-auth-page .kk-auth-card .kk-sub{color:#7389a5;font-size:12px;line-height:1.6;margin:0 0 22px}
+.kk-auth-page .kk-auth-card .kk-form{gap:14px}
+.kk-auth-page .kk-auth-card .kk-form label{min-width:0;gap:7px}
+.kk-auth-page .kk-auth-card .kk-form input{width:100%;min-width:0;background:#f6f9ff;border-radius:9px}
+.kk-label-title,.kk-form label>.kk-label-title{
+ display:block!important;width:100%;font-size:12px;font-weight:700;
+ line-height:1.45;color:#2f527c;white-space:normal
+}
+.kk-label-title .kk-required{
+ display:inline!important;position:static!important;white-space:nowrap!important;
+ color:#c14952!important;font-size:12px;font-weight:800;margin-left:2px;vertical-align:baseline
+}
+.kk-password-field{display:block;position:relative;width:100%;min-width:0}
+.kk-password-field input{padding-right:76px!important}
+.kk-password-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:#eef4fe;border:1px solid #c9daf0;border-radius:7px;color:#2d5c98;font:700 11px 'DM Sans',sans-serif;padding:7px 11px;min-height:33px}
+.kk-password-toggle:hover{background:#dae9ff}
+.kk-session-hint{display:flex;align-items:center;gap:6px;color:#7891b0;font-size:10px;line-height:1.5}
+.kk-session-hint svg{width:14px;height:14px;flex:none;color:#7595bb}
+.kk-auth-page .kk-auth-submit{width:100%;background:#2a5ba6;border-radius:10px;justify-content:center;box-shadow:0 5px 14px #2d63ae26}
+.kk-auth-page .kk-auth-submit svg{width:17px;height:17px}
+.kk-auth-page .kk-auth-submit:hover{background:#204b91}
+.kk-auth-page .kk-or{margin:17px 0 12px}
+.kk-google{min-height:46px;gap:10px}
+.kk-google .kk-google-logo{height:20px;width:20px;flex:none}
+.kk-google.disabled{cursor:not-allowed}
+.kk-google-note{font-size:10px;text-align:center;line-height:1.55;margin:9px 0 0;overflow-wrap:anywhere}
+.kk-register-prompt{margin-top:15px;padding-top:14px;border-top:1px solid #e2eaf5;text-align:center}
+.kk-register-prompt p{font-size:11px;color:#6c84a2;margin:0 0 9px}
+.kk-register-action{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-size:12px;font-weight:800;color:#255c9e;border:1px solid #bfd4f0;border-radius:9px;background:#f0f6ff;min-height:42px;padding:9px 12px}
+.kk-register-action:hover{background:#e1edff}
+.kk-register-action svg{height:16px;width:16px}
+.kk-auth-footnote{margin:14px 0 0;padding:11px 0 0;border-top:1px solid #e5edf7;display:flex;align-items:flex-start;gap:8px;color:#8a9bb2;font-size:10px;line-height:1.6}
+.kk-auth-footnote svg{width:14px;height:14px;flex:none;margin-top:1px}
+.kk-mobile-home{display:none}
+/* Register/Profile: brand and actions are within their own card, never a top-level navbar. */
+.kk-auth-page .kk-registration{width:100%;max-width:685px;min-width:0;margin:0;padding:27px clamp(18px,3vw,33px)}
+.kk-reg-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;margin:0 0 22px}
+.kk-register-brand{display:inline-flex;align-items:center;gap:10px;color:#244d7f;text-decoration:none;min-width:0}
+.kk-register-brand img{display:block;object-fit:contain;width:40px;height:40px;border-radius:10px;border:1px solid #d7e4f3}
+.kk-register-brand strong{display:block;color:#193c6b;font:800 13px/1.3 Manrope,sans-serif}
+.kk-register-brand small{display:block;color:#7790ac;font-size:10px;line-height:1.3}
+.kk-register-home{display:inline-flex;align-items:center;gap:7px;flex:none;background:#ecf4ff;border:1px solid #d0e0f5;border-radius:9px;padding:9px 12px;color:#2a5e9d;text-decoration:none;font-size:12px;font-weight:800;min-height:40px}
+.kk-register-home svg{width:16px;height:16px}
+.kk-auth-page[data-view="register"] .kk-page-heading{margin-bottom:16px}
+.kk-auth-page[data-view="register"] .kk-field-section{padding:16px 0 21px}
+.kk-auth-page[data-view="register"] .kk-field-grid{column-gap:16px;row-gap:15px}
+.kk-auth-page[data-view="register"] .kk-field-section h2{margin:0 0 17px}
+.kk-auth-page[data-view="register"] .kk-form label:not(.kk-checkbox){gap:7px;min-width:0}
+.kk-auth-page[data-view="register"] .kk-form label:not(.kk-checkbox)>input{margin:0}
+.kk-auth-page[data-view="register"] .kk-field-grid>*{min-width:0}
+.kk-auth-page[data-view="register"] .kk-registration>.kk-form>.kk-btn{width:100%}
+.kk-auth-page[data-view="register"] .kk-page-heading h1{font-size:27px}
+.kk-auth-page[data-view="register"] .kk-page-heading p{font-size:12px}
+.kk-auth-page .kk-footer{max-width:1160px}
+.kk-profile-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 24px;padding:13px 17px;background:#fff;border:1px solid var(--line);border-radius:13px}
+@media(max-width:760px){
+ .kk-auth-page .kk-main{min-height:0;padding:14px 12px 15px;display:block}
+ .kk-auth-page .kk-auth-layout{grid-template-columns:minmax(0,1fr);max-width:510px;min-height:0;margin:0 auto;border-radius:18px}
+ .kk-auth-page .kk-auth-story{min-height:0;padding:21px 23px 22px}
+ .kk-auth-page .kk-story-center{padding:13px 0 0;margin:0}
+ .kk-auth-page .kk-auth-story h1{font-size:24px;letter-spacing:-.5px;margin:10px 0 0}
+ .kk-auth-page .kk-auth-story p,.kk-auth-page .kk-story-features,.kk-auth-page .kk-story-bottom{display:none}
+ .kk-auth-page .kk-auth-card{padding:22px 23px 25px}
+ .kk-auth-page .kk-auth-card .kk-sub{margin-bottom:20px}
+ .kk-mobile-home{display:flex;align-items:center;gap:6px;align-self:flex-end;margin:-3px 0 15px;padding:6px 0;color:#2e5f9e;font-size:12px;font-weight:800;text-decoration:none}
+ .kk-mobile-home svg{width:16px;height:16px}
+ .kk-auth-page .kk-registration{margin:0 auto;max-width:620px;padding:20px 19px}
+ .kk-reg-toolbar{margin-bottom:18px}
+ .kk-auth-page[data-view="register"] .kk-field-grid{grid-template-columns:minmax(0,1fr)}
+ .kk-auth-page[data-view="register"] .kk-grid-span{grid-column:auto}
+ .kk-auth-page .kk-footer{padding:10px 15px}
+}
+@media(max-width:380px){
+ .kk-auth-page .kk-main{padding:8px 8px 12px}
+ .kk-auth-page .kk-auth-card{padding:18px 16px 22px}
+ .kk-auth-page .kk-auth-story{padding:18px}
+ .kk-auth-page .kk-auth-story h1{font-size:21px}
+ .kk-auth-page .kk-registration{padding:17px 14px}
+ .kk-register-brand small{font-size:9px}
+ .kk-register-home{padding:8px}
+ .kk-auth-page .kk-auth-card h2{font-size:26px}
+ .kk-auth-page .kk-footer{gap:5px}
+}
+@media(prefers-reduced-motion:reduce){
+ .kk-auth-page *{scroll-behavior:auto!important;transition:none!important}
+}
+
+/* Philippine mobile input: the permanent +63 9 prefix is not editable. */
+.kk-form .kk-ph-number{display:flex!important;align-items:stretch;width:100%;min-width:0;min-height:45px;border:1px solid #cdd9e8;border-radius:10px;background:#fbfcff;overflow:hidden;gap:0}
+.kk-form .kk-ph-prefix{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;white-space:nowrap;min-width:73px;padding:0 13px;background:#eaf2ff;color:#265d9e;font:800 15px 'DM Sans',sans-serif;border-right:1px solid #cdd9e8}
+.kk-form .kk-ph-number input[name="phone"]{display:block;flex:1;min-width:0!important;width:100%!important;margin:0!important;padding:10px 12px!important;border:0!important;border-radius:0!important;outline:none!important;box-shadow:none!important;background:#fbfcff;font-size:16px!important;letter-spacing:.65px}
+.kk-form .kk-ph-number:focus-within{border-color:#4f84c7;box-shadow:0 0 0 3px #2e79b522}
+.kk-form .kk-ph-number input::placeholder{color:#9aadbf}
+@media(max-width:380px){.kk-form .kk-ph-prefix{min-width:67px;padding:0 9px}.kk-form .kk-ph-number input[name="phone"]{padding:10px!important}}
+
+/* KK database readiness is checked before youth can submit personal data. */
+.kk-readiness{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;margin:0 0 19px;border-radius:12px;border:1px solid #cfddf0;background:#eff5ff;color:#315984;min-width:0}
+.kk-readiness .kk-readiness-icon{color:#5f91d2;font-size:12px;line-height:1.7;flex:none}
+.kk-readiness>div{flex:1;min-width:0}
+.kk-readiness strong{display:block;font:800 12px/1.45 Manrope,sans-serif}
+.kk-readiness p{font-size:11px;line-height:1.65;margin:5px 0 0;overflow-wrap:anywhere}
+.kk-readiness button{align-self:center;min-height:36px;padding:7px 11px;font-size:11px;flex:none}
+.kk-readiness[data-status="ready"]{background:#f0fbf6;color:#196847;border-color:#b3e1cb}
+.kk-readiness[data-status="ready"] .kk-readiness-icon{color:#2c9b6c}
+.kk-readiness[data-status="unavailable"]{background:#fff5f3;color:#9f403b;border-color:#edc5c2}
+.kk-readiness[data-status="unavailable"] .kk-readiness-icon{color:#d36660}
+.kk-auth-page[data-view="register"] button[type="submit"]:disabled{cursor:not-allowed;opacity:.68}
+@media(max-width:520px){.kk-readiness{flex-wrap:wrap}.kk-readiness button{margin-left:22px}}
+
+/* Registered users see the form itself, not a big green status panel.
+   Keep actionable failures visible even when site CSS styles buttons as flex. */
+.kk-auth-page #kk-registration-readiness[hidden],
+.kk-auth-page #kk-registration-readiness [hidden]{display:none!important}
+
+/* Desktop: use more horizontal space, not a narrow mobile-width card.
+   Natural page scrolling is preserved for accessibility and shorter screens. */
+@media (min-width: 900px){
+ .kk-auth-page[data-view="register"] .kk-main{align-items:flex-start;padding:18px 28px 18px}
+ .kk-auth-page[data-view="register"] .kk-registration{
+  max-width:980px;padding:21px 32px 25px;border-radius:18px
+ }
+ .kk-auth-page[data-view="register"] .kk-reg-toolbar{margin-bottom:8px}
+ .kk-auth-page[data-view="register"] .kk-page-heading{margin-bottom:8px}
+ .kk-auth-page[data-view="register"] .kk-page-heading h1{font-size:25px;margin:4px 0}
+ .kk-auth-page[data-view="register"] .kk-page-heading p{margin:3px 0 9px}
+ .kk-auth-page[data-view="register"] .kk-field-section{padding:11px 0 15px}
+ .kk-auth-page[data-view="register"] .kk-field-section h2{margin:0 0 12px}
+ .kk-auth-page[data-view="register"] .kk-field-grid{gap:11px 22px}
+ .kk-auth-page[data-view="register"] .kk-form{gap:12px}
+ .kk-auth-page[data-view="register"] .kk-field-grid input{min-height:42px;padding:8px 11px}
+ .kk-auth-page[data-view="register"] .kk-helper{margin:3px 0 0}
+ .kk-auth-page[data-view="register"] .kk-privacy{padding:10px 13px}
+ .kk-auth-page[data-view="register"] .kk-checkbox{line-height:1.4}
+ .kk-auth-page[data-view="register"] .kk-registration>.kk-form>.kk-btn{min-height:43px}
+}
+@media (min-width: 1250px) and (max-height:900px){
+ .kk-auth-page[data-view="register"] .kk-registration{padding-top:15px;padding-bottom:18px}
+ .kk-auth-page[data-view="register"] .kk-reg-toolbar{margin-bottom:4px}
+ .kk-auth-page[data-view="register"] .kk-field-grid{row-gap:8px}
+ .kk-auth-page[data-view="register"] .kk-field-section{padding:8px 0 12px}
+}
+/* Narrow screens: prevent clipping and horizontal scroll at 320/360/375px. */
+@media (max-width:760px){
+ .kk-auth-page[data-view="register"] .kk-main{padding:12px 10px}
+ .kk-auth-page[data-view="register"] .kk-registration{max-width:600px;width:100%;padding:18px 15px}
+ .kk-auth-page[data-view="register"] .kk-reg-toolbar{gap:10px;margin-bottom:12px}
+ .kk-auth-page[data-view="register"] .kk-page-heading{margin-bottom:12px}
+ .kk-auth-page[data-view="register"] .kk-field-grid{grid-template-columns:minmax(0,1fr);gap:13px}
+ .kk-auth-page[data-view="register"] .kk-field-grid input{min-width:0;width:100%;max-width:100%}
+ .kk-auth-page[data-view="register"] .kk-field-section{padding:13px 0 18px}
+ .kk-auth-page[data-view="register"] .kk-field-section h2{margin-bottom:13px}
+ .kk-auth-page[data-view="register"] .kk-helper,
+ .kk-auth-page[data-view="register"] .kk-privacy{overflow-wrap:anywhere}
+ .kk-auth-page .kk-summary, .kk-auth-page .kk-review,
+ .kk-auth-page .kk-perk-grid{min-width:0}
+ .kk-profile-toolbar{gap:10px}
+}
+@media (max-width:380px){
+ .kk-auth-page[data-view="register"] .kk-main{padding:8px 6px}
+ .kk-auth-page[data-view="register"] .kk-registration{padding:14px 12px}
+ .kk-reg-toolbar .kk-register-brand{flex:1}
+ .kk-reg-toolbar .kk-register-brand small{overflow-wrap:anywhere}
+ .kk-reg-toolbar .kk-register-home{flex:none;padding:8px 9px}
+ .kk-auth-page .kk-profile-sheet,.kk-auth-page .kk-perks{padding:14px}
+ .kk-step-actions{flex-wrap:wrap}
+ .kk-step-actions .kk-btn{min-width:0;flex:1}
+}
+/* iOS Safari auto-zooms on focus when input/select/textarea is below 16px.
+   Do not disable pinch-to-zoom: only correct real control font sizing. */
+@media (hover:none) and (pointer:coarse){
+ .kk-body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+ .kk-body select,.kk-body textarea{font-size:16px!important}
+}
+
+/* Current NCR address is informational, not a shortcut around Vasra validation. */
+.kk-address-note{grid-column:1/-1;background:#f0f6ff;border:1px solid #d4e3f8;
+ border-radius:11px;padding:11px 13px;color:#325c90}
+.kk-address-note strong{display:block;margin-bottom:4px;font-size:12px;font-weight:800}
+.kk-address-note span{display:block;font-size:11px;line-height:1.6;color:#5778a3}
+.kk-load-error{padding:20px;background:#fff8f7;border:1px solid #f0c9c4;
+ border-radius:14px;color:#9c3f37;max-width:720px}
+.kk-load-error strong{font-size:16px}.kk-load-error p{font-size:13px;line-height:1.65}
+.kk-load-error a{color:#2159a5;font-weight:800}
+.kk-load-error button{margin-left:8px;padding:9px 14px;min-height:40px;
+ border:1px solid #adc3e7;border-radius:9px;background:#eaf2ff;color:#245898;cursor:pointer}
+@media(max-width:550px){
+ .kk-address-note{padding:10px}
+ .kk-load-error{padding:14px}
+}
+
+.kk-retry-barangays{justify-self:start;align-self:end;max-width:100%;
+ padding:10px 12px;min-height:42px;border:1px solid #cbdcf0;
+ border-radius:10px;background:#f1f6ff;color:#285e9e;
+ font:800 12px 'DM Sans',sans-serif;cursor:pointer}
+.kk-retry-barangays:hover{background:#e5efff}
+.kk-retry-barangays:focus-visible{outline:3px solid #89b5ef;outline-offset:2px}
+@media(max-width:760px){.kk-retry-barangays{width:100%}}

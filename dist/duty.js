@@ -84,9 +84,11 @@ function selectDay(index){
   poster.hidden=!!managedDutyDays;photos.hidden=!managedDutyDays;
   if(managedDutyDays){
    const list=managedDutyProfiles.filter(p=>Array.isArray(p.duty_days)&&p.duty_days.includes(index+1));
+   photos.dataset.layout=list.length===1?'single':list.length>1?'group':'empty';
    photos.innerHTML=list.length?list.map(p=>{
     const initials=String(p.name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
-    const picture=p.duty_photo_id?'<img src="./api/images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager">':'';
+    const picture=p.duty_photo_id?'<img class="duty-photo-primary" src="./api/images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager">'+
+     '<img class="duty-photo-backdrop" src="./api/images/'+encodeURIComponent(p.duty_photo_id)+'" alt="" aria-hidden="true" loading="eager">':'';
     return '<article class="duty-profile"><span class="duty-profile-frame">'+
      '<span class="duty-profile-fallback" aria-hidden="true">'+esc(initials||'SK')+'</span>'+picture+
      '</span><strong>'+esc(p.name)+'</strong><small>'+esc(({

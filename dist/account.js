@@ -282,17 +282,17 @@ async function verifyEmailFromLink(token){
 }
 async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Budget oversight, project expenses at verified financial reports.':user.position==='secretary'?'Meeting documentation, attendance, resolutions at SK project records.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;$('#secretary-overview').hidden=true;$('#treasurer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: Annual Finance at monthly expense reports ay available. I-base lang sa mga official financial document.':user.position==='secretary'?'Secretary workspace: i-review ang project records at monthly reports. Ang hiwalay na minutes/attendance registry ay hindi pa enabled.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
 let activeStaffTab='overview';
-async function selectTab(name){const tabs=['overview','projects','awards','monthly','budget','roster','duty-manage','users','audit','settings'];if(!tabs.includes(name))return;if(['roster','duty-manage','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;activeStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');const secretaryDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='secretary';
+async function selectTab(name){const tabs=['overview','projects','awards','monthly','budget','disclosure','roster','duty-manage','users','audit','settings','kk-profiling'];if(!tabs.includes(name))return;if(['roster','duty-manage','users','audit','disclosure'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;activeStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');const secretaryDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='secretary';
  const treasurerDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='treasurer';
  $('#secretary-overview').hidden=!secretaryDashboard;
  $('#treasurer-overview').hidden=!treasurerDashboard;
  $('#officer-overview').hidden=!(name==='overview'&&user?.role==='sk'&&!secretaryDashboard&&!treasurerDashboard);
  $('#dashboard-welcome').hidden=name!=='overview';
- const tabLabels={overview:'Dashboard',projects:'Manage Projects',awards:'Achievements & Awards',monthly:'Monthly Updates',budget:'Annual Finance',roster:'SK Officials','duty-manage':'SK Duty Management',users:'SK Accounts',audit:'Activity Log',settings:'Account Settings'};
+ const tabLabels={overview:'Dashboard',projects:'Manage Projects',awards:'Achievements & Awards',monthly:'Monthly Updates',budget:'Annual Finance',disclosure:'Full Disclosure Board',roster:'SK Officials','duty-manage':'SK Duty Management',users:'SK Accounts',audit:'Activity Log',settings:'Account Settings','kk-profiling':'KK Profiling'};
  $('#account-breadcrumb').textContent=tabLabels[name];
  $('#header-settings').classList.toggle('active',name==='settings');
  $('#header-settings').setAttribute('aria-current',name==='settings'?'page':'false');
- document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name);if(name==='duty-manage')await loadDutyManagement();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
+ document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name);if(name==='disclosure'&&window.loadDisclosureAdmin)await window.loadDisclosureAdmin();if(name==='duty-manage')await loadDutyManagement();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts();if(name==='kk-profiling'&&window.loadKKStaff)await window.loadKKStaff()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 // The gallery's first image is authoritative when an older record has no image_id.
@@ -929,9 +929,10 @@ async function uploadPhotoRequest(data,stage){
   }
  }
 }
-async function uploadProjectPhoto(file){
+async function uploadProjectPhoto(file,onProgress){
  if(!file||!Number.isFinite(file.size)||file.size<1||file.size>5242880||!['image/png','image/jpeg','image/webp'].includes(file.type))
   throw Error('Photo must be PNG, JPG or WebP and no larger than 5 MB.');
+ onProgress?.('Preparing secure upload…',0,1);
  const upload=await uploadPhotoRequest({action:'begin',size:file.size,mime:file.type},'Starting upload');
  if(!upload?.id||!Number.isInteger(upload.chunkSize)||upload.chunkSize<1)
   throw Error('Invalid upload session from server. Hindi pa na-upload ang larawan.');
@@ -943,8 +944,11 @@ async function uploadProjectPhoto(file){
    reader.onerror=()=>reject(Error('Hindi mabasa ang photo file sa device.'));
    reader.readAsDataURL(piece);
   });
+  onProgress?.('Uploading photo part '+(index+1)+' of '+Math.ceil(file.size/upload.chunkSize),index,Math.ceil(file.size/upload.chunkSize));
   await uploadPhotoRequest({action:'chunk',id:upload.id,index,data:encoded},'Uploading photo part '+(index+1));
+  onProgress?.('Uploaded photo part '+(index+1)+' of '+Math.ceil(file.size/upload.chunkSize),index+1,Math.ceil(file.size/upload.chunkSize));
  }
+ onProgress?.('Verifying uploaded image…',1,1);
  const completed=await uploadPhotoRequest({action:'complete',id:upload.id},'Finalizing image');
  if(!completed?.id)throw Error('Hindi nakumpirma ang photo upload sa database.');
  return completed.id;
@@ -1056,12 +1060,117 @@ window.addEventListener('beforeunload',e=>{
  if(!projectSaveJob)return;
  e.preventDefault();e.returnValue='';
 });
-async function loadUsers(){const b=await api('./api/users');$('#users-list').innerHTML=b.users.map(u=>`<article class="manage-row"><div><h3>${esc(u.name)}</h3><p>${esc(u.email)}</p><span>${roleText[u.role]}${u.role==='sk'?' · '+esc(({kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'})[u.position]||'SK Kagawad'):''}</span></div>${u.role==='chairman'?'<span class="badge-inline">Chairman</span>':`<form class="role-form" data-user="${esc(u.id)}"><label>Role para kay ${esc(u.name)}<select name="role"><option value="youth" ${u.role==='youth'?'selected':''}>Walang SK access</option><option value="sk" ${u.role==='sk'?'selected':''}>SK Officer</option></select></label><button class="secondary">Save Access</button><label>Designation<select name="position"><option value="kagawad" ${u.position==='kagawad'?'selected':''}>SK Kagawad</option><option value="treasurer" ${u.position==='treasurer'?'selected':''}>SK Treasurer</option><option value="secretary" ${u.position==='secretary'?'selected':''}>SK Secretary</option></select></label><button type="button" data-save-position="${esc(u.id)}" class="secondary">Save Position</button></form>`}</article>`).join('')}
-$('#users-list').onclick=async e=>{const btn=e.target.closest('[data-save-position]');if(!btn)return;const form=btn.closest('form');btn.disabled=true;try{await api('./api/users/'+btn.dataset.savePosition+'/position',{method:'PUT',body:JSON.stringify({position:form.elements.position.value})});success('Matagumpay na na-update ang posisyon ng SK officer.');await loadUsers()}catch(error){message(error.message,true)}finally{btn.disabled=false}};
-$('#users-list').onsubmit=async e=>{e.preventDefault();const form=e.target,b=form.querySelector('button');b.disabled=true;try{await api('./api/users/'+form.dataset.user+'/role',{method:'PUT',body:JSON.stringify({role:form.elements.role.value})});success('Matagumpay na na-update ang SK account access.');await loadUsers()}catch(error){message(error.message,true)}finally{b.disabled=false}};
+// SK Accounts: single edit form per row, chairman-only protected server writes.
+let staffDirectory=[];
+const staffRoleTitle=u=>u.role==='chairman'?'SK Chairperson':u.role==='youth'?'No SK Access':
+ ({kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'})[u.position]||'SK Officer';
+const staffIcon=(name)=>{
+ const icons={
+ edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4L16.5 3.5z"/>',
+ trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v6m4-6v6"/>',
+ check:'<path d="m4 12 5 5L20 6"/>',
+ x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ shield:'<path d="m12 2 8 4v6c0 5-3 8-8 10C7 20 4 17 4 12V6l8-4Z"/>'
+ };
+ return '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(icons[name]||icons.shield)+'</svg>';
+};
+function renderUsers(){
+ const query=($('#staff-account-search')?.value||'').toLowerCase().trim();
+ const found=staffDirectory.filter(u=>[u.name,u.email,staffRoleTitle(u)].join(' ').toLowerCase().includes(query));
+ $('#staff-account-total').textContent=String(staffDirectory.length);
+ $('#staff-accounts-empty').hidden=found.length>0;
+ $('#users-list').innerHTML=found.map(u=>{
+  const initials=u.name.trim().split(/\\s+/).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('');
+  const isChairman=u.role==='chairman';
+  return '<article class="staff-account-card" data-account="'+esc(u.id)+'">'+
+   '<div class="staff-account-overview"><span class="staff-account-avatar">'+esc(initials||'SK')+'</span>'+
+    '<div class="staff-account-info"><h3>'+esc(u.name)+'</h3><p>'+esc(u.email)+'</p><span class="staff-account-designation">'+staffIcon('shield')+' '+esc(staffRoleTitle(u))+'</span></div>'+
+    '<div class="staff-account-actions">'+(isChairman?'<span class="staff-account-owner">Protected Chairman</span>':
+      '<button type="button" class="secondary" data-account-edit="'+esc(u.id)+'">'+staffIcon('edit')+' Edit</button>'+
+      '<button type="button" class="staff-account-danger" data-account-remove="'+esc(u.id)+'">'+staffIcon('trash')+' Delete</button>')+'</div></div>'+
+    (isChairman?'':'<form class="staff-account-edit-form" data-account-edit-form="'+esc(u.id)+'" hidden>'+
+      '<div class="staff-account-edit-fields"><label>Full Name<input name="name" minlength="2" maxlength="100" required value="'+esc(u.name)+'"></label>'+
+      '<label>Email Address<input name="email" type="email" maxlength="254" required value="'+esc(u.email)+'"></label>'+
+      '<label>Designation<select name="position"><option value="kagawad"'+(u.position==='kagawad'?' selected':'')+'>SK Kagawad</option>'+
+      '<option value="treasurer"'+(u.position==='treasurer'?' selected':'')+'>SK Treasurer</option>'+
+      '<option value="secretary"'+(u.position==='secretary'?' selected':'')+'>SK Secretary</option></select></label>'+
+      '<label>Account Access<select name="role"><option value="sk"'+(u.role==='sk'?' selected':'')+'>Active SK Officer</option>'+
+      '<option value="youth"'+(u.role==='youth'?' selected':'')+'>No SK Access</option></select></label></div>'+
+      '<p class="staff-account-edit-note">Name at designation changes ay mag-a-update rin sa linked SK Council / SK Duty directory. Email o access changes ay magre-revoke ng active sessions.</p>'+
+      '<div class="staff-account-edit-actions"><button type="button" class="secondary" data-account-cancel="'+esc(u.id)+'">'+staffIcon('x')+' Cancel</button>'+
+      '<button type="submit" class="primary">'+staffIcon('check')+' Save Changes</button></div></form>')+
+   '</article>';
+ }).join('');
+}
+async function loadUsers(){
+ const result=await api('./api/users');
+ if(!Array.isArray(result?.users))throw Error('Hindi ma-load ang active SK account directory.');
+ staffDirectory=result.users;
+ renderUsers();
+}
+$('#staff-account-search')?.addEventListener('input',renderUsers);
+$('#users-list').addEventListener('click',async event=>{
+ const edit=event.target.closest('[data-account-edit]');
+ const cancel=event.target.closest('[data-account-cancel]');
+ const remove=event.target.closest('[data-account-remove]');
+ if(edit){
+  const form=$('#users-list').querySelector('[data-account-edit-form="'+edit.dataset.accountEdit+'"]');
+  if(!form)return;
+  form.hidden=false;edit.setAttribute('aria-expanded','true');
+  form.querySelector('input[name="name"]')?.focus();return;
+ }
+ if(cancel){
+  const form=$('#users-list').querySelector('[data-account-edit-form="'+cancel.dataset.accountCancel+'"]');
+  if(form){form.hidden=true;form.reset();}
+  $('#users-list').querySelector('[data-account-edit="'+cancel.dataset.accountCancel+'"]')?.setAttribute('aria-expanded','false');
+  return;
+ }
+ if(remove){
+  const account=staffDirectory.find(u=>u.id===remove.dataset.accountRemove);
+  if(!account||account.role==='chairman')return;
+  const dialog=$('#staff-account-delete'),typed=$('#staff-delete-confirm-name'),confirmBtn=$('#staff-delete-confirm');
+  if(!dialog||typeof dialog.showModal!=='function'){message('Update your browser to confirm staff account deactivation securely.',true);return;}
+  typed.value='';confirmBtn.disabled=true;
+  $('#staff-delete-name').textContent=account.name;
+  const check=()=>{confirmBtn.disabled=typed.value!==account.name;};
+  const copy=async()=>{
+   try{await navigator.clipboard.writeText(account.name);typed.value=account.name;check();}
+   catch{typed.focus();}
+  };
+  const copier=$('#staff-delete-copy');typed.addEventListener('input',check);
+  copier.addEventListener('click',copy);
+  dialog.showModal();
+  await new Promise(resolve=>dialog.addEventListener('close',resolve,{once:true}));
+  typed.removeEventListener('input',check);copier.removeEventListener('click',copy);
+  if(dialog.returnValue!=='confirm'||typed.value!==account.name)return;
+  remove.disabled=true;
+  try{
+   const result=await api('./api/users/'+account.id,{method:'DELETE',body:JSON.stringify({confirm_name:account.name})});
+   if(result?.ok!==true)throw Error('The server did not confirm account deactivation.');
+   success('SK account deactivated: '+account.name+'. Access revoked; historical records preserved.');
+   await loadUsers();
+  }catch(error){message(error.message,true);remove.disabled=false;}
+ }
+});
+$('#users-list').addEventListener('submit',async event=>{
+ const form=event.target.closest('[data-account-edit-form]');if(!form)return;
+ event.preventDefault();if(!form.reportValidity())return;
+ const id=form.dataset.accountEditForm,button=form.querySelector('button[type="submit"]');
+ const original=staffDirectory.find(u=>u.id===id);
+ if(!original||original.role==='chairman')return;
+ const data=Object.fromEntries(new FormData(form));
+ if(!confirm('Save changes to '+original.name+'? This may also update the SK Council / Duty roster.'))return;
+ button.disabled=true;
+ try{
+  const result=await api('./api/users/'+id,{method:'PUT',body:JSON.stringify(data)});
+  if(result?.ok!==true)throw Error('The server did not confirm the account update.');
+  success('Updated '+data.name+' in SK Accounts and its linked officer directory.');
+  await loadUsers();
+ }catch(error){message(error.message,true);button.disabled=false;}
+});
 const actions={
- account_registered:'Nag-register ng account',chairman_provisioned:'Na-set up ang SK Chairman account',
- account_created:'Gumawa ng SK officer account',password_changed:'Nagpalit ng password',
+ account_registered:'Nag-register ng account',kk_registered:'Nag-register ng KK youth account',kk_login:'Nag-login sa KK Youth Portal',staff_login:'Nag-login sa SK Staff Workspace',chairman_provisioned:'Na-set up ang SK Chairman account',
+ account_created:'Gumawa ng SK officer account',disclosure_link_updated:'Nag-update ng Full Disclosure Drive link',staff_account_updated:'In-update ang SK account',staff_account_deactivated:'Na-deactivate ang SK account',password_changed:'Nagpalit ng password',
  image_uploaded:'Nag-upload ng larawan',project_created:'Gumawa ng proyekto',
  project_updated:'Nag-edit ng proyekto',role_changed:'Nagbago ng account role',
  position_changed:'Binago ang posisyon ng SK officer',budget_updated:'Nag-update ng SK budget',
@@ -1078,6 +1187,16 @@ function auditDetails(event){
  if(typeof d==='string'){try{d=JSON.parse(d)}catch{return 'Hindi available ang detalye ng lumang activity.';}}
  if(!d||typeof d!=='object'||Array.isArray(d))return 'Walang karagdagang detalye para sa activity na ito.';
  const name=v=>String(v??'').trim();
+ if(['kk_registered','kk_login','staff_login'].includes(event.action)){
+  const type=event.action==='staff_login'?'SK Staff':'KK Youth';
+  const action=event.action==='kk_registered'?'Account registered':'Successful login';
+  const method=d.method==='google'?'Google Sign-In':d.method==='email'?'Email / password':'Authenticated session';
+  const lines=[type+' · '+action,'Sign-in method: '+method];
+  if(event.action==='kk_registered')lines.push('Registration is not the same as SK verification. The KK profile is subject to officer review.');
+  // Passwords, birthdates, phone numbers, tokens and full profile data are never stored in this log.
+  return lines.join('\n');
+ }
+
  const title=name(d.title);
  const progress=v=>Number.isFinite(Number(v))?Number(v)+'%':'hindi nakasaad';
  const number=v=>Number.isInteger(Number(v))&&Number(v)>=0?Number(v):null;
@@ -1129,7 +1248,10 @@ async function loadAudit(){
   const actor=event.actor_name||'Unknown account';
   const action=actions[event.action]||String(event.action||'Unknown activity').replace(/_/g,' ');
   const ip=typeof event.ip_address==='string'&&event.ip_address?event.ip_address.replace(/\/(?:32|128)$/,''):'Hindi naitala';
-  return '<article class="audit-row"><div><b>'+esc(actor)+'</b> · '+esc(action)+'</div>'+
+  const isYouth=event.action==='kk_login'||event.action==='kk_registered';
+  const isStaffLogin=event.action==='staff_login';
+  const kind=isYouth?'<span class="audit-type audit-type-kk">KK Youth</span>':isStaffLogin?'<span class="audit-type audit-type-staff">SK Staff</span>':'';
+  return '<article class="audit-row"><div><b>'+esc(actor)+'</b> · '+esc(action)+' '+kind+'</div>'+
    '<small>'+esc(dateText(event.created))+' PHT · Record #'+esc(event.id)+'</small>'+
    '<small class="audit-ip">IP address: '+esc(ip)+'</small>'+
    '<details class="audit-more"><summary>Tingnan ang detalye</summary><div class="audit-detail-text">'+esc(auditDetails(event))+'</div></details></article>';
