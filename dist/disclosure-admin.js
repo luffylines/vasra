@@ -42,7 +42,7 @@ async function loadDisclosureAdmin(){
     '<div class="fdp-admin-fields"><label>Document year<input type="text" name="year" required maxlength="16" pattern="20[0-9]{2}(-20[0-9]{2})?" value="'+esc(yr)+'" placeholder="2026 or 2026-2028"></label>'+
     '<label class="fdp-admin-link-label">Google Drive document / folder URL<input type="url" name="url" maxlength="1500" inputmode="url" placeholder="https://drive.google.com/drive/folders/..." value="'+esc(url)+'" autocomplete="off"></label></div>'+
     '<div class="fdp-admin-row-footer"><label class="fdp-admin-publish"><input type="checkbox" name="published"'+(published?' checked':'')+'><span>Show on public board</span></label>'+
-    '<div class="fdp-admin-actions">'+(url?'<a class="secondary" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Preview Drive ↗</a>':'')+
+    '<div class="fdp-admin-actions">'+(url?'<a class="secondary" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Preview Drive <svg class="ui-action-icon" data-direction="external" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2V6a2 2 0 0 1 2-2h4"/></svg></a>':'')+
     '<button type="submit" class="primary">Save Disclosure Link</button></div></div></form>';
   }).join('');
   disclosureAdminMessage('5 categories · '+data.links.filter(link=>link.published&&link.url).length+' published Google Drive links.');
