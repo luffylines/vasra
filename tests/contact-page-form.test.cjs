@@ -43,6 +43,8 @@ test('Contacts displays four SK-specific methods, real form, embedded map and re
  assert.match(client,/api\('\.\/api\/contact-message'/);
  assert.match(client,/result\?\.accepted!==true/);
  assert.match(client,/form\.reset\(\)/);
+ assert.match(client,/Email tracking ID/);
+ assert.match(client,/hindi pa kumpirmadong dumating/);
 });
 test('Contact endpoint rejects wrong origin and malformed public form before sending',async()=>{
  const db=backend();
@@ -79,7 +81,7 @@ test('Valid inquiry is sent through Resend to SK office with reply-to, subject a
  try{
   const response=await handle(req(),{ip:'192.0.2.15'});
   assert.equal(response.status,202);
-  assert.deepEqual(await response.json(),{accepted:true});
+  assert.deepEqual(await response.json(),{accepted:true,delivery:'provider_accepted',reference:null});
   assert.equal(outbound.url,'https://api.resend.com/emails');
   const sent=JSON.parse(outbound.opts.body);
   assert.deepEqual(sent.to,['skbrgyvasraqc@gmail.com']);
@@ -117,6 +119,6 @@ test('No account session is needed for public message, but signed-in account dat
  assert.match(handler,/await limit\('public-contact-email'/);
  assert.match(handler,/reply_to:email/);
  assert.match(handler,/to:\['skbrgyvasraqc@gmail.com'\]/);
- assert.match(handler,/return json\(\{accepted:true\},202\)/);
+ assert.match(handler,/return json\(\{accepted:true,delivery:'provider_accepted',reference:receipt.emailId\},202\)/);
  assert.match(handler,/Hindi pa configured ang SK Vasra contact email service/);
 });
