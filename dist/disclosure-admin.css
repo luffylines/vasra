@@ -1,0 +1,37 @@
+/* Chairman Full Disclosure Drive links — compact and mobile-first. */
+#panel-disclosure[hidden]{display:none!important}
+.fdp-manage{width:100%;max-width:1160px;margin:0 auto;padding:12px 0 25px;min-width:0}
+.fdp-manage-header{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:18px}
+.fdp-manage-header h2{font:800 clamp(22px,2.8vw,30px)/1.25 Manrope,sans-serif;margin:8px 0;color:#153d6c}
+.fdp-manage-header p{font:400 12px/1.7 'DM Sans',sans-serif;max-width:720px;color:#6982a3;margin:0}
+.fdp-manage .fdp-public-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border-radius:10px;white-space:normal;padding:10px 14px}
+.fdp-admin-help{padding:16px 19px;background:#ecf4ff;border:1px solid #c9def7;border-radius:12px;margin-bottom:18px}
+.fdp-admin-help strong{font:800 13px 'DM Sans',sans-serif;color:#26538e}
+.fdp-admin-help p{font:400 12px/1.65 'DM Sans',sans-serif;color:#5a7596;margin:5px 0 0}
+#fdp-admin-status{font:700 12px/1.55 'DM Sans',sans-serif;color:#38669d;padding:7px 0}
+#fdp-admin-status.fdp-error{color:#c04443}
+.fdp-admin-list{display:grid;gap:14px;margin-top:12px}
+.fdp-admin-row{min-width:0;padding:20px 22px;background:#fff;border:1px solid #d9e6f4;border-radius:16px;box-shadow:0 5px 20px #193a6310}
+.fdp-admin-row-head{display:flex;gap:13px;align-items:center;margin-bottom:16px}
+.fdp-admin-icon{flex:none;width:41px;height:41px;border-radius:12px;background:#e8f1ff;color:#2b65af;display:grid;place-items:center;font:800 14px Manrope,sans-serif}
+.fdp-admin-row-head>div{flex:1;min-width:0}
+.fdp-admin-row-head h3{font:800 15px/1.4 Manrope,sans-serif;color:#1e4578;margin:0 0 4px;overflow-wrap:anywhere}
+.fdp-admin-row-head p{font:400 11px/1.55 'DM Sans',sans-serif;color:#738baa;margin:0}
+.fdp-admin-state{font:800 11px 'DM Sans',sans-serif;color:#687f9f;background:#f0f5fc;border:1px solid #d7e3f1;padding:7px 10px;border-radius:8px;white-space:nowrap}
+.fdp-admin-state.fdp-published{color:#1b784f;background:#e9f9ef;border-color:#bee5d0}
+.fdp-admin-fields{display:grid;grid-template-columns:minmax(130px,.35fr) minmax(0,1.5fr);gap:13px}
+.fdp-admin-fields label{display:flex;flex-direction:column;gap:7px;font:700 11px 'DM Sans',sans-serif;color:#506c8a;min-width:0}
+.fdp-admin-fields input{box-sizing:border-box;width:100%;min-height:44px;font:500 16px 'DM Sans',sans-serif;color:#24486e;border:1px solid #cdddec;background:#f9fbff;padding:10px 12px;border-radius:10px;min-width:0}
+.fdp-admin-fields input:focus-visible{outline:3px solid #94bef3;outline-offset:1px}
+.fdp-admin-row-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-top:15px}
+.fdp-admin-publish{display:inline-flex;align-items:center;gap:9px;font:700 12px 'DM Sans',sans-serif;color:#36608e}
+.fdp-admin-publish input{width:18px;height:18px;accent-color:#2d68b1}
+.fdp-admin-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.fdp-admin-actions button,.fdp-admin-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;margin:0;padding:10px 14px;font:800 11px 'DM Sans',sans-serif;border-radius:10px;text-decoration:none}
+.fdp-admin-actions button:disabled{opacity:.6}
+body.account-workspace[data-theme="dark"] .fdp-admin-row{background:#182f4d;border-color:#3c5676}
+body.account-workspace[data-theme="dark"] .fdp-admin-row-head h3,body.account-workspace[data-theme="dark"] .fdp-manage-header h2{color:#e7f2ff}
+body.account-workspace[data-theme="dark"] .fdp-admin-help{background:#203957;border-color:#456485}
+body.account-workspace[data-theme="dark"] .fdp-admin-fields input{color:#edf6ff;background:#203a5b;border-color:#456485}
+@media(max-width:780px){.fdp-admin-fields{grid-template-columns:minmax(0,1fr)}.fdp-admin-row{padding:15px}}
+@media(max-width:480px){.fdp-admin-row-head{align-items:flex-start;flex-wrap:wrap}.fdp-admin-state{margin-left:54px}.fdp-admin-actions{width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fdp-admin-actions button,.fdp-admin-actions a{min-width:0;padding:10px 7px}.fdp-admin-help{padding:13px}}
