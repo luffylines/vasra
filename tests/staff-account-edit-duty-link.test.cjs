@@ -32,7 +32,7 @@ test('Chairman-only editing fields and typed-name deactivation are protected ser
  assert.match(handler,/accounts_update/);
  assert.match(handler,/accounts_deactivate/);
  assert.match(handler,/await user\(\['chairman'\]\)/);
- assert.match(migration,/actor\.role='chairman'/);
+ assert.match(migration,/u\.role='chairman'/);
  assert.match(migration,/target\.role='chairman' or target\.id=actor\.id/);
  assert.match(migration,/payload->>'confirm_name' <> target\.name/);
  assert.match(migration,/delete from vasra\.sessions where user_id=target\.id/);
