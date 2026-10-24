@@ -160,56 +160,77 @@
   graduate:[['master-1','Masteral 1st Year'],['master-2','Masteral 2nd Year'],['doctorate-1','Doctoral 1st Year'],['doctorate-2','Doctoral 2nd Year'],['doctorate-3','Doctoral 3rd Year or Higher'],['completed','Postgraduate Completed']],
   'out-of-school':[['na','Not Currently Enrolled']]
  };
- // Residential address is distinct from official SK Vasra eligibility.
- // PSA PSGC 2026 NCR coverage: 16 cities plus Pateros municipality.
+ // Optional current Metro Manila address. This never changes verified
+ // Barangay Vasra jurisdiction; SK officers decide residency eligibility.
+ // PSA 2026 PSGC 10-digit NCR locality codes (16 cities + Pateros).
  const metroCities=['Caloocan','Las Piñas','Makati','Malabon','Mandaluyong','Manila',
   'Marikina','Muntinlupa','Navotas','Parañaque','Pasay','Pasig','Pateros',
   'Quezon City','San Juan','Taguig','Valenzuela'];
- let metroBarangays=[['Vasra','Vasra']],metroCache=null,metroLoading=false;
- const normalizedArea=value=>String(value||'').toLocaleLowerCase().replace(/^city (of )?/,'').replace(/\bcity\b/g,'').replace(/[^a-z0-9]/g,'');
+ const metroCodes={'Caloocan':'1380100000','Las Piñas':'1380200000',
+  'Makati':'1380300000','Malabon':'1380400000','Mandaluyong':'1380500000',
+  'Manila':'1380600000','Marikina':'1380700000','Muntinlupa':'1380800000',
+  'Navotas':'1380900000','Parañaque':'1381000000','Pasay':'1381100000',
+  'Pasig':'1381200000','Quezon City':'1381300000','San Juan':'1381400000',
+  'Taguig':'1381500000','Valenzuela':'1381600000','Pateros':'1381700000'};
+ const metroCache=new Map();
+ let metroBarangays=[['Vasra','Vasra']],metroLoading=false,metroError=false;
  const metroAreaSelection=()=>{
-  const city=data.residence_city||'Quezon City';
-  const area=(city==='Quezon City' && !metroBarangays.some(b=>b[0]==='Vasra'))?[['Vasra','Vasra'],...metroBarangays]:metroBarangays;
-  const current=String(data.residence_barangay||'');
+  const city=data.residence_city||'Quezon City',current=String(data.residence_barangay||'');
+  const area=city==='Quezon City'&&!metroBarangays.some(([v])=>v==='Vasra')
+   ?[['Vasra','Vasra'],...metroBarangays]:metroBarangays;
   return '<label>Current Barangay in Metro Manila (Optional)<select name="residence_barangay" aria-label="Select Metro Manila residential barangay">'+
-   '<option value="">'+(metroLoading?'Loading official barangay options…':'Select barangay / check directory')+'</option>'+
+   '<option value="">'+(metroLoading?'Loading PSGC barangays…':
+     metroError?'Unable to load directory — tap Retry':'Select barangay')+'</option>'+
    area.map(([val,label])=>'<option value="'+esc(val)+'"'+(current===val?' selected':'')+'>'+esc(label)+'</option>').join('')+
-   (current&&!area.some(([v])=>v===current)?'<option selected value="'+esc(current)+'">'+esc(current)+' (saved)</option>':'')+
-   '</select></label>';
+   (current&&!area.some(([v])=>v===current)?'<option selected value="'+esc(current)+'">'+esc(current)+' (saved for SK review)</option>':'')+
+   '</select></label><button class="kk-retry-barangays" type="button" id="kk-refresh-barangays">'+
+   (metroError?'Retry Barangay List':'Reload Barangay List')+'</button>';
  };
- async function refreshMetroBarangays(){
+ const extractRows=json=>{
+  const rows=Array.isArray(json)?json:Array.isArray(json?.data)?json.data:
+   Array.isArray(json?.items)?json.items:[];
+  return rows.map(row=>({name:String(row.name||'').trim(),
+   city:String(row.city_municipality?.name||row.cityMunicipality?.name||
+    (typeof row.city_municipality==='string'?row.city_municipality:'')||'')}))
+   .filter(row=>row.name);
+ };
+ const cleanArea=name=>String(name||'').toLocaleLowerCase().replace(/^(city of |city )/,'')
+  .replace(/ city$/,'').normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+ async function refreshMetroBarangays(force=false){
   if(metroLoading)return;
-  const city=data.residence_city||'Quezon City';
-  if(metroCache){
-   metroBarangays=metroCache.filter(b=>normalizedArea(b.city)===normalizedArea(city)).map(b=>[b.name,b.name])
-    .sort((a,b)=>a[1].localeCompare(b[1]));
-   if(city==='Quezon City'&&!metroBarangays.some(v=>v[0]==='Vasra'))metroBarangays.unshift(['Vasra','Vasra']);
+  const city=data.residence_city||'Quezon City',code=metroCodes[city];
+  if(!code)return;
+  if(!force&&metroCache.has(code)){
+   metroBarangays=metroCache.get(code).map(n=>[n,n]);metroError=false;
    if(current===1)renderStep();
    return;
   }
-  metroLoading=true;
+  metroLoading=true;metroError=false;
   try{
-   // Only the public NCR region code is sent to the PSGC directory.
-   // No applicant name, address, cookie, or session is sent.
-   const response=await fetch('https://psgc.cloud/api/v2/regions/1300000000/barangays',{mode:'cors',credentials:'omit'});
-   if(!response.ok)throw Error('PSGC directory currently unavailable');
-   const responseData=await response.json(),items=Array.isArray(responseData)?responseData:responseData.data;
-   if(!Array.isArray(items))throw Error('Unexpected PSGC directory response');
-   const mapped=items.map(v=>({name:String(v.name||''),city:String(
-    v.city_municipality?.name||v.cityMunicipality?.name||v.city_municipality||'')}))
-    .filter(v=>v.name&&v.city);
-   if(mapped.length<100)throw Error('Incomplete PSGC NCR directory');
-   metroCache=mapped;
+   // Public PSGC 10-digit locality code only. No resident information is sent.
+   let response=await fetch('https://psgc.cloud/api/v2/cities-municipalities/'+code+'/barangays',
+    {mode:'cors',credentials:'omit'});
+   let items=response.ok?extractRows(await response.json()):[];
+   if(items.length===0){
+    response=await fetch('https://psgc.cloud/api/v2/regions/1300000000/barangays',
+     {mode:'cors',credentials:'omit'});
+    if(!response.ok)throw Error('PSGC is temporarily unavailable');
+    items=extractRows(await response.json()).filter(v=>cleanArea(v.city)===cleanArea(city));
+   }
+   if(!items.length)throw Error('No matching NCR barangay results');
+   const names=[...new Set(items.map(item=>item.name))].sort((a,b)=>a.localeCompare(b));
+   metroCache.set(code,names);
+   metroBarangays=names.map(n=>[n,n]);
   }catch{
-   // Keep verified Barangay Vasra fallback and don't invent other barangays.
-   metroCache=[];
+   metroError=true;
+   metroBarangays=city==='Quezon City'?[['Vasra','Vasra']]:[];
   }finally{
    metroLoading=false;
-   metroBarangays=metroCache.filter(b=>normalizedArea(b.city)===normalizedArea(data.residence_city||'Quezon City'))
-    .map(b=>[b.name,b.name]).sort((a,b)=>a[1].localeCompare(b[1]));
-   if((data.residence_city||'Quezon City')==='Quezon City'&&!metroBarangays.some(v=>v[0]==='Vasra'))
-    metroBarangays.unshift(['Vasra','Vasra']);
-   if(current===1){const form=$('#kk-step-form');if(form&&form.querySelector('select[name="residence_city"]')){savedFields(form);renderStep();}}
+   if(data.residence_city!==city){refreshMetroBarangays();return;}
+   if(current===1){
+    const form=$('#kk-step-form');
+    if(form&&form.querySelector('select[name="residence_city"]')){savedFields(form);renderStep();}
+   }
   }
  }
  const values=(container)=>Object.fromEntries(new FormData(container));
@@ -305,6 +326,11 @@
  }
  $('#kk-logout').onclick=async()=>{try{await send('logout',{});}finally{location.replace('./kk-login');}};
  $('#kk-back').onclick=()=>{if(current>1){savedFields($('#kk-step-form'));current--;feedback('');renderStep();}};
+ $('#kk-step-form').addEventListener('click',event=>{
+  if(event.target.closest('#kk-refresh-barangays')){
+   savedFields($('#kk-step-form'));refreshMetroBarangays(true);
+  }
+ });
  $('#kk-step-form').addEventListener('input',event=>{
   if(event.target.matches('input[name="phone"]'))kkNormalizePhoneInput(event.target);
  });
