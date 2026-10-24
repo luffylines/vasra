@@ -1,10 +1,74 @@
 const MANILA='Asia/Manila';
 let selected=-1, manualSelection=false, observedDate='', dutyOverride='auto', overrideDate='';
 let managedDutyDays=null,managedDutyProfiles=[],publishedDutyHours=null;
+let publicDutyContacts=[],publicDutyContactsAvailable=false;
 async function refreshDutyOverride(){try{const r=await fetch('./api/duty-status',{cache:'no-store'});if(!r.ok)throw Error('status unavailable');const data=await r.json();dutyOverride=data.mode==='closed'?'closed':'auto';overrideDate=data.date||'';}catch{dutyOverride='unknown';overrideDate='';}updateSchedule();}
 function manilaNow(){
   const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:MANILA,weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
   return {short:parts.weekday.toUpperCase(),date:parts.year+'-'+parts.month+'-'+parts.day,hour:Number(parts.hour),minute:Number(parts.minute)};
+}
+// Match saved account details to the selected duty assignment by both name and
+// SK position, never by weekday alone or by a hardcoded officer profile.
+function dutyContactName(value){
+ return String(value||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase();
+}
+function dutyContactPosition(role){
+ const text=dutyContactName(role);
+ if(text.includes('chairman')||text.includes('chairperson'))return 'chairman';
+ if(text.includes('treasurer'))return 'treasurer';
+ if(text.includes('secretary'))return 'secretary';
+ if(text.includes('kagawad'))return 'kagawad';
+ return '';
+}
+function dutyContactRows(){
+ const host=$('#duty-contact-list');
+ if(!host||selected<0)return;
+ if(!publicDutyContactsAvailable){
+  host.innerHTML='<p class="duty-contact-empty">Hindi pa available ang public officer contact details. Maaari pa ring makipag-ugnay sa SK Vasra Office.</p>';
+  return;
+ }
+ const day=managedDutyDays?managedDutyDays[selected]:days[selected];
+ const items=managedDutyDays
+  ? managedDutyProfiles
+    .filter(profile=>Array.isArray(profile.duty_days)&&profile.duty_days.includes(selected+1))
+    .map(profile=>publicDutyContacts.find(c=>c.official_id===profile.id&&c.position===profile.position))
+    .filter(Boolean)
+  : (day.names||[]).map((name,index)=>{
+     const position=dutyContactPosition(day.roles[index]);
+     return publicDutyContacts.find(c=>dutyContactName(c.name)===dutyContactName(name)&&c.position===position);
+    }).filter(Boolean);
+ const icon=path=>'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+path+'</svg>';
+ const pin=icon('<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>');
+ const mail=icon('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>');
+ const phone=icon('<path d="M7 3H4a2 2 0 0 0-2 2c0 9.4 7.6 17 17 17a2 2 0 0 0 2-2v-3l-6-2-2 3a16 16 0 0 1-7-7l3-2-2-6Z"/>');
+ const web=icon('<path d="M13 4h7v7m0-7-9 9"/><path d="M20 13v6H4V4h6"/>');
+ const names={chairman:'SK Chairperson',kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'};
+ const row=(svg,body)=>'<div class="duty-contact-detail">'+svg+'<span>'+body+'</span></div>';
+ host.innerHTML=items.length?items.map(c=>{
+  const parts=[];
+  if(c.address)parts.push(row(pin,esc(c.address)));
+  if(c.email)parts.push(row(mail,'<a href="mailto:'+encodeURIComponent(c.email)+'">'+esc(c.email)+'</a>'));
+  if(c.phone)parts.push(row(phone,'<a href="tel:'+esc(c.phone.replace(/[^+0-9]/g,''))+'">'+esc(c.phone)+'</a>'));
+  if(c.facebook_url){
+   try{
+    const link=new URL(c.facebook_url);
+    if(link.protocol==='https:'&&['facebook.com','www.facebook.com','m.facebook.com'].includes(link.hostname)&&!link.username&&!link.password)
+     parts.push(row(web,'<a href="'+esc(link.href)+'" target="_blank" rel="noopener noreferrer">Facebook profile / page ↗</a>'));
+   }catch{/* hide malformed legacy URL */}
+  }
+  return '<article class="duty-contact-card"><h3>'+esc(c.name)+'</h3><small>'+esc(names[c.position]||'SK Officer')+'</small><div class="duty-contact-details">'+parts.join('')+'</div></article>';
+ }).join(''):'<p class="duty-contact-empty">Wala pang naka-publish na contact details para sa napiling SK officer. Available pa rin ang SK Vasra Office para sa inyong mga katanungan.</p>';
+}
+async function loadPublicDutyContacts(){
+ try{
+  const result=await api('./api/officer-contacts');
+  if(!Array.isArray(result.contacts))throw Error('Invalid contact directory');
+  publicDutyContacts=result.contacts;
+  publicDutyContactsAvailable=true;
+ }catch{
+  publicDutyContacts=[];publicDutyContactsAvailable=false;
+ }
+ dutyContactRows();
 }
 function selectDay(index){
   selected=index;
@@ -15,6 +79,7 @@ function selectDay(index){
   const times=publishedDutyHours?.find(h=>h.weekday===index+1);
   const fmt=clock=>{const [h,m]=String(clock).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
   $('#officer-role').textContent='Office hours · '+fmt(times?.open_time||'09:00')+'–'+fmt(times?.close_time||'18:00')+' (PHT)';
+  dutyContactRows();
   const poster=$('#poster-link'),photos=$('#duty-officer-portraits');
   poster.hidden=!!managedDutyDays;photos.hidden=!managedDutyDays;
   if(managedDutyDays){
@@ -116,3 +181,4 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateSche
 
 refreshDutyOverride();setInterval(refreshDutyOverride,30000);
 loadManagedDutyRoster();setInterval(loadManagedDutyRoster,20000);
+loadPublicDutyContacts();setInterval(loadPublicDutyContacts,60000);
