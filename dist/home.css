@@ -8,7 +8,10 @@
 .home-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:22px 0 30px;align-items:stretch}
 .home-shortcuts a{display:flex;flex-direction:column;gap:10px;padding:22px;background:white;border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 18px #16345b05}
 .home-shortcuts a:hover{border-color:#90acd4;background:#f9fbff}
-.home-shortcuts span{font-size:9px;letter-spacing:1px;color:#5c779d}
+.home-shortcuts .home-shortcut-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.home-shortcuts .home-shortcut-top span{font-size:9px;letter-spacing:1px;color:#5c779d;line-height:1.45}
+.home-shortcuts .home-shortcut-symbol{display:block;flex:none;width:36px;height:36px;padding:8px;box-sizing:border-box;border:1px solid #dce7f7;border-radius:11px;background:#eef4fd;color:#315d99;transition:background .18s,color .18s,transform .18s}
+.home-shortcuts a:hover .home-shortcut-symbol{background:#dceafa;color:#1e4d8d;transform:translateY(-2px)}
 .home-shortcuts strong{font:700 17px Manrope;color:#234572}
 .home-shortcuts small{font-size:12px;color:#637999;line-height:1.6}
 .home-panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px;margin-bottom:24px;box-shadow:0 5px 20px #16345b04;min-width:0}
@@ -75,3 +78,5 @@
 .home-award strong{color:#173b70;font-size:14px;line-height:1.4}
 .home-award>span:last-child>span{color:#617d9e;font-size:11px}
 @media(max-width:780px){.home-awards-list{grid-template-columns:1fr}.home-award{padding:13px}}
+
+@media(max-width:600px){.home-shortcuts .home-shortcut-symbol{width:32px;height:32px;padding:7px}.home-shortcuts .home-shortcut-top{gap:6px}}
