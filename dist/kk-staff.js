@@ -11,23 +11,32 @@
   const states=['draft','pending','verified','rejected'];
   $('#kk-staff-stats').innerHTML=states.map(state=>'<div class="kk-stat"><span>'+state+'</span><b>'+members.filter(x=>x.status===state).length+'</b></div>').join('');
  };
+ const sitioName=id=>sitios.find(s=>String(s.id)===String(id))?.name||'Not selected';
+ const sitioCounts=id=>{
+  const matches=members.filter(m=>String(m.profile?.sitio_id||'')===String(id));
+  return {registered:matches.length,verified:matches.filter(m=>m.status==='verified').length};
+ };
  const displaySitios=()=>{
   const list=$('#kk-sitio-list');if(!list)return;
-  list.innerHTML=sitios.length?sitios.map(s=>'<div class="kk-sitio-item"><div><strong>'+escVal(s.name)+'</strong><small>'+escVal(s.active?'Active · visible in KK dropdown':'Inactive · hidden from youth')+'</small></div><div class="kk-sitio-buttons">'+
-   '<button type="button" data-sitio-action="edit" data-id="'+escVal(s.id)+'">Edit</button>'+
-   '<button type="button" data-sitio-action="toggle" data-id="'+escVal(s.id)+'">'+(s.active?'Disable':'Enable')+'</button></div></div>').join(''):
-   '<p class="kk-muted">Wala pang official Sitio/Purok. Mag-add muna upang makapili ang youth applicants.</p>';
- };
- const displayPerks=()=>{
-  const root=$('#kk-perk-list');if(!root)return;
-  root.innerHTML=perks.length?perks.map(perk=>'<div class="kk-perk-row"><b>'+escVal(perk.title)+'</b><small>'+escVal(perk.cost)+' points · '+(perk.active?'Active':'Inactive')+'</small></div>').join(''):
-  '<p class="kk-muted">Wala pang configured perks.</p>';
+  const search=$('#kk-sitio-search')?.value.trim().toLocaleLowerCase()||'';
+  const ordered=sitios.filter(s=>s.name.toLocaleLowerCase().includes(search))
+   .sort((a,b)=>Number(a.sort_order||100)-Number(b.sort_order||100)||a.name.localeCompare(b.name));
+  const total=members.filter(m=>m.profile?.sitio_id).length;
+  $('#kk-sitio-totals').textContent=sitios.length+' sitios · '+total+' residents assigned';
+  list.innerHTML=ordered.length?ordered.map(s=>{
+   const counts=sitioCounts(s.id);
+   return '<article class="kk-sitio-item"><div class="kk-sitio-label"><strong>'+escVal(s.name)+'</strong><small>'+
+    escVal(s.active?'Active · KK dropdown':'Inactive · hidden from youth')+'</small></div>'+
+    '<div class="kk-sitio-counts"><span><b>'+counts.registered+'</b> Registered</span><span><b>'+counts.verified+'</b> Verified</span></div>'+
+    '<div class="kk-sitio-buttons"><button type="button" data-sitio-action="edit" data-id="'+escVal(s.id)+'">Edit</button>'+
+    '<button type="button" data-sitio-action="toggle" data-id="'+escVal(s.id)+'">'+(s.active?'Disable':'Enable')+'</button></div></article>';
+  }).join(''):'<p class="kk-muted">'+(search?'Walang sitio na tumutugma sa search.':'Wala pang official Sitio/Purok. Pindutin ang + Add Sitio.')+'</p>';
  };
  const memberCard=m=>{
   const full=initials(m),info=m.profile||{};
   const attributes=[['KK ID',m.kk_id||'For verification'],['Date of birth',m.birthdate||''],
    ['Phone',m.phone],['Email',m.email],['Region','NCR'],['City','Quezon City'],['Barangay','Barangay Vasra'],
-   ['Sitio/Purok',sitios.find(s=>s.id===info.sitio_id)?.name||'(No official selection)'],
+   ['Sitio/Purok',sitioName(info.sitio_id)],
    ['Street',info.street],['Religion',info.religion],['Civil status',info.civil_status],
    ['Gender',info.gender],['Solo Parent',info.solo_parent],['Family members',info.family_count],
    ['Siblings',info.siblings],['Education',info.education],['School',info.school_name],
@@ -40,34 +49,29 @@
    (m.review_note?'<p class="kk-note">Review Note: '+escVal(m.review_note)+'</p>':'')+
    '<div class="kk-member-actions">'+
     (m.status==='pending'?'<button type="button" class="primary" data-review="verified" data-id="'+escVal(m.id)+'">Verify Profile</button><button type="button" class="secondary" data-review="rejected" data-id="'+escVal(m.id)+'">Reject / Request Correction</button>':'')+
-    (m.status==='verified'?'<button type="button" class="secondary" data-award="'+escVal(m.id)+'">Award Points</button>':'')+
+    (m.status==='verified'?'<span class="kk-verification-reward">✓ Verified · 50 welcome points awarded once</span>':'')+
    '</div></div></details>';
  };
  const displayMembers=()=>{
   const text=$('#kk-staff-search').value.trim().toLowerCase(),state=$('#kk-staff-filter').value;
   const showing=members.filter(m=>(state==='all'||m.status===state)&&
-   (!text||(initials(m)+' '+m.email+' '+(m.kk_id||'')).toLowerCase().includes(text)));
+   (!text||(initials(m)+' '+m.email+' '+(m.kk_id||'')+' '+sitioName(m.profile?.sitio_id)).toLowerCase().includes(text)));
   $('#kk-staff-list').innerHTML=showing.length?showing.map(memberCard).join(''):
    '<p class="kk-muted">Walang KK records na tumutugma sa filter.</p>';
  };
- const displayRedemptions=()=>{
-  $('#kk-redemption-list').innerHTML=redemptions.length?redemptions.map(r=>
-   '<div class="kk-redemption"><div><b>'+escVal(r.name)+'</b><span>'+escVal(r.perk)+' · '+escVal(r.cost)+' points · '+escVal(r.status)+'</span></div>'+
-   (r.status==='pending'?'<div><button data-redemption="approved" data-id="'+escVal(r.id)+'" type="button">Approve</button> <button data-redemption="rejected" data-id="'+escVal(r.id)+'" type="button">Reject</button></div>':'')+'</div>').join(''):
-   '<p class="kk-muted">Wala pang redemption requests.</p>';
- };
  async function refresh(){
-  if(loading)return;loading=true;status('Loading SK KK records…');
+  if(loading)return;loading=true;status('Loading KK Profiling records…');
   try{
-   const [result,sitioResult,catalog]=await Promise.all([request(''),request('sitios'),request('catalog')]);
-   members=Array.isArray(result.members)?result.members:[];
-   redemptions=Array.isArray(result.redemptions)?result.redemptions:[];
-   sitios=Array.isArray(sitioResult.sitios)?sitioResult.sitios:[];
-   perks=Array.isArray(catalog.perks)?catalog.perks:[];
-   stats();displayMembers();displaySitios();displayPerks();displayRedemptions();
-   status('Records loaded · '+members.length+' KK profile(s). Only SK staff can access these records.');
+   // Separate calls avoid falsely claiming that the KK schema is missing
+   // when a different, optional endpoint fails.
+   const [result,sitioResult]=await Promise.all([request(''),request('sitios')]);
+   if(!Array.isArray(result?.members)||!Array.isArray(sitioResult?.sitios))
+    throw Error('Invalid KK staff response.');
+   members=result.members;sitios=sitioResult.sitios;
+   stats();displayMembers();displaySitios();
+   status('Updated · '+members.length+' KK members · '+sitios.length+' official sitios.');
   }catch(e){
-   status('KK database is not active yet. Approved KK migration is required before records or Sitio settings can be saved. '+e.message,true);
+   status('Hindi ma-load ang KK records: '+e.message+' I-check ang staff session at kung sa tamang preview domain ka naka-login.',true);
   }finally{loading=false;}
  }
  window.loadKKStaff=refresh;
@@ -79,7 +83,7 @@
  };
  document.addEventListener('click',e=>{
   if(!e.target.closest('#panel-kk-profiling'))return;
-  const target=e.target.closest('[data-review],[data-award],[data-sitio-action],[data-redemption]');
+  const target=e.target.closest('[data-review],[data-sitio-action]');
   if(!target)return;
   if(target.dataset.review){
    const decision=target.dataset.review;
@@ -87,15 +91,6 @@
    if(note===null||decision==='rejected'&&note.trim().length<5)return;
    if(!confirm((decision==='verified'?'Verify':'Reject')+' this KK profile?'))return;
    bind(target,()=>request('review',{id:target.dataset.id,status:decision,note}));
-  }
-  if(target.dataset.award){
-   const points=prompt('Ilang points ang ibibigay? (1–500)','10');
-   if(points===null)return;
-   const reason=prompt('Dahilan ng points (required, 5+ characters):','');
-   if(reason===null||!Number.isInteger(Number(points))||Number(points)<1||Number(points)>500||reason.trim().length<5){
-    status('Suriin ang points at reason.',true);return;
-   }
-   bind(target,()=>request('points',{id:target.dataset.award,points:Number(points),reason:reason.trim()}));
   }
   if(target.dataset.sitioAction){
    const entry=sitios.find(item=>item.id===target.dataset.id);
@@ -111,26 +106,25 @@
      sort_order:entry.sort_order,active:entry.active}));
    }
   }
-  if(target.dataset.redemption){
-   const choice=target.dataset.redemption;
-   if(!confirm((choice==='approved'?'Approve':'Reject')+' this perk request?'))return;
-   bind(target,()=>request('redemption',{id:target.dataset.id,status:choice,note:''}));
-  }
+
  });
  $('#kk-sitio-form')?.addEventListener('submit',e=>{
   e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;
   const data=Object.fromEntries(new FormData(form));
   const button=form.querySelector('button[type="submit"]');
   bind(button,async()=>{await request('sitios',{intent:'save',name:data.name.trim(),
-   sort_order:Number(data.sort_order),active:true});form.reset();});
+   sort_order:Number(data.sort_order),active:true});form.reset();$('#kk-sitio-editor').hidden=true;$('#kk-sitio-add-toggle').setAttribute('aria-expanded','false');});
  });
- $('#kk-perk-form')?.addEventListener('submit',e=>{
-  e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;
-  const data=Object.fromEntries(new FormData(form));
-  const button=form.querySelector('button[type="submit"]');
-  bind(button,async()=>{await request('perks',{title:data.title.trim(),description:data.description||'',
-   cost:Number(data.cost),active:true});form.reset();});
+ $('#kk-sitio-add-toggle')?.addEventListener('click',()=>{
+  const editor=$('#kk-sitio-editor'),button=$('#kk-sitio-add-toggle');
+  editor.hidden=!editor.hidden;button.setAttribute('aria-expanded',String(!editor.hidden));
+  if(!editor.hidden)editor.querySelector('input[name="name"]')?.focus();
  });
+ $('#kk-sitio-add-cancel')?.addEventListener('click',()=>{
+  $('#kk-sitio-editor').hidden=true;$('#kk-sitio-add-toggle').setAttribute('aria-expanded','false');
+  $('#kk-sitio-form').reset();
+ });
+ $('#kk-sitio-search')?.addEventListener('input',displaySitios);
  $('#kk-staff-search')?.addEventListener('input',displayMembers);
  $('#kk-staff-filter')?.addEventListener('change',displayMembers);
  $('#kk-staff-refresh')?.addEventListener('click',refresh);

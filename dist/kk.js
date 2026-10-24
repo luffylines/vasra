@@ -160,27 +160,68 @@
   graduate:[['master-1','Masteral 1st Year'],['master-2','Masteral 2nd Year'],['doctorate-1','Doctoral 1st Year'],['doctorate-2','Doctoral 2nd Year'],['doctorate-3','Doctoral 3rd Year or Higher'],['completed','Postgraduate Completed']],
   'out-of-school':[['na','Not Currently Enrolled']]
  };
- const values=(container)=>Object.fromEntries(new FormData(container));
- const showPerks=()=>{
-  const el=$('#kk-perks-list'),records=Array.isArray(account.perks)?account.perks:[];
-  el.innerHTML=records.length?records.map(perk=>'<article class="kk-perk"><h3>'+esc(perk.title)+'</h3><p>'+esc(perk.description||'')+'</p><strong>'+esc(perk.cost)+' points</strong><button type="button" class="kk-btn" data-perk="'+esc(perk.id)+'"'+(profile.status!=='verified'||Number(account.points)<Number(perk.cost)?' disabled':'')+'>Request redemption</button></article>').join(''):'<p class="kk-helper">Wala pang active perks na inilathala ng SK Vasra. Mananatili ang iyong points balance.</p>';
-  $('#kk-redemptions').innerHTML=(account.redemptions||[]).map(r=>'<p class="kk-helper">'+esc(r.perk)+' · '+esc(r.cost)+' points · <b>'+esc(r.status)+'</b></p>').join('')||'<p class="kk-helper">Wala pang redemption requests.</p>';
-  el.querySelectorAll('[data-perk]').forEach(btn=>btn.onclick=async()=>{
-   if(!confirm('I-request ang perk na ito? Ire-review muna ito ng SK officer.'))return;
-   btn.disabled=true;
-   try{await send('redeem',{id:btn.dataset.perk});await load();}catch(e){alert(e.message);btn.disabled=false;}
-  });
+ // Residential address is distinct from official SK Vasra eligibility.
+ // PSA PSGC 2026 NCR coverage: 16 cities plus Pateros municipality.
+ const metroCities=['Caloocan','Las Piñas','Makati','Malabon','Mandaluyong','Manila',
+  'Marikina','Muntinlupa','Navotas','Parañaque','Pasay','Pasig','Pateros',
+  'Quezon City','San Juan','Taguig','Valenzuela'];
+ let metroBarangays=[['Vasra','Vasra']],metroCache=null,metroLoading=false;
+ const normalizedArea=value=>String(value||'').toLocaleLowerCase().replace(/^city (of )?/,'').replace(/\bcity\b/g,'').replace(/[^a-z0-9]/g,'');
+ const metroAreaSelection=()=>{
+  const city=data.residence_city||'Quezon City';
+  const area=(city==='Quezon City' && !metroBarangays.some(b=>b[0]==='Vasra'))?[['Vasra','Vasra'],...metroBarangays]:metroBarangays;
+  const current=String(data.residence_barangay||'');
+  return '<label>Current Barangay in Metro Manila (Optional)<select name="residence_barangay" aria-label="Select Metro Manila residential barangay">'+
+   '<option value="">'+(metroLoading?'Loading official barangay options…':'Select barangay / check directory')+'</option>'+
+   area.map(([val,label])=>'<option value="'+esc(val)+'"'+(current===val?' selected':'')+'>'+esc(label)+'</option>').join('')+
+   (current&&!area.some(([v])=>v===current)?'<option selected value="'+esc(current)+'">'+esc(current)+' (saved)</option>':'')+
+   '</select></label>';
  };
+ async function refreshMetroBarangays(){
+  if(metroLoading)return;
+  const city=data.residence_city||'Quezon City';
+  if(metroCache){
+   metroBarangays=metroCache.filter(b=>normalizedArea(b.city)===normalizedArea(city)).map(b=>[b.name,b.name])
+    .sort((a,b)=>a[1].localeCompare(b[1]));
+   if(city==='Quezon City'&&!metroBarangays.some(v=>v[0]==='Vasra'))metroBarangays.unshift(['Vasra','Vasra']);
+   if(current===1)renderStep();
+   return;
+  }
+  metroLoading=true;
+  try{
+   // Only the public NCR region code is sent to the PSGC directory.
+   // No applicant name, address, cookie, or session is sent.
+   const response=await fetch('https://psgc.cloud/api/v2/regions/1300000000/barangays',{mode:'cors',credentials:'omit'});
+   if(!response.ok)throw Error('PSGC directory currently unavailable');
+   const responseData=await response.json(),items=Array.isArray(responseData)?responseData:responseData.data;
+   if(!Array.isArray(items))throw Error('Unexpected PSGC directory response');
+   const mapped=items.map(v=>({name:String(v.name||''),city:String(
+    v.city_municipality?.name||v.cityMunicipality?.name||v.city_municipality||'')}))
+    .filter(v=>v.name&&v.city);
+   if(mapped.length<100)throw Error('Incomplete PSGC NCR directory');
+   metroCache=mapped;
+  }catch{
+   // Keep verified Barangay Vasra fallback and don't invent other barangays.
+   metroCache=[];
+  }finally{
+   metroLoading=false;
+   metroBarangays=metroCache.filter(b=>normalizedArea(b.city)===normalizedArea(data.residence_city||'Quezon City'))
+    .map(b=>[b.name,b.name]).sort((a,b)=>a[1].localeCompare(b[1]));
+   if((data.residence_city||'Quezon City')==='Quezon City'&&!metroBarangays.some(v=>v[0]==='Vasra'))
+    metroBarangays.unshift(['Vasra','Vasra']);
+   if(current===1){const form=$('#kk-step-form');if(form&&form.querySelector('select[name="residence_city"]')){savedFields(form);renderStep();}}
+  }
+ }
+ const values=(container)=>Object.fromEntries(new FormData(container));
  const render=()=>{
   $('#kk-status').textContent=(profile.status||'draft').toUpperCase();
   $('#kk-id').textContent=profile.kk_id||'After verification';
   $('#kk-points').textContent=String(account.points||0);
   const review=$('#kk-review-note');review.hidden=!profile.review_note;
   if(profile.review_note){review.textContent=profile.review_note;review.dataset.kind=profile.status==='rejected'?'error':'info';}
-  showPerks();
   const edit=profile.status!=='pending'&&profile.status!=='verified';
   $('#kk-profile-area').hidden=!edit;
-  if(edit)renderStep();
+  if(edit){renderStep();if(current===1)refreshMetroBarangays();}
  };
  const savedFields=(form)=>{
   for(const [name,value] of new FormData(form)){
@@ -209,6 +250,9 @@
    field('barangay','Barangay',{select:[['Vasra','Barangay Vasra']],required:true})+
    sitioSelect()+
    field('street','Street / House Number (Optional)',{placeholder:'Address detail, kung mayroon'})+
+   '<div class="kk-address-note"><strong>Current residence within Metro Manila (Optional)</strong><span>Ang official KK registration ay para sa Barangay Vasra. Kung kasalukuyan kang nakatira sa ibang NCR city, maaari mong ilagay rito para sa SK residency review. Hindi nito awtomatikong binabago ang Barangay Vasra eligibility.</span></div>'+
+   field('residence_city','Current City / Municipality in Metro Manila',{select:metroCities.map(c=>[c,c])})+
+   metroAreaSelection()+
    '</div><p class="kk-helper">Sensitibong personal details ay para lamang sa authorized SK validation.</p>';
   if(current===2)return '<div class="kk-form-fields">'+
    field('education','Educational Level',{select:options.edu,required:true})+
@@ -242,10 +286,17 @@
  async function load(){
   let result;
   try{result=await getApi('me');}
-  catch(err){loading.textContent='Hindi pa available ang KK database. Kailangang ma-approve at ma-apply muna ang KK migration. '+err.message;return;}
+  catch(err){
+   loading.innerHTML='<div class="kk-load-error"><strong>Hindi ma-load ang KK profile</strong><p>'+esc(err.message)+
+   '</p><p>Siguraduhing sa iisang preview domain ka nag-login. Kung expired ang session, mag-login muli.</p>'+
+   '<a href="./kk-login">Go to KK Login</a> · <button type="button" id="kk-retry-load">Retry</button></div>';
+   $('#kk-retry-load')?.addEventListener('click',()=>{loading.textContent='Checking your KK account…';load();});
+   return;
+  }
   if(!result.member){location.replace('./kk-login');return;}
   account=result;profile=result.profile||{};data={...(profile.data||{})};
   data.region='NCR';data.province='N/A (NCR)';data.city='Quezon City';data.barangay='Vasra';
+  data.residence_city=data.residence_city||'Quezon City';
   try{const directory=await getApi('sitios');sitios=Array.isArray(directory.sitios)?directory.sitios:[];}
   catch{sitios=[];}
 
@@ -265,6 +316,11 @@
   }
  });
  $('#kk-step-form').addEventListener('change',event=>{
+  if(current===1 && event.target.name==='residence_city'){
+   savedFields($('#kk-step-form'));data.residence_city=event.target.value;
+   data.residence_barangay='';metroBarangays=[];
+   renderStep();refreshMetroBarangays();return;
+  }
   if(current!==2 || event.target.name!=='education')return;
   savedFields($('#kk-step-form'));
   data.education=event.target.value;

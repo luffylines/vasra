@@ -140,26 +140,34 @@
  </form>
 </dialog>
 </section><section id="panel-users" hidden><h2>SK Accounts at access</h2><p class="muted">Gumawa ng account para sa SK officer. Ibigay nang pribado ang temporary password; papalitan ito sa unang login.</p><form id="create-officer" class="officer-create"><label>Full Name<input name="name" required maxlength="100" autocomplete="off"></label><label>SK Position<select name="position" required><option value="kagawad">SK Kagawad</option><option value="treasurer">SK Treasurer</option><option value="secretary">SK Secretary</option></select></label><label>Email ng SK officer<input name="email" type="email" required maxlength="254" autocomplete="off"></label><button class="primary">Gumawa ng SK account</button></form><div id="new-credentials" class="credential-note" hidden></div><div id="users-list"></div></section><section id="panel-audit" hidden><h2>Activity log</h2><p class="muted">Awtomatikong tala ng mga ginawa. Walang edit o delete sa dashboard.</p><div id="audit-list"></div><div class="pagination"><button id="audit-prev"><svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5m6-6-6 6 6 6"/></svg> Bago</button><span id="audit-page"></span><button id="audit-next">Mas luma <svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></section><section id="panel-kk-profiling" class="kk-staff-panel" hidden>
- <div class="kk-staff-heading"><div><span class="eyebrow">KATIPUNAN NG KABATAAN · SK STAFF</span><h2>KK Profiling</h2><p>Review submitted KK profiles, manage official Sitio/Purok choices, review perks and export verified KK members.</p></div><a class="kk-staff-export" href="./api/kk/staff/export" download="SK-Vasra-Verified-KK.xlsx">Export Verified to Excel <svg class="ui-action-icon" data-direction="external" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/></svg></a></div>
- <p id="kk-staff-message" role="status" aria-live="polite"></p><div id="kk-staff-stats" class="kk-staff-stats"></div>
- <div class="kk-staff-settings-grid">
-  <section class="kk-staff-card" aria-labelledby="kk-sitio-title"><h3 id="kk-sitio-title">Sitio / Purok Management</h3>
-   <p>Ang mga Sitio na naka-active rito ang lalabas na dropdown sa KK profiling. Barangay Vasra ang automatic na barangay.</p>
-   <form id="kk-sitio-form"><label>Sitio / Purok Name<input name="name" maxlength="100" minlength="2" required placeholder="Ilagay ang opisyal na pangalan ng sitio"></label>
-   <label>Display Order<input name="sort_order" type="number" min="0" max="10000" value="100" required></label><button type="submit" class="primary">Add Sitio</button></form>
-   <div id="kk-sitio-list" class="kk-sitio-list"></div>
-  </section>
-  <section class="kk-staff-card"><h3>Points & Perks</h3><p>Points ay para lang sa verified KK members. Inire-review ng SK ang redemption requests.</p>
-   <form id="kk-perk-form" class="kk-compact-form"><label>Perk Title<input name="title" maxlength="120" minlength="3" placeholder="Program or perk title" required></label><label>Points Cost<input name="cost" type="number" min="1" max="10000" required></label>
-   <label>Details<input name="description" maxlength="500"></label><button type="submit" class="primary">Add Perk (Chairman)</button></form><div id="kk-perk-list"></div>
-  </section>
- </div>
- <div class="kk-staff-card"><div class="kk-staff-heading"><div><h3>Member Applications</h3><p>Only submitted profiles can be approved or rejected. Ang pending review ay hindi verified.</p></div></div>
-  <div class="kk-staff-filters"><label>Review Status<select id="kk-staff-filter"><option value="all">All profiles</option><option value="pending">Pending</option><option value="verified">Verified</option><option value="rejected">Rejected</option><option value="draft">Draft</option></select></label>
-  <label>Search Member<input id="kk-staff-search" type="search" placeholder="Name / email / KK ID"></label><button id="kk-staff-refresh" type="button" class="secondary">Refresh</button></div>
-  <div id="kk-staff-list" class="kk-staff-members"></div>
- </div>
- <div class="kk-staff-card"><h3>Perk Redemption Requests</h3><p>Approve or reject requests only after checking the member and available points.</p><div id="kk-redemption-list"></div></div>
+ <div class="kk-staff-heading"><div><span class="eyebrow">SANGGUNIANG KABATAAN VASRA · SK STAFF</span>
+ <h2>KK Profiling</h2><p>Official youth profiling, verified membership, Sitio/Purok directory at secure review.</p></div>
+ <a class="kk-staff-export" href="./api/kk/staff/export" download="SK-Vasra-Verified-KK.xlsx">Export Verified to Excel ↗</a></div>
+ <p id="kk-staff-message" role="status" aria-live="polite"></p>
+ <div id="kk-staff-stats" class="kk-staff-stats"></div>
+ <section class="kk-staff-card kk-sitio-section" aria-labelledby="kk-sitio-title">
+  <div class="kk-staff-heading kk-sitio-head"><div><h3 id="kk-sitio-title">Sitio / Purok Directory</h3>
+   <p>Official sitios ng Barangay Vasra at bilang ng registered residents sa bawat sitio.</p></div>
+   <button id="kk-sitio-add-toggle" type="button" class="primary" aria-expanded="false" aria-controls="kk-sitio-editor">+ Add Sitio</button>
+  </div>
+  <div id="kk-sitio-editor" hidden>
+   <form id="kk-sitio-form" class="kk-sitio-form">
+    <label>Sitio / Purok Name<input name="name" maxlength="100" minlength="2" required placeholder="Opisyal na pangalan ng sitio"></label>
+    <label>Display Order<input name="sort_order" type="number" min="0" max="10000" value="100" required></label>
+    <div class="kk-sitio-form-actions"><button type="submit" class="primary">Save Sitio</button><button id="kk-sitio-add-cancel" type="button" class="secondary">Cancel</button></div>
+   </form>
+  </div>
+  <div class="kk-sitio-toolbar">
+   <label><span>Search Sitio / Purok</span><input id="kk-sitio-search" type="search" placeholder="Search Palanas, Central VASRA..." autocomplete="off"></label>
+   <span id="kk-sitio-totals" class="kk-sitio-totals" role="status"></span>
+  </div>
+  <div id="kk-sitio-list" class="kk-sitio-list"></div>
+ </section>
+ <section class="kk-staff-card" aria-labelledby="kk-applications-title"><div class="kk-staff-heading"><div><h3 id="kk-applications-title">Member Applications</h3><p>SK officers review submitted applications before verification. Automatic 50 welcome points kapag Verified.</p></div></div>
+ <div class="kk-staff-filters"><label>Review Status<select id="kk-staff-filter"><option value="all">All profiles</option><option value="pending">Pending</option><option value="verified">Verified</option><option value="rejected">Rejected</option><option value="draft">Draft</option></select></label>
+ <label>Search Member<input id="kk-staff-search" type="search" placeholder="Name / email / KK ID / Sitio"></label><button id="kk-staff-refresh" type="button" class="secondary">Refresh</button></div>
+ <div id="kk-staff-list" class="kk-staff-members"></div>
+ </section>
  </section><section id="panel-settings" class="account-settings-panel" hidden>
 <div class="settings-header"><div class="eyebrow">PERSONAL ACCOUNT</div><h2>Account Settings</h2><p>Manage your email and password securely.</p></div>
 <div class="settings-layout">
