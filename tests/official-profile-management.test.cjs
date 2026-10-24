@@ -46,7 +46,7 @@ test('Public organizational structure remains based only on organization photo',
  assert.doesNotMatch(rendered,new RegExp(other));
 });
 test('Public SK Duty uses only the duty image and legacy fallback until activation',()=>{
- assert.match(duty,/p\.duty_photo_id\?'<img src/);
+ assert.match(duty,/p\.duty_photo_id\?'<img class="duty-photo-primary" src/);
  assert.doesNotMatch(duty,/p\.photo_id\?'<img src/);
  assert.match(duty,/poster\.hidden=!!managedDutyDays/);
  assert.match(duty,/photos\.hidden=!managedDutyDays/);
