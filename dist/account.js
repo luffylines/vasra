@@ -1060,12 +1060,117 @@ window.addEventListener('beforeunload',e=>{
  if(!projectSaveJob)return;
  e.preventDefault();e.returnValue='';
 });
-async function loadUsers(){const b=await api('./api/users');$('#users-list').innerHTML=b.users.map(u=>`<article class="manage-row"><div><h3>${esc(u.name)}</h3><p>${esc(u.email)}</p><span>${roleText[u.role]}${u.role==='sk'?' · '+esc(({kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'})[u.position]||'SK Kagawad'):''}</span></div>${u.role==='chairman'?'<span class="badge-inline">Chairman</span>':`<form class="role-form" data-user="${esc(u.id)}"><label>Role para kay ${esc(u.name)}<select name="role"><option value="youth" ${u.role==='youth'?'selected':''}>Walang SK access</option><option value="sk" ${u.role==='sk'?'selected':''}>SK Officer</option></select></label><button class="secondary">Save Access</button><label>Designation<select name="position"><option value="kagawad" ${u.position==='kagawad'?'selected':''}>SK Kagawad</option><option value="treasurer" ${u.position==='treasurer'?'selected':''}>SK Treasurer</option><option value="secretary" ${u.position==='secretary'?'selected':''}>SK Secretary</option></select></label><button type="button" data-save-position="${esc(u.id)}" class="secondary">Save Position</button></form>`}</article>`).join('')}
-$('#users-list').onclick=async e=>{const btn=e.target.closest('[data-save-position]');if(!btn)return;const form=btn.closest('form');btn.disabled=true;try{await api('./api/users/'+btn.dataset.savePosition+'/position',{method:'PUT',body:JSON.stringify({position:form.elements.position.value})});success('Matagumpay na na-update ang posisyon ng SK officer.');await loadUsers()}catch(error){message(error.message,true)}finally{btn.disabled=false}};
-$('#users-list').onsubmit=async e=>{e.preventDefault();const form=e.target,b=form.querySelector('button');b.disabled=true;try{await api('./api/users/'+form.dataset.user+'/role',{method:'PUT',body:JSON.stringify({role:form.elements.role.value})});success('Matagumpay na na-update ang SK account access.');await loadUsers()}catch(error){message(error.message,true)}finally{b.disabled=false}};
+// SK Accounts: single edit form per row, chairman-only protected server writes.
+let staffDirectory=[];
+const staffRoleTitle=u=>u.role==='chairman'?'SK Chairperson':u.role==='youth'?'No SK Access':
+ ({kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'})[u.position]||'SK Officer';
+const staffIcon=(name)=>{
+ const icons={
+ edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4L16.5 3.5z"/>',
+ trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v6m4-6v6"/>',
+ check:'<path d="m4 12 5 5L20 6"/>',
+ x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ shield:'<path d="m12 2 8 4v6c0 5-3 8-8 10C7 20 4 17 4 12V6l8-4Z"/>'
+ };
+ return '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(icons[name]||icons.shield)+'</svg>';
+};
+function renderUsers(){
+ const query=($('#staff-account-search')?.value||'').toLowerCase().trim();
+ const found=staffDirectory.filter(u=>[u.name,u.email,staffRoleTitle(u)].join(' ').toLowerCase().includes(query));
+ $('#staff-account-total').textContent=String(staffDirectory.length);
+ $('#staff-accounts-empty').hidden=found.length>0;
+ $('#users-list').innerHTML=found.map(u=>{
+  const initials=u.name.trim().split(/\\s+/).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join('');
+  const isChairman=u.role==='chairman';
+  return '<article class="staff-account-card" data-account="'+esc(u.id)+'">'+
+   '<div class="staff-account-overview"><span class="staff-account-avatar">'+esc(initials||'SK')+'</span>'+
+    '<div class="staff-account-info"><h3>'+esc(u.name)+'</h3><p>'+esc(u.email)+'</p><span class="staff-account-designation">'+staffIcon('shield')+' '+esc(staffRoleTitle(u))+'</span></div>'+
+    '<div class="staff-account-actions">'+(isChairman?'<span class="staff-account-owner">Protected Chairman</span>':
+      '<button type="button" class="secondary" data-account-edit="'+esc(u.id)+'">'+staffIcon('edit')+' Edit</button>'+
+      '<button type="button" class="staff-account-danger" data-account-remove="'+esc(u.id)+'">'+staffIcon('trash')+' Delete</button>')+'</div></div>'+
+    (isChairman?'':'<form class="staff-account-edit-form" data-account-edit-form="'+esc(u.id)+'" hidden>'+
+      '<div class="staff-account-edit-fields"><label>Full Name<input name="name" minlength="2" maxlength="100" required value="'+esc(u.name)+'"></label>'+
+      '<label>Email Address<input name="email" type="email" maxlength="254" required value="'+esc(u.email)+'"></label>'+
+      '<label>Designation<select name="position"><option value="kagawad"'+(u.position==='kagawad'?' selected':'')+'>SK Kagawad</option>'+
+      '<option value="treasurer"'+(u.position==='treasurer'?' selected':'')+'>SK Treasurer</option>'+
+      '<option value="secretary"'+(u.position==='secretary'?' selected':'')+'>SK Secretary</option></select></label>'+
+      '<label>Account Access<select name="role"><option value="sk"'+(u.role==='sk'?' selected':'')+'>Active SK Officer</option>'+
+      '<option value="youth"'+(u.role==='youth'?' selected':'')+'>No SK Access</option></select></label></div>'+
+      '<p class="staff-account-edit-note">Name at designation changes ay mag-a-update rin sa linked SK Council / SK Duty directory. Email o access changes ay magre-revoke ng active sessions.</p>'+
+      '<div class="staff-account-edit-actions"><button type="button" class="secondary" data-account-cancel="'+esc(u.id)+'">'+staffIcon('x')+' Cancel</button>'+
+      '<button type="submit" class="primary">'+staffIcon('check')+' Save Changes</button></div></form>')+
+   '</article>';
+ }).join('');
+}
+async function loadUsers(){
+ const result=await api('./api/users');
+ if(!Array.isArray(result?.users))throw Error('Hindi ma-load ang active SK account directory.');
+ staffDirectory=result.users;
+ renderUsers();
+}
+$('#staff-account-search')?.addEventListener('input',renderUsers);
+$('#users-list').addEventListener('click',async event=>{
+ const edit=event.target.closest('[data-account-edit]');
+ const cancel=event.target.closest('[data-account-cancel]');
+ const remove=event.target.closest('[data-account-remove]');
+ if(edit){
+  const form=$('#users-list').querySelector('[data-account-edit-form="'+edit.dataset.accountEdit+'"]');
+  if(!form)return;
+  form.hidden=false;edit.setAttribute('aria-expanded','true');
+  form.querySelector('input[name="name"]')?.focus();return;
+ }
+ if(cancel){
+  const form=$('#users-list').querySelector('[data-account-edit-form="'+cancel.dataset.accountCancel+'"]');
+  if(form){form.hidden=true;form.reset();}
+  $('#users-list').querySelector('[data-account-edit="'+cancel.dataset.accountCancel+'"]')?.setAttribute('aria-expanded','false');
+  return;
+ }
+ if(remove){
+  const account=staffDirectory.find(u=>u.id===remove.dataset.accountRemove);
+  if(!account||account.role==='chairman')return;
+  const dialog=$('#staff-account-delete'),typed=$('#staff-delete-confirm-name'),confirmBtn=$('#staff-delete-confirm');
+  if(!dialog||typeof dialog.showModal!=='function'){message('Update your browser to confirm staff account deactivation securely.',true);return;}
+  typed.value='';confirmBtn.disabled=true;
+  $('#staff-delete-name').textContent=account.name;
+  const check=()=>{confirmBtn.disabled=typed.value!==account.name;};
+  const copy=async()=>{
+   try{await navigator.clipboard.writeText(account.name);typed.value=account.name;check();}
+   catch{typed.focus();}
+  };
+  const copier=$('#staff-delete-copy');typed.addEventListener('input',check);
+  copier.addEventListener('click',copy);
+  dialog.showModal();
+  await new Promise(resolve=>dialog.addEventListener('close',resolve,{once:true}));
+  typed.removeEventListener('input',check);copier.removeEventListener('click',copy);
+  if(dialog.returnValue!=='confirm'||typed.value!==account.name)return;
+  remove.disabled=true;
+  try{
+   const result=await api('./api/users/'+account.id,{method:'DELETE',body:JSON.stringify({confirm_name:account.name})});
+   if(result?.ok!==true)throw Error('The server did not confirm account deactivation.');
+   success('SK account deactivated: '+account.name+'. Access revoked; historical records preserved.');
+   await loadUsers();
+  }catch(error){message(error.message,true);remove.disabled=false;}
+ }
+});
+$('#users-list').addEventListener('submit',async event=>{
+ const form=event.target.closest('[data-account-edit-form]');if(!form)return;
+ event.preventDefault();if(!form.reportValidity())return;
+ const id=form.dataset.accountEditForm,button=form.querySelector('button[type="submit"]');
+ const original=staffDirectory.find(u=>u.id===id);
+ if(!original||original.role==='chairman')return;
+ const data=Object.fromEntries(new FormData(form));
+ if(!confirm('Save changes to '+original.name+'? This may also update the SK Council / Duty roster.'))return;
+ button.disabled=true;
+ try{
+  const result=await api('./api/users/'+id,{method:'PUT',body:JSON.stringify(data)});
+  if(result?.ok!==true)throw Error('The server did not confirm the account update.');
+  success('Updated '+data.name+' in SK Accounts and its linked officer directory.');
+  await loadUsers();
+ }catch(error){message(error.message,true);button.disabled=false;}
+});
 const actions={
  account_registered:'Nag-register ng account',kk_registered:'Nag-register ng KK youth account',kk_login:'Nag-login sa KK Youth Portal',staff_login:'Nag-login sa SK Staff Workspace',chairman_provisioned:'Na-set up ang SK Chairman account',
- account_created:'Gumawa ng SK officer account',password_changed:'Nagpalit ng password',
+ account_created:'Gumawa ng SK officer account',staff_account_updated:'In-update ang SK account',staff_account_deactivated:'Na-deactivate ang SK account',password_changed:'Nagpalit ng password',
  image_uploaded:'Nag-upload ng larawan',project_created:'Gumawa ng proyekto',
  project_updated:'Nag-edit ng proyekto',role_changed:'Nagbago ng account role',
  position_changed:'Binago ang posisyon ng SK officer',budget_updated:'Nag-update ng SK budget',
