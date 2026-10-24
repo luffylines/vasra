@@ -4,6 +4,21 @@
  const $=s=>document.querySelector(s);
  const feedback=(message,kind='info')=>{const el=$('#kk-feedback');if(!el)return;el.textContent=message;el.dataset.kind=kind;el.hidden=!message;};
  const busy=(form,on)=>{const btn=form.querySelector('[type="submit"]');if(btn){btn.disabled=on;btn.setAttribute('aria-busy',String(on));}};
+ // Fixed +63 9 is outside the editable box. Paste supports 09..., +639... or
+ // the remaining nine digits, while typed content never exceeds nine digits.
+ const kkMobileTail=value=>{
+  let digits=String(value||'').replace(/\D/g,'');
+  if(digits.startsWith('63')&&digits.length>=12)digits=digits.slice(2);
+  if(digits.startsWith('0')&&digits.length>=11)digits=digits.slice(1);
+  if(digits.startsWith('9')&&digits.length>=10)digits=digits.slice(1);
+  return digits.slice(0,9);
+ };
+ const kkNormalizePhoneInput=input=>{
+  if(!input||!input.matches('input[name="phone"]'))return;
+  const tail=kkMobileTail(input.value);
+  if(input.value!==tail)input.value=tail;
+ };
+ const kkPhilippineMobile=value=>'+639'+kkMobileTail(value);
  const getApi=async path=>api('./api/kk/'+path);
  const send=async(path,data)=>api('./api/kk/'+path,{method:'POST',body:JSON.stringify(data)});
  if(view==='login'){
@@ -37,12 +52,20 @@
  }
  if(view==='register'){
   const form=$('#kk-registration-form');
+  const phone=form.elements.namedItem('phone');
+  phone.addEventListener('input',()=>kkNormalizePhoneInput(phone));
+  phone.addEventListener('paste',e=>{
+   const pasted=e.clipboardData?.getData('text')||'';
+   if(pasted && (pasted.replace(/\D/g,'').length>=10)){
+    e.preventDefault();phone.value=kkMobileTail(pasted);
+   }
+  });
   form.addEventListener('submit',async e=>{
    e.preventDefault();if(!form.reportValidity())return;
    const f=Object.fromEntries(new FormData(form));
    if(f.email.trim().toLowerCase()!==f.confirm_email.trim().toLowerCase())return feedback('Hindi magkatugma ang email at confirm email.','error');
    if(f.password!==f.confirm_password)return feedback('Hindi magkatugma ang password.','error');
-   const data={...f,email:f.email.trim().toLowerCase(),confirm_email:f.confirm_email.trim().toLowerCase(),agree:form.agree.checked,confirm_email_correct:form.confirm_email_correct.checked};
+   const data={...f,email:f.email.trim().toLowerCase(),confirm_email:f.confirm_email.trim().toLowerCase(),phone:kkPhilippineMobile(f.phone),agree:form.agree.checked,confirm_email_correct:form.confirm_email_correct.checked};
    busy(form,true);feedback('Creating your protected KK account…');
    try{const r=await send('register',data);if(r.ok)location.assign('./kk-profile');}
    catch(err){feedback(err.message,'error');}finally{busy(form,false);}
@@ -57,6 +80,10 @@
   if(opt.select){
    return '<label>'+esc(label)+(opt.required?' *':'')+'<select name="'+name+'"'+req+'><option value="">Pumili…</option>'+
     opt.select.map(v=>{const [val,text]=Array.isArray(v)?v:[v,v];return '<option value="'+esc(val)+'"'+(value===val?' selected':'')+'>'+esc(text)+'</option>';}).join('')+'</select></label>';
+  }
+  if(name==='phone'){
+   const tail=kkMobileTail(value);
+   return '<label>'+esc(label)+' *<span class="kk-ph-number"><span class="kk-ph-prefix" aria-hidden="true">+63 9</span><input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="9" minlength="9" pattern="[0-9]{9}" placeholder="XXXXXXXXX" value="'+esc(tail)+'" required></span></label>';
   }
   const type=opt.type||'text';
   return '<label>'+esc(label)+(opt.required?' *':'')+'<input name="'+name+'" type="'+type+'" maxlength="'+(opt.max||150)+'" placeholder="'+esc(opt.placeholder||'')+'" value="'+esc(value)+'"'+req+'></label>';
@@ -184,6 +211,16 @@
  }
  $('#kk-logout').onclick=async()=>{try{await send('logout',{});}finally{location.replace('./kk-login');}};
  $('#kk-back').onclick=()=>{if(current>1){savedFields($('#kk-step-form'));current--;feedback('');renderStep();}};
+ $('#kk-step-form').addEventListener('input',event=>{
+  if(event.target.matches('input[name="phone"]'))kkNormalizePhoneInput(event.target);
+ });
+ $('#kk-step-form').addEventListener('paste',event=>{
+  if(!event.target.matches('input[name="phone"]'))return;
+  const pasted=event.clipboardData?.getData('text')||'';
+  if(pasted && pasted.replace(/\D/g,'').length>=10){
+   event.preventDefault();event.target.value=kkMobileTail(pasted);
+  }
+ });
  $('#kk-step-form').addEventListener('change',event=>{
   if(current!==2 || event.target.name!=='education')return;
   savedFields($('#kk-step-form'));
@@ -196,6 +233,7 @@
   if(!form.reportValidity())return;
   const identityRequired=!account.member.first_name||!account.member.birthdate;
   const identity=identityRequired?values(form):{};
+  if(identityRequired && identity.phone)identity.phone=kkPhilippineMobile(identity.phone);
   savedFields(form);
   busy(form,true);feedback('Saving securely to your KK account…');
   try{

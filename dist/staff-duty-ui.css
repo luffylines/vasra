@@ -200,3 +200,65 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(#duty-off
   display:inline-flex!important;position:static!important;
  }
 }
+
+/* Duty photo and weekday editor: review-before-save presentation. */
+.duty-manager-panel .duty-manager-single,
+.duty-manager-panel .duty-manager-hours-disclosure{max-width:1100px}
+.duty-manager-panel .duty-manager-selected{
+ display:grid;grid-template-columns:minmax(120px,160px) minmax(0,1fr);
+ align-items:start;gap:19px;padding:18px;
+ background:#f4f8ff;border:1px solid #d2e3f7;border-radius:15px
+}
+.duty-manager-panel .duty-manager-photo-preview{
+ width:100%;max-width:160px;height:auto;min-height:180px;aspect-ratio:4/5;
+ box-sizing:border-box;border-radius:13px
+}
+.duty-manager-panel .duty-manager-photo-preview img:not([hidden]){
+ object-fit:cover;object-position:center 20%
+}
+.duty-manager-panel .duty-manager-selected-detail{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.duty-manager-panel .duty-manager-selected-detail>strong{font-size:19px;line-height:1.25}
+.duty-manager-panel .duty-manager-source{margin:2px 0;overflow-wrap:anywhere}
+.duty-manager-panel .duty-manager-private-note{
+ margin:0 0 2px;color:#42668f;font-size:11px;line-height:1.55;
+ padding:8px 11px;border-left:3px solid #72a2db;background:#eaf3ff;border-radius:5px
+}
+.duty-manager-panel .duty-manager-photo-upload{
+ max-width:100%;white-space:normal;text-align:left;min-height:42px
+}
+.duty-manager-panel .duty-manager-photo-preview.duty-manager-pending{
+ border:2px dashed #2a69c2;box-shadow:0 0 0 3px #2a69c219
+}
+.duty-manager-photo-pending{
+ position:absolute;z-index:2;top:8px;left:6px;right:6px;
+ display:block;padding:5px 7px;border-radius:7px;background:#173b6fdd;
+ color:#fff;font-size:9px;font-weight:850;letter-spacing:.4px;text-align:center
+}
+.duty-save-confirm{border:1px solid #d3e2f4;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 28px);color:#244a77;box-shadow:0 24px 70px #071a36a0}
+.duty-save-confirm::backdrop{background:#081d3da6}
+.duty-save-confirm-inner{padding:26px;display:flex;flex-direction:column;gap:12px;background:#fff;border-radius:18px}
+.duty-confirm-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:13px;background:#e7f1ff;color:#2862ac}
+.duty-confirm-icon svg{width:24px;height:24px}
+.duty-save-confirm h3{font:800 20px/1.3 Manrope,sans-serif;color:#1b426f;margin:0}
+.duty-save-confirm p{margin:0;line-height:1.7;color:#637e9c;font-size:13px;overflow-wrap:anywhere}
+.duty-confirm-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:10px}
+.duty-confirm-actions button{min-height:43px;min-width:106px;font-size:12px;padding:10px 13px;border-radius:9px}
+.duty-save-confirm button:focus-visible{outline:3px solid #70a6f0;outline-offset:2px}
+body.account-workspace[data-theme="dark"] .duty-save-confirm-inner{background:#172e4c}
+body.account-workspace[data-theme="dark"] .duty-save-confirm h3{color:#eef6ff}
+body.account-workspace[data-theme="dark"] .duty-save-confirm p{color:#c1d5ec}
+body.account-workspace[data-theme="dark"] .duty-manager-panel .duty-manager-private-note{background:#1d3e67;color:#d6e7ff}
+@media(max-width:600px){
+ .duty-manager-panel .duty-manager-selected{grid-template-columns:110px minmax(0,1fr);padding:12px;gap:12px}
+ .duty-manager-panel .duty-manager-photo-preview{width:110px;min-height:140px;max-width:110px}
+ .duty-manager-panel .duty-manager-selected-detail>strong{font-size:15px}
+ .duty-manager-panel .duty-manager-photo-upload{padding:9px;font-size:11px}
+ .duty-manager-panel .duty-manager-private-note{font-size:10px}
+ .duty-save-confirm-inner{padding:20px}
+}
+@media(max-width:390px){
+ .duty-manager-panel .duty-manager-selected{grid-template-columns:minmax(0,1fr)}
+ .duty-manager-panel .duty-manager-photo-preview{width:125px;max-width:125px}
+ .duty-confirm-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .duty-confirm-actions button{min-width:0}
+}

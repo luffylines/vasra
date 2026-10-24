@@ -42,7 +42,7 @@ test('Registration and youth profile have card-internal brand/Home and no separa
 test('KK registration keeps all eight required asterisks beside the corresponding label',()=>{
  assert.equal((register.match(/class="kk-required"/g)||[]).length,8);
  for(const name of ['first_name','last_name','birthdate','phone','email','confirm_email','password','confirm_password']){
-  assert.match(register,new RegExp('<span class="kk-label-title">[^<]+<span class="kk-required"[^>]*>\\*<\\/span><\\/span><input[^>]+name="'+name+'"'));
+  assert.match(register,new RegExp('<span class="kk-label-title">[^<]+<span class="kk-required"[^>]*>\\*<\\/span><\\/span>\\s*(?:<span class="kk-ph-number">[\\s\\S]*?)?<input[^>]+name="'+name+'"'));
  }
  assert.match(css,/\.kk-label-title \.kk-required/);
  assert.match(css,/display:inline!important/);
@@ -78,7 +78,7 @@ test('Responsive layout handles desktop, phone and narrow phone without viewport
  assert.match(css,/\.kk-auth-page\[data-view="register"\] \.kk-field-grid\{grid-template-columns:minmax\(0,1fr\)\}/);
  assert.match(css,/font:500 16px 'DM Sans'/);
  assert.match(contactCss,/@media\(max-width:560px\)/);
- assert.match(read('dist/sw.js'),/vasra-v45-kk-auth-login-responsive-20261024/);
+ assert.match(read('dist/sw.js'),/vasra-v46-kk-mobile-and-duty-confirm-20261024/);
 });
 test('Staff sign-in UI remains unchanged by the youth login redesign',()=>{
  const staff=read('dist/account.html');

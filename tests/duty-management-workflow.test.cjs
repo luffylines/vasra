@@ -37,13 +37,14 @@ test('Select options prioritize existing Youth Leaders directory and suppress ou
  assert.equal(fallback[0].name,'Old Member');
  assert.equal(fallback[0].canSave,false);
 });
-test('One duty day only: radio inputs and auto-save following server confirmation',()=>{
+test('One duty day only: changes are explicitly confirmed before server save',()=>{
  assert.match(html,/id="duty-manage-day-choices"/);
  assert.match(html,/id="duty-manage-day-fieldset"/);
  assert.match(mg,/type="radio" name="sk-duty-day"/);
- assert.match(mg,/dutyManageSave\(\{duty_day:Number\(input\.value\)\|\|null\},input\)/);
+ assert.match(mg,/await dutyManageConfirm\('Confirm duty day assignment'/);
+ assert.match(mg,/dutyManageSave\(\{duty_day:proposed\|\|null\},input\)/);
  assert.match(mg,/if\(response\?\.ok!==true\)throw Error/);
- assert.match(mg,/catch\{const old=document\.querySelector/);
+ assert.match(mg,/dutyManageRestoreDay\(before\)/);
  assert.match(mg,/dutyManagerSaving/);
  assert.match(api,/officer_profile_duty/);
  assert.match(read('supabase/migrations/20261018140000_official_photos_duty_roster.sql'),/cardinality\(duty_days\)<=1/);

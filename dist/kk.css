@@ -149,3 +149,11 @@
 @media(prefers-reduced-motion:reduce){
  .kk-auth-page *{scroll-behavior:auto!important;transition:none!important}
 }
+
+/* Philippine mobile input: the permanent +63 9 prefix is not editable. */
+.kk-form .kk-ph-number{display:flex!important;align-items:stretch;width:100%;min-width:0;min-height:45px;border:1px solid #cdd9e8;border-radius:10px;background:#fbfcff;overflow:hidden;gap:0}
+.kk-form .kk-ph-prefix{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;white-space:nowrap;min-width:73px;padding:0 13px;background:#eaf2ff;color:#265d9e;font:800 15px 'DM Sans',sans-serif;border-right:1px solid #cdd9e8}
+.kk-form .kk-ph-number input[name="phone"]{display:block;flex:1;min-width:0!important;width:100%!important;margin:0!important;padding:10px 12px!important;border:0!important;border-radius:0!important;outline:none!important;box-shadow:none!important;background:#fbfcff;font-size:16px!important;letter-spacing:.65px}
+.kk-form .kk-ph-number:focus-within{border-color:#4f84c7;box-shadow:0 0 0 3px #2e79b522}
+.kk-form .kk-ph-number input::placeholder{color:#9aadbf}
+@media(max-width:380px){.kk-form .kk-ph-prefix{min-width:67px;padding:0 9px}.kk-form .kk-ph-number input[name="phone"]{padding:10px!important}}
