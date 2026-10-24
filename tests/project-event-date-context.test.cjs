@@ -62,7 +62,7 @@ test('upload flow retries only transient failures and retains partial DB links',
 });
 test('nonrecoverable upload errors cannot be silently swallowed',async()=>{
  const begin=staff.indexOf('async function uploadPhotoRequest(data,stage){');
- const end=staff.indexOf('async function uploadProjectPhoto(file){',begin);
+ const end=staff.indexOf('async function uploadProjectPhoto(file,onProgress){',begin);
  assert(begin>=0&&end>begin);
  let requests=0;const status=[];
  const helper=new Function('api','projectUploadStatus','setTimeout',

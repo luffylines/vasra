@@ -53,7 +53,7 @@ test('Duty photo upload is separate from Organizational Structure, with preview 
  assert.match(html,/id="duty-photo-file"/);
  assert.match(html,/id="duty-photo-remove"/);
  assert.match(mg,/officer\.duty_photo_id/);
- assert.match(mg,/uploadProjectPhoto\(file\)/);
+ assert.match(mg,/uploadProjectPhoto\(file,\(label,done,total\)=>dutyManageUploadStatus/);
  assert.match(mg,/dutyManageSave\(\{duty_photo_id:uploadedId\},input\)/);
  assert.match(mg,/dutyManageSave\(\{duty_photo_id:null\},e\.currentTarget\)/);
  assert.match(mg,/URL\.revokeObjectURL/);

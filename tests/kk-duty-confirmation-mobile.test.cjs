@@ -43,7 +43,7 @@ test('Photo upload and removal require explicit confirmation; cancel skips uploa
  const remove=duty.slice(duty.indexOf("$('#duty-photo-remove').addEventListener"),duty.indexOf("$('#duty-manage-week').addEventListener"));
  assert.match(change,/duty-manager-pending/);
  assert.match(change,/PREVIEW · NOT SAVED/);
- assert.ok(change.indexOf("await dutyManageConfirm(")<change.indexOf("await uploadProjectPhoto(file)"));
+ assert.ok(change.indexOf("await dutyManageConfirm(")<change.indexOf("await uploadProjectPhoto(file,"));
  assert.match(change,/if\(!confirmed\|\|dutyManageOfficer\(\)\?\.id!==selectedId\)return/);
  assert.match(remove,/await dutyManageConfirm\('Remove SK Duty photo'/);
  assert.ok(remove.indexOf("if(!confirmed)return")<remove.indexOf("await dutyManageSave("));
