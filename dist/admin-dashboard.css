@@ -2506,3 +2506,70 @@ body.account-workspace[data-theme="dark"] .audit-row .audit-type-staff{
 @media(max-width:420px){
  .audit-row .audit-type{margin-left:0;margin-top:6px;white-space:normal;font-size:10px}
 }
+
+/* Chairman SK Accounts: one readable account summary, inline optional edit form. */
+#panel-users.staff-account-panel{width:100%;max-width:1160px;margin:0 auto;padding:12px 0 28px;min-width:0}
+#panel-users.staff-account-panel [hidden]{display:none!important}
+.staff-accounts-heading{display:flex;gap:18px;align-items:center;justify-content:space-between;margin-bottom:19px;flex-wrap:wrap}
+.staff-accounts-heading h2{font:800 clamp(23px,2.5vw,29px)/1.25 Manrope,sans-serif;margin:6px 0;color:#173d6b}
+.staff-accounts-heading p{font:400 12px/1.7 'DM Sans',sans-serif;color:#6c829f;margin:0;max-width:640px}
+.staff-account-summary{display:flex;align-items:center;gap:10px;padding:12px 15px;border:1px solid #d7e6f8;border-radius:12px;background:#f4f8fe;color:#28558f}
+.staff-account-summary svg{width:23px;height:23px}
+.staff-account-summary strong{font:800 22px Manrope,sans-serif}
+.staff-account-summary span{font:700 11px 'DM Sans',sans-serif}
+.staff-account-create-card,.staff-account-directory{border:1px solid #dce7f4;background:#fff;border-radius:17px;padding:20px 21px;margin:15px 0 20px;box-shadow:0 5px 18px #122d5210;min-width:0}
+.staff-account-section-title{display:flex;gap:12px;align-items:center;margin-bottom:17px;min-width:0}
+.staff-account-section-title>div{min-width:0;flex:1}
+.staff-account-heading-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;background:#edf4ff;border-radius:12px;color:#2865b0}
+.staff-account-heading-icon svg{width:22px;height:22px}
+.staff-account-section-title h3{font:800 17px/1.35 Manrope,sans-serif;color:#22446e;margin:0}
+.staff-account-section-title p{font:400 11px/1.6 'DM Sans',sans-serif;color:#7389a6;margin:5px 0 0}
+#panel-users .staff-officer-create{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(140px,.7fr) minmax(0,1.2fr) auto;gap:13px;align-items:end;min-width:0;background:none;border:0;box-shadow:none;margin:0;padding:0}
+#panel-users .staff-officer-create label,#panel-users .staff-account-edit-fields label{display:flex;flex-direction:column;gap:6px;min-width:0;color:#466080;font:700 11px 'DM Sans',sans-serif}
+#panel-users .staff-officer-create input,#panel-users .staff-officer-create select,#panel-users .staff-account-edit-fields input,#panel-users .staff-account-edit-fields select,#panel-users .staff-account-search input,
+.staff-account-delete-dialog input{display:block;min-width:0;width:100%;min-height:44px;border:1px solid #cbdcf0;border-radius:10px;background:#f9fbff;color:#214368;padding:10px 12px;font:500 16px 'DM Sans',sans-serif}
+#panel-users .staff-officer-create button{min-height:44px;white-space:nowrap;display:inline-flex;gap:8px;align-items:center;justify-content:center;border-radius:10px;padding:11px 16px}
+#panel-users .staff-officer-create button svg{width:17px;height:17px}
+.staff-account-directory-head{flex-wrap:wrap}
+.staff-account-search{min-width:190px;width:min(100%,310px);display:flex;flex-direction:column;gap:6px;color:#536d8c;font:700 11px 'DM Sans',sans-serif}
+.staff-account-list{display:grid;gap:12px}
+.staff-account-card{border:1px solid #dce7f4;border-radius:14px;min-width:0;background:#fafcff;overflow:hidden}
+.staff-account-overview{display:flex;align-items:center;gap:15px;padding:17px 18px;min-width:0}
+.staff-account-avatar{flex:none;display:grid;place-items:center;width:51px;height:51px;border-radius:13px;color:#245b99;background:#e4efff;font:800 16px Manrope,sans-serif}
+.staff-account-info{min-width:0;flex:1}
+.staff-account-info h3{font:800 15px Manrope,sans-serif;color:#1f426f;margin:0 0 5px;overflow-wrap:anywhere}
+.staff-account-info p{font:400 12px/1.5 'DM Sans',sans-serif;color:#6c86a5;margin:0 0 7px;overflow-wrap:anywhere}
+.staff-account-designation{display:inline-flex;align-items:center;gap:6px;color:#27609c;font:800 11px 'DM Sans',sans-serif;background:#eaf3ff;border:1px solid #d3e4f8;border-radius:8px;padding:5px 8px}
+.staff-account-designation svg,.staff-account-actions svg,.staff-account-edit-actions svg{width:15px;height:15px;flex:none}
+.staff-account-actions{display:flex;align-items:center;gap:9px;justify-content:flex-end;flex-wrap:wrap}
+.staff-account-actions button,.staff-account-edit-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:41px;border-radius:9px;padding:10px 14px;white-space:nowrap;font:800 11px 'DM Sans',sans-serif;cursor:pointer}
+.staff-account-danger{color:#a53d3f;background:#fff2f2;border:1px solid #ecc6c6}
+.staff-account-danger:hover{background:#fbe5e5}
+.staff-account-owner{color:#277953;font:800 11px 'DM Sans',sans-serif}
+.staff-account-edit-form{padding:15px 18px 18px;border-top:1px solid #dce7f4;background:#f1f6fd}
+.staff-account-edit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 15px}
+.staff-account-edit-note{font:400 11px/1.6 'DM Sans',sans-serif;color:#597ca2;margin:13px 0}
+.staff-account-edit-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.staff-account-delete-dialog{border:1px solid #d2e0f3;border-radius:17px;padding:0;width:calc(100% - 28px);max-width:500px;box-shadow:0 25px 85px #061d38a0;color:#254a74;background:#fff}
+.staff-account-delete-dialog::backdrop{background:#081c3ab3}
+.staff-account-delete-dialog form{padding:25px;display:flex;flex-direction:column;gap:12px}
+.staff-delete-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:11px;background:#fff0ed;color:#b94843}
+.staff-delete-icon svg{width:25px;height:25px}
+.staff-account-delete-dialog h3{font:800 20px/1.3 Manrope,sans-serif;margin:0;color:#21426d}
+.staff-account-delete-dialog p{font:400 12px/1.7 'DM Sans',sans-serif;color:#607b9a;margin:0}
+.staff-account-delete-dialog label{display:flex;flex-direction:column;gap:8px;font:700 12px 'DM Sans',sans-serif}
+.staff-account-delete-dialog strong{color:#b34240}
+.staff-delete-actions{display:flex;gap:9px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-top:7px}
+.staff-delete-actions button{min-height:43px;border-radius:9px;padding:9px 13px}
+.staff-delete-actions .danger{background:#bb4343;color:#fff;border:1px solid #bb4343}
+.staff-delete-actions .danger:disabled{opacity:.45;cursor:not-allowed}
+.staff-account-delete-dialog input:focus-visible,#panel-users input:focus-visible,#panel-users select:focus-visible{outline:3px solid #8abaff;outline-offset:1px}
+body.account-workspace[data-theme="dark"] .staff-account-create-card,body.account-workspace[data-theme="dark"] .staff-account-directory,
+body.account-workspace[data-theme="dark"] .staff-account-delete-dialog{background:#172b46;border-color:#35506e;color:#e7f2ff}
+body.account-workspace[data-theme="dark"] .staff-account-card{background:#1b3553;border-color:#355575}
+body.account-workspace[data-theme="dark"] .staff-account-info h3,body.account-workspace[data-theme="dark"] .staff-account-section-title h3,
+body.account-workspace[data-theme="dark"] .staff-accounts-heading h2,body.account-workspace[data-theme="dark"] .staff-account-delete-dialog h3{color:#e7f4ff}
+body.account-workspace[data-theme="dark"] .staff-account-edit-form{background:#1a3658;border-color:#355575}
+@media(max-width:1080px){#panel-users .staff-officer-create{grid-template-columns:repeat(2,minmax(0,1fr))}#panel-users .staff-officer-create button{width:100%}}
+@media(max-width:650px){.staff-account-create-card,.staff-account-directory{padding:15px}.staff-account-overview{padding:13px;flex-wrap:wrap;gap:10px}.staff-account-actions{width:100%;justify-content:flex-start;padding-left:0}.staff-account-edit-fields{grid-template-columns:minmax(0,1fr)}.staff-account-search{width:100%;max-width:none}.staff-account-delete-dialog form{padding:18px}}
+@media(max-width:430px){#panel-users .staff-officer-create{grid-template-columns:minmax(0,1fr)}.staff-account-avatar{width:42px;height:42px}.staff-account-summary{width:100%;justify-content:center}.staff-delete-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.staff-delete-actions .danger{grid-column:1/-1}}

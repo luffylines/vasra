@@ -5,9 +5,19 @@ const dutyManageWeekdays=['Monday','Tuesday','Wednesday','Thursday','Friday','Sa
 const dutyManageShort=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const dutyManageRole={chairman:'SK Chairperson',kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'};
 const dutyManageLegacyRole={'SK Chairman':'chairman','SK Treasurer':'treasurer','SK Secretary':'secretary','SK Kagawad':'kagawad'};
-let dutyManageDay=1,dutyManageHours=[],dutyManageOfficers=[],dutyManageSelectedId='',dutyManagerReady=false,dutyManagerLoading=false,dutyManagerSaving=false,dutyManagePhotoURL=null;
+let dutyManageDay=1,dutyManageHours=[],dutyManageOfficers=[],dutyManageSelectedId='',dutyManagerReady=false,dutyManagerLoading=false,dutyManagerSaving=false,dutyManagerUploadBusy=false,dutyManagePhotoURL=null;
 const dutyManageOfficer=()=>dutyManageOfficers.find(o=>o.key===dutyManageSelectedId)||null;
 const dutyManageNormal=v=>String(v||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase();
+function dutyManageUploadStatus(label,completed=0,total=1,visible=true){
+ const node=$('#duty-upload-progress');
+ if(!node)return;
+ node.hidden=!visible;
+ if(!visible)return;
+ const ratio=Math.max(0,Math.min(100,Math.round(100*completed/Math.max(1,total))));
+ $('#duty-upload-label').textContent=label;
+ $('#duty-upload-meter').value=ratio;
+ $('#duty-upload-percent').textContent=ratio+'%';
+}
 function dutyManageTime(time){
  const [h,m]=String(time||'09:00').split(':').map(Number);
  return (h%12||12)+':'+String(m).padStart(2,'0')+' '+(h<12?'AM':'PM');
@@ -62,7 +72,7 @@ function dutyManageRenderSelected(){
  box.hidden=false;
  $('#duty-manage-selected-name').textContent=officer.name;
  $('#duty-manage-selected-role').textContent=dutyManageRole[officer.position]||'SK Official';
- const canUpdate=dutyManagerReady&&officer.canSave&&!dutyManagerSaving;
+ const canUpdate=dutyManagerReady&&officer.canSave&&!dutyManagerSaving&&!dutyManagerUploadBusy;
  $('#duty-manage-day-fieldset').disabled=!canUpdate;
  $('#duty-photo-file').disabled=!canUpdate;
  $('#duty-photo-remove').disabled=!canUpdate||!officer.duty_photo_id;
@@ -167,7 +177,7 @@ $('#duty-manage-day-choices').addEventListener('change',async e=>{
  const input=e.target.closest('input[name="sk-duty-day"]');if(!input)return;
  const officer=dutyManageOfficer(),before=officer?.duty_days?.[0]||0;
  const proposed=Number(input.value)||0;
- if(!officer?.canSave||!dutyManagerReady||dutyManagerSaving){dutyManageRestoreDay(before);return;}
+ if(!officer?.canSave||!dutyManagerReady||dutyManagerSaving||dutyManagerUploadBusy){dutyManageRestoreDay(before);return;}
  if(proposed===before)return;
  const label=proposed?dutyManageWeekdays[proposed-1]:'No assigned day';
  try{
@@ -196,20 +206,30 @@ $('#duty-photo-file').addEventListener('change',async e=>{
    'Officer: '+officer.name+'. Image: '+file.name+'. The public duty photo will change only after you confirm and the upload succeeds.');
   if(!confirmed||dutyManageOfficer()?.id!==selectedId)return;
   input.disabled=true;
-  $('#duty-manage-selection-message').textContent='Uploading confirmed SK Duty photo…';
-  const uploadedId=await uploadProjectPhoto(file);
+  dutyManagerUploadBusy=true;
+  $('#duty-officer-select').disabled=true;
+  $('#duty-manage-day-fieldset').disabled=true;
+  $('#duty-photo-remove').disabled=true;
+  dutyManageUploadStatus('Uploading confirmed SK Duty photo…',0,1);
+  $('#duty-manage-selection-message').textContent='Uploading SK Duty photo · please keep this page open.';
+  const uploadedId=await uploadProjectPhoto(file,(label,done,total)=>dutyManageUploadStatus(label,done,total));
+  dutyManageUploadStatus('Saving duty photo assignment…',1,1);
+  dutyManagerUploadBusy=false;
   await dutyManageSave({duty_photo_id:uploadedId},input);
  }catch(error){message('Upload/save failed: '+error.message,true);}
  finally{
   URL.revokeObjectURL(source);
   input.value='';
+  dutyManagerUploadBusy=false;
+  $('#duty-officer-select').disabled=false;
+  dutyManageUploadStatus('',0,1,false);
   input.disabled=false;
   dutyManageRenderSelected();
  }
 });
 $('#duty-photo-remove').addEventListener('click',async e=>{
  const officer=dutyManageOfficer();
- if(!officer?.duty_photo_id||dutyManagerSaving)return;
+ if(!officer?.duty_photo_id||dutyManagerSaving||dutyManagerUploadBusy)return;
  const confirmed=await dutyManageConfirm('Remove SK Duty photo',
   'Officer: '+officer.name+'. This removes only the duty photo, not the SK Council organizational portrait.');
  if(!confirmed)return;

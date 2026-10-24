@@ -929,9 +929,10 @@ async function uploadPhotoRequest(data,stage){
   }
  }
 }
-async function uploadProjectPhoto(file){
+async function uploadProjectPhoto(file,onProgress){
  if(!file||!Number.isFinite(file.size)||file.size<1||file.size>5242880||!['image/png','image/jpeg','image/webp'].includes(file.type))
   throw Error('Photo must be PNG, JPG or WebP and no larger than 5 MB.');
+ onProgress?.('Preparing secure upload…',0,1);
  const upload=await uploadPhotoRequest({action:'begin',size:file.size,mime:file.type},'Starting upload');
  if(!upload?.id||!Number.isInteger(upload.chunkSize)||upload.chunkSize<1)
   throw Error('Invalid upload session from server. Hindi pa na-upload ang larawan.');
@@ -943,8 +944,11 @@ async function uploadProjectPhoto(file){
    reader.onerror=()=>reject(Error('Hindi mabasa ang photo file sa device.'));
    reader.readAsDataURL(piece);
   });
+  onProgress?.('Uploading photo part '+(index+1)+' of '+Math.ceil(file.size/upload.chunkSize),index,Math.ceil(file.size/upload.chunkSize));
   await uploadPhotoRequest({action:'chunk',id:upload.id,index,data:encoded},'Uploading photo part '+(index+1));
+  onProgress?.('Uploaded photo part '+(index+1)+' of '+Math.ceil(file.size/upload.chunkSize),index+1,Math.ceil(file.size/upload.chunkSize));
  }
+ onProgress?.('Verifying uploaded image…',1,1);
  const completed=await uploadPhotoRequest({action:'complete',id:upload.id},'Finalizing image');
  if(!completed?.id)throw Error('Hindi nakumpirma ang photo upload sa database.');
  return completed.id;

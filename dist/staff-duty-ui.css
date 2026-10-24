@@ -262,3 +262,21 @@ body.account-workspace[data-theme="dark"] .duty-manager-panel .duty-manager-priv
  .duty-confirm-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
  .duty-confirm-actions button{min-width:0}
 }
+
+/* Fixed confirmation alignment: both actions equal width on desktop and mobile. */
+.duty-save-confirm .duty-confirm-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:10px;width:100%;justify-content:stretch}
+.duty-save-confirm .duty-confirm-actions button{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:0;width:100%;min-height:46px;padding:11px 12px;margin:0;border-radius:10px;line-height:1.3;text-align:center}
+.duty-save-confirm-inner{width:100%;box-sizing:border-box}
+.duty-upload-progress[hidden]{display:none!important}
+.duty-upload-progress{position:sticky;z-index:60;bottom:14px;margin:17px 0 8px;padding:14px 16px;background:#eaf4ff;border:1px solid #96bbe9;box-shadow:0 8px 30px #133b692a;border-radius:12px;color:#204e87}
+.duty-upload-progress-header{display:flex;gap:10px;align-items:center;margin-bottom:9px;min-width:0}
+.duty-upload-progress-header strong{flex:1;min-width:0;font:800 12px/1.45 'DM Sans',sans-serif}
+.duty-upload-progress-header span:last-child{font:800 12px 'DM Sans',sans-serif}
+.duty-upload-progress progress{display:block;width:100%;height:8px;accent-color:#2d67b7;border-radius:20px}
+.duty-upload-progress p{font-size:11px;margin:8px 0 0;color:#5579a2}
+.duty-upload-spinner{height:17px;width:17px;flex:none;border-radius:50%;border:2px solid #c5ddf9;border-top-color:#2e66b1;animation:duty-upload-spin .8s linear infinite}
+@keyframes duty-upload-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.duty-upload-spinner{animation:none}}
+body.account-workspace[data-theme="dark"] .duty-upload-progress{background:#193454;border-color:#4779b2;color:#e9f4ff}
+body.account-workspace[data-theme="dark"] .duty-upload-progress p{color:#bdd8f6}
+@media(max-width:520px){.duty-save-confirm-inner{padding:18px}.duty-save-confirm .duty-confirm-actions{gap:8px}.duty-save-confirm .duty-confirm-actions button{min-height:46px;padding:10px 7px;font-size:12px}.duty-upload-progress{bottom:8px;padding:12px}}

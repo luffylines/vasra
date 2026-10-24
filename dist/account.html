@@ -124,7 +124,11 @@
    </div>
   </div>
   <fieldset class="duty-manager-single-week" id="duty-manage-day-fieldset" disabled><legend>Duty day</legend><p>Isang araw lang ang puwedeng piliin. Piliin ang araw. Hihingin muna ang confirmation bago i-save at lumabas sa public SK Duty.</p><div id="duty-manage-day-choices" class="duty-manager-day-choices"></div></fieldset>
-  <div id="duty-manage-selection-message" class="duty-manager-selection-message" role="status" aria-live="polite">Pumili muna ng SK officer.</div>
+  <div id="duty-manage-selection-message" class="duty-manager-selection-message" role="status" aria-live="polite">Pumili muna ng SK officer.</div><div id="duty-upload-progress" class="duty-upload-progress" role="status" aria-live="polite" hidden>
+ <div class="duty-upload-progress-header"><span class="duty-upload-spinner" aria-hidden="true"></span><strong id="duty-upload-label">Preparing SK Duty photo upload…</strong><span id="duty-upload-percent">0%</span></div>
+ <progress id="duty-upload-meter" max="100" value="0" aria-label="SK Duty photo upload progress"></progress>
+ <p>Keep this page open until the photo is saved.</p>
+ </div>
  </section>
  <details class="duty-manager-hours-disclosure"><summary><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><strong>Office hours</strong><small>Optional — i-update ang opening at closing time kada araw</small></span><svg class="duty-manager-chevron" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg></summary>
   <div class="duty-manager-hours-inner"><div id="duty-manage-week" class="duty-manager-week"></div>
