@@ -1,0 +1,30 @@
+/* Staff-owned SK contact settings and SK Duty public profile cards. */
+.settings-card-contact{grid-column:1 / -1;min-width:0}
+.settings-card-contact form{display:grid;gap:14px}
+.settings-card-contact .contact-input-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.settings-card-contact label{display:grid;gap:7px;min-width:0;font-size:13px;font-weight:650;color:#304f77}
+.settings-card-contact input:not([type="checkbox"]){display:block;min-width:0;width:100%;min-height:44px;padding:12px 13px;border:1px solid #ccdaeb;border-radius:11px;background:#fff;color:#17345b;font:inherit;font-size:16px}
+.settings-card-contact .contact-sharing{display:flex;align-items:flex-start;gap:11px;padding:15px;border:1px solid #c6d9f4;background:#f2f7ff;border-radius:12px;line-height:1.6;cursor:pointer}
+.settings-card-contact .contact-sharing input{margin:4px 0 0;width:19px;height:19px;flex:none;accent-color:#275baf}
+.settings-card-contact .contact-sharing span{min-width:0}
+.settings-card-contact .contact-sharing small{display:block;color:#5d789c;font-size:12px;font-weight:400;margin-top:3px}
+.settings-card-contact .contact-note{font-size:12px;line-height:1.6;color:#5c7192}
+.settings-card-contact .contact-status{font-size:12px;line-height:1.6;color:#365e92}
+.settings-card-contact .contact-status[data-kind="error"]{color:#b23535}
+.settings-card-contact .contact-status[data-kind="success"]{color:#1a7650}
+.settings-card-contact .contact-form-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.duty-contact-section{margin-top:22px;background:#fff;border:1px solid #dae5f4;border-radius:17px;padding:24px;box-shadow:0 5px 18px #12294a08}
+.duty-contact-heading{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:18px}
+.duty-contact-heading h2{font-size:23px;color:#193d6d;margin:5px 0 3px}
+.duty-contact-heading p{font-size:12px;color:#617a9a;line-height:1.6}
+.duty-contact-heading .eyebrow{font-size:10px;letter-spacing:1.5px;color:#5375a6}
+.duty-contact-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.duty-contact-card{border:1px solid #dce7f6;border-radius:14px;padding:18px;background:#f7faff;min-width:0}
+.duty-contact-card h3{font-size:17px;color:#194173;margin:0 0 4px}
+.duty-contact-card>small{color:#6c82a2;font-size:12px;display:block;margin-bottom:14px}
+.duty-contact-details{display:grid;gap:12px}
+.duty-contact-detail{display:flex;align-items:flex-start;gap:12px;font-size:13px;line-height:1.6;color:#365b84;overflow-wrap:anywhere;min-width:0}
+.duty-contact-detail svg{width:17px;height:17px;flex:none;margin-top:2px;color:#2e68af;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.duty-contact-detail a{color:#1c579f;font-weight:700;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;min-width:0}
+.duty-contact-empty{margin:0;border:1px dashed #cfddef;border-radius:13px;padding:17px;color:#6a809d;font-size:13px;line-height:1.6;background:#f7faff}
+@media(max-width:680px){.settings-card-contact .contact-input-grid{grid-template-columns:1fr}.duty-contact-section{padding:17px}.duty-contact-heading{align-items:flex-start;flex-direction:column}.duty-contact-heading h2{font-size:20px}.duty-contact-list{grid-template-columns:1fr}}

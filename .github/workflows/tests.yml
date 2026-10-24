@@ -4,9 +4,11 @@ on:
   pull_request:
     branches:
       - migration/vercel-supabase
+      - ui/sk-council-branding-home-icons-20261024
   push:
     branches:
       - fix/compact-project-cover-cards-20261017
+      - feature/officer-contact-details-20261024
 
 permissions:
   contents: read

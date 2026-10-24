@@ -122,6 +122,61 @@ function emailChangeFeedback(text='',kind='info'){
  const box=$('#email-change-message');
  box.textContent=String(text||'');box.dataset.kind=kind;box.hidden=!text;
 }
+// SK officer contact details are owned by the logged-in account, not a
+// Chairman-selected public profile. Publishing is opt-in and off by default.
+function officerContactMessage(text='',kind='info'){
+ const output=$('#officer-contact-status');
+ if(!output)return;
+ output.textContent=text;
+ output.dataset.kind=kind;
+}
+async function loadOfficerContacts(){
+ const form=$('#officer-contact-form');
+ if(!form||!user||user.mustChange)return;
+ const submit=form.querySelector('[type="submit"]');
+ submit.disabled=true;
+ officerContactMessage('Loading your SK contact details…');
+ try{
+  const result=await api('./api/officer-contacts/me');
+  const c=result.contact||{};
+  for(const key of ['address','email','phone','facebook_url']){
+   form.elements.namedItem(key).value=c[key]||'';
+  }
+  form.elements.namedItem('is_public').checked=c.is_public===true;
+  officerContactMessage('Only your own account can edit these details. Public sharing is '+(c.is_public===true?'ON.':'OFF.'),'info');
+  submit.disabled=false;
+ }catch(error){
+  officerContactMessage('Hindi pa available ang SK contact settings. Kailangang ma-approve at ma-apply muna ang contact database migration. '+(error.message||''),'error');
+  // Fail closed: do not let a user submit a form that cannot yet be saved.
+  submit.disabled=true;
+ }
+}
+$('#officer-contact-form').onsubmit=async e=>{
+ e.preventDefault();
+ const form=e.currentTarget,submit=form.querySelector('[type="submit"]');
+ if(submit.disabled||!form.reportValidity())return;
+ const fields=Object.fromEntries(new FormData(form));
+ const data={
+  address:String(fields.address||'').trim(),
+  email:String(fields.email||'').trim(),
+  phone:String(fields.phone||'').trim(),
+  facebook_url:String(fields.facebook_url||'').trim(),
+  is_public:form.elements.namedItem('is_public').checked
+ };
+ if(data.is_public && ![data.address,data.email,data.phone,data.facebook_url].some(Boolean)){
+  officerContactMessage('Maglagay muna ng public contact detail bago mag-enable ng sharing.','error');return;
+ }
+ submit.disabled=true;
+ officerContactMessage('Saving your SK contact details…','info');
+ try{
+  await api('./api/officer-contacts/me',{method:'POST',body:JSON.stringify(data)});
+  officerContactMessage(data.is_public?'Saved. Public contact details enabled for your matching SK Duty assignment.':'Saved. Your SK contact details are private.','success');
+  success('Nai-save ang SK contact details.');
+ }catch(error){
+  officerContactMessage(error.message||'Hindi na-save ang SK contact details.','error');
+  message(error.message||'Hindi na-save.',true);
+ }finally{submit.disabled=false;}
+};
 $('#change-email-form').onsubmit=async e=>{
  e.preventDefault();
  const form=e.target,button=form.querySelector('button[type="submit"]');
@@ -237,7 +292,7 @@ async function selectTab(name){const tabs=['overview','projects','awards','month
  $('#account-breadcrumb').textContent=tabLabels[name];
  $('#header-settings').classList.toggle('active',name==='settings');
  $('#header-settings').setAttribute('aria-current',name==='settings'?'page':'false');
- document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name);if(name==='duty-manage')await loadDutyManagement();if(name==='awards')await loadAwards()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
+ document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name);if(name==='duty-manage')await loadDutyManagement();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 // The gallery's first image is authoritative when an older record has no image_id.
