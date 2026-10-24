@@ -1,6 +1,6 @@
 'use strict';
 // SK Duty Management is a single-person editor.
-// Officer identity/position comes from SK Youth Leaders; duty photo/day are separate.
+// Officer identity/position comes from SK Council; duty photo/day are separate.
 const dutyManageWeekdays=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const dutyManageShort=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const dutyManageRole={chairman:'SK Chairperson',kagawad:'SK Kagawad',treasurer:'SK Treasurer',secretary:'SK Secretary'};
@@ -24,7 +24,7 @@ function dutyManageCollect(roster,directory){
   item.canSave=priority===3&&!!item.published&&!!item.id;
   entries.set(key,item);
  };
- // Legacy names are a read-only fallback ONLY if the managed Youth Leaders directory is empty.
+ // Legacy names are a read-only fallback ONLY if the managed SK Council directory is empty.
  // This prevents departed/archived SK members reappearing beside an active roster.
  const hasManagedNames=(directory?.officials?.length||0)>0||(roster?.profiles?.length||0)>0;
  if(!hasManagedNames&&typeof days!=='undefined'&&Array.isArray(days)){
@@ -33,7 +33,7 @@ function dutyManageCollect(roster,directory){
    if(role)add({name,position:role,published:false,duty_days:[]},1);
   });
  }
- // SK Youth Leaders Management is the authoritative directory, including unpublished drafts.
+ // SK Council Management is the authoritative directory, including unpublished drafts.
  for(const item of directory?.officials||[])add(item,2);
  // The protected profile RPC supplies the persistent duty photo and assigned weekday.
  for(const item of roster?.profiles||[])add(item,3);
@@ -113,7 +113,7 @@ async function loadDutyManagement(){
   api('./api/transparency/manage?year='+transYearNow())
  ]);
  const [h,r,d]=result.map(x=>x.status==='fulfilled'?x.value:null);
- // Keep the existing selectable Youth Leaders reference even before SQL migrations are applied.
+ // Keep the existing selectable SK Council reference even before SQL migrations are applied.
  dutyManageHours=Array.isArray(h?.days)?h.days:[];
  dutyManagerReady=dutyManageHours.length===7&&Array.isArray(r?.profiles);
  dutyManageOfficers=dutyManageCollect(r,d);

@@ -38,7 +38,7 @@
  });
  const topbar=document.createElement('div');
  topbar.className='mobile-appbar';
- topbar.innerHTML='<a class="mobile-brand" href="./" aria-label="SK Vasra homepage"><img src="./sk%20logo.jpg" alt=""><span>SK VASRA<small>Sangguniang Kabataan</small></span></a><button class="mobile-menu-toggle" type="button" aria-controls="vasra-sidebar" aria-expanded="false" aria-label="Buksan ang menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';
+ topbar.innerHTML='<a class="mobile-brand" href="./" aria-label="SK Vasra homepage"><img src="./sk%20logo.jpg" alt=""><span>SK VASRA<small>Sangguniang Kabataan Vasra</small></span></a><button class="mobile-menu-toggle" type="button" aria-controls="vasra-sidebar" aria-expanded="false" aria-label="Buksan ang menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';
  const close=document.createElement('button');
  close.className='sidebar-close';close.type='button';close.setAttribute('aria-label','Isara ang menu');
  close.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
