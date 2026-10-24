@@ -55,10 +55,10 @@ test('organization chart uses published roles and requires matching photo identi
  const duty=fs.readFileSync(path.join(dist,'duty.html'),'utf8');assert.match(duty,/class="duty-poster"/);assert.match(duty,/id="day-poster"/);assert.doesNotMatch(duty,/officers.css|duty-officer-card/);
 });
 
-test('Youth Leaders owns the chart route and navigation while Duty presentation stays unchanged',()=>{
+test('SK Council owns the chart route and navigation while Duty presentation stays unchanged',()=>{
  const html=fs.readFileSync(path.join(dist,'youth-leaders.html'),'utf8');assert.match(html,/id="leaders-directory"/);assert.match(html,/href=".\/youth-leaders" aria-current="page"/);
  for(const file of ['index.html','projects.html','duty.html','contacts.html','transparency.html','account.html','youth-leaders.html']){
-  const s=fs.readFileSync(path.join(dist,file),'utf8');const nav=s.slice(s.indexOf('<nav aria-label="Pangunahing navigation">'),s.indexOf('</nav>'));if(file==='account.html'){assert.match(s,/id="staff-nav"/);continue;}assert(nav.includes('SK Duty'));assert(nav.includes('SK Youth Leaders'));assert(nav.includes('Contacts'));
+  const s=fs.readFileSync(path.join(dist,file),'utf8');const nav=s.slice(s.indexOf('<nav aria-label="Pangunahing navigation">'),s.indexOf('</nav>'));if(file==='account.html'){assert.match(s,/id="staff-nav"/);continue;}assert(nav.includes('SK Duty'));assert(nav.includes('SK Council'));assert(nav.includes('Contacts'));
  }
  const trans=fs.readFileSync(path.join(dist,'transparency.html'),'utf8');assert.doesNotMatch(trans,/id="officials"|id="officials-grid"/);for(const id of ['about-sk','annual-budget','project-spending','monthly-reports'])assert(trans.includes('id="'+id+'"'));
  const config=JSON.parse(fs.readFileSync(path.join(dist,'../vercel.json'),'utf8'));assert(config.rewrites.some(r=>r.source==='/youth-leaders'&&r.destination==='/youth-leaders.html'));
