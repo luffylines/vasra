@@ -150,3 +150,21 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .a
  .site-header nav a.kk-mobile-nav-link{display:flex;align-items:center;gap:12px;margin-top:8px;border:1px solid #7798c850;background:#31548b45;color:#fff}
  .site-header nav a.kk-mobile-nav-link svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 }
+
+/* Mobile form focus: Safari/Chrome can zoom when editable controls use
+   font-size <16px. Keep pinch zoom enabled and preserve accessible scrolling. */
+@media (hover:none) and (pointer:coarse){
+ input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+ select,textarea{
+  font-size:16px!important;
+  -webkit-text-size-adjust:100%;
+ }
+}
+@media(max-width:520px){
+ .portal-main,.portal-content,.staff-main,.workspace-content,
+ .contacts-redesign,.contacts-connect,.contacts-form-panel,
+ .contacts-location-panel,.contacts-overview{min-width:0;max-width:100%}
+ .contacts-redesign .contacts-message-form input,
+ .contacts-redesign .contacts-message-form textarea,
+ .contacts-redesign .contacts-message-form select{min-width:0;max-width:100%}
+}

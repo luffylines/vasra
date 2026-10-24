@@ -171,3 +171,68 @@
 .kk-readiness[data-status="unavailable"] .kk-readiness-icon{color:#d36660}
 .kk-auth-page[data-view="register"] button[type="submit"]:disabled{cursor:not-allowed;opacity:.68}
 @media(max-width:520px){.kk-readiness{flex-wrap:wrap}.kk-readiness button{margin-left:22px}}
+
+/* Registered users see the form itself, not a big green status panel.
+   Keep actionable failures visible even when site CSS styles buttons as flex. */
+.kk-auth-page #kk-registration-readiness[hidden],
+.kk-auth-page #kk-registration-readiness [hidden]{display:none!important}
+
+/* Desktop: use more horizontal space, not a narrow mobile-width card.
+   Natural page scrolling is preserved for accessibility and shorter screens. */
+@media (min-width: 900px){
+ .kk-auth-page[data-view="register"] .kk-main{align-items:flex-start;padding:18px 28px 18px}
+ .kk-auth-page[data-view="register"] .kk-registration{
+  max-width:980px;padding:21px 32px 25px;border-radius:18px
+ }
+ .kk-auth-page[data-view="register"] .kk-reg-toolbar{margin-bottom:8px}
+ .kk-auth-page[data-view="register"] .kk-page-heading{margin-bottom:8px}
+ .kk-auth-page[data-view="register"] .kk-page-heading h1{font-size:25px;margin:4px 0}
+ .kk-auth-page[data-view="register"] .kk-page-heading p{margin:3px 0 9px}
+ .kk-auth-page[data-view="register"] .kk-field-section{padding:11px 0 15px}
+ .kk-auth-page[data-view="register"] .kk-field-section h2{margin:0 0 12px}
+ .kk-auth-page[data-view="register"] .kk-field-grid{gap:11px 22px}
+ .kk-auth-page[data-view="register"] .kk-form{gap:12px}
+ .kk-auth-page[data-view="register"] .kk-field-grid input{min-height:42px;padding:8px 11px}
+ .kk-auth-page[data-view="register"] .kk-helper{margin:3px 0 0}
+ .kk-auth-page[data-view="register"] .kk-privacy{padding:10px 13px}
+ .kk-auth-page[data-view="register"] .kk-checkbox{line-height:1.4}
+ .kk-auth-page[data-view="register"] .kk-registration>.kk-form>.kk-btn{min-height:43px}
+}
+@media (min-width: 1250px) and (max-height:900px){
+ .kk-auth-page[data-view="register"] .kk-registration{padding-top:15px;padding-bottom:18px}
+ .kk-auth-page[data-view="register"] .kk-reg-toolbar{margin-bottom:4px}
+ .kk-auth-page[data-view="register"] .kk-field-grid{row-gap:8px}
+ .kk-auth-page[data-view="register"] .kk-field-section{padding:8px 0 12px}
+}
+/* Narrow screens: prevent clipping and horizontal scroll at 320/360/375px. */
+@media (max-width:760px){
+ .kk-auth-page[data-view="register"] .kk-main{padding:12px 10px}
+ .kk-auth-page[data-view="register"] .kk-registration{max-width:600px;width:100%;padding:18px 15px}
+ .kk-auth-page[data-view="register"] .kk-reg-toolbar{gap:10px;margin-bottom:12px}
+ .kk-auth-page[data-view="register"] .kk-page-heading{margin-bottom:12px}
+ .kk-auth-page[data-view="register"] .kk-field-grid{grid-template-columns:minmax(0,1fr);gap:13px}
+ .kk-auth-page[data-view="register"] .kk-field-grid input{min-width:0;width:100%;max-width:100%}
+ .kk-auth-page[data-view="register"] .kk-field-section{padding:13px 0 18px}
+ .kk-auth-page[data-view="register"] .kk-field-section h2{margin-bottom:13px}
+ .kk-auth-page[data-view="register"] .kk-helper,
+ .kk-auth-page[data-view="register"] .kk-privacy{overflow-wrap:anywhere}
+ .kk-auth-page .kk-summary, .kk-auth-page .kk-review,
+ .kk-auth-page .kk-perk-grid{min-width:0}
+ .kk-profile-toolbar{gap:10px}
+}
+@media (max-width:380px){
+ .kk-auth-page[data-view="register"] .kk-main{padding:8px 6px}
+ .kk-auth-page[data-view="register"] .kk-registration{padding:14px 12px}
+ .kk-reg-toolbar .kk-register-brand{flex:1}
+ .kk-reg-toolbar .kk-register-brand small{overflow-wrap:anywhere}
+ .kk-reg-toolbar .kk-register-home{flex:none;padding:8px 9px}
+ .kk-auth-page .kk-profile-sheet,.kk-auth-page .kk-perks{padding:14px}
+ .kk-step-actions{flex-wrap:wrap}
+ .kk-step-actions .kk-btn{min-width:0;flex:1}
+}
+/* iOS Safari auto-zooms on focus when input/select/textarea is below 16px.
+   Do not disable pinch-to-zoom: only correct real control font sizing. */
+@media (hover:none) and (pointer:coarse){
+ .kk-body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+ .kk-body select,.kk-body textarea{font-size:16px!important}
+}

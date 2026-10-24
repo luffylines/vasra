@@ -128,3 +128,9 @@
  .contacts-redesign .contacts-message-form label:not(.contacts-consent){min-width:0}
  .contacts-redesign .contacts-form-panel,.contacts-redesign .contacts-location-panel{min-width:0}
 }
+
+@media (hover:none) and (pointer:coarse){
+ .contacts-redesign .contacts-message-form input:not([type="checkbox"]),
+ .contacts-redesign .contacts-message-form select,
+ .contacts-redesign .contacts-message-form textarea{font-size:16px!important}
+}

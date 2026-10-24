@@ -36,6 +36,6 @@ test('Registration readiness is mobile responsive and JS syntax valid',()=>{
  const css=read('dist/kk.css');
  assert.match(css,/\.kk-readiness\[data-status="unavailable"\]/);
  assert.match(css,/@media\(max-width:520px\)/);
- assert.match(read('dist/sw.js'),/vasra-v47-kk-readiness-preflight-20261024/);
+ assert.match(read('dist/sw.js'),/vasra-v48-kk-responsive-no-status-banner-20261024/);
  assert.doesNotThrow(()=>new vm.Script(js));
 });

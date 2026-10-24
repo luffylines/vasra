@@ -124,7 +124,7 @@ begin
      length(btrim(coalesce(payload->>'middle_name',''))) > 80 or
      length(btrim(coalesce(payload->>'phone',''))) not between 10 and 22 or
      length(btrim(coalesce(payload->>'email',''))) > 160 or
-     payload->>'email' !~* '^[A-Z0-9._%+\\-]+@[A-Z0-9.\\-]+\\.[A-Z]{2,}$' or
+     payload->>'email' !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+[.][A-Z]{2,}$' or
      nullif(payload->>'password_hash','') is null or
      (payload->>'birthdate')::date > current_date_ph - interval '15 years' or
      (payload->>'birthdate')::date <= current_date_ph - interval '31 years'
@@ -150,7 +150,7 @@ begin
  end if;
  if action='google' then
   if coalesce(payload->>'sub','') !~ '^[0-9]{5,40}$' or
-   coalesce(payload->>'email','') !~* '^[A-Z0-9._%+\\-]+@[A-Z0-9.\\-]+\\.[A-Z]{2,}$'
+   coalesce(payload->>'email','') !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+[.][A-Z]{2,}$'
   then return jsonb_build_object('error',400); end if;
   select * into m from vasra.kk_members where email=lower(payload->>'email') for update;
   if found and m.google_sub is distinct from payload->>'sub' then

@@ -63,6 +63,7 @@
    checking=true;databaseReady=false;
    submit.disabled=true;submit.setAttribute('aria-disabled','true');
    submit.textContent='Checking KK Registration…';
+   readiness.hidden=true;  // Only errors need a visible status card.
    readiness.dataset.status='checking';
    readinessTitle.textContent='Checking registration service…';
    readinessDescription.textContent='Tinitingnan kung active ang secure KK registration database.';
@@ -74,6 +75,7 @@
     const result=await getApi('sitios');
     if(!Array.isArray(result?.sitios))throw Error('Invalid KK service response.');
     databaseReady=true;readiness.dataset.status='ready';
+    readiness.hidden=true;
     readinessTitle.textContent='KK registration service is available';
     readinessDescription.textContent=result.sitios.length?
       'Available ang secure KK database. Maaari nang gumawa ng account.':
@@ -82,6 +84,7 @@
     submit.textContent='Create KK Account →';
    }catch{
     readiness.dataset.status='unavailable';
+    readiness.hidden=false;
     readinessTitle.textContent='KK registration is not yet available';
     readinessDescription.textContent='Hindi pa available ang KK database migration. Walang registration na mai-save sa preview. Hindi ka pa nakagawa ng account. Ipa-activate muna ito sa authorized SK administrator.';
     submit.textContent='Registration temporarily unavailable';
