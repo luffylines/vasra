@@ -157,3 +157,17 @@
 .kk-form .kk-ph-number:focus-within{border-color:#4f84c7;box-shadow:0 0 0 3px #2e79b522}
 .kk-form .kk-ph-number input::placeholder{color:#9aadbf}
 @media(max-width:380px){.kk-form .kk-ph-prefix{min-width:67px;padding:0 9px}.kk-form .kk-ph-number input[name="phone"]{padding:10px!important}}
+
+/* KK database readiness is checked before youth can submit personal data. */
+.kk-readiness{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;margin:0 0 19px;border-radius:12px;border:1px solid #cfddf0;background:#eff5ff;color:#315984;min-width:0}
+.kk-readiness .kk-readiness-icon{color:#5f91d2;font-size:12px;line-height:1.7;flex:none}
+.kk-readiness>div{flex:1;min-width:0}
+.kk-readiness strong{display:block;font:800 12px/1.45 Manrope,sans-serif}
+.kk-readiness p{font-size:11px;line-height:1.65;margin:5px 0 0;overflow-wrap:anywhere}
+.kk-readiness button{align-self:center;min-height:36px;padding:7px 11px;font-size:11px;flex:none}
+.kk-readiness[data-status="ready"]{background:#f0fbf6;color:#196847;border-color:#b3e1cb}
+.kk-readiness[data-status="ready"] .kk-readiness-icon{color:#2c9b6c}
+.kk-readiness[data-status="unavailable"]{background:#fff5f3;color:#9f403b;border-color:#edc5c2}
+.kk-readiness[data-status="unavailable"] .kk-readiness-icon{color:#d36660}
+.kk-auth-page[data-view="register"] button[type="submit"]:disabled{cursor:not-allowed;opacity:.68}
+@media(max-width:520px){.kk-readiness{flex-wrap:wrap}.kk-readiness button{margin-left:22px}}

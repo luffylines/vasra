@@ -79,6 +79,16 @@ create table if not exists vasra.kk_redemptions (
 );
 create index if not exists kk_redemptions_status_idx on vasra.kk_redemptions(status,created_at desc);
 
+-- Defense in depth: residents' sensitive information must never be exposed via
+-- implicit REST grants or an accidentally widened schema exposure.
+-- The internal service_role RPC gateway bypasses RLS only after server-side auth.
+alter table vasra.kk_members enable row level security;
+alter table vasra.kk_sessions enable row level security;
+alter table vasra.kk_profiles enable row level security;
+alter table vasra.kk_sitios enable row level security;
+alter table vasra.kk_points enable row level security;
+alter table vasra.kk_perks enable row level security;
+alter table vasra.kk_redemptions enable row level security;
 revoke all on vasra.kk_members,vasra.kk_sessions,vasra.kk_profiles,vasra.kk_points,vasra.kk_perks,vasra.kk_redemptions,vasra.kk_sitios from public, anon, authenticated;
 grant select,insert,update,delete on vasra.kk_members,vasra.kk_sessions,vasra.kk_profiles,vasra.kk_points,vasra.kk_perks,vasra.kk_redemptions,vasra.kk_sitios to service_role;
 

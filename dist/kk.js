@@ -52,6 +52,44 @@
  }
  if(view==='register'){
   const form=$('#kk-registration-form');
+  const submit=form.querySelector('button[type="submit"]');
+  const readiness=$('#kk-registration-readiness');
+  const readinessTitle=$('#kk-readiness-title');
+  const readinessDescription=$('#kk-readiness-description');
+  const retry=$('#kk-readiness-retry');
+  let databaseReady=false,checking=false;
+  async function checkKKRegistration(){
+   if(checking)return;
+   checking=true;databaseReady=false;
+   submit.disabled=true;submit.setAttribute('aria-disabled','true');
+   submit.textContent='Checking KK Registration…';
+   readiness.dataset.status='checking';
+   readinessTitle.textContent='Checking registration service…';
+   readinessDescription.textContent='Tinitingnan kung active ang secure KK registration database.';
+   retry.hidden=true;
+   try{
+    // This is a public, non-sensitive directory lookup and verifies that the
+    // dedicated KK database RPC actually exists. A READY HTML preview alone
+    // does NOT mean the KK migration has been applied.
+    const result=await getApi('sitios');
+    if(!Array.isArray(result?.sitios))throw Error('Invalid KK service response.');
+    databaseReady=true;readiness.dataset.status='ready';
+    readinessTitle.textContent='KK registration service is available';
+    readinessDescription.textContent=result.sitios.length?
+      'Available ang secure KK database. Maaari nang gumawa ng account.':
+      'Available ang KK database; kailangan pang ilagay ng SK ang official Sitio/Purok list bago makumpleto ang profiling.';
+    submit.disabled=false;submit.removeAttribute('aria-disabled');
+    submit.textContent='Create KK Account →';
+   }catch{
+    readiness.dataset.status='unavailable';
+    readinessTitle.textContent='KK registration is not yet available';
+    readinessDescription.textContent='Hindi pa available ang KK database migration. Walang registration na mai-save sa preview. Hindi ka pa nakagawa ng account. Ipa-activate muna ito sa authorized SK administrator.';
+    submit.textContent='Registration temporarily unavailable';
+    retry.hidden=false;
+   }finally{checking=false;}
+  }
+  retry.addEventListener('click',checkKKRegistration);
+  checkKKRegistration();
   const phone=form.elements.namedItem('phone');
   phone.addEventListener('input',()=>kkNormalizePhoneInput(phone));
   phone.addEventListener('paste',e=>{
@@ -61,7 +99,9 @@
    }
   });
   form.addEventListener('submit',async e=>{
-   e.preventDefault();if(!form.reportValidity())return;
+   e.preventDefault();
+   if(!databaseReady){feedback('Hindi pa active ang KK database. Walang na-create na account. Pindutin ang Retry o ipaalam sa SK administrator.','error');return;}
+   if(!form.reportValidity())return;
    const f=Object.fromEntries(new FormData(form));
    if(f.email.trim().toLowerCase()!==f.confirm_email.trim().toLowerCase())return feedback('Hindi magkatugma ang email at confirm email.','error');
    if(f.password!==f.confirm_password)return feedback('Hindi magkatugma ang password.','error');
