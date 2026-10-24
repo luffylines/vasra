@@ -8,6 +8,16 @@
  const send=async(path,data)=>api('./api/kk/'+path,{method:'POST',body:JSON.stringify(data)});
  if(view==='login'){
   const google=$('#kk-google-login'),note=$('#kk-google-note');
+  // Password visibility for KK youth only; independent of the SK staff login.
+  const password=$('#kk-login-password'),reveal=$('.kk-password-toggle');
+  if(password&&reveal)reveal.addEventListener('click',()=>{
+   const visible=password.type==='text';
+   password.type=visible?'password':'text';
+   reveal.textContent=visible?'Show':'Hide';
+   reveal.setAttribute('aria-label',visible?'Show password':'Hide password');
+   reveal.setAttribute('aria-pressed',String(!visible));
+  });
+
   try{
    const status=await getApi('google/status');
    if(status.enabled===true){google.href='./api/kk/google/start';google.classList.remove('disabled');google.setAttribute('aria-disabled','false');note.textContent='Google account login is available for KK members.';}
