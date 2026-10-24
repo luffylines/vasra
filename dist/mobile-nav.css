@@ -138,3 +138,15 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .a
  body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea,[contenteditable="true"]){font-size:16px!important;-webkit-text-size-adjust:100%}
  body .auth-form-card :is(input,select,textarea),body .account-workspace :is(input,select,textarea){font-size:16px!important}
 }
+
+/* Separate public Katipunan ng Kabataan access (never staff /account login). */
+.kk-page-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0;margin-left:auto}
+.kk-top-login{display:inline-flex;align-items:center;gap:7px;border-radius:10px;border:1px solid #bfd5f1;background:#eaf2ff;color:#255ca4;text-decoration:none;font:800 11px 'DM Sans',sans-serif;padding:9px 13px;transition:background .2s}
+.kk-top-login:hover{background:#d9eafa}.kk-top-login svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.site-header nav a.kk-mobile-nav-link{display:none}
+@media(max-width:850px){
+ .kk-top-login{display:none}
+ .kk-page-actions{margin-left:auto}
+ .site-header nav a.kk-mobile-nav-link{display:flex;align-items:center;gap:12px;margin-top:8px;border:1px solid #7798c850;background:#31548b45;color:#fff}
+ .site-header nav a.kk-mobile-nav-link svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+}
