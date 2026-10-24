@@ -57,3 +57,14 @@ test('Error states explain session or network instead of falsely claiming missin
  assert.match(read('dist/sw.js'),/vasra-v51-psgc-city-barangays-20261025/);
  for(const [p,s] of [['kk-staff.js',staff],['kk.js',kk],['handler.cjs',handler]])assert.doesNotThrow(()=>new vm.Script(s,{filename:p}));
 });
+
+test('Ten SK-supplied Sitio names are seeded once without inventing resident counts',()=>{
+ const migration=read('supabase/migrations/20261025003000_kk_vasra_sitio_directory.sql');
+ for(const sitio of ['BAI Lower','BAI Upper','BPI Compound','Central VASRA',
+  'DENR-NCR Compound','Fisheries Street','Palanas A','Palanas B','Palanas C','Palanas D'])
+  assert.ok(migration.includes("'"+sitio+"'"),sitio);
+ assert.match(migration,/on conflict \(normalized_name\) do nothing/);
+ assert.match(migration,/from vasra\.users where role='chairman'/);
+ assert.doesNotMatch(migration,/\bTRUNCATE\b|\bDELETE\b|\bDROP TABLE\b/i);
+ assert.doesNotMatch(migration,/registered_count|verified_count|members_assigned/);
+});
