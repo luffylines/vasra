@@ -24,8 +24,15 @@
   if(target.endsWith('/index.html')||target.endsWith('/'))return 'home';
   return null;
  };
+ // One authoritative active state, derived from the current public URL.
+ // Corrects stale/mismatched markup and supports both .html and clean routes.
+ const currentPage=match(location.pathname);
  for(const a of nav.querySelectorAll('a[href]')){
   const route=routes.find(item=>item.key===match(a.getAttribute('href')));
+  a.querySelectorAll(':scope > i').forEach(dot=>dot.remove());
+  if(route && route.key===currentPage)a.setAttribute('aria-current','page');
+  else a.removeAttribute('aria-current');
+
   if(!route)continue;
   const old=a.querySelector(':scope > svg, :scope > span[aria-hidden="true"]');
   if(old)old.outerHTML=icon(route.icon);

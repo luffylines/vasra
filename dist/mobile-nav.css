@@ -168,3 +168,6 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .a
  .contacts-redesign .contacts-message-form textarea,
  .contacts-redesign .contacts-message-form select{min-width:0;max-width:100%}
 }
+
+/* Public nav selection is represented by aria-current, never a trailing dot. */
+.site-header nav a > i{display:none!important}

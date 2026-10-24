@@ -73,5 +73,5 @@ test('Modified JS parses, responsive state and no new hardcoded credentials',()=
  for(const [p,s] of [['account.js',app],['duty-management.js',duty],['handler.cjs',handler],['supabase.cjs',db]])
   assert.doesNotThrow(()=>new vm.Script(s,{filename:p}));
  assert.doesNotMatch(migration,/PASSWORD_SECRET|service_role_key|SUPABASE_SERVICE_KEY/);
- assert.match(read('dist/sw.js'),/vasra-v53-sk-full-disclosure-board-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v54-public-sidebar-active-20261025/);
 });
