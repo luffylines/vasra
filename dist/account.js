@@ -1060,7 +1060,7 @@ async function loadUsers(){const b=await api('./api/users');$('#users-list').inn
 $('#users-list').onclick=async e=>{const btn=e.target.closest('[data-save-position]');if(!btn)return;const form=btn.closest('form');btn.disabled=true;try{await api('./api/users/'+btn.dataset.savePosition+'/position',{method:'PUT',body:JSON.stringify({position:form.elements.position.value})});success('Matagumpay na na-update ang posisyon ng SK officer.');await loadUsers()}catch(error){message(error.message,true)}finally{btn.disabled=false}};
 $('#users-list').onsubmit=async e=>{e.preventDefault();const form=e.target,b=form.querySelector('button');b.disabled=true;try{await api('./api/users/'+form.dataset.user+'/role',{method:'PUT',body:JSON.stringify({role:form.elements.role.value})});success('Matagumpay na na-update ang SK account access.');await loadUsers()}catch(error){message(error.message,true)}finally{b.disabled=false}};
 const actions={
- account_registered:'Nag-register ng account',chairman_provisioned:'Na-set up ang SK Chairman account',
+ account_registered:'Nag-register ng account',kk_registered:'Nag-register ng KK youth account',kk_login:'Nag-login sa KK Youth Portal',staff_login:'Nag-login sa SK Staff Workspace',chairman_provisioned:'Na-set up ang SK Chairman account',
  account_created:'Gumawa ng SK officer account',password_changed:'Nagpalit ng password',
  image_uploaded:'Nag-upload ng larawan',project_created:'Gumawa ng proyekto',
  project_updated:'Nag-edit ng proyekto',role_changed:'Nagbago ng account role',
@@ -1078,6 +1078,16 @@ function auditDetails(event){
  if(typeof d==='string'){try{d=JSON.parse(d)}catch{return 'Hindi available ang detalye ng lumang activity.';}}
  if(!d||typeof d!=='object'||Array.isArray(d))return 'Walang karagdagang detalye para sa activity na ito.';
  const name=v=>String(v??'').trim();
+ if(['kk_registered','kk_login','staff_login'].includes(event.action)){
+  const type=event.action==='staff_login'?'SK Staff':'KK Youth';
+  const action=event.action==='kk_registered'?'Account registered':'Successful login';
+  const method=d.method==='google'?'Google Sign-In':d.method==='email'?'Email / password':'Authenticated session';
+  const lines=[type+' · '+action,'Sign-in method: '+method];
+  if(event.action==='kk_registered')lines.push('Registration is not the same as SK verification. The KK profile is subject to officer review.');
+  // Passwords, birthdates, phone numbers, tokens and full profile data are never stored in this log.
+  return lines.join('\n');
+ }
+
  const title=name(d.title);
  const progress=v=>Number.isFinite(Number(v))?Number(v)+'%':'hindi nakasaad';
  const number=v=>Number.isInteger(Number(v))&&Number(v)>=0?Number(v):null;
@@ -1129,7 +1139,10 @@ async function loadAudit(){
   const actor=event.actor_name||'Unknown account';
   const action=actions[event.action]||String(event.action||'Unknown activity').replace(/_/g,' ');
   const ip=typeof event.ip_address==='string'&&event.ip_address?event.ip_address.replace(/\/(?:32|128)$/,''):'Hindi naitala';
-  return '<article class="audit-row"><div><b>'+esc(actor)+'</b> · '+esc(action)+'</div>'+
+  const isYouth=event.action==='kk_login'||event.action==='kk_registered';
+  const isStaffLogin=event.action==='staff_login';
+  const kind=isYouth?'<span class="audit-type audit-type-kk">KK Youth</span>':isStaffLogin?'<span class="audit-type audit-type-staff">SK Staff</span>':'';
+  return '<article class="audit-row"><div><b>'+esc(actor)+'</b> · '+esc(action)+' '+kind+'</div>'+
    '<small>'+esc(dateText(event.created))+' PHT · Record #'+esc(event.id)+'</small>'+
    '<small class="audit-ip">IP address: '+esc(ip)+'</small>'+
    '<details class="audit-more"><summary>Tingnan ang detalye</summary><div class="audit-detail-text">'+esc(auditDetails(event))+'</div></details></article>';

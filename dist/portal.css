@@ -334,3 +334,83 @@
  #image-lightbox[open] .lightbox-arrow{width:32px!important;height:40px!important}
  #image-lightbox[open] .lightbox-tip{padding:5px 8px!important;margin:0!important;font-size:10px!important}
 }
+
+/* Fill the managed SK Duty image panel like the original duty poster.
+   The photograph is always visible in full (contain), with a softly
+   blurred duplicate filling the leftover sides instead of empty whitespace. */
+.portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"]{
+ display:block;position:relative;align-self:stretch;min-height:390px;
+ width:100%;height:100%;padding:0;gap:0;
+ background:#d5e6f8;border:0;border-left:1px solid #c8dbef;
+ border-radius:0;overflow:hidden
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile{
+ display:block;position:relative;min-height:390px;
+ width:100%;height:100%;padding:0;margin:0;border:0;border-radius:0;
+ overflow:hidden;background:#cbdff6
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile-frame{
+ position:absolute;inset:0;display:block;max-width:none;
+ width:100%;height:100%;aspect-ratio:auto;border:0;border-radius:0;
+ overflow:hidden;background:linear-gradient(125deg,#bfd6ee,#e3eef9)
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile-frame img{
+ position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;
+ border:0;border-radius:0
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] img.duty-photo-backdrop{
+ object-fit:cover;object-position:center 28%;z-index:1;
+ filter:blur(18px) brightness(.83);transform:scale(1.12);
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] img.duty-photo-primary{
+ object-fit:contain;object-position:center center;z-index:2;
+ filter:drop-shadow(0 2px 10px #0c244c2c)
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile:after{
+ content:"";position:absolute;z-index:3;pointer-events:none;inset:55% 0 0;
+ background:linear-gradient(0deg,#071d3ac7 0%,#071d3a35 45%,transparent 100%);
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile strong,
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile small{
+ position:absolute;left:17px;right:17px;z-index:4;display:block;
+ color:white;text-align:center;margin:0;text-shadow:0 2px 8px #071d3ab8;
+ overflow-wrap:anywhere
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile strong{
+ bottom:41px;font:800 clamp(16px,1.8vw,20px)/1.4 Manrope,sans-serif
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile small{
+ bottom:21px;font:600 12px/1.35 'DM Sans',sans-serif;color:#e6f2ff
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile-fallback{
+ position:absolute;left:0;right:0;top:45%;z-index:1;color:#244f89
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] img[hidden]{display:none!important}
+/* Multiple assigned officers keep equal, full-height image cards. */
+.portal-refresh #duty-officer-portraits[data-layout="group"]{align-items:stretch;padding:12px}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile{
+ min-height:255px;padding:10px;border-radius:12px
+}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile-frame{
+ width:100%;height:195px;max-width:none;aspect-ratio:auto
+}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-photo-primary{
+ object-fit:contain;z-index:2
+}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-photo-backdrop{
+ object-fit:cover;filter:blur(12px);transform:scale(1.1);opacity:.65
+}
+@media(max-width:900px){
+ .portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"]{min-height:340px}
+ .portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile{min-height:340px}
+}
+@media(max-width:650px){
+ .portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"]{min-height:315px;border-left:0;border-top:1px solid #c8dbef}
+ .portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile{min-height:315px}
+ .portal-refresh #duty-officer-portraits[data-layout="group"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile-frame{height:160px;max-width:none}
+ .portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile{min-height:228px}
+}
+@media(max-width:390px){
+ .portal-refresh #duty-officer-portraits[data-layout="group"]{grid-template-columns:minmax(0,1fr)}
+}
