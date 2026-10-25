@@ -110,7 +110,6 @@
    e.preventDefault();
    if(!databaseReady){feedback('Hindi pa active ang KK database. Walang na-create na account. Pindutin ang Retry o ipaalam sa SK administrator.','error');return;}
    if(!form.reportValidity())return;
-  if(current===1 && (!validID?.exists||idBusy)){feedback('Mag-upload muna ng valid ID bago mag-Save & Next.');return;}
    const f=Object.fromEntries(new FormData(form));
    if(f.email.trim().toLowerCase()!==f.confirm_email.trim().toLowerCase())return feedback('Hindi magkatugma ang email at confirm email.','error');
    if(f.password!==f.confirm_password)return feedback('Hindi magkatugma ang password.','error');
@@ -473,6 +472,13 @@
  });
  $('#kk-step-form').addEventListener('submit',async e=>{
   e.preventDefault();const form=e.currentTarget;
+  // The secure Valid ID upload is only part of Step 1, never account registration.
+  if(current===1&&!validID?.exists){
+   feedback(idBusy?'Hindi pa tapos ang Valid ID upload.':'Mag-upload muna ng Valid ID bago mag-Save & Next.','error');
+   if(!idBusy)$('#kk-valid-id-file')?.focus();
+   return;
+  }
+  if(idBusy){feedback('Hindi pa tapos ang Valid ID upload.','error');return;}
   if(!form.reportValidity())return;
   const identityRequired=!account.member.first_name||!account.member.birthdate;
   const identity=identityRequired?values(form):{};

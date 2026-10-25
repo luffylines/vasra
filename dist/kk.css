@@ -337,3 +337,17 @@
 .kk-profile-sheet .kk-yn-field input[type=radio]{min-height:19px;width:19px;accent-color:#255cb8;flex:none}
 @media(max-width:1080px){.kk-profile-workspace{grid-template-columns:1fr}.kk-profile-preview{position:static}.kk-preview-card dl{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.kk-profile-workspace .kk-profile-sheet{padding:16px}.kk-profile-preview{padding:13px}.kk-preview-card dl{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-steps .kk-step strong{font-size:10px}.kk-steps .kk-step small{font-size:9px}.kk-id-drop{min-height:135px}}
+
+/* Form typography: legible on phones, required marks stay beside field names. */
+.kk-profile-sheet .kk-label-title{display:inline-flex;flex-wrap:wrap;align-items:baseline;column-gap:3px;line-height:1.45;font-size:14px;font-weight:750}
+.kk-profile-sheet .kk-form label:not(.kk-checkbox){font-size:14px;line-height:1.6}
+.kk-profile-sheet .kk-required{color:#d12437!important;white-space:nowrap;display:inline!important;vertical-align:baseline!important;line-height:1!important}
+.kk-profile-sheet .kk-helper,.kk-profile-sheet .kk-form-section-head p{font-size:13px;line-height:1.7}
+.kk-profile-sheet .kk-id-chip-row span{font-size:12px}
+.kk-profile-sheet .kk-yn-field legend{font-size:14px;font-weight:800}
+.kk-profile-sheet .kk-yn-field>label{font-size:14px!important}
+.kk-profile-sheet .kk-preview-card dt{font-size:12px}
+.kk-profile-sheet .kk-id-drop input[type=file]{font-size:16px;max-width:100%}
+.kk-profile-sheet .kk-form input,.kk-profile-sheet .kk-form select{font-size:16px}
+.kk-profile-sheet .kk-form select,.kk-profile-sheet .kk-form input{max-width:100%}
+@media(max-width:650px){.kk-profile-sheet .kk-label-title{font-size:14px}.kk-profile-sheet .kk-id-drop{padding:14px}}
