@@ -160,6 +160,12 @@ if(location.pathname.endsWith('/')||location.pathname.endsWith('/index.html')){i
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
 
+// Appearance controls for public pages, separate from the staff workspace.
+if(!document.body.classList.contains('account-workspace')){
+ const appearance=document.createElement('script');appearance.src='./theme.js';
+ document.head.append(appearance);
+}
+
 /* Consistent Philippine Time at the page header on every public/staff page.
    Syncs against a lightweight server timestamp to avoid wrong device clocks;
    if server is offline the client clock is shown as a fallback. */
@@ -209,9 +215,3 @@ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch
  setInterval(sync,300000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
 })();
-
-// Appearance controls for every public page; staff workspace uses its own theme switch.
-if(!document.body.classList.contains('account-workspace')){
- const appearance=document.createElement('script');appearance.src='./theme.js';
- document.head.append(appearance);
-}
