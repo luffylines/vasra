@@ -182,6 +182,11 @@
  <a class="kk-staff-export" href="./api/kk/staff/export" download="SK-Vasra-Verified-KK.xlsx">Export Verified to Excel <svg class="ui-action-icon" data-direction="external" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/></svg></a></div>
  <p id="kk-staff-message" role="status" aria-live="polite"></p>
  <div id="kk-staff-stats" class="kk-staff-stats"></div>
+ <section class="kk-staff-card" aria-labelledby="kk-applications-title"><div class="kk-staff-heading"><div><h3 id="kk-applications-title">Member Applications</h3><p>SK officers review submitted applications before verification. Automatic 50 welcome points kapag Verified.</p></div></div>
+ <div class="kk-staff-filters"><label>Review Status<select id="kk-staff-filter"><option value="all">All profiles</option><option value="pending">Pending</option><option value="verified">Verified</option><option value="rejected">Rejected</option><option value="draft">Draft</option></select></label>
+ <label>Search Member<input id="kk-staff-search" type="search" placeholder="Name / email / KK ID / Sitio"></label><button id="kk-staff-refresh" type="button" class="secondary">Refresh</button></div>
+ <div class="kk-applications-layout"><div class="kk-applicants-column"><header class="kk-applicant-list-head"><h4 id="kk-applicant-count">Applicants</h4><label>Sort <select id="kk-staff-order" aria-label="Sort member applicants"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="name">Name A–Z</option></select></label></header><div id="kk-staff-list" class="kk-staff-members"></div></div><div id="kk-staff-detail" class="kk-applicant-detail" aria-live="polite"><p>Choose an applicant to review.</p></div></div>
+ </section>
  <section class="kk-staff-card kk-sitio-section" aria-labelledby="kk-sitio-title">
   <div class="kk-staff-heading kk-sitio-head"><div><h3 id="kk-sitio-title">Sitio / Purok Management</h3>
    <p>Official sitios ng Barangay Vasra at bilang ng registered residents sa bawat sitio.</p></div>
@@ -199,11 +204,6 @@
    <span id="kk-sitio-totals" class="kk-sitio-totals" role="status"></span>
   </div>
   <div id="kk-sitio-list" class="kk-sitio-list"></div>
- </section>
- <section class="kk-staff-card" aria-labelledby="kk-applications-title"><div class="kk-staff-heading"><div><h3 id="kk-applications-title">Member Applications</h3><p>SK officers review submitted applications before verification. Automatic 50 welcome points kapag Verified.</p></div></div>
- <div class="kk-staff-filters"><label>Review Status<select id="kk-staff-filter"><option value="all">All profiles</option><option value="pending">Pending</option><option value="verified">Verified</option><option value="rejected">Rejected</option><option value="draft">Draft</option></select></label>
- <label>Search Member<input id="kk-staff-search" type="search" placeholder="Name / email / KK ID / Sitio"></label><button id="kk-staff-refresh" type="button" class="secondary">Refresh</button></div>
- <div class="kk-applications-layout"><div class="kk-applicants-column"><header class="kk-applicant-list-head"><h4 id="kk-applicant-count">Applicants</h4><label>Sort <select id="kk-staff-order" aria-label="Sort member applicants"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="name">Name A–Z</option></select></label></header><div id="kk-staff-list" class="kk-staff-members"></div></div><div id="kk-staff-detail" class="kk-applicant-detail" aria-live="polite"><p>Choose an applicant to review.</p></div></div>
  </section>
  <section class="kk-staff-card" aria-labelledby="kk-participants-title"><div class="kk-staff-heading"><div><h3 id="kk-participants-title">Project Participants</h3><p>Automatically registered KK members per published project. Only SK staff can view this roster.</p></div></div>
  <label class="kk-participant-search">Search project or participant<input id="kk-participant-search" type="search" placeholder="Project title / KK member name"></label>
