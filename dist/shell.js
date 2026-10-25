@@ -43,18 +43,74 @@
   if(!link.querySelector('svg'))link.insertAdjacentHTML('afterbegin',icon(fbPath));
   link.classList.add('social-footer-link');
  });
- // Public KK entry is separate from the SK Officer/Chairman account.
- // Desktop: beside Barangay Vasra / Philippine live time.
- // Mobile: inside the accessible hamburger navigation.
+ // KK navigation is derived from the verified server-side HttpOnly cookie.
+ // Don't store a guessed logged-in flag in localStorage and never treat an API
+ // outage as an expired session.
  if(!document.body.classList.contains('account-workspace')){
   const loginIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>';
+  const logoutIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-5"/></svg>';
+  const dashboardIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   nav.insertAdjacentHTML('beforeend','<a class="kk-mobile-nav-link" href="./kk-login">'+loginIcon+'<span>KK Login / Register</span></a>');
   const locationTag=document.querySelector('.page-top .location-tag');
+  let actions=null;
   if(locationTag){
-   const actions=document.createElement('div');actions.className='kk-page-actions';
+   actions=document.createElement('div');actions.className='kk-page-actions';
    locationTag.before(actions);actions.append(locationTag);
    actions.insertAdjacentHTML('beforeend','<a class="kk-top-login" href="./kk-login" aria-label="KK Login and Registration">'+loginIcon+'<span>Login</span></a>');
   }
+  const showAuthenticatedControls=profile=>{
+   const target=profile?.status==='verified'?'./kk-dashboard':'./kk-profile';
+   const mobileLink=nav.querySelector('.kk-mobile-nav-link');
+   if(mobileLink){mobileLink.href=target;mobileLink.innerHTML=dashboardIcon+'<span>'+(profile?.status==='verified'?'My KK Dashboard':'My KK Profile')+'</span>';}
+   if(actions){
+    const login=actions.querySelector('.kk-top-login');
+    if(login){
+     const memberLink=document.createElement('a');
+     memberLink.href=target;memberLink.className='kk-member-entry';
+     memberLink.innerHTML=dashboardIcon+'<span>'+(profile?.status==='verified'?'My KK Dashboard':'My KK Profile')+'</span>';
+     login.before(memberLink);
+     const logout=document.createElement('button');
+     logout.type='button';logout.className='kk-top-login kk-signout';
+     logout.setAttribute('aria-label','Logout from KK account');
+     logout.innerHTML=logoutIcon+'<span>Logout</span>';
+     login.replaceWith(logout);
+    }
+   }
+   const mobileSignout=document.createElement('a');
+   mobileSignout.href='./';mobileSignout.className='kk-mobile-nav-link kk-mobile-signout';
+   mobileSignout.innerHTML=logoutIcon+'<span>Logout KK Account</span>';
+   mobileLink?.after(mobileSignout);
+   // On phones the KK Logout icon is available without opening the drawer.
+   const phoneLogout=document.createElement('button');
+   phoneLogout.type='button';phoneLogout.className='kk-appbar-logout';
+   phoneLogout.setAttribute('aria-label','Logout KK Account');phoneLogout.title='Logout KK Account';
+   phoneLogout.innerHTML=logoutIcon;
+   topbar.querySelector('.mobile-menu-toggle')?.before(phoneLogout);
+   const signOut=async event=>{
+    event.preventDefault();
+    const pressed=event.currentTarget;
+    if(pressed.dataset.pending==='yes')return;
+    pressed.dataset.pending='yes';pressed.setAttribute('aria-disabled','true');
+    try{
+     const reply=await fetch('./api/kk/logout',{method:'POST',credentials:'same-origin',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},body:'{}',cache:'no-store'});
+     if(!reply.ok)throw Error('Logout service unavailable');
+     location.assign('./');
+    }catch{
+     pressed.removeAttribute('aria-disabled');pressed.dataset.pending='no';
+     const note=document.createElement('p');note.className='kk-logout-error';note.setAttribute('role','alert');
+     note.textContent='Hindi natuloy ang KK logout. Subukang muli.';
+     (actions||nav).append(note);setTimeout(()=>note.remove(),6500);
+    }
+   };
+   actions?.querySelector('.kk-signout')?.addEventListener('click',signOut);
+   mobileSignout.addEventListener('click',signOut);
+   phoneLogout.addEventListener('click',signOut);
+  };
+  fetch('./api/kk/me',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}})
+   .then(r=>r.ok?r.json():null)
+   .then(result=>{if(result?.member?.id)showAuthenticatedControls(result.profile||{});})
+   .catch(()=>{/* Server offline: do not assume a session exists or sign the user out. */});
  }
  const topbar=document.createElement('div');
  topbar.className='mobile-appbar';
@@ -110,6 +166,12 @@ if((location.pathname.endsWith('/transparency')||location.pathname.endsWith('/tr
 if(location.pathname.endsWith('/')||location.pathname.endsWith('/index.html')){if(location.hash==='#duty')location.replace('./duty.html');if(location.hash==='#contacts')location.replace('./contacts.html');if(location.hash==='#projects')location.replace('./projects.html');}
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
+
+// Appearance controls for public pages, separate from the staff workspace.
+if(!document.body.classList.contains('account-workspace')){
+ const appearance=document.createElement('script');appearance.src='./theme.js';
+ document.head.append(appearance);
+}
 
 /* Consistent Philippine Time at the page header on every public/staff page.
    Syncs against a lightweight server timestamp to avoid wrong device clocks;

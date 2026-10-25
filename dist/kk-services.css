@@ -1,0 +1,23 @@
+
+/* KK service forms reuse the existing SK Vasra cards and theme. */
+.kk-services-panel .kk-service-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px;max-width:850px;margin:20px 0}
+.kk-service-form label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:750;color:#34547d;min-width:0}
+.kk-service-form select,.kk-service-form input,.kk-service-form textarea{min-width:0;width:100%;font:500 16px/1.4 'DM Sans',sans-serif;min-height:45px;border:1px solid #cbd9ed;border-radius:10px;padding:10px 12px;color:#19385d;background:#f9fbff}
+.kk-service-form textarea{resize:vertical}
+.kk-service-form .kk-service-required{color:#c63649;display:inline}
+.kk-service-wide,.kk-service-hint{grid-column:1/-1}
+.kk-service-hint{font-size:13px;color:#6481a4;line-height:1.6;margin:0}
+.kk-service-form>.kk-btn{grid-column:1/-1;justify-self:start;min-height:44px}
+.kk-service-item{background:#f8fbff;border:1px solid #dce6f2;border-radius:12px;padding:14px 16px;display:flex;gap:18px;align-items:center;justify-content:space-between;margin:10px 0}
+.kk-service-item strong{display:block;color:#1c406d}
+.kk-service-item small{display:block;font-size:12px;color:#57789a;margin-top:5px}
+.kk-service-item p{margin:6px 0 0}
+.kk-service-status{font-size:12px;font-weight:800;padding:7px 10px;border-radius:20px;color:#92600d;background:#fff4d9;white-space:nowrap}
+.kk-service-status[data-status="approved"]{color:#13633d;background:#e2f9ea}
+.kk-service-status[data-status="rejected"]{color:#a53642;background:#ffecec}
+html[data-theme="dark"] .kk-service-form label{color:#d4e6ff}
+html[data-theme="dark"] .kk-service-form select,html[data-theme="dark"] .kk-service-form input,html[data-theme="dark"] .kk-service-form textarea{background:#152740;color:#eff5ff;border-color:#476489}
+html[data-theme="dark"] .kk-service-item{background:#1b3353;border-color:#3d5778}
+html[data-theme="dark"] .kk-service-item strong{color:#eaf3ff}
+html[data-theme="dark"] .kk-service-item small{color:#b9cde5}
+@media(max-width:660px){.kk-services-panel .kk-service-form{grid-template-columns:1fr}.kk-service-item{align-items:flex-start;flex-direction:column;gap:8px}}

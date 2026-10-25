@@ -6,18 +6,62 @@
  const message=(id,text,type='info')=>{const el=$(id);if(!el)return;el.textContent=text;el.dataset.kind=type;el.hidden=!text;};
  const loading=$('#kk-dash-loading'),content=$('#kk-dash-content');
  let member=null,projects=[],registrations=[];
- const tab=which=>{
-  for(const button of document.querySelectorAll('[data-tab]')){
+ const sidebar=$('#kk-sidebar'),menuToggle=$('#kk-menu-toggle'),backdrop=$('#kk-sidebar-backdrop');
+ const smallScreen=window.matchMedia('(max-width:900px)');
+ let menuOpen=false;
+ const setMenu=open=>{
+  menuOpen=!!open&&smallScreen.matches;
+  document.body.classList.toggle('kk-menu-open',menuOpen);
+  menuToggle.setAttribute('aria-expanded',String(menuOpen));
+  menuToggle.setAttribute('aria-label',menuOpen?'Close KK navigation':'Open KK navigation');
+  if(smallScreen.matches){sidebar.inert=!menuOpen;sidebar.setAttribute('aria-hidden',String(!menuOpen));}
+  else{sidebar.inert=false;sidebar.removeAttribute('aria-hidden');}
+ };
+ menuToggle.addEventListener('click',()=>{setMenu(!menuOpen);if(menuOpen)sidebar.querySelector('[data-tab]')?.focus();});
+ backdrop.addEventListener('click',()=>{setMenu(false);menuToggle.focus();});
+ smallScreen.addEventListener('change',()=>setMenu(false));
+ document.addEventListener('keydown',event=>{
+  if(!menuOpen)return;
+  if(event.key==='Escape'){event.preventDefault();setMenu(false);menuToggle.focus();}
+  if(event.key==='Tab'){
+   const focusable=[...sidebar.querySelectorAll('a[href],button:not([disabled])')].filter(el=>el.getClientRects().length);
+   if(!focusable.length)return;
+   if(event.shiftKey&&document.activeElement===focusable[0]){event.preventDefault();focusable.at(-1).focus();}
+   else if(!event.shiftKey&&document.activeElement===focusable.at(-1)){event.preventDefault();focusable[0].focus();}
+  }
+ });
+ setMenu(false);
+ const sections=new Set(['overview','projects','activities','printing','computer','retabox','rewards','settings']);
+ const tab=(which,updateHash=true)=>{
+  if(!sections.has(which))which='overview';
+  for(const button of document.querySelectorAll('.kk-sidebar-nav [data-tab]')){
    if(button.dataset.tab===which)button.setAttribute('aria-current','page');
    else button.removeAttribute('aria-current');
   }
   for(const section of document.querySelectorAll('[data-section]'))
    section.hidden=section.dataset.section!==which;
+  if(updateHash&&location.hash!=='#confirm-email'&&!location.hash.startsWith('#confirm-email='))
+   history.replaceState(null,'',location.pathname+location.search+'#'+which);
+  setMenu(false);
  };
- document.querySelectorAll('[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
- $('#kk-dashboard-logout').onclick=async()=>{
-  try{await request('logout',{});}finally{location.replace('./kk-login');}
+ document.querySelectorAll('button[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
+ $('#kk-dashboard-settings').addEventListener('click',()=>tab('settings'));
+ const signOut=async()=>{
+  const buttons=[$('#kk-dashboard-logout'),$('#kk-sidebar-logout')];
+  buttons.forEach(button=>{button.disabled=true;});
+  try{
+   const result=await request('logout',{});
+   if(result?.ok!==true)throw Error('Could not sign out.');
+   location.replace('./');
+  }catch(error){
+   buttons.forEach(button=>{button.disabled=false;});
+   loading.hidden=false;
+   loading.textContent='Hindi natuloy ang KK logout: '+String(error.message||'Subukang muli.');
+   loading.dataset.kind='error';
+  }
  };
+ $('#kk-dashboard-logout').addEventListener('click',signOut);
+ $('#kk-sidebar-logout').addEventListener('click',signOut);
  const renderProjects=()=>{
   const el=$('#kk-upcoming-projects');
   el.innerHTML=projects.length?projects.map(p=>
@@ -56,6 +100,10 @@
   $('#kk-dash-id').textContent=data.profile.kk_id||'For issuance';
   $('#kk-dash-points').textContent=String(data.points||0);
   $('#kk-current-email').textContent=data.member.email||'—';
+  $('#kk-sidebar-name').textContent=[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')||'Verified KK Member';
+  $('#kk-dash-projects-count').textContent=String(projects.length);
+  $('#kk-dash-joined-count').textContent=String(registrations.length);
+  $('#kk-dash-rewards-count').textContent=String(Array.isArray(data.perks)?data.perks.length:0);
   renderProjects();renderRewards();
   loading.hidden=true;content.hidden=false;return true;
  }
@@ -106,6 +154,7 @@
  });
  try{
   const ready=await reload();if(!ready)return;
+  if(sections.has(location.hash.slice(1)))tab(location.hash.slice(1),false);
   if(location.hash.startsWith('#confirm-email=')){
    const token=decodeURIComponent(location.hash.slice('#confirm-email='.length));
    tab('settings');

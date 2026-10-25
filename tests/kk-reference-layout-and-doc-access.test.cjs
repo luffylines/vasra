@@ -36,7 +36,7 @@ test('Youth form matches approved sidebar, preview, required inputs and five ste
  assert.match(form,/current<=1;.*hidden=current<=1/);
  assert.match(visual,/\.kk-profile-workspace\{display:grid/);
  assert.match(visual,/@media\(max-width:730px\)/);
- assert.match(read('dist/sw.js'),/vasra-v60-kk-reference-layout-staff-docs-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v62-kk-services-20261025/);
  assert.match(read('dist/sw.js'),/\.\/kk-visual\.css/);
 });
 test('Changed client and handler JavaScript compiles',()=>{
