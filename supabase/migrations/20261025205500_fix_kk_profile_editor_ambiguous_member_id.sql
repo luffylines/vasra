@@ -74,7 +74,6 @@ BEGIN
   jsonb_build_object('section',section_name,'changed_keys',to_jsonb(changed_keys)));
  RETURN jsonb_build_object('ok',true,'member_id',target_member_id,'section',section_name);
 END;
-$function$
-
+$function$;
 REVOKE ALL ON FUNCTION public.vasra_kk_profile_editor(text,jsonb,text) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.vasra_kk_profile_editor(text,jsonb,text) TO service_role;
