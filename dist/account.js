@@ -1,5 +1,5 @@
 let user=null,managed=[],editing=null,auditOffset=0,auditTotal=0,recoveryMode=null,recoveryToken=null;
-// Notifications display as accessible toasts; each new message restarts the 10s timer.
+// Notifications display as accessible toasts; each new message restarts the 5s timer.
 let messageTimer=null;
 const message=(text,error=false)=>{
  const toast=$('#message');
@@ -15,10 +15,10 @@ const message=(text,error=false)=>{
   toast.setAttribute('role','status');
   toast.setAttribute('aria-live','polite');
   messageTimer=null;
- },10000);
+ },5000);
 };
 // A fixed, persistent side toast remains visible while photos are uploading.
-// Success/error toast resumes its normal 10-second timeout only on completion.
+// Success/error toast resumes its normal 5-second timeout only on completion.
 let uploadToastTimer=null;
 function projectUploadStatus(text,state='uploading'){
  const toast=$('#project-upload-progress');
@@ -29,9 +29,9 @@ function projectUploadStatus(text,state='uploading'){
  if(typeof toast.showPopover==='function'&&!toast.matches?.(':popover-open')){
   try{toast.showPopover()}catch{/* fallback when unsupported */}
  }
- if(state!=='uploading')uploadToastTimer=setTimeout(()=>projectUploadStatus(''),14000);
+ if(state!=='uploading')uploadToastTimer=setTimeout(()=>projectUploadStatus(''),5000);
 }
-// All confirmed staff mutations use the same 10-second green confirmation toast.
+// All confirmed staff mutations use the same 5-second green confirmation toast.
 const success=(text)=>message(text,false);
 // Light theme is the default; a manually selected dark theme is remembered locally.
 const themeStorageKey='vasra-staff-theme-v1';
