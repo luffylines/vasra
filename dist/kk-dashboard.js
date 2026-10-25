@@ -3,7 +3,7 @@
  const $=selector=>document.querySelector(selector);
  const safe=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&#39;'}[ch]));
  const request=(path,data)=>api('./api/kk/'+path,data===undefined?{}:{method:'POST',body:JSON.stringify(data)});
- const message=(id,text,type='info')=>{const el=$(id);if(!el)return;el.textContent=text;el.dataset.kind=type;el.hidden=!text;};
+ const message=(id,text,type='info')=>{const el=$(id);if(el){el.textContent='';el.hidden=true;}if(text)window.showVasraToast(text,type==='error'?'error':'success');};
  const loading=$('#kk-dash-loading'),content=$('#kk-dash-content');
  let member=null,projects=[],registrations=[];
  const sidebar=$('#kk-sidebar'),menuToggle=$('#kk-menu-toggle'),backdrop=$('#kk-sidebar-backdrop');
@@ -64,10 +64,10 @@
  document.querySelectorAll('button[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
  $('#kk-dashboard-settings').addEventListener('click',()=>tab('settings'));
  $('#kk-copy-id')?.addEventListener('click',async()=>{
-  const value=$('#kk-dash-id').textContent.trim(),status=$('#kk-copy-message');
+  const value=$('#kk-dash-id').textContent.trim();
   if(!/^VASRA-KK-[0-9]+$/.test(value))return;
-  try{await navigator.clipboard.writeText(value);status.textContent='Copied!';}
-  catch{status.textContent='Select your KK ID and copy manually.';}
+  try{await navigator.clipboard.writeText(value);window.showVasraToast('KK ID copied.','success');}
+  catch{window.showVasraToast('Select your KK ID and copy manually.','error');}
  });
  const signOut=async()=>{
   const buttons=[$('#kk-dashboard-logout'),$('#kk-sidebar-logout')];
