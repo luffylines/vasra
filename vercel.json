@@ -42,6 +42,10 @@
     {
       "source": "/kk-dashboard",
       "destination": "/kk-dashboard.html"
+    },
+    {
+      "source": "/sk-resolutions",
+      "destination": "/sk-resolutions.html"
     }
   ],
   "redirects": [
@@ -88,6 +92,11 @@
     {
       "source": "/kk-dashboard.html",
       "destination": "/kk-dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/sk-resolutions.html",
+      "destination": "/sk-resolutions",
       "permanent": true
     }
   ]
