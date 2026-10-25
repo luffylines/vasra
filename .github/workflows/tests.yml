@@ -3,6 +3,8 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - fix/kk-id-logo-centered-header-20261025
+      - fix/kk-id-logo-centered-header-20261025
       - fix/kk-id-upload-first-theme-20261025
       - feature/kk-id-reference-duplex-pdf-20261025
       - fix/kk-profile-editor-variable-collision-20261025
@@ -24,6 +26,8 @@ on:
       - feature/officer-contact-details-20261024
   push:
     branches:
+      - fix/kk-id-logo-centered-header-20261025
+      - fix/kk-id-logo-centered-header-20261025
       - fix/kk-id-upload-first-theme-20261025
       - feature/kk-id-reference-duplex-pdf-20261025
       - fix/kk-profile-editor-variable-collision-20261025
