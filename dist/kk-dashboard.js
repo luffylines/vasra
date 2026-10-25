@@ -31,7 +31,7 @@
   }
  });
  setMenu(false);
- const sections=new Set(['overview','projects','activities','rewards','settings']);
+ const sections=new Set(['overview','projects','activities','rewards','printing','computer','retabox','settings']);
  const tab=(which,updateHash=true)=>{
   if(!sections.has(which))which='overview';
   for(const button of document.querySelectorAll('.kk-sidebar-nav [data-tab]')){
@@ -43,6 +43,7 @@
   if(updateHash&&location.hash!=='#confirm-email'&&!location.hash.startsWith('#confirm-email='))
    history.replaceState(null,'',location.pathname+location.search+'#'+which);
   setMenu(false);
+  if(['printing','computer','retabox'].includes(which))window.loadKKServices?.();
  };
  document.querySelectorAll('button[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
  $('#kk-dashboard-settings').addEventListener('click',()=>tab('settings'));
@@ -105,6 +106,7 @@
   $('#kk-dash-joined-count').textContent=String(registrations.length);
   $('#kk-dash-rewards-count').textContent=String(Array.isArray(data.perks)?data.perks.length:0);
   renderProjects();renderRewards();
+  if(['printing','computer','retabox'].includes(location.hash.slice(1)))window.loadKKServices?.();
   loading.hidden=true;content.hidden=false;return true;
  }
  document.addEventListener('click',async event=>{
