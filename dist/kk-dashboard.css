@@ -128,3 +128,23 @@ html[data-theme="dark"] body.kk-member-dashboard .kk-overview-card small{color:#
 html[data-theme="dark"] body.kk-member-dashboard .kk-overview-card>span:last-child{color:#9bc5ff}
 html[data-theme="dark"] body.kk-member-dashboard .kk-overview-icon{background:#2b4875}
 @media(prefers-reduced-motion:reduce){.kk-member-dashboard .kk-workspace-sidebar{transition:none}.kk-member-dashboard .kk-overview-card:hover{transform:none}}
+
+
+/* KK ID value is its own flex item, not touching the Copy ID control. */
+.kk-member-dashboard .kk-summary-id-card .kk-summary-id-actions{
+ display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;min-width:0;margin-top:1px
+}
+.kk-member-dashboard .kk-summary-id-actions #kk-dash-id{
+ display:inline-block;max-width:100%;min-width:0;line-height:1.4;
+ letter-spacing:.01em;overflow-wrap:anywhere
+}
+.kk-member-dashboard .kk-summary-id-actions #kk-copy-id{
+ display:inline-flex;justify-content:center;align-items:center;flex:none;
+ margin:0;min-height:32px;padding:5px 12px;
+ border-radius:8px;font:750 11px/1.2 'DM Sans',sans-serif
+}
+.kk-member-dashboard .kk-summary-id-card #kk-copy-message:empty{display:none}
+@media(max-width:440px){
+ .kk-member-dashboard .kk-summary-id-card .kk-summary-id-actions{gap:9px}
+ .kk-member-dashboard .kk-summary-id-actions #kk-copy-id{min-height:34px}
+}
