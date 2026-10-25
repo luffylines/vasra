@@ -1,102 +1,199 @@
 'use strict';
 (()=>{
- const $=selector=>document.querySelector(selector);
+ const $=s=>document.querySelector(s);
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let requests=[],pointsRate=0,busy=false;
- const call=(path='',data)=>api('./api/kk/staff/services'+path,
-  data===undefined?{}:{method:'POST',body:JSON.stringify(data)});
- const message=(value,error=false)=>{
+ const kindLabels={printing:'Free Printing',computer:'Computer Use',retabox:'RetaBox Donations'};
+ const statusLabels={pending:'Pending',approved:'Approved',completed:'Completed',rejected:'Rejected'};
+ let records=[],pointsRate=0,loading=false;
+ const apiCall=(url,body)=>api(url,body===undefined?{}:{method:'POST',body:JSON.stringify(body)});
+ const info=(msg,isError=false)=>{
   const el=$('#kk-service-staff-message');
-  if(!el)return;el.textContent=value;el.dataset.kind=error?'error':'info';
+  el.textContent=msg;el.dataset.kind=isError?'error':'info';
  };
- const kindLabel={printing:'Free Printing',computer:'Computer Use',retabox:'RetaBox Donations'};
- const summary=r=>{
+ const phDate=value=>{
+  const d=new Date(value);
+  if(!Number.isFinite(d.getTime()))return '';
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d);
+  const get=key=>parts.find(p=>p.type===key)?.value||'';
+  return get('year')+'-'+get('month')+'-'+get('day');
+ };
+ const pht=value=>value?new Date(value).toLocaleString('en-PH',{
+  timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short'}):'—';
+ const today=()=>phDate(new Date());
+ const daysApart=(a,b)=>Math.round((Date.parse(a+'T00:00:00Z')-Date.parse(b+'T00:00:00Z'))/86400000);
+ const describe=r=>{
+  const d=r.effective_details||r.details||{};
+  if(r.service_type==='printing')return (d.paper_size==='long'?'Long':'Short')+
+   ' bond paper · '+(d.color==='colored'?'Colored':'B&W')+' · '+esc(d.pages)+' pages × '+esc(d.copies)+' copies';
+  if(r.service_type==='computer')return esc(d.hours)+' hour(s)';
+  return esc(r.verified_grams||r.details?.grams||0)+' grams'+(r.verified_grams?' verified':' estimated')+
+   (Number(r.points_awarded)>0?' · '+esc(r.points_awarded)+' pts':'');
+ };
+ const badge=r=>'<span class="kk-service-status kk-service-status-'+esc(r.status)+'">'+
+  esc(statusLabels[r.status]||r.status)+'</span>';
+ const state=()=>{
+  const type=$('#kk-service-type-filter').value,status=$('#kk-service-status-filter').value,
+   period=$('#kk-service-date-filter').value,
+   custom=$('#kk-service-custom-date').value,search=$('#kk-service-search').value.trim().toLowerCase();
+  return {type,status,period,custom,search};
+ };
+ const filter=(r,f)=>{
+  if(f.type!=='all'&&r.service_type!==f.type)return false;
+  if(f.status!=='all'&&r.status!==f.status)return false;
+  const day=phDate(r.requested_at),now=today();
+  if(f.period==='today'&&day!==now)return false;
+  if(f.period==='week'&&(daysApart(now,day)<0||daysApart(now,day)>6))return false;
+  if(f.period==='custom'&&f.custom&&day!==f.custom)return false;
+  return !f.search||[r.name,r.kk_id,r.email,r.id].some(x=>String(x||'').toLowerCase().includes(f.search));
+ };
+ const editable=r=>{
   const d=r.details||{};
-  if(r.service_type==='printing')return (d.paper_size==='long'?'Long':'Short')+' · '+(d.color==='colored'?'Colored':'Black & White')+
-   ' · '+d.pages+' pages × '+d.copies+' copies';
-  if(r.service_type==='computer')return d.hours+' hour(s) of computer use';
-  return 'Reported: '+d.grams+' grams'+(d.description?' · '+d.description:'');
+  if(r.service_type==='printing')return '<div class="kk-service-edit-grid">'+
+   '<label>Paper Size<select name="paper_size"><option value="short"'+(d.paper_size==='short'?' selected':'')+'>Short</option>'+
+   '<option value="long"'+(d.paper_size==='long'?' selected':'')+'>Long</option></select></label>'+
+   '<label>Color<select name="color"><option value="bw"'+(d.color==='bw'?' selected':'')+'>Black & White</option>'+
+   '<option value="colored"'+(d.color==='colored'?' selected':'')+'>Colored</option></select></label>'+
+   '<label>Pages per Copy<input type="number" name="pages" min="1" max="100" value="'+esc(d.pages||1)+'" required></label>'+
+   '<label>Copies<input type="number" name="copies" min="1" max="100" value="'+esc(d.copies||1)+'" required></label></div>';
+  if(r.service_type==='computer')return '<div class="kk-service-edit-grid"><label>Approved Computer Hours'+
+   '<input name="hours" type="number" min="1" max="8" value="'+esc(d.hours||1)+'" required></label></div>';
+  return '<div class="kk-service-edit-grid"><label>Verified Donation Weight (grams)'+
+    '<input name="verified_grams" type="number" min="1" max="100000" value="'+esc(d.grams||1)+'" required></label>'+
+    '<p class="kk-service-rate-note">Official rate: '+esc(pointsRate)+' pts/kg. Awarded once on approval after checking the actual donation.</p></div>';
  };
- const item=r=>{
-  const pending=r.status==='pending';
-  const points=r.service_type==='retabox'&&r.status==='approved'?'<p class="kk-service-earned">Verified: '+
-   esc(r.verified_grams||'—')+' grams · '+esc(r.points_awarded||0)+' points awarded</p>':'';
-  const controls=pending?'<div class="kk-service-review-actions">'+
-   (r.service_type==='retabox'?'<label>Actual verified weight (grams)'+
-    '<input type="number" inputmode="numeric" min="1" max="100000" data-verified-grams="'+esc(r.id)+'" value="'+esc(r.details?.grams||'')+'"></label>':'')+
-   '<label>Officer note <input type="text" maxlength="500" data-review-note="'+esc(r.id)+'" placeholder="Optional approval note; required if rejected"></label>'+
-   '<button type="button" class="primary" data-review-service="approved" data-id="'+esc(r.id)+'">Approve</button>'+
-   '<button type="button" class="secondary" data-review-service="rejected" data-id="'+esc(r.id)+'">Reject</button></div>':'';
+ const card=r=>{
+  const d=r.details||{},effective=r.effective_details||d;
+  const wasEdited=JSON.stringify(d)!==JSON.stringify(effective);
   return '<article class="kk-service-admin-card" data-request-id="'+esc(r.id)+'">'+
-   '<div class="kk-service-admin-card-header"><div><small>'+esc(kindLabel[r.service_type]||r.service_type)+'</small>'+
-   '<h3>'+esc(r.name||'KK Member')+'</h3>'+
-   '<p>'+esc(summary(r))+'</p><small>Requested '+esc(new Date(r.requested_at).toLocaleString('en-PH',{dateStyle:'medium',
-    timeStyle:'short',timeZone:'Asia/Manila'}))+'</small></div>'+
-   '<span class="kk-service-status kk-service-status-'+esc(r.status)+'">'+esc(r.status)+'</span></div>'+
-   points+(r.review_note?'<p class="kk-service-officer-note">SK Note: '+esc(r.review_note)+'</p>':'')+controls+'</article>';
+   '<header class="kk-service-admin-card-header"><div>'+
+    '<span class="kk-service-request-label">'+esc(kindLabels[r.service_type]||r.service_type)+'</span>'+
+    '<h4>'+esc(r.name||'KK Member')+'</h4>'+
+    '<small>'+esc(r.kk_id||'KK ID pending')+' · '+esc(r.id.slice(0,8).toUpperCase())+'</small>'+
+    '<small>Submitted: '+esc(pht(r.requested_at))+'</small></div>'+badge(r)+'</header>'+
+   '<div class="kk-service-request-summary"><strong>Member request</strong><p>'+describe({...r,effective_details:d})+'</p>'+
+   (wasEdited?'<strong>Officer-approved details</strong><p>'+describe(r)+'</p>':'')+'</div>'+
+   (r.status==='pending'?'<form class="kk-service-review-form" data-service-form="'+esc(r.id)+'">'+
+    '<p class="kk-service-review-caption">Confirm or correct the member details before approving.</p>'+editable(r)+
+    '<label>Officer Note <input name="note" type="text" maxlength="500" placeholder="Optional approval note; required on rejection"></label>'+
+    '<div class="kk-service-review-actions"><button type="button" class="primary" data-action="approve" data-id="'+esc(r.id)+'">Approve Request</button>'+
+    '<button type="button" class="secondary" data-action="reject" data-id="'+esc(r.id)+'">Reject</button></div></form>':
+    '<div class="kk-service-request-footer"><small>Reviewed by: '+esc(r.reviewed_by||'—')+
+     ' · '+esc(pht(r.reviewed_at))+'</small>'+
+     (r.review_note?'<p>Note: '+esc(r.review_note)+'</p>':'')+
+     (r.completed_at?'<small>Completed by '+esc(r.completed_by||'SK Officer')+' · '+esc(pht(r.completed_at))+'</small>':'')+
+     (r.status==='approved'?'<button type="button" class="kk-service-complete-button" data-action="complete" data-id="'+esc(r.id)+'">Mark Completed</button>':'')+
+    '</div>')+'</article>';
+ };
+ const updateStats=()=>{
+  const now=today(),todays=records.filter(r=>phDate(r.requested_at)===now);
+  for(const status of ['total','pending','approved','completed','rejected']){
+   const el=$('#kk-service-stat-'+status);
+   el.textContent=String(status==='total'?todays.length:todays.filter(r=>r.status===status).length);
+  }
+ };
+ const renderHistory=()=>{
+  const q=$('#kk-service-history-search').value.trim().toLowerCase();
+  const data=records.filter(r=>phDate(r.requested_at)===today()&&
+   (!q||[r.name,r.kk_id,r.id,r.service_type].some(x=>String(x||'').toLowerCase().includes(q))));
+  $('#kk-service-history-body').innerHTML=data.length?data.map(r=>
+   '<tr><td>'+esc(new Date(r.requested_at).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',
+    hour:'numeric',minute:'2-digit'}))+'</td><td><strong>'+esc(r.name)+'</strong><small>'+esc(r.kk_id||r.id.slice(0,8))+
+   '</small></td><td>'+esc(kindLabels[r.service_type])+'</td><td>'+describe(r)+'</td><td>'+badge(r)+
+   '</td><td>'+esc(r.reviewed_by||'—')+'</td><td>'+esc(r.completed_by||'—')+'</td></tr>').join(''):
+   '<tr><td colspan="7" class="kk-service-no-history">Wala pang service requests ngayong araw.</td></tr>';
  };
  const render=()=>{
-  const type=$('#kk-service-type-filter').value,status=$('#kk-service-status-filter').value;
-  const rows=requests.filter(r=>(type==='all'||r.service_type===type)&&(status==='all'||r.status===status));
-  $('#kk-service-admin-queue').innerHTML=rows.length?rows.map(item).join(''):
+  const f=state(),visible=records.filter(r=>filter(r,f));
+  $('#kk-service-admin-queue').innerHTML=visible.length?visible.map(card).join(''):
    '<div class="kk-service-empty">Walang requests para sa napiling filters.</div>';
-  const form=$('#kk-retabox-rate-form'),section=$('#kk-retabox-rate-section');
-  const chairman=typeof user!=='undefined'&&user?.role==='chairman';
+  $('#kk-service-result-count').textContent=visible.length+' request(s)';
+  $('#kk-service-custom-date-wrap').hidden=f.period!=='custom';
+  const section=$('#kk-retabox-rate-section'),chairman=typeof user!=='undefined'&&user?.role==='chairman';
   section.hidden=!chairman;
-  if(chairman)form.elements.points_per_kg.value=String(pointsRate);
+  if(chairman)section.querySelector('input[name="points_per_kg"]').value=String(pointsRate);
+  updateStats();renderHistory();
  };
- window.loadKKServiceStaff=async()=>{
-  if(busy)return;busy=true;message('Loading service requests…');
+ const refresh=async()=>{
+  if(loading)return;
+  loading=true;info('Loading service requests…');
   try{
-   const data=await call();
-   requests=Array.isArray(data.requests)?data.requests:[];
+   const data=await apiCall('./api/kk/staff/services');
+   if(data?.error)throw Error('Service not ready. Check database migration.');
+   records=Array.isArray(data.requests)?data.requests:[];
    pointsRate=Number(data.retabox_points_per_kg||0);
-   render();message(requests.length+' service requests · Points rate: '+pointsRate+' per kilogram');
-  }catch(e){message('Hindi ma-load ang SK Services: '+e.message,true);}
-  finally{busy=false;}
+   render();info(records.length+' total service request(s) · '+today()+' PHT');
+  }catch(e){info('Hindi ma-load ang SK Services: '+e.message,true);}
+  finally{loading=false;}
  };
- $('#kk-service-staff-refresh')?.addEventListener('click',()=>window.loadKKServiceStaff());
- $('#kk-service-type-filter')?.addEventListener('change',render);
- $('#kk-service-status-filter')?.addEventListener('change',render);
- $('#kk-service-admin-queue')?.addEventListener('click',async event=>{
-  const button=event.target.closest('button[data-review-service]');
+ window.loadKKServiceStaff=refresh;
+ for(const id of ['kk-service-type-filter','kk-service-status-filter','kk-service-date-filter','kk-service-custom-date'])
+  $('#'+id)?.addEventListener('change',render);
+ $('#kk-service-search')?.addEventListener('input',render);
+ $('#kk-service-history-search')?.addEventListener('input',renderHistory);
+ $('#kk-service-staff-refresh')?.addEventListener('click',refresh);
+ $('#kk-service-export')?.addEventListener('click',()=>{
+  const f=state(),date=f.period==='today'?today():f.period==='custom'?(f.custom||'all'):'all';
+  const q=new URLSearchParams({search:f.search,service:f.type,status:f.status,date});
+  // Export downloads an actual XLSX from the authenticated backend, not a public link.
+  window.location.assign('./api/kk/staff/services/export?'+q.toString());
+ });
+ $('#kk-service-admin-queue')?.addEventListener('click',async e=>{
+  const button=e.target.closest('button[data-action]');
   if(!button||button.disabled)return;
-  const req=requests.find(r=>r.id===button.dataset.id);
-  if(!req||req.status!=='pending')return;
-  const root=button.closest('[data-request-id]');
-  const status=button.dataset.reviewService;
-  const note=root.querySelector('[data-review-note]')?.value.trim()||'';
-  if(status==='rejected'&&note.length<5){message('Maglagay ng dahilan ng rejection (at least 5 characters).',true);return;}
-  const payload={id:req.id,status,note};
-  if(req.service_type==='retabox'&&status==='approved'){
-   const grams=Number(root.querySelector('[data-verified-grams]')?.value);
-   if(!Number.isInteger(grams)||grams<1||grams>100000){message('Ilagay ang aktuwal na verified weight (grams).',true);return;}
-   if(pointsRate<=0){message('SK Chairman must configure the official RetaBox points rate first.',true);return;}
-   const expected=Math.floor(grams*pointsRate/1000);
-   if(expected>500){message('Mahigit 500 points ang request na ito. Kailangan munang i-review ang points rate.',true);return;}
-   payload.verified_grams=grams;
-   if(!confirm('Approve RetaBox donation: '+grams+' verified grams, '+expected+' points?'))return;
-  }else if(!confirm((status==='approved'?'Approve':'Reject')+' this '+kindLabel[req.service_type]+' request?'))return;
+  const item=records.find(r=>r.id===button.dataset.id);
+  if(!item)return;
+  const decision=button.dataset.action;
+  let url='./api/kk/staff/services',payload={id:item.id};
+  if(decision==='complete'){
+   if(item.status!=='approved')return;
+   if(!confirm('Mark this '+(kindLabels[item.service_type]||'service')+' request completed?'))return;
+   url+='/complete';payload.note='';
+  }else{
+   if(item.status!=='pending')return;
+   const form=button.closest('[data-service-form]'),data=new FormData(form);
+   const note=String(data.get('note')||'').trim();
+   if(decision==='reject'){
+    if(note.length<5){info('Maglagay ng dahilan ng rejection (5 characters minimum).',true);return;}
+    payload={id:item.id,status:'rejected',note};
+   }else if(decision==='approve'){
+    if(!form.reportValidity())return;
+    payload={id:item.id,status:'approved',note};
+    if(item.service_type==='printing'){
+     payload.approved_details={paper_size:data.get('paper_size'),color:data.get('color'),
+      pages:Number(data.get('pages')),copies:Number(data.get('copies'))};
+    }else if(item.service_type==='computer'){
+     payload.approved_details={hours:Number(data.get('hours'))};
+    }else{
+     const grams=Number(data.get('verified_grams'));
+     if(!Number.isInteger(grams)||grams<1||grams>100000){info('Actual grams must be valid.',true);return;}
+     if(pointsRate<=0){info('SK Chairman must set RetaBox points rate first.',true);return;}
+     const points=Math.floor(grams*pointsRate/1000);
+     if(points>500){info('Points exceed permitted limit; check official rate.',true);return;}
+     payload.verified_grams=grams;
+     if(!confirm('Confirm '+grams+' verified grams = '+points+' point(s)?'))return;
+    }
+    if(item.service_type!=='retabox'&&!confirm('Confirm the corrected details and approve this request?'))return;
+   }else return;
+  }
   button.disabled=true;
   try{
-   const result=await call('',payload);
-   if(result?.ok!==true)throw Error('Review failed.');
-   await window.loadKKServiceStaff();
-   message(status==='approved'?'Request approved. '+(result.points_awarded||0)+' points awarded.':'Request rejected.');
-  }catch(error){message(error.message,true);button.disabled=false;}
+   const result=await apiCall(url,payload);
+   if(result?.ok!==true)throw Error('Cannot update request. Refresh and retry.');
+   await refresh();
+   info('Request '+(decision==='complete'?'completed':decision==='approve'?'approved':'rejected')+' successfully.');
+  }catch(error){info(error.message,true);button.disabled=false;}
  });
  $('#kk-retabox-rate-form')?.addEventListener('submit',async event=>{
   event.preventDefault();const form=event.currentTarget;
   if(!form.reportValidity())return;
-  const value=Number(form.elements.points_per_kg.value);
-  if(!Number.isInteger(value)||value<0||value>5000)return;
-  if(!confirm('Set official RetaBox points rate to '+value+' points per kilogram?'))return;
-  const btn=form.querySelector('button[type="submit"]');btn.disabled=true;
+  const rate=Number(form.elements.points_per_kg.value);
+  if(!Number.isInteger(rate)||rate<0||rate>5000)return;
+  if(!confirm('Set official rate to '+rate+' points per kilogram?'))return;
+  const button=form.querySelector('[type="submit"]');button.disabled=true;
   try{
-   const result=await call('/config',{points_per_kg:value});
-   if(result?.ok!==true)throw Error('Setting was not saved.');
-   await window.loadKKServiceStaff();
-   message('Official RetaBox rate updated.');
-  }catch(e){message(e.message,true);}finally{btn.disabled=false;}
+   const outcome=await apiCall('./api/kk/staff/services/config',{points_per_kg:rate});
+   if(!outcome?.ok)throw Error('Could not update rate.');
+   await refresh();info('RetaBox rate updated.');
+  }catch(e){info(e.message,true);}finally{button.disabled=false;}
  });
 })();
