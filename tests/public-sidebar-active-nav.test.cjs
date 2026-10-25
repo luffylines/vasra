@@ -25,7 +25,7 @@ test('All eight public pages highlight exactly their own route, without any side
   assert.equal(selected.length,1,page+' must have one and only one selected link');
   assert.ok(selected[0][1].includes('href="'+route+'"'),page+' should highlight '+route);
   assert.doesNotMatch(nav,/<i\b|<\/i>/i,page+' should not have a trailing dot');
-  assert.equal((nav.match(/<a href=/g)||[]).length,7,page+' keeps all eight public routes');
+  assert.equal((nav.match(/<a href=/g)||[]).length,8,page+' keeps all eight public routes');
  }
 });
 test('Client-side shell reconciles active state from URL for clean and .html route aliases',()=>{
