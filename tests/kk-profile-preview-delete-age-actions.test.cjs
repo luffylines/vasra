@@ -37,8 +37,8 @@ test('Documents show full private image or PDF inline, separate from optional do
  assert.match(handler,/inline\?'SAMEORIGIN':'DENY'/);
  assert.match(handler,/await user\(\['sk','chairman'\]\)/);
  assert.match(staff,/class="kk-document-inline-viewer"/);
- assert.match(staff,/Full size uploaded ID PDF/);
- assert.match(staff,/alt="Uploaded KK Valid ID, staff-only preview"/);
+ assert.match(staff,/Full uploaded Valid ID preview \(image or PDF\)/);
+ assert.match(staff,/iframe title="Full uploaded Valid ID preview/);
  assert.match(staff,/Open Full View/);
  assert.match(staff,/Download File/);
  assert.match(staff,/Protected thumbnail of uploaded Valid ID/);
