@@ -336,7 +336,7 @@
    if(!member||window.kkStaffRole!=='chairman')return;
    const name=initials(member);
    const confirmation=prompt('PERMANENT DELETE KK PROFILE: '+name+
-    '\\nMawawala ang KK login, profile, points, registrations, service requests at ID. I-type ang buong pangalan para kumpirmahin:');
+    '\nMawawala ang KK login, profile, points, registrations, service requests at ID. I-type ang buong pangalan para kumpirmahin:');
    if(confirmation===null)return;
    if(confirmation.trim()!==name){status('Hindi tugma ang pangalan. Walang profile na nabura.',true);return;}
    if(!confirm('Final confirmation: Permanently delete KK member '+name+' and related records? This cannot be undone.'))return;
