@@ -10,6 +10,7 @@
  const approvalView=(approved,picture)=>{
   // The entire upload article disappears after approval — no empty bordered strip.
   uploadCard.hidden=approved;
+  $('.kk-id-reference-card')?.classList.toggle('kk-id-photo-approved',approved);
   submission.hidden=approved;
   approvedPhoto.hidden=!approved;
   if(approved&&picture)approvedPortrait.src=picture;
