@@ -43,7 +43,7 @@
   if(data?.ok!==true)throw Error('Server did not confirm the saved resolution.');
   return data;
  };
- $('#skres-admin-form')?.addEventListener('reset',()=>queueMicrotask(reset));
+
  $('#skres-admin-form')?.addEventListener('submit',async e=>{
   e.preventDefault();
   const f=e.currentTarget;if(busy||!f.reportValidity())return;
@@ -59,7 +59,7 @@
   catch(error){msg('Hindi na-save: '+error.message,true);}
   finally{busy=false;btn.disabled=false;}
  });
- $('#skres-admin-reset')?.addEventListener('click',()=>reset());
+ $('#skres-admin-reset')?.addEventListener('click',event=>{event.preventDefault();reset();});
  $('#skres-admin-search')?.addEventListener('input',list);
  $('#skres-admin-refresh')?.addEventListener('click',load);
  $('#skres-admin-list')?.addEventListener('click',async e=>{
