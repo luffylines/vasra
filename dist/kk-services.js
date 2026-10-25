@@ -4,8 +4,8 @@
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;',"'":'&#39;'}[c]));
  const notice=(type,message,error=false)=>{
   const node=$('#kk-'+type+'-message');
-  if(!node)return;
-  node.hidden=false;node.textContent=message;node.dataset.kind=error?'error':'success';
+  if(node){node.textContent='';node.hidden=true;}
+  if(message)window.showVasraToast(message,error?'error':'success');
  };
  let loading=false;
  const formatDetails=record=>{
