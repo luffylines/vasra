@@ -134,3 +134,56 @@ body.account-workspace[data-theme="dark"] .kk-id-print-preference{background:#1b
 body.account-workspace[data-theme="dark"] .kk-id-print-preference :is(strong,p){color:#e1efff}
 body.account-workspace[data-theme="dark"] .kk-id-print-preference label{background:#263f60;color:#eff6ff;border-color:#54759c}
 @media print{.kk-id-print-preference{display:none!important}}
+
+
+/* Exact reference-style ID artwork. Both sides use the same canvas used to
+   create each 85.6x54mm PDF page: no layout drift, cropping, or text mismatch. */
+.kk-id-workspace-grid{grid-template-columns:minmax(0,1fr)!important}
+.kk-id-reference-card{padding:24px!important}
+.kk-id-reference-title{display:flex;justify-content:space-between;align-items:start;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.kk-id-reference-overline{display:block;font:800 10px 'DM Sans',sans-serif;letter-spacing:.12em;color:#537db5}
+.kk-id-reference-title h3{font:800 clamp(18px,2vw,25px)/1.25 Manrope,sans-serif;color:#1e4677;margin:6px 0}
+.kk-id-reference-title p{font:500 12px/1.7 'DM Sans',sans-serif;color:#6b84a4;margin:0}
+.kk-id-reference-title .kk-id-pill{align-self:center;margin:0;white-space:nowrap}
+.kk-id-preview-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:1080px;margin:0 auto}
+.kk-id-preview-side{min-width:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.kk-id-preview-side>img{display:block;width:100%;height:auto;aspect-ratio:85.6 / 54;
+ background:linear-gradient(135deg,#fcf5ff,#fff0c1);object-fit:contain;
+ border:1px solid #dfc1ef;border-radius:14px;box-shadow:0 10px 22px #354f8025}
+.kk-id-preview-side>figcaption{font:800 12px 'DM Sans',sans-serif;color:#3b6caa;padding:0 4px}
+.kk-id-preview-note{color:#617d9e;font:600 12px/1.6 'DM Sans',sans-serif;margin:14px 0 0}
+.kk-id-staff-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+.kk-id-staff-summary span{padding:8px 12px;background:#eaf3ff;border-radius:9px;color:#32629e;font:750 11px 'DM Sans',sans-serif}
+.kk-id-toolbar-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.kk-id-toolbar-actions button{padding:11px 14px;border-radius:10px;min-height:42px;font:800 12px 'DM Sans',sans-serif}
+.kk-id-toolbar-actions .primary,.kk-id-download-button{background:#255fb5!important;border:1px solid #255fb5!important;color:white!important}
+.kk-id-toolbar-actions .primary:disabled{opacity:.5;cursor:not-allowed}
+.kk-id-staff-item.selected{border-color:#5d92e4;box-shadow:0 0 0 2px #5d92e42b}
+.kk-id-staff-actions{max-width:310px}
+.kk-id-staff-actions .kk-id-mark-printed{border-color:#c5d8ef;background:#f5f9ff;color:#235792}
+.kk-id-printed-badge{display:inline-block;margin-top:7px;margin-left:5px;border-radius:20px;
+ padding:5px 9px;background:#e6efff;color:#3162a1;font:750 10px 'DM Sans',sans-serif}
+.kk-id-staff-preview{margin:20px 0;border:1px solid #d8e5f8;border-radius:16px;background:white;padding:22px}
+.kk-id-staff-preview-heading{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.kk-id-staff-preview-heading span{color:#527fb9;font:800 10px 'DM Sans',sans-serif;letter-spacing:.12em}
+.kk-id-staff-preview-heading h3{font:800 19px Manrope,sans-serif;color:#214775;margin:6px 0}
+.kk-id-staff-preview-heading>p{font:550 11px/1.6 'DM Sans',sans-serif;color:#647f9e}
+#kk-id-staff-preview-status{margin:15px 0 0;font:600 12px 'DM Sans',sans-serif;color:#5176a0}
+@media(max-width:850px){.kk-id-preview-pair{grid-template-columns:1fr;max-width:590px}
+.kk-id-staff-actions{max-width:none}.kk-id-staff-preview{padding:14px}.kk-id-reference-card{padding:15px!important}}
+@media(max-width:480px){.kk-id-preview-pair{gap:17px}.kk-id-toolbar-actions{width:100%}.kk-id-toolbar-actions button{flex:1 1 100%}}
+html[data-theme=dark] body.kk-body .kk-id-reference-title :is(h3,p){color:#e5f1ff}
+html[data-theme=dark] body.kk-body .kk-id-preview-side figcaption{color:#bfdafc}
+html[data-theme=dark] body.kk-body .kk-id-preview-note{color:#bdd3ee}
+html[data-theme=dark] body.account-workspace .kk-id-staff-preview{background:#152a46;border-color:#3e577a}
+html[data-theme=dark] body.account-workspace .kk-id-staff-preview :is(h3,p){color:#e5f1ff}
+html[data-theme=dark] body.account-workspace .kk-id-staff-summary span{background:#223e62;color:#d5e8ff}
+html[data-theme=dark] body.account-workspace .kk-id-staff-preview figcaption{color:#c7ddfa}
+html[data-theme=dark] body.account-workspace .kk-id-printed-badge{background:#294c71;color:#e5f1ff}
+@media print{
+ /* Every manually printed face is exactly CR80, on a centered A4 paper page. */
+ .kk-print-page>.kk-id-print-canvas{position:absolute!important;left:62.2mm!important;top:35mm!important;
+  width:85.6mm!important;height:54mm!important;max-width:none!important;
+  margin:0!important;padding:0!important;border:0!important;object-fit:fill!important;
+  -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}

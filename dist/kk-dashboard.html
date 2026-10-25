@@ -99,11 +99,20 @@
   </section>
 <section data-section="kk-id" class="kk-dashboard-panel kk-id-workspace" aria-labelledby="kk-id-title" hidden>
 <div class="kk-id-heading"><span class="kk-tag">OFFICIAL KK MEMBER IDENTIFICATION</span><h2 id="kk-id-title">My KK ID Card</h2><p>Mag-upload ng malinaw na portrait photograph. SK officers will review it before printing the official front-and-back ID.</p></div>
-<div class="kk-id-workspace-grid"><article class="kk-id-profile-card"><div class="kk-id-member-preview">
-<img src="./sk%20logo.jpg" alt="SK VASRA" class="kk-id-logo"><strong>SK VASRA · KATIPUNAN NG KABATAAN</strong>
-<div class="kk-id-live-preview"><img id="kk-id-photo-preview" alt="Your KK ID photograph" hidden><span id="kk-id-placeholder">PHOTO</span></div>
-<strong id="kk-id-display-name">Verified KK Member</strong><small id="kk-id-display-number">VASRA-KK-—</small>
-<span id="kk-id-card-approval" class="kk-id-pill">No Photo Yet</span></div></article>
+<div class="kk-id-workspace-grid"><article class="kk-id-profile-card kk-id-reference-card">
+ <div class="kk-id-reference-title"><div><span class="kk-id-reference-overline">SK IDENTIFICATION CARD PREVIEW</span>
+ <h3>My Official KK ID · Front &amp; Back</h3><p>Eksaktong same layout ng ID na dina-download at pini-print ng SK officers. Standard CR80 size: 85.6 × 54 mm.</p></div>
+ <span id="kk-id-card-approval" class="kk-id-pill">No Photo Yet</span></div>
+ <div id="kk-id-duplex-preview" class="kk-id-preview-pair" aria-live="polite">
+  <figure class="kk-id-preview-side"><img id="kk-id-render-front" alt="Front of your KK identification card" loading="eager">
+   <figcaption>Front · KK Identification Card</figcaption></figure>
+  <figure class="kk-id-preview-side"><img id="kk-id-render-back" alt="Back of your KK identification card with QR code" loading="eager">
+   <figcaption>Back · KK ID QR Code</figcaption></figure>
+ </div>
+ <p class="kk-id-preview-note" id="kk-id-preview-note" role="status">Card preview will load with your verified membership information.</p>
+ <strong id="kk-id-display-name" hidden>Verified KK Member</strong>
+ <small id="kk-id-display-number" hidden>VASRA-KK-—</small>
+ </article>
 <article class="kk-id-upload-card"><h3>Upload KK ID Photo</h3>
 <p>Neutral background, clear face, passport-style photograph. JPG, PNG or WEBP, up to 2 MB.</p>
 <form id="kk-id-upload-form"><label for="kk-id-photo" class="kk-id-upload-zone">Choose Photo<input type="file" accept="image/jpeg,image/png,image/webp" id="kk-id-photo" required></label>
@@ -133,4 +142,4 @@
  <button class="kk-sidebar-backdrop" type="button" aria-label="Close KK navigation" id="kk-sidebar-backdrop"></button>
 </div>
 <footer class="kk-footer kk-workspace-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
-<script src="./common.js"></script><script src="./theme.js"></script><script src="./kk-dashboard.js" defer></script><script src="./kk-id-member.js" defer></script><script src="./kk-services.js" defer></script></body></html>
+<script src="./common.js"></script><script src="./theme.js"></script><script src="./kk-dashboard.js" defer></script><script src="./kk-id-render.js" defer></script><script src="./kk-id-member.js" defer></script><script src="./kk-services.js" defer></script></body></html>
