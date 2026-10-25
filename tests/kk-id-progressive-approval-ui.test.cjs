@@ -8,11 +8,16 @@ const member=read('kk-id-member.js'),staff=read('kk-id-staff.js');
 const css=read('kk-id-card.css');
 
 test('Approved member view replaces uploader with square portrait and downloadable PDF',()=>{
- assert.match(memberHtml,/id="kk-id-photo-submission" hidden/);
+ assert.match(memberHtml,/id="kk-id-upload-card" class="kk-id-upload-card" hidden/);
+ assert.match(memberHtml,/id="kk-id-photo-submission"/);
  assert.match(memberHtml,/id="kk-id-approved-photo" class="kk-id-approved-photo" hidden/);
  assert.match(memberHtml,/id="kk-id-approved-portrait"/);
  assert.match(memberHtml,/id="kk-id-member-download"[^>]*disabled/);
- assert.match(member,/submission\.hidden=approved;approvedPhoto\.hidden=!approved/);
+ assert.match(member,/uploadCard\.hidden=approved/);
+ assert.match(member,/submission\.hidden=approved/);
+ assert.match(member,/approvedPhoto\.hidden=!approved/);
+ assert.ok(memberHtml.indexOf('id="kk-id-approved-photo"')>memberHtml.indexOf('class="kk-id-profile-card kk-id-reference-card"'),
+   'approved PDF controls must live in the ID preview, not in the hidden uploader');
  assert.match(member,/exportReady=state==='approved'&&found&&photoLoaded/);
  assert.match(css,/#kk-id-approved-photo\[hidden\]/);
  assert.match(css,/\.kk-id-approved-photo>img\{[\s\S]*?aspect-ratio:1\/1/);
