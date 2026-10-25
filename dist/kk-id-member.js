@@ -3,6 +3,24 @@
  const $=s=>document.querySelector(s),upload=$('#kk-id-upload-form');
  if(!upload)return;
  const status=$('#kk-id-upload-status');
+ const chooser=$('#kk-id-photo'),chosen=$('#kk-id-selected-photo');
+ let selectedPhotoUrl=null;
+ const clearPreview=()=>{if(selectedPhotoUrl)URL.revokeObjectURL(selectedPhotoUrl);
+  selectedPhotoUrl=null;chosen.hidden=true;$('#kk-id-selected-thumbnail').removeAttribute('src');
+  $('#kk-id-selected-filename').textContent='';
+ };
+ chooser.addEventListener('change',()=>{
+  clearPreview();const file=chooser.files?.[0];if(!file)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size<100||file.size>2000000){
+   tell('Only JPG, PNG or WEBP photos of up to 2 MB are allowed.',true);return;
+  }
+  selectedPhotoUrl=URL.createObjectURL(file);
+  $('#kk-id-selected-thumbnail').src=selectedPhotoUrl;
+  $('#kk-id-selected-filename').textContent=file.name+' · '+(file.size/1024).toFixed(0)+' KB';
+  chosen.hidden=false;tell('Photo selected. Pindutin ang Submit Photo for SK Approval.');
+ });
+ window.addEventListener('pagehide',clearPreview);
+
  let revision=0;
  const tell=(s,err=false)=>{status.textContent=s;status.dataset.kind=err?'error':'success';status.hidden=!s;};
  const load=async()=>{
@@ -56,7 +74,7 @@
    const response=await api('./api/kk/id-card/photo',{method:'POST',
     body:JSON.stringify({name:file.name,mime:file.type,data:btoa(binary)})});
    if(response?.ok!==true)throw Error('Photo upload was not confirmed');
-   upload.reset();tell('Photo submitted. Waiting for SK Officer review.');
+   upload.reset();clearPreview();tell('Photo submitted. Waiting for SK Officer review.');
    await load();
   }catch(err){tell('Hindi na-upload: '+err.message,true);}
   finally{button.disabled=false;}
