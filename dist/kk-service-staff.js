@@ -4,7 +4,7 @@
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const kindLabels={printing:'Free Printing',computer:'Computer Use',retabox:'RetaBox Donations'};
  const statusLabels={pending:'Pending',approved:'Approved',completed:'Completed',rejected:'Rejected'};
- let records=[],pointsRate=0,loading=false;
+ let records=[],pointsRate=0,loading=false,reviewingId=null;
  const apiCall=(url,body)=>api(url,body===undefined?{}:{method:'POST',body:JSON.stringify(body)});
  const info=(msg,isError=false,isSuccess=false)=>{
   const el=$('#kk-service-staff-message');
@@ -63,33 +63,49 @@
     '<p class="kk-service-rate-note">Official rate: '+esc(pointsRate)+' pts/kg. Awarded once on approval after checking the actual donation.</p></div>';
  };
  const card=r=>{
+  const pending=r.status==='pending',selected=pending&&reviewingId===r.id;
+  const desc=describe({...r,effective_details:r.details||{}});
+  return '<article class="kk-service-admin-card'+(selected?' is-selected':'')+'" data-request-id="'+esc(r.id)+'">'+
+   '<header class="kk-service-admin-card-header">'+
+    '<span class="kk-service-request-label">'+esc(kindLabels[r.service_type]||r.service_type)+'</span>'+badge(r)+'</header>'+
+   '<div class="kk-service-card-identity">'+
+    '<h4>'+esc(r.name||'KK Member')+'</h4>'+
+    '<span class="kk-service-member-id">'+esc(r.kk_id||'KK ID pending')+'</span>'+
+    '<small class="kk-service-request-code">Request #'+esc(r.id.slice(0,8).toUpperCase())+'</small>'+
+    '<small class="kk-service-submitted">Submitted '+esc(pht(r.requested_at))+'</small>'+
+   '</div>'+
+   '<div class="kk-service-request-summary"><strong>Member request</strong><p>'+desc+'</p></div>'+
+   '<div class="kk-service-card-actions">'+
+    (pending?'<button type="button" class="kk-service-review-trigger" data-action="open-review" data-id="'+esc(r.id)+'" aria-expanded="'+String(selected)+'" aria-controls="kk-service-active-review">'+
+       (selected?'Close review':'Review request')+'</button>':
+     '<span class="kk-service-reviewed-meta">'+esc(r.reviewed_by||'Reviewed by SK')+'</span>'+
+      (r.status==='approved'?'<button type="button" class="kk-service-complete-button" data-action="complete" data-id="'+esc(r.id)+'">Mark Completed</button>':''))+
+   '</div></article>';
+ };
+ const reviewPanel=r=>{
   const d=r.details||{},effective=r.effective_details||d;
   const wasEdited=JSON.stringify(d)!==JSON.stringify(effective);
-  return '<article class="kk-service-admin-card" data-request-id="'+esc(r.id)+'">'+
-   '<header class="kk-service-admin-card-header"><div>'+
-    '<span class="kk-service-request-label">'+esc(kindLabels[r.service_type]||r.service_type)+'</span>'+
-    '<h4>'+esc(r.name||'KK Member')+'</h4>'+
-    '<small>'+esc(r.kk_id||'KK ID pending')+' · '+esc(r.id.slice(0,8).toUpperCase())+'</small>'+
-    '<small>Submitted: '+esc(pht(r.requested_at))+'</small></div>'+badge(r)+'</header>'+
+  return '<section id="kk-service-active-review" class="kk-service-review-detail" aria-label="Review '+esc(kindLabels[r.service_type]||r.service_type)+' request">'+
+   '<div class="kk-service-review-detail-heading"><div><span class="kk-service-request-label">'+esc(kindLabels[r.service_type]||r.service_type)+'</span>'+
+    '<h4>Review '+esc(r.name||'KK Member')+'’s request</h4>'+
+    '<p>'+esc(r.kk_id||'KK ID pending')+' · '+esc(pht(r.requested_at))+'</p></div>'+
+    '<button type="button" class="kk-service-review-dismiss" data-action="close-review" data-id="'+esc(r.id)+'" aria-label="Close review form">Close ×</button></div>'+
    '<div class="kk-service-request-summary"><strong>Member request</strong><p>'+describe({...r,effective_details:d})+'</p>'+
    (wasEdited?'<strong>Officer-approved details</strong><p>'+describe(r)+'</p>':'')+'</div>'+
-   (r.status==='pending'?'<form class="kk-service-review-form" data-service-form="'+esc(r.id)+'">'+
-    '<p class="kk-service-review-caption">Confirm or correct the member details before approving.</p>'+editable(r)+
-    '<label>Officer Note <input name="note" type="text" maxlength="500" placeholder="Optional approval note; required on rejection"></label>'+
-    '<div class="kk-service-review-actions"><button type="button" class="primary" data-action="approve" data-id="'+esc(r.id)+'">Approve Request</button>'+
-    '<button type="button" class="secondary" data-action="reject" data-id="'+esc(r.id)+'">Reject</button></div></form>':
-    '<div class="kk-service-request-footer"><small>Reviewed by: '+esc(r.reviewed_by||'—')+
-     ' · '+esc(pht(r.reviewed_at))+'</small>'+
-     (r.review_note?'<p>Note: '+esc(r.review_note)+'</p>':'')+
-     (r.completed_at?'<small>Completed by '+esc(r.completed_by||'SK Officer')+' · '+esc(pht(r.completed_at))+'</small>':'')+
-     (r.status==='approved'?'<button type="button" class="kk-service-complete-button" data-action="complete" data-id="'+esc(r.id)+'">Mark Completed</button>':'')+
-    '</div>')+'</article>';
+   '<form class="kk-service-review-form" data-service-form="'+esc(r.id)+'">'+
+    '<p class="kk-service-review-caption">Verify the information below before approving or rejecting this request.</p>'+
+    editable(r)+
+    '<label class="kk-service-officer-note">Officer Note <input name="note" type="text" maxlength="500" placeholder="Optional for approval · Required on rejection"></label>'+
+    '<div class="kk-service-review-actions">'+
+     '<button type="button" class="primary" data-action="approve" data-id="'+esc(r.id)+'">Approve Request</button>'+
+     '<button type="button" class="secondary" data-action="reject" data-id="'+esc(r.id)+'">Reject Request</button>'+
+    '</div></form></section>';
  };
  const updateStats=()=>{
   const now=today(),created=records.filter(r=>phDate(r.requested_at)===now);
   const counts={
    total:created.length,
-   pending:created.filter(r=>r.status==='pending').length,
+   pending:records.filter(r=>r.status==='pending').length,
    approved:records.filter(r=>phDate(r.reviewed_at)===now&&['approved','completed'].includes(r.status)).length,
    completed:records.filter(r=>phDate(r.completed_at)===now).length,
    rejected:records.filter(r=>phDate(r.reviewed_at)===now&&r.status==='rejected').length
@@ -115,7 +131,10 @@
  };
  const render=()=>{
   const f=state(),visible=records.filter(r=>filter(r,f));
-  $('#kk-service-admin-queue').innerHTML=visible.length?visible.map(card).join(''):
+  const active=visible.find(r=>r.id===reviewingId&&r.status==='pending');
+  if(!active)reviewingId=null;
+  $('#kk-service-admin-queue').innerHTML=visible.length?
+   visible.map(card).join('')+(active?reviewPanel(active):''):
    '<div class="kk-service-empty">Walang requests para sa napiling filters.</div>';
   $('#kk-service-result-count').textContent=visible.length+' request(s)';
   $('#kk-service-custom-date-wrap').hidden=f.period!=='custom';
@@ -152,6 +171,15 @@
  $('#kk-service-admin-queue')?.addEventListener('click',async e=>{
   const button=e.target.closest('button[data-action]');
   if(!button||button.disabled)return;
+  if(button.dataset.action==='close-review'){
+   reviewingId=null;render();return;
+  }
+  if(button.dataset.action==='open-review'){
+   reviewingId=reviewingId===button.dataset.id?null:button.dataset.id;
+   render();
+   if(reviewingId)$('#kk-service-active-review')?.scrollIntoView?.({behavior:'smooth',block:'nearest'});
+   return;
+  }
   const item=records.find(r=>r.id===button.dataset.id);
   if(!item)return;
   const decision=button.dataset.action;
@@ -191,6 +219,7 @@
   try{
    const result=await apiCall(url,payload);
    if(result?.ok!==true)throw Error('Cannot update request. Refresh and retry.');
+   reviewingId=null;
    await refresh();
    info('Request '+(decision==='complete'?'completed':decision==='approve'?'approved':'rejected')+' successfully.',false,true);
   }catch(error){info(error.message,true);button.disabled=false;}
