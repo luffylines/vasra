@@ -715,3 +715,15 @@ body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-document-intro
 body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-tabs .kk-delete-tab{
  background:#482a36;color:#ffd4d8;border-color:#995869
 }
+
+/* Fixed mobile prefix for officer-controlled KK emergency phone edits. */
+#panel-kk-profiling .kk-edit-field .kk-ph-number{display:flex;align-items:stretch;min-height:45px;min-width:0;width:100%;
+ border:1px solid #c9d9ef;border-radius:9px;overflow:hidden;background:#fff}
+#panel-kk-profiling .kk-edit-field .kk-ph-prefix{display:flex;align-items:center;flex:none;justify-content:center;
+ min-width:54px;padding:8px 10px;background:#e8f1fd;border-right:1px solid #c9d9ef;
+ font:800 12px 'DM Sans',sans-serif;color:#245b9b}
+#panel-kk-profiling .kk-edit-field .kk-ph-number input[data-ph-mobile]{
+ flex:1;min-width:0;width:100%;border:0;border-radius:0;font:500 16px 'DM Sans',sans-serif;padding:10px 12px}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-field .kk-ph-number{background:#10233c;border-color:#536d92}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-field .kk-ph-prefix{
+ background:#264164;color:#e4f0ff;border-color:#536d92}
