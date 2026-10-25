@@ -22,6 +22,11 @@
  const getApi=async path=>api('./api/kk/'+path);
  const send=async(path,data)=>api('./api/kk/'+path,{method:'POST',body:JSON.stringify(data)});
  if(view==='login'){
+  // A valid cookie survives navigation back to the public homepage. Skip the
+  // login form entirely when the server confirms a current KK session.
+  getApi('me').then(active=>{
+   if(active?.member?.id)location.replace(active.profile?.status==='verified'?'./kk-dashboard':'./kk-profile');
+  }).catch(()=>{/* Keep login available when service is temporarily unavailable. */});
   const google=$('#kk-google-login'),note=$('#kk-google-note');
   // Password visibility for KK youth only; independent of the SK staff login.
   const password=$('#kk-login-password'),reveal=$('.kk-password-toggle');
@@ -46,7 +51,12 @@
    busy(form,true);feedback('Verifying your KK account…');
    try{
     const b=await send('login',{email:form.email.value.trim(),password:form.password.value});
-    if(b.ok)location.assign('./kk-profile');
+    if(b.ok){
+     // Go directly to the verified dashboard; incomplete/rejected users resume profiling.
+     let next='./kk-profile';
+     try{const active=await getApi('me');if(active?.profile?.status==='verified')next='./kk-dashboard';}catch{}
+     location.replace(next);
+    }
    }catch(err){feedback(err.message,'error');}finally{busy(form,false);}
   });
  }
@@ -95,7 +105,7 @@
   // Existing authenticated KK members must resume the five-step profile,
   // not try to create a second account with the same email.
   getApi('me').then(result=>{
-   if(result?.member?.id)location.replace('./kk-profile');
+   if(result?.member?.id)location.replace(result.profile?.status==='verified'?'./kk-dashboard':'./kk-profile');
   }).catch(()=>{});
   checkKKRegistration();
   const phone=form.elements.namedItem('phone');
