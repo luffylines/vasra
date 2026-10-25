@@ -129,7 +129,13 @@
    field='<select name="'+escVal(key)+'"'+(type==='yesno'?' required':'')+'>'+
     (type==='yesno'?'<option value="">Select Yes or No</option>':'')+
     choices.map(([v,t])=>'<option value="'+escVal(v)+'"'+(v===val?' selected':'')+'>'+escVal(t)+'</option>').join('')+'</select>';
-  }else field='<input name="'+escVal(key)+'" type="'+(type==='number'?'number':type==='tel'?'tel':'text')+
+  }else if(type==='tel'){
+   const digits=String(val).replace(/[^0-9]/g,'');
+   const local=digits.startsWith('63')?digits.slice(2):digits.startsWith('0')?digits.slice(1):digits;
+   field='<span class="kk-ph-number"><span class="kk-ph-prefix">+63</span>'+
+    '<input name="'+escVal(key)+'" data-ph-mobile type="tel" inputmode="numeric" minlength="10" maxlength="10"'+
+    ' pattern="9[0-9]{9}" value="'+escVal(local)+'" placeholder="9XXXXXXXXX" required></span>';
+  }else field='<input name="'+escVal(key)+'" type="'+(type==='number'?'number':'text')+
    '" maxlength="160"'+(type==='number'?' min="'+(key==='family_count'?1:0)+'" max="99"':'')+
    ' value="'+escVal(val)+'" autocomplete="off">';
   return '<label class="kk-edit-field"><span>'+escVal(label)+'</span>'+field+'</label>';
@@ -403,6 +409,10 @@
   const form=e.target,m=selectedMember(),section=editingSection;
   if(!m||!section||!form.reportValidity())return;
   const changes=Object.fromEntries(new FormData(form));
+  if(changes.emergency_phone){
+   if(!/^9[0-9]{9}$/.test(changes.emergency_phone))return;
+   changes.emergency_phone='+63'+changes.emergency_phone;
+  }
   const button=form.querySelector('[type=submit]'),response=form.querySelector('.kk-edit-response');
   button.disabled=true;response.textContent='Saving verified staff changes…';
   try{
