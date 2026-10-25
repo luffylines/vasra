@@ -65,7 +65,7 @@ test('Auth icons cannot expand to giant size when browser has cached old CSS',()
   assert.match(html,/<svg width="18" height="18" style="width:18px;height:18px;display:block;flex:none"/);
   assert.match(html,/href="\.\/kk\.css\?v=20261025-auth-nav-fix"/);
   assert.match(html,/src="\.\/theme\.js\?v=[a-zA-Z0-9-]+"/);
-  assert.match(html,/src="\.\/kk\.js\?v=20261025-auth-nav-fix"/);
+  assert.match(html,/src="\.\/kk\.js\?v=20261025-toast5-v1"/);
   assert.match(html,/\.kk-auth-card>\.kk-auth-top-actions\{position:absolute/);
  }
 });
