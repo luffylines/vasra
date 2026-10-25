@@ -31,7 +31,7 @@
   }
  });
  setMenu(false);
- const sections=new Set(['overview','projects','activities','rewards','printing','computer','retabox','settings']);
+ const sections=new Set(['overview','projects','activities','rewards','printing','computer','retabox','settings','kk-id']);
  const tab=(which,updateHash=true)=>{
   if(!sections.has(which))which='overview';
   for(const button of document.querySelectorAll('.kk-sidebar-nav [data-tab]')){
@@ -40,13 +40,21 @@
   }
   for(const section of document.querySelectorAll('[data-section]'))
    section.hidden=section.dataset.section!==which;
+  const summary=document.querySelector('.kk-summary');if(summary)summary.hidden=!['overview','settings'].includes(which);
   if(updateHash&&location.hash!=='#confirm-email'&&!location.hash.startsWith('#confirm-email='))
    history.replaceState(null,'',location.pathname+location.search+'#'+which);
   setMenu(false);
   if(['printing','computer','retabox'].includes(which))window.loadKKServices?.();
+  if(which==='kk-id')window.loadKKIDCard?.();
  };
  document.querySelectorAll('button[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
  $('#kk-dashboard-settings').addEventListener('click',()=>tab('settings'));
+ $('#kk-copy-id')?.addEventListener('click',async()=>{
+  const value=$('#kk-dash-id').textContent.trim(),status=$('#kk-copy-message');
+  if(!/^VASRA-KK-[0-9]+$/.test(value))return;
+  try{await navigator.clipboard.writeText(value);status.textContent='Copied!';}
+  catch{status.textContent='Select your KK ID and copy manually.';}
+ });
  const signOut=async()=>{
   const buttons=[$('#kk-dashboard-logout'),$('#kk-sidebar-logout')];
   buttons.forEach(button=>{button.disabled=true;});
@@ -99,6 +107,7 @@
   $('#kk-welcome').textContent='Welcome, '+[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')+'! Tuklasin ang mga proyekto at reward programs ng SK Vasra.';
   $('#kk-dash-status').textContent='VERIFIED';
   $('#kk-dash-id').textContent=data.profile.kk_id||'For issuance';
+  window.kkCardMember=data.member;window.kkCardNumber=data.profile.kk_id;
   $('#kk-dash-points').textContent=String(data.points||0);
   $('#kk-current-email').textContent=data.member.email||'—';
   $('#kk-sidebar-name').textContent=[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')||'Verified KK Member';
