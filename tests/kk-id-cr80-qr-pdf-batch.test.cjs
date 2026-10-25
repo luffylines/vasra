@@ -67,7 +67,7 @@ test('Only reviewed portraits can be exported; printing requires confirmation an
  assert.match(api,/b\.confirmed!==true/);
  assert.match(sql,/IF card\.status<>'approved'/);
  assert.match(sql,/INSERT INTO vasra\.kk_id_card_audit/);
- assert.match(sql,/action.*'printed'/);
+ assert.match(sql,/VALUES\(target_id,officer\.id,'printed'\)/);
  assert.match(sql,/printed_by uuid REFERENCES vasra\.users/);
  assert.match(sql,/print_count integer NOT NULL DEFAULT 0/);
  assert.match(fields,/'first_name',m\.first_name/);
