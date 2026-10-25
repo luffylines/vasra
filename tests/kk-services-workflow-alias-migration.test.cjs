@@ -16,7 +16,7 @@ test('SK Services staff-list migration resolves the 42702 ambiguous PL/pgSQL ali
  assert.doesNotMatch(list,/\br\./,'ambiguous r record/table alias must be removed only from SELECT');
  assert.match(sql,/DECLARE[\s\S]*?r vasra\.kk_service_requests;/);
  assert.match(sql,/IF action='complete' THEN/);
- assert.match(sql,/IF action='review'/); // Function still validates review actions.
+ assert.match(sql,/IF action NOT IN \('review','complete'\) THEN/); // Function still validates review actions.
  assert.match(sql,/SECURITY INVOKER/);
  assert.doesNotMatch(sql,/\b(?:DROP TABLE|TRUNCATE|DELETE FROM vasra\.kk_service_requests)\b/i);
  assert.match(sql,/GRANT EXECUTE ON FUNCTION public\.vasra_kk_service_workflow\(text,jsonb,text\) TO service_role/);
