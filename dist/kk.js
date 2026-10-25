@@ -92,6 +92,11 @@
    }finally{checking=false;}
   }
   retry.addEventListener('click',checkKKRegistration);
+  // Existing authenticated KK members must resume the five-step profile,
+  // not try to create a second account with the same email.
+  getApi('me').then(result=>{
+   if(result?.member?.id)location.replace('./kk-profile');
+  }).catch(()=>{});
   checkKKRegistration();
   const phone=form.elements.namedItem('phone');
   phone.addEventListener('input',()=>kkNormalizePhoneInput(phone));
@@ -110,8 +115,20 @@
    if(f.password!==f.confirm_password)return feedback('Hindi magkatugma ang password.','error');
    const data={...f,email:f.email.trim().toLowerCase(),confirm_email:f.confirm_email.trim().toLowerCase(),phone:kkPhilippineMobile(f.phone),agree:form.agree.checked,confirm_email_correct:form.confirm_email_correct.checked};
    busy(form,true);feedback('Creating your protected KK account…');
-   try{const r=await send('register',data);if(r.ok)location.assign('./kk-profile');}
-   catch(err){feedback(err.message,'error');}finally{busy(form,false);}
+   try{
+    const result=await send('register',data);
+    if(result?.ok)location.replace('./kk-profile');
+    else throw Error('Hindi makumpleto ang KK registration. Subukang mag-login.');
+   }catch(err){
+    const duplicate=/existing|registered|record o kailangang i-review|already/i.test(String(err.message||''));
+    if(duplicate){
+     feedback('Hindi makagawa ng panibagong KK account gamit ang email na ito. Kung may account ka na, mag-login para magpatuloy sa Step 1–5.','error');
+     const link=document.createElement('a');
+     link.href='./kk-login';link.textContent='Pumunta sa KK Login at ipagpatuloy ang profiling →';
+     link.className='kk-existing-login-link';
+     $('#kk-feedback')?.append(link);
+    }else feedback(err.message,'error');
+   }finally{busy(form,false);}
   });
  }
  if(view!=='profile')return;

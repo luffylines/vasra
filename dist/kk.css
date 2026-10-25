@@ -260,3 +260,8 @@
 .kk-retry-barangays:hover{background:#e5efff}
 .kk-retry-barangays:focus-visible{outline:3px solid #89b5ef;outline-offset:2px}
 @media(max-width:760px){.kk-retry-barangays{width:100%}}
+
+/* Returning KK member: clear, keyboard-accessible recovery link after duplicate registration. */
+.kk-existing-login-link{display:inline-flex;align-items:center;min-height:42px;max-width:100%;margin-top:9px;padding:9px 12px;border-radius:9px;background:#f0f6ff;border:1px solid #c4d9f6;color:#1f5599!important;font-weight:800;font-size:13px;text-decoration:none;overflow-wrap:anywhere}
+.kk-existing-login-link:hover{background:#e5effd}
+.kk-existing-login-link:focus-visible{outline:3px solid #77a7e5;outline-offset:3px}
