@@ -17,7 +17,7 @@ test('Database KK staff listing and member login lookup use disambiguated record
 });
 test('Existing logged-in KK members resume steps instead of registering twice',()=>{
  assert.match(client,/getApi\('me'\)\.then\(result=>/);
- assert.match(client,/if\(result\?\.member\?\.id\)location\.replace\('\.\/kk-profile'\)/);
+ assert.match(client,/if\(result\?\.member\?\.id\)location\.replace\(result\.profile\?\.status==='verified'\?'\.\/kk-dashboard':'\.\/kk-profile'\)/);
  assert.match(client,/if\(result\?\.ok\)location\.replace\('\.\/kk-profile'\)/);
  assert.match(client,/link\.href='\.\/kk-login'/);
  assert.match(client,/Pumunta sa KK Login at ipagpatuloy ang profiling/);
