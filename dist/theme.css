@@ -211,3 +211,141 @@ html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback
  background:#153d32;border-color:#287554;color:#aaf0d2}
 html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback[data-kind="error"]{
  background:#45262e;border-color:#9a5360;color:#ffdbd7}
+
+
+/* Public Projects — contrast-complete dark theme.
+   Only applies on /projects(.html), never changes light mode or other pages. */
+html[data-theme="dark"] body.portal-refresh.projects-page{
+ --line:#354e71;--ink:#ecf5ff;--muted:#b8cbe7
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .sectionhead h2{
+ color:#f0f7ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .sectionhead h2 span,
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .sectionhead p,
+html[data-theme="dark"] body.portal-refresh.projects-page #count{
+ color:#b8cde9
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .stats>div{
+ background:#172a46;border-color:#3b5679!important;color:#e8f3ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .stats>div :is(strong,b){color:#edf6ff}
+html[data-theme="dark"] body.portal-refresh.projects-page .stats>div :is(span,small){color:#bed0e9}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .toolbar{
+ background:#172a46;border-color:#3b5576;color:#e8f2ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters{
+ background:#10243c;border:1px solid #3b5677
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button{
+ color:#c4d5ef;background:transparent;border:1px solid transparent
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button:hover{
+ background:#263f62;color:#fff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button.selected,
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button[aria-pressed="true"]{
+ background:#3567ad;color:#fff;border-color:#6592ce
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search{
+ background:#0f2037;border:1px solid #4a6486;color:#d8eaff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search:focus-within{
+ border-color:#7caff2;box-shadow:0 0 0 3px #5a93ea33
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search input{
+ background:transparent;color:#f0f7ff;border:0;box-shadow:none
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search input::placeholder{color:#a9bfdc}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search :is(svg,span){color:#bed7fb;stroke:currentColor}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .card{
+ background:#172a46;border-color:#385376;color:#e8f3ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody{
+ background:#172a46;color:#e8f3ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody .category{
+ color:#a7d1ff;font-weight:800
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody h3{color:#f2f8ff}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody>p{color:#d1e0f4}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .progresslabel :is(span,b){
+ color:#e4f1ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .track{background:#324b6a}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .track>div{background:#79adf4}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbottom{
+ border-top-color:#3f5778
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbottom .card-publish-date,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-published-at time,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-date-day,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-date-time{
+ color:#b8d4f5
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbottom .card-publish-date>svg,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-date-separator{
+ color:#92b9e9
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cover .badge{
+ background:#e7f1ff;color:#173d71;border:1px solid #ffffff;
+ font-weight:800;text-shadow:none;opacity:1
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cover .project-placeholder{
+ color:#315986
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-see-more{
+ background:#23456f;color:#edf6ff;border-color:#4b73a6
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-see-more:hover{
+ background:#325e95;border-color:#85b0e9
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-see-more-icon{
+ background:#35629a;color:#f0f7ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .empty{
+ background:#162c49;border-color:#48678d;color:#c6d9f2
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .empty :is(h3,p){color:#dbe9ff}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .empty-icon{
+ background:#2b507e;color:#e3f1ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .secondary,
+html[data-theme="dark"] body.portal-refresh.projects-page .install-strip .secondary{
+ background:#23446b;color:#eef6ff;border-color:#4b6f9b
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .install-strip{
+ color:#d8e7fa;border-color:#3e5778
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .install-strip small{
+ color:#b2c8e5
+}
+/* See More dialog: the light-only text colors would otherwise be unreadable. */
+html[data-theme="dark"] body.portal-refresh.projects-page #detail{
+ background:#14253f;color:#eaf4ff;border-color:#486486
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>.eyebrow{
+ color:#a8d1ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody :is(h2,h3){
+ color:#f1f7ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>p,
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>p>b,
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>.muted,
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .project-gallery-count{
+ color:#cbddf5
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .detail-publication-meta{
+ background:#1c3353;border-color:#415e83;color:#d6e8ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .detail-publication-meta :is(strong,span){
+ color:#dcecff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail :is(.trans-report,.trans-empty){
+ background:#1b314d;border-color:#3f5c80;color:#d6e8ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .trans-picker :is(select,input){
+ background:#172d49;color:#edf6ff;border-color:#526c90
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail :is(a,.close){color:#a9d2ff}
