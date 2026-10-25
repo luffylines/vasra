@@ -35,7 +35,8 @@
    '<h2>OFFICIAL KK MEMBER ID</h2><div class="kk-print-back-details"><span>Full Name</span><strong>'+name+'</strong>'+
    '<span>KK ID</span><strong>'+code+'</strong><span>Date of Birth</span><strong>'+esc(m.birthdate||'—')+'</strong></div>'+
    '<p class="kk-print-card-note">Issued for the verified Katipunan ng Kabataan member. For validation, contact SK Vasra · Quezon City. If found, return to SK Vasra Office, 40 Forestry St.</p></div>';
-  return '<div class="kk-physical-card front"><div class="kk-print-header"><img src="./sk%20logo.jpg" alt=""><span><strong>SK VASRA</strong><small>SANGGUNIANG KABATAAN · BARANGAY VASRA</small></span></div>'+
+  const logoSide=document.querySelector('input[name="kk-id-logo-position"]:checked')?.value==='right'?'right':'left';
+  return '<div class="kk-physical-card front kk-logo-'+logoSide+'"><div class="kk-print-header"><img src="./sk%20logo.jpg" alt=""><span><strong>SK VASRA</strong><small>SANGGUNIANG KABATAAN · BARANGAY VASRA</small></span></div>'+
    '<div class="kk-print-front-main"><img class="kk-print-member-photo" src="'+photoUrl(m.member_id)+'" alt="Approved KK ID portrait"><div><small>VERIFIED KK MEMBER</small><strong class="kk-print-member-name">'+name+'</strong><span class="kk-print-member-code">'+code+'</span></div></div>'+
    '<div class="kk-print-front-footer">QUEZON CITY · KATIPUNAN NG KABATAAN</div></div>';
  };
