@@ -6,9 +6,10 @@
  const statusLabels={pending:'Pending',approved:'Approved',completed:'Completed',rejected:'Rejected'};
  let records=[],pointsRate=0,loading=false;
  const apiCall=(url,body)=>api(url,body===undefined?{}:{method:'POST',body:JSON.stringify(body)});
- const info=(msg,isError=false)=>{
+ const info=(msg,isError=false,isSuccess=false)=>{
   const el=$('#kk-service-staff-message');
-  el.textContent=msg;el.dataset.kind=isError?'error':'info';
+  if(msg&&(isError||isSuccess)){el.textContent='';window.showVasraToast(msg,isError?'error':'success');return;}
+  el.textContent=msg;el.dataset.kind='info';
  };
  const phDate=value=>{
   const d=new Date(value);
@@ -191,7 +192,7 @@
    const result=await apiCall(url,payload);
    if(result?.ok!==true)throw Error('Cannot update request. Refresh and retry.');
    await refresh();
-   info('Request '+(decision==='complete'?'completed':decision==='approve'?'approved':'rejected')+' successfully.');
+   info('Request '+(decision==='complete'?'completed':decision==='approve'?'approved':'rejected')+' successfully.',false,true);
   }catch(error){info(error.message,true);button.disabled=false;}
  });
  $('#kk-retabox-rate-form')?.addEventListener('submit',async event=>{
@@ -204,7 +205,7 @@
   try{
    const outcome=await apiCall('./api/kk/staff/services/config',{points_per_kg:rate});
    if(!outcome?.ok)throw Error('Could not update rate.');
-   await refresh();info('RetaBox rate updated.');
+   await refresh();info('RetaBox rate updated.',false,true);
   }catch(e){info(e.message,true);}finally{button.disabled=false;}
  });
 })();
