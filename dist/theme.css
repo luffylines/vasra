@@ -103,3 +103,17 @@ html[data-theme="dark"] body.kk-body .kk-step.active :is(strong,small){color:#f0
 html[data-theme="dark"] body.kk-body .kk-dashboard-panel[hidden],
 html[data-theme="dark"] body.kk-body .kk-feedback[hidden]{display:none}
 @media(prefers-reduced-motion:reduce){.vasra-theme-toggle{transition:none}}
+
+
+/* Avoid overlapping Home and Appearance actions on compact KK login. */
+@media(max-width:760px){
+ body.kk-auth-page .kk-mobile-home{margin-right:51px}
+ body.kk-auth-page .kk-auth-theme-button{right:16px;top:15px}
+}
+/* Keep nested KK form widgets readable, including dependent school/address lists. */
+html[data-theme="dark"] body.kk-body :is(.kk-school-picker,.kk-school-list,.kk-address-list,.kk-profile-preview,
+ .kk-preview-card,.kk-id-drop,.kk-ph-number,.kk-yn-field,.kk-profile-sheet-head,.kk-form-section-head){
+ border-color:#3c5578;color:#e9f3ff}
+html[data-theme="dark"] body.kk-body :is(.kk-review>div,.kk-profile-preview,.kk-id-drop,.kk-school-list,.kk-address-list){
+ background:#172a45}
+html[data-theme="dark"] body.kk-body :is(.kk-id-drop>strong,.kk-yn-field legend,.kk-form-section-head h3){color:#eef6ff}
