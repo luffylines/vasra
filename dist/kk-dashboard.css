@@ -148,3 +148,16 @@ html[data-theme="dark"] body.kk-member-dashboard .kk-overview-icon{background:#2
  .kk-member-dashboard .kk-summary-id-card .kk-summary-id-actions{gap:9px}
  .kk-member-dashboard .kk-summary-id-actions #kk-copy-id{min-height:34px}
 }
+
+/* Four actual overview sections: upcoming projects, submitted printing/computer requests, rewards. */
+.kk-member-dashboard .kk-overview-cards{
+ grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch
+}
+.kk-member-dashboard .kk-overview-card{min-width:0;overflow-wrap:anywhere}
+.kk-member-dashboard .kk-overview-card small{line-height:1.45}
+@media(max-width:1200px) and (min-width:641px){
+ .kk-member-dashboard .kk-overview-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+ .kk-member-dashboard .kk-overview-cards{grid-template-columns:1fr}
+}
