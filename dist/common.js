@@ -23,7 +23,21 @@ const roleText={youth:'Walang SK access',sk:'SK Officer',chairman:'SK Chairman'}
  html[data-theme="dark"] .vasra-app-toast{background:#173354;color:#e9f3ff;border-color:#5276a5}
  html[data-theme="dark"] .vasra-app-toast[data-kind="success"]{background:#153c34;color:#c9f7de;border-color:#36866c}
  html[data-theme="dark"] .vasra-app-toast[data-kind="error"]{background:#4b222d;color:#ffdde2;border-color:#a35762}
- @media(max-width:600px){.vasra-app-toast{top:76px;right:14px;left:14px;width:auto}}
+ .vasra-app-toast[data-kind="info"]{background:#ecf5ff;color:#20558c;border-color:#a8c8eb}
+ .vasra-app-toast[data-kind="success"],.vasra-app-toast[data-kind="error"]{
+  padding-left:42px
+ }
+ .vasra-app-toast[data-kind="success"]::before,.vasra-app-toast[data-kind="error"]::before{
+  position:absolute;top:12px;left:14px;font:900 17px Arial,sans-serif
+ }
+ .vasra-app-toast[data-kind="success"]::before{content:"✓"}
+ .vasra-app-toast[data-kind="error"]::before{content:"!"}
+ html[data-theme="dark"] .vasra-app-toast[data-kind="info"]{
+  background:#1d3c62;color:#dcecff;border-color:#5278a5
+ }
+ @media(max-width:600px){
+  .vasra-app-toast{top:74px;right:12px;left:auto;width:min(350px,calc(100vw - 24px))}
+ }
  `;
  document.head.append(styles);
  window.showVasraToast=(message,kind='success')=>{
@@ -38,10 +52,28 @@ const roleText={youth:'Walang SK access',sk:'SK Officer',chairman:'SK Chairman'}
    node.append(label,close);document.body.append(node);
   }
   node.querySelector('.vasra-app-toast-label').textContent=String(message||'');
-  node.dataset.kind=['success','error','loading'].includes(kind)?kind:'success';
+  node.dataset.kind=['success','error','loading','info'].includes(kind)?kind:'info';
   node.setAttribute('role',kind==='error'?'alert':'status');
   node.setAttribute('aria-live',kind==='error'?'assertive':'polite');
   node.hidden=!message;
   if(message&&kind!=='loading')timer=setTimeout(()=>{node.hidden=true;timer=null;},5000);
  };
+ // Carry a one-time, non-sensitive success toast through KK login/registration redirects.
+ window.queueVasraToast=(message,kind='success')=>{
+  try{sessionStorage.setItem('vasra-kk-toast-once',JSON.stringify({
+   message:String(message||''),kind:String(kind),at:Date.now()
+  }));}catch{}
+ };
+ const restoreToast=()=>{
+  try{
+   const raw=sessionStorage.getItem('vasra-kk-toast-once');
+   if(!raw)return;
+   sessionStorage.removeItem('vasra-kk-toast-once');
+   const data=JSON.parse(raw);
+   if(data&&Date.now()-data.at<20000&&data.at<=Date.now()&&typeof data.message==='string'&&
+      data.message.length<=220)window.showVasraToast(data.message,data.kind==='error'?'error':'success');
+  }catch{}
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restoreToast,{once:true});
+ else restoreToast();
 })();
