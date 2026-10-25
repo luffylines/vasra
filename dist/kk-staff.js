@@ -37,7 +37,7 @@
   const attributes=[['KK ID',m.kk_id||'For verification'],['Date of birth',m.birthdate||''],
    ['Phone',m.phone],['Email',m.email],['Region','NCR'],['City','Quezon City'],['Barangay','Barangay Vasra'],
    ['Sitio/Purok',sitioName(info.sitio_id)],
-   ['Street',info.street],['Religion',info.religion],['Civil status',info.civil_status],
+   ['Residential Region',info.residence_region||'NCR'],['Province',info.residence_province||'Metro Manila'],['Residential City',info.residence_city||'Quezon City'],['Residential Barangay',info.residence_barangay||'—'],['Street',info.street],['Religion',info.religion],['Civil status',info.civil_status],
    ['Gender',info.gender],['Solo Parent',info.solo_parent],['Family members',info.family_count],
    ['Siblings',info.siblings],['Education',info.education],['School',info.school_name],
    ['Year Level',info.year_level],['Employment',info.employment],['Voter status',info.voter],
@@ -77,7 +77,15 @@
  window.loadKKStaff=refresh;
  const bind=async(button,task)=>{
   button.disabled=true;
-  try{await task();await refresh();}
+  try{
+   const result=await task();await refresh();
+   if(result?.notification){
+    status(result.notification.status==='provider_accepted'
+     ?'SK review saved. Notification accepted by email provider (delivery to inbox is not yet confirmed).'+(result.notification.reference?' Tracking ID: '+result.notification.reference:'')
+     :'SK review saved, pero hindi pa naipadala ang email. I-check ang Resend configuration at contact the member through an authorized channel.',
+     result.notification.status!=='provider_accepted');
+   }
+  }
   catch(e){status(e.message,true);}
   finally{button.disabled=false;}
  };

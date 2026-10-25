@@ -36,6 +36,6 @@ test('Registration readiness is mobile responsive and JS syntax valid',()=>{
  const css=read('dist/kk.css');
  assert.match(css,/\.kk-readiness\[data-status="unavailable"\]/);
  assert.match(css,/@media\(max-width:520px\)/);
- assert.match(read('dist/sw.js'),/vasra-v55-kk-rpc-account-resume-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v56-kk-required-review-email-20261025/);
  assert.doesNotThrow(()=>new vm.Script(js));
 });

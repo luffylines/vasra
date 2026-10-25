@@ -265,3 +265,35 @@
 .kk-existing-login-link{display:inline-flex;align-items:center;min-height:42px;max-width:100%;margin-top:9px;padding:9px 12px;border-radius:9px;background:#f0f6ff;border:1px solid #c4d9f6;color:#1f5599!important;font-weight:800;font-size:13px;text-decoration:none;overflow-wrap:anywhere}
 .kk-existing-login-link:hover{background:#e5effd}
 .kk-existing-login-link:focus-visible{outline:3px solid #77a7e5;outline-offset:3px}
+
+/* SK VASRA 5-step profile: compact form sections, legible dropdowns, no mobile zoom. */
+.kk-step-one{gap:16px 17px}
+.kk-step-one>.kk-section-heading{grid-column:1/-1;color:#607998;font:800 11px/1.5 Manrope,sans-serif;letter-spacing:.85px;margin:3px 0 0;padding:0 0 6px}
+.kk-step-one>.kk-section-heading:not(:first-child){margin-top:13px;padding-top:20px;border-top:1px solid #dde7f4}
+.kk-step-one>.kk-full-span{grid-column:1/-1;min-width:0}
+.kk-step-one label,.kk-step-one fieldset{min-width:0}
+.kk-step-one label{gap:6px}
+.kk-step-one select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:37px!important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23496a94' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E")!important;
+ background-position:right 12px center!important;background-repeat:no-repeat!important;background-size:18px!important}
+.kk-step-one select:invalid{color:#8095af}
+.kk-step-one .kk-required{color:#cf3f4d}
+.kk-solo-field{display:flex;align-items:center;gap:14px;border:0;padding:0;margin:0;flex-wrap:wrap;align-content:center}
+.kk-solo-field legend{width:100%;font:700 12px 'DM Sans',sans-serif;color:#304d72;margin:0 0 7px;padding:0}
+.kk-step-one .kk-solo-field label{display:flex;flex-direction:row;align-items:center;gap:7px;font:650 13px 'DM Sans',sans-serif;color:#365473}
+.kk-solo-field input[type=radio]{appearance:auto;width:17px;height:17px;min-height:17px;accent-color:#2b5eaa;margin:0}
+.kk-addline-controls{display:flex;justify-content:flex-end}
+.kk-addline-controls button{background:#f8fbff;border:1px solid #cbd9ed;color:#2f5f9c;border-radius:9px;min-height:39px;font-size:12px;font-weight:800;padding:9px 12px}
+.kk-residency-notice{margin:0;padding:12px 14px;background:#fff9ef;border:1px solid #f0d7aa;border-radius:10px;color:#8a621e;font-size:12px;line-height:1.6}
+.kk-address-status{margin:0;color:#7087a5;font-size:11px;line-height:1.7}
+.kk-step-one input[type=number]{font-variant-numeric:tabular-nums;min-width:0}
+.kk-step-one .kk-count-field{position:relative;display:flex;align-items:center}
+.kk-step-one .kk-count-field input{padding-left:47px!important;padding-right:47px!important;text-align:center;appearance:textfield;-moz-appearance:textfield}
+.kk-step-one .kk-count-field input::-webkit-inner-spin-button,.kk-step-one .kk-count-field input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.kk-step-one .kk-count-field button{position:absolute;z-index:1;top:2px;bottom:2px;width:42px;border:0;background:transparent;color:#285c9a;font-size:22px;line-height:1;cursor:pointer}
+.kk-step-one .kk-count-field button:first-child{left:1px;border-right:1px solid #dfebf7}
+.kk-step-one .kk-count-field button:last-child{right:1px;border-left:1px solid #dfebf7}
+.kk-step-one .kk-count-field button:hover{background:#eaf3ff}
+.kk-step-one .kk-count-field button:focus-visible,.kk-addline-controls button:focus-visible{outline:3px solid #78a9ec;outline-offset:1px}
+@media(max-width:760px){.kk-step-one{grid-template-columns:1fr;gap:13px}.kk-step-one>.kk-section-heading:not(:first-child){margin-top:7px;padding-top:16px}.kk-step-one .kk-count-field button{width:40px}}
+@media(min-width:761px){.kk-step-one .kk-section-heading{margin-bottom:2px}}

@@ -35,18 +35,18 @@ test('50 bonus is awarded once on status transition pending to verified, with da
  assert.match(bonus,/where pr\.status='verified' and pr\.reviewer_id is not null/);
  assert.doesNotMatch(bonus,/\bDROP TABLE\b|\bTRUNCATE\b/);
 });
-test('Profile remains five steps with official Barangay Vasra residency and optional NCR current residence',()=>{
+test('Five steps keep official Vasra identity and use a single required address picker',()=>{
  for(const v of ['Personal Information','Education','Additional Information','Emergency Contact','Review & Submit'])assert.ok(kk.includes(v),v);
  assert.match(kk,/const metroCities=\['Caloocan','Las Piñas'/);
- assert.match(kk,/metroAreaSelection\(\)/);
+ assert.match(kk,/addressFields\(\)/);
  assert.match(kk,/data\.residence_city\|\|'Quezon City'/);
- assert.match(kk,/fetch\('https:\/\/psgc\.cloud\/api\/v2\/regions\/1300000000\/barangays'/);
+ assert.match(kk,/fetch\('https:\/\/psgc\.cloud\/api\/v2\/cities-municipalities\//);
  assert.match(kk,/credentials:'omit'/);
- assert.match(kk,/Current Barangay in Metro Manila/);
+ assert.doesNotMatch(kk,/metroAreaSelection\(\)|Current Barangay in Metro Manila|Reload Barangay List/);
  assert.match(kk,/field\('year_level','Year \/ Grade Level',\{select:yearLevelOptions/);
  assert.match(handler,/profile\.city='Quezon City';profile\.barangay='Vasra'/);
- assert.match(handler,/'residence_city','residence_barangay'/);
- assert.match(handler,/const allowedNcrCities=new Set/);
+ assert.match(handler,/'residence_region','residence_province','residence_city','residence_barangay'/);
+ assert.match(handler,/const ncrCities=new Set/);
 });
 test('Error states explain session or network instead of falsely claiming missing KK database',()=>{
  assert.doesNotMatch(staff,/KK database is not active yet/);
@@ -54,7 +54,7 @@ test('Error states explain session or network instead of falsely claiming missin
  assert.match(kk,/Hindi ma-load ang KK profile/);
  assert.match(kk,/id="kk-retry-load"/);
  assert.match(kk,/Go to KK Login/);
- assert.match(read('dist/sw.js'),/vasra-v55-kk-rpc-account-resume-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v56-kk-required-review-email-20261025/);
  for(const [p,s] of [['kk-staff.js',staff],['kk.js',kk],['handler.cjs',handler]])assert.doesNotThrow(()=>new vm.Script(s,{filename:p}));
 });
 

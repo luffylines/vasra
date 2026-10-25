@@ -41,5 +41,5 @@ test('Client-side shell reconciles active state from URL for clean and .html rou
  assert.match(fs.readFileSync(path.join(dist,'mobile-nav.css'),'utf8'),/\.site-header nav a > i\{display:none!important\}/);
 });
 test('Service worker cache is bumped so old sidebar HTML cannot stay pinned on installed PWA',()=>{
- assert.match(fs.readFileSync(path.join(dist,'sw.js'),'utf8'),/vasra-v55-kk-rpc-account-resume-20261025/);
+ assert.match(fs.readFileSync(path.join(dist,'sw.js'),'utf8'),/vasra-v56-kk-required-review-email-20261025/);
 });
