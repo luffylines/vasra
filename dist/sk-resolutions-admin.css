@@ -1,0 +1,66 @@
+
+/* Staff SK Resolution publishing — matching existing VASRA workspace. */
+#panel-sk-resolutions[hidden]{display:none!important}
+.skres-admin-panel{width:100%;max-width:1180px;margin:0 auto;padding:12px 0 28px;min-width:0}
+.skres-admin-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+.skres-admin-heading .eyebrow{font:800 10px 'DM Sans',sans-serif;letter-spacing:.12em;color:#5d82ac}
+.skres-admin-heading h2{font:800 clamp(22px,3vw,30px)/1.3 Manrope,sans-serif;color:#173c6d;margin:7px 0}
+.skres-admin-heading p{font:500 12px/1.8 'DM Sans',sans-serif;color:#6982a1;max-width:650px;margin:0}
+.skres-admin-heading>a{padding:11px 15px;border:1px solid #c2d6f3;border-radius:10px;background:#eff5ff;text-decoration:none;font-weight:800;font-size:11px;color:#265b9b}
+#skres-admin-message{color:#496e99;font:650 12px/1.6 'DM Sans',sans-serif;min-height:22px;margin:10px 0}
+#skres-admin-message[data-kind=error]{color:#b33544}
+.skres-admin-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.skres-admin-editor,.skres-admin-index{background:white;border:1px solid #d8e5f6;border-radius:15px;padding:20px;min-width:0}
+.skres-admin-editor h3,.skres-admin-index h3{font:800 19px Manrope,sans-serif;color:#1c4376;margin:0 0 18px}
+.skres-admin-editor form{display:grid;gap:14px}
+.skres-admin-editor form label{display:grid;gap:7px;color:#486887;font:750 11px 'DM Sans',sans-serif}
+.skres-admin-editor form :is(input:not([type=checkbox]),textarea){box-sizing:border-box;width:100%;min-height:43px;
+ background:#f9fbff;border:1px solid #cbdcf1;border-radius:10px;color:#244876;padding:10px 12px;
+ font:600 14px 'DM Sans',sans-serif}
+.skres-admin-editor form :is(input:not([type=checkbox]),textarea):focus-visible{outline:3px solid #a1c9ff;outline-offset:1px}
+.skres-admin-editor textarea{resize:vertical;min-height:90px}
+.skres-admin-two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.7fr);gap:12px}
+.skres-admin-editor .skres-admin-publish{display:flex;align-items:center;gap:9px;font-size:12px;color:#255a9a}
+.skres-admin-publish input{width:17px;height:17px;accent-color:#2359ac}
+.skres-admin-notice{background:#f1f6ff;border:1px solid #d7e5f7;border-radius:10px;padding:12px;
+ color:#577596;font:500 11px/1.75 'DM Sans',sans-serif;margin:0}
+.skres-admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.skres-admin-actions button{box-sizing:border-box;min-height:45px;display:flex;align-items:center;justify-content:center;
+ width:100%;border-radius:9px;font:800 12px 'DM Sans',sans-serif}
+.skres-admin-actions .primary{background:#235baf;color:#fff;border:1px solid #235baf}
+.skres-admin-actions .secondary{background:#eef4fd;color:#2a588b;border:1px solid #cbdcf1}
+.skres-index-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.skres-index-title h3{margin:0}
+.skres-index-title p{margin:3px 0 0;color:#778eaa;font-size:11px}
+.skres-index-title button{border:1px solid #cfdded;background:#eff5ff;color:#265690;
+ border-radius:9px;padding:10px 14px;min-height:40px;font-size:11px;font-weight:800}
+#skres-admin-search{box-sizing:border-box;width:100%;min-height:44px;border:1px solid #cbdcf1;background:#f9fbff;
+ color:#28517d;padding:10px 12px;border-radius:10px;font-size:14px;margin-bottom:12px}
+#skres-admin-list{display:grid;gap:11px;max-height:900px;overflow:auto}
+.skres-admin-row{padding:16px;border:1px solid #dce7f6;border-radius:12px;background:#f9fbff;min-width:0}
+.skres-admin-row-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.skres-admin-row-head strong{color:#27578d;font-size:12px;overflow-wrap:anywhere}
+.skres-pub-badge{background:#fff0d7;color:#976919;padding:6px 9px;border-radius:20px;font:800 10px 'DM Sans',sans-serif}
+.skres-pub-badge.active{background:#dcf6e9;color:#126b42}
+.skres-admin-row h4{color:#1d4275;font:800 15px/1.4 Manrope,sans-serif;margin:10px 0 6px;overflow-wrap:anywhere}
+.skres-admin-row>p{font:500 12px/1.65 'DM Sans',sans-serif;color:#657e9a;overflow-wrap:anywhere}
+.skres-admin-row-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:12px;border-top:1px solid #e2eaf6}
+.skres-admin-row-footer>small{font-size:10px;color:#7390b1}
+.skres-admin-row-footer>div{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.skres-admin-row-footer :is(a,button){display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;
+ background:#eaf2ff;color:#275e9f;border:1px solid #bbd2ee;border-radius:8px;text-decoration:none;
+ font:800 10px 'DM Sans',sans-serif;min-height:35px;box-sizing:border-box}
+.skres-admin-row-footer [data-skres-unpublish]{color:#9c5a22;background:#fff6e9;border-color:#ecd4b4}
+.skres-admin-empty{color:#6d84a1;text-align:center;padding:20px;font-size:12px}
+@media(max-width:970px){.skres-admin-grid{grid-template-columns:1fr}}
+@media(max-width:550px){.skres-admin-editor,.skres-admin-index{padding:14px}.skres-admin-two{grid-template-columns:1fr}
+.skres-admin-heading>a{width:100%;text-align:center}.skres-admin-actions{gap:8px}}
+body.account-workspace[data-theme=dark] .skres-admin-panel :is(.skres-admin-editor,.skres-admin-index,.skres-admin-row){background:#172a44;border-color:#385477}
+body.account-workspace[data-theme=dark] .skres-admin-panel :is(h2,h3,h4,.skres-admin-row-head strong){color:#edf6ff}
+body.account-workspace[data-theme=dark] .skres-admin-panel :is(.skres-admin-heading p,.skres-admin-row>p,.skres-admin-row-footer>small,
+ .skres-admin-editor form label,.skres-index-title p){color:#c4d5ea}
+body.account-workspace[data-theme=dark] .skres-admin-panel :is(input:not([type=checkbox]),textarea){
+ background:#10243b;color:#edf6ff;border-color:#496589}
+body.account-workspace[data-theme=dark] .skres-admin-notice{background:#1c3554;border-color:#455e80;color:#c2d8f1}
+body.account-workspace[data-theme=dark] .skres-admin-row-footer{border-color:#3c5675}
+body.account-workspace[data-theme=dark] .skres-admin-heading>a{background:#294970;border-color:#5379ab;color:#edf5ff}
