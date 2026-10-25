@@ -5,7 +5,7 @@
  const request=(path,body)=>api('./api/kk/staff/id-cards'+path,body?{method:'POST',body:JSON.stringify(body)}:{});
  const photo=id=>'./api/kk/staff/id-cards/'+encodeURIComponent(id)+'/photo';
  let rows=[],selected=null,previewRevision=0,busy=false;
- const report=(msg,error=false)=>{const target=$('#kk-id-staff-status');if(!target)return;target.textContent=msg;target.dataset.kind=error?'error':'info';};
+ const report=(msg,error=false,success=false)=>{const target=$('#kk-id-staff-status');if(!target)return;if(msg&&(error||success)){target.textContent='';window.showVasraToast(msg,error?'error':'success');return;}target.textContent=msg;target.dataset.kind='info';};
  const approved=r=>r.status==='approved'&&r.photo_exists&&/^VASRA-KK-\d+$/.test(r.kk_id||'');
  const date=v=>v?new Date(v).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',timeZone:'Asia/Manila'}):'—';
  const filtered=()=>{
@@ -91,7 +91,7 @@
     pages.push(pair.front,pair.back);
    }
    window.KKIDRender.pdf(pages,'SK-VASRA-all-approved-KK-IDs-CR80.pdf');
-   report('Downloaded '+items.length+' approved KK IDs: '+pages.length+' exact-size front/back PDF pages.');
+   report('Downloaded '+items.length+' approved KK IDs: '+pages.length+' exact-size front/back PDF pages.',false,true);
   }catch(e){report('Batch PDF failed: '+e.message+' — no partial set was exported.',true);}
   finally{busy=false;paint();}
  };
@@ -113,7 +113,7 @@
   try{
    const result=await request('/printed',{id:member.member_id,confirmed:true});
    if(result?.ok!==true)throw Error('No server confirmation.');
-   await load();report('Recorded printed KK ID: '+member.kk_id+' · print count '+result.print_count+'.');
+   await load();report('Recorded printed KK ID: '+member.kk_id+' · print count '+result.print_count+'.',false,true);
   }catch(e){report('Could not mark ID as printed: '+e.message,true);}
  };
  $('#kk-id-staff-query')?.addEventListener('input',paint);
@@ -129,7 +129,7 @@
   const member=rows.find(r=>r.member_id===id);if(!member)return;
   if(target.dataset.cardPreview){await preview(id);return;}
   if(target.dataset.cardDownload){try{target.disabled=true;report('Preparing '+member.kk_id+' PDF…');await pdfOne(member);
-   report('Downloaded '+member.kk_id+' front/back PDF · CR80 85.6 × 54 mm.');}
+   report('Downloaded '+member.kk_id+' front/back PDF · CR80 85.6 × 54 mm.',false,true);}
    catch(e){report('Download failed: '+e.message,true);}finally{target.disabled=false;}return;}
   if(target.dataset.cardPrint){await print(member);return;}
   if(target.dataset.cardPrinted){await mark(member);return;}
@@ -146,7 +146,7 @@
   try{
    const result=await request('/review',{id,status:yes?'approved':'rejected',note});
    if(result?.ok!==true)throw Error('Photo review not confirmed by server.');
-   await load();report('KK ID photo '+(yes?'approved':'rejected')+' for '+member.kk_id+'.');
+   await load();report('KK ID photo '+(yes?'approved':'rejected')+' for '+member.kk_id+'.',false,true);
   }catch(e){report('Review failed: '+e.message,true);target.disabled=false;}
  });
  window.addEventListener('afterprint',()=>$('#kk-id-print-root')?.replaceChildren());
