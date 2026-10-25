@@ -27,8 +27,8 @@ test('Existing logged-in KK members resume steps instead of registering twice',(
  assert.match(client,/await send\('submit',\{\}\)/);
 });
 test('KK applications appear in staff dashboard only after member submits and sessions are authorized',()=>{
- assert.match(staff,/await Promise\.all\(\[request\(''\),request\('sitios'\),request\('catalog'\)\]\)/);
- assert.match(staff,/members=result\.members;sitios=sitioResult\.sitios/);
+ assert.match(staff,/await Promise\.allSettled\(\[request\('sitios'\),request\('catalog'\)\]\)/);
+ assert.match(staff,/members=result\.members;sitios=Array\.isArray\(sitioData\?\.sitios\)/);
  assert.match(staff,/m\.status==='pending'/);
  assert.match(handler,/await user\(\['sk','chairman'\]\)/);
  assert.match(handler,/const result=await kkRpc\('staff_list',\{\},true\)/);
