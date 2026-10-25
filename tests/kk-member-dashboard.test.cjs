@@ -39,7 +39,7 @@ test('SK staff sees participation roster, but public dashboard cannot read other
 });
 test('New dashboard has valid source and preview route',()=>{
  assert.ok(read('vercel.json').includes('"source": "/kk-dashboard"'));
- assert.ok(read('dist/sw.js').includes('vasra-v58-kk-id-review-20261025'));
+ assert.ok(read('dist/sw.js').includes('vasra-v59-kk-form-registration-fix-20261025'));
  assert.ok(read('dist/kk-dashboard.css').includes('@media(max-width:650px)'));
  for(const file of ['dist/kk-dashboard.js','dist/kk.js','dist/kk-staff.js','lib/handler.cjs'])
  assert.doesNotThrow(()=>new vm.Script(read(file),{filename:file}));
