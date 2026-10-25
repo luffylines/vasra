@@ -39,8 +39,8 @@ test('Public Google links are disabled until genuinely published and validated',
  assert.match(publicJs,/anchor\.rel='noopener noreferrer'/);
  assert.match(publicJs,/awaiting approved public links/i);
 });
-test('Only chairman can update Drive document links, links stored separate from financial records',()=>{
- assert.match(staffHtml,/data-tab="disclosure" class="chair-only" hidden/);
+test('All SK officers can manage Drive links, stored separately from financial records',()=>{
+ assert.match(staffHtml,/data-tab="disclosure"/);
  assert.match(staffHtml,/id="panel-disclosure"/);
  assert.match(staffHtml,/id="fdp-admin-list"/);
  assert.match(staffHtml,/disclosure-admin\.js/);
@@ -51,10 +51,10 @@ test('Only chairman can update Drive document links, links stored separate from 
  assert.match(staffJs,/name="published"/);
  assert.match(staffJs,/value\.url/);
  assert.match(api,/path==='\/api\/disclosure\/manage'&&method==='POST'/);
- assert.match(api,/await user\(\['chairman'\]\)/);
+ assert.match(api,/if\(path==='\/api\/disclosure\/manage'&&method==='POST'\)\{\s*await user\(\['sk','chairman'\]\)/);
  assert.match(db,/action\.startsWith\('disclosure_'\)/);
  assert.match(db,/vasra_disclosure/);
- assert.match(sql,/u\.role='chairman'/);
+ assert.match(read('supabase/migrations/20261025090500_disclosure_officer_access.sql'),/u\.role in \('sk','chairman'\)/);
  assert.match(sql,/revoke all on function public\.vasra_disclosure\(text,jsonb,text\) from public,anon,authenticated/);
  assert.match(sql,/grant execute on function public\.vasra_disclosure\(text,jsonb,text\) to service_role/);
  assert.doesNotMatch(sql,/DROP TABLE|TRUNCATE|delete from vasra\.annual_budgets/i);
