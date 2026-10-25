@@ -31,7 +31,7 @@ test('KK applications appear in staff dashboard only after member submits and se
  assert.match(staff,/members=result\.members;sitios=sitioResult\.sitios/);
  assert.match(staff,/m\.status==='pending'/);
  assert.match(handler,/await user\(\['sk','chairman'\]\)/);
- assert.match(handler,/return json\(await kkRpc\('staff_list',\{\},true\)\)/);
+ assert.match(handler,/const result=await kkRpc\('staff_list',\{\},true\)/);
  assert.match(backend,/SK VASRA RPC failed/);
  assert.doesNotMatch(backend,/console\.warn\([^)]*password_hash/);
 });

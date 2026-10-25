@@ -24,7 +24,7 @@ test('ID upload is private, size-capped, authenticated, and protected from publi
  assert.ok(kk.includes("send('id/upload'"));
  assert.ok(html.includes('kk-profile-preview'));
  assert.ok(sty.includes('.kk-id-upload'));
- for(const route of ['/api/kk/id/upload','/api/kk/id/mine','/api/kk/staff/id/'])assert.ok(handler.includes(route),route);
+ for(const route of ['/api/kk/id/upload','/api/kk/id/mine','staff_id_access'])assert.ok(handler.includes(route),route);
  for(const sqlSnippet of ['vasra.kk_valid_ids','storage.buckets','public=false','enable row level security','if action=\'staff_id_access\' then','if action=\'id_attach\' then'])assert.ok(sql.includes(sqlSnippet),sqlSnippet);
  assert.ok(backend.includes('getPrivate(')&&backend.includes('putPrivate('));
  assert.ok(!sql.includes('grant select on vasra.kk_valid_ids to anon'));
