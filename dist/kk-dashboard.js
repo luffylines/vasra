@@ -41,6 +41,20 @@
   for(const section of document.querySelectorAll('[data-section]'))
    section.hidden=section.dataset.section!==which;
   const summary=document.querySelector('.kk-summary');if(summary)summary.hidden=!['overview','settings'].includes(which);
+  // Keep exactly one main heading regardless of the open KK workspace tab.
+  const headings={overview:'My KK Dashboard',projects:'Upcoming Projects',activities:'My Activities',
+   rewards:'Points & Rewards',printing:'Free Printing',computer:'Computer Use',
+   retabox:'RetaBox Donations',settings:'Account Settings','kk-id':'My KK ID Card'};
+  const title=$('#kk-current-section-title'),eyebrow=$('#kk-current-section-eyebrow'),welcome=$('#kk-welcome');
+  if(title)title.textContent=headings[which]||headings.overview;
+  if(eyebrow)eyebrow.textContent=which==='kk-id'?'OFFICIAL KATIPUNAN NG KABATAAN IDENTIFICATION':
+   which==='overview'?'VERIFIED KATIPUNAN NG KABATAAN MEMBER':'SK VASRA · KK MEMBER PORTAL';
+  if(welcome){
+   if(which==='kk-id')welcome.textContent='Mag-upload ng larawan at i-preview ang iyong official front-and-back KK ID.';
+   else if(which==='overview')welcome.textContent=welcome.dataset.overviewText||welcome.textContent;
+   else welcome.textContent='Manage your '+(headings[which]||'KK account').toLowerCase()+' in one secure place.';
+  }
+  document.title=(headings[which]||'KK Dashboard')+' — SK Vasra';
   if(updateHash&&location.hash!=='#confirm-email'&&!location.hash.startsWith('#confirm-email='))
    history.replaceState(null,'',location.pathname+location.search+'#'+which);
   setMenu(false);
@@ -105,6 +119,7 @@
   projects=Array.isArray(dashboard.projects)?dashboard.projects:[];
   registrations=Array.isArray(dashboard.registrations)?dashboard.registrations:[];
   $('#kk-welcome').textContent='Welcome, '+[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')+'! Tuklasin ang mga proyekto at reward programs ng SK Vasra.';
+  $('#kk-welcome').dataset.overviewText=$('#kk-welcome').textContent;
   $('#kk-dash-status').textContent='VERIFIED';
   $('#kk-dash-id').textContent=data.profile.kk_id||'For issuance';
   window.kkCardMember=data.member;window.kkCardNumber=data.profile.kk_id;

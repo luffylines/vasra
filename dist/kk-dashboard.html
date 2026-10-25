@@ -1,4 +1,4 @@
-<!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css"><link rel="stylesheet" href="./kk-dashboard.css"><link rel="stylesheet" href="./kk-services.css"><link rel="stylesheet" href="./kk-id-card.css"></head>
+<!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css?v=20261025-kk-upload-first-dark-v3"><link rel="stylesheet" href="./kk-dashboard.css?v=20261025-kk-upload-first-dark-v3"><link rel="stylesheet" href="./kk-services.css?v=20261025-kk-upload-first-dark-v3"><link rel="stylesheet" href="./kk-id-card.css?v=20261025-kk-upload-first-dark-v3"></head>
 <body class="kk-body kk-member-dashboard">
 <div class="kk-workspace">
  <aside class="kk-workspace-sidebar" id="kk-sidebar" aria-label="KK member navigation">
@@ -31,7 +31,7 @@
    </div>
   </header>
   <div class="kk-main"><div class="kk-dashboard">
- <div class="kk-dashboard-head"><div><span class="kk-tag">VERIFIED KATIPUNAN NG KABATAAN MEMBER</span><h1>My KK Dashboard</h1><p id="kk-welcome">Mga programa at serbisyo para sa kabataang Vasra.</p></div></div>
+ <div class="kk-dashboard-head"><div><span class="kk-tag" id="kk-current-section-eyebrow">VERIFIED KATIPUNAN NG KABATAAN MEMBER</span><h1 id="kk-current-section-title">My KK Dashboard</h1><p id="kk-welcome">Mga programa at serbisyo para sa kabataang Vasra.</p></div></div>
  <p id="kk-dash-loading" class="kk-loading" role="status">Loading your secure dashboard…</p>
  <div id="kk-dash-content" hidden>
   <section class="kk-summary" aria-label="Membership overview">
@@ -98,10 +98,21 @@
    <h3>My RetaBox Requests</h3><div id="kk-retabox-history"></div>
   </section>
 <section data-section="kk-id" class="kk-dashboard-panel kk-id-workspace" aria-labelledby="kk-id-title" hidden>
-<div class="kk-id-heading"><span class="kk-tag">OFFICIAL KK MEMBER IDENTIFICATION</span><h2 id="kk-id-title">My KK ID Card</h2><p>Mag-upload ng malinaw na portrait photograph. SK officers will review it before printing the official front-and-back ID.</p></div>
-<div class="kk-id-workspace-grid"><article class="kk-id-profile-card kk-id-reference-card">
- <div class="kk-id-reference-title"><div><span class="kk-id-reference-overline">SK IDENTIFICATION CARD PREVIEW</span>
- <h3>My Official KK ID · Front &amp; Back</h3><p>Eksaktong same layout ng ID na dina-download at pini-print ng SK officers. Standard CR80 size: 85.6 × 54 mm.</p></div>
+<div class="kk-id-heading"><p class="kk-id-section-description" id="kk-id-title">I-upload muna ang iyong larawan, pagkatapos ay suriin ang harap at likod ng KK ID bago aprubahan ng SK officer.</p></div>
+<div class="kk-id-workspace-grid"><article class="kk-id-upload-card"><h3>Step 1 · Upload Your Photo</h3>
+<p>Magdagdag ng malinaw na portrait photo para makumpleto ang ID. JPG, PNG o WEBP · hanggang 2 MB.</p>
+<form id="kk-id-upload-form">
+<label for="kk-id-photo" class="kk-id-upload-zone">
+ <span class="kk-id-upload-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
+ <strong>Choose Your Portrait Photo</strong><small>Click to select JPG, PNG or WEBP (max 2 MB)</small>
+ <input type="file" accept="image/jpeg,image/png,image/webp" id="kk-id-photo" required>
+</label><div class="kk-id-selected-photo" id="kk-id-selected-photo" hidden>
+<img id="kk-id-selected-thumbnail" alt="Selected portrait preview"><span id="kk-id-selected-filename"></span></div>
+<button type="submit" class="kk-btn">Submit Photo for SK Approval</button></form>
+<p id="kk-id-upload-status" class="kk-feedback" role="status" aria-live="polite"></p>
+<p class="kk-id-helper">Approved ID photos become available to SK officers for front-and-back CR80 ID printing. Changing your photo requires approval again.</p>
+</article><article class="kk-id-profile-card kk-id-reference-card">
+ <div class="kk-id-reference-title"><div><span class="kk-id-reference-overline">FRONT &amp; BACK PREVIEW · STANDARD CR80 (85.6 × 54 MM)</span><p>Makikita dito ang parehong disenyo na sinusuri at pini-print ng SK officers.</p></div>
  <span id="kk-id-card-approval" class="kk-id-pill">No Photo Yet</span></div>
  <div id="kk-id-duplex-preview" class="kk-id-preview-pair" aria-live="polite">
   <figure class="kk-id-preview-side"><img id="kk-id-render-front" alt="Front of your KK identification card" loading="eager">
@@ -113,13 +124,7 @@
  <strong id="kk-id-display-name" hidden>Verified KK Member</strong>
  <small id="kk-id-display-number" hidden>VASRA-KK-—</small>
  </article>
-<article class="kk-id-upload-card"><h3>Upload KK ID Photo</h3>
-<p>Neutral background, clear face, passport-style photograph. JPG, PNG or WEBP, up to 2 MB.</p>
-<form id="kk-id-upload-form"><label for="kk-id-photo" class="kk-id-upload-zone">Choose Photo<input type="file" accept="image/jpeg,image/png,image/webp" id="kk-id-photo" required></label>
-<button type="submit" class="kk-btn">Submit Photo for SK Approval</button></form>
-<p id="kk-id-upload-status" class="kk-feedback" role="status" aria-live="polite"></p>
-<p class="kk-id-helper">Approved ID photos become available to SK officers for front-and-back CR80 ID printing. Changing your photo requires approval again.</p>
-</article></div></section>
+</div></section>
   <section data-section="settings" class="kk-dashboard-panel" aria-labelledby="kk-settings-title" hidden>
    <h2 id="kk-settings-title">My Account Settings</h2><div class="kk-settings-id-link"><div><strong>My Official KK ID</strong><p>Photo approval status and official KK identification card.</p></div><button type="button" data-tab="kk-id" class="kk-btn">Open KK ID →</button></div><p>Palitan ang password at email ng iyong KK account. Hindi ito ang SK Officer login.</p>
    <div class="kk-settings-grid"><form id="kk-dash-password" class="kk-form kk-settings-card">
@@ -142,4 +147,4 @@
  <button class="kk-sidebar-backdrop" type="button" aria-label="Close KK navigation" id="kk-sidebar-backdrop"></button>
 </div>
 <footer class="kk-footer kk-workspace-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
-<script src="./common.js"></script><script src="./theme.js"></script><script src="./kk-dashboard.js" defer></script><script src="./kk-id-render.js" defer></script><script src="./kk-id-member.js" defer></script><script src="./kk-services.js" defer></script></body></html>
+<script src="./common.js"></script><script src="./theme.js?v=20261025-kk-upload-first-dark-v3"></script><script src="./kk-dashboard.js?v=20261025-kk-upload-first-dark-v3" defer></script><script src="./kk-id-render.js?v=20261025-kk-upload-first-dark-v3" defer></script><script src="./kk-id-member.js?v=20261025-kk-upload-first-dark-v3" defer></script><script src="./kk-services.js?v=20261025-kk-upload-first-dark-v3" defer></script></body></html>

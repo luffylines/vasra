@@ -7,7 +7,8 @@
   },
   "scripts": {
     "start": "node server.cjs",
-    "test": "node --test"
+    "test": "node --test",
+    "check:deploy": "node scripts/verify-static-deploy.cjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.9",
