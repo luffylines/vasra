@@ -2,7 +2,7 @@
 (async()=>{
  const view=document.body.dataset.view;
  const $=s=>document.querySelector(s);
- const feedback=(message,kind='info')=>{const el=$('#kk-feedback');if(!el)return;el.textContent=message;el.dataset.kind=kind;el.hidden=!message;};
+ const feedback=(message,kind='info')=>{const el=$('#kk-feedback');if(!el)return;if(message&&(kind==='error'||kind==='success')){el.textContent='';el.hidden=true;window.showVasraToast(message,kind);return;}el.textContent=message;el.dataset.kind=kind;el.hidden=!message;};
  const busy=(form,on)=>{const btn=form.querySelector('[type="submit"]');if(btn){btn.disabled=on;btn.setAttribute('aria-busy',String(on));}};
  // +63 is fixed; users enter exactly 10 digits, beginning with 9.
  // Pasted +639XXXXXXXXX, 09XXXXXXXXX, and 9XXXXXXXXX normalize to the same digits.
