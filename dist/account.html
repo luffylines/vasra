@@ -433,4 +433,26 @@
     <button type="button" id="delete-project-cancel" class="secondary">Cancel</button>
     <button type="button" id="delete-project-button" class="project-delete-confirm" disabled>Delete Project</button>
   </div>
+</dialog><dialog id="kk-delete-dialog" class="kk-delete-dialog" aria-labelledby="kk-delete-title" aria-describedby="kk-delete-description">
+ <form id="kk-delete-confirm-form" novalidate>
+  <div class="kk-delete-modal-heading"><span class="kk-delete-symbol" aria-hidden="true">!</span><div>
+    <span class="kk-delete-overline">SK STAFF · DUPLICATE RECORD MANAGEMENT</span>
+    <h3 id="kk-delete-title">Delete KK Profile?</h3>
+  </div></div>
+  <p id="kk-delete-description">Permanently remove this KK account and related records. Hindi ito maibabalik.</p>
+  <div class="kk-delete-target"><strong id="kk-delete-target-name"></strong><small id="kk-delete-target-id"></small></div>
+  <label for="kk-delete-challenge">1. Copy this unique confirmation code</label>
+  <div class="kk-delete-copy-group">
+   <input id="kk-delete-challenge" type="text" readonly aria-label="Unique code to copy">
+   <button type="button" id="kk-delete-copy">Copy Code</button>
+  </div>
+  <label for="kk-delete-confirm-code">2. Paste the exact code here</label>
+  <input id="kk-delete-confirm-code" type="text" autocomplete="off" spellcheck="false" placeholder="Paste DELETE KK code" required>
+  <label for="kk-delete-confirm-name">3. Enter the complete KK member name</label>
+  <input id="kk-delete-confirm-name" type="text" autocomplete="off" spellcheck="false" placeholder="Full name exactly as shown" required>
+  <label class="kk-delete-understand"><input id="kk-delete-acknowledge" type="checkbox" required>
+   I understand that the KK login, profile, points, participation, service requests and ID will be deleted permanently.</label>
+  <p id="kk-delete-dialog-status" role="status" aria-live="polite"></p>
+  <div class="kk-delete-modal-actions"><button type="button" id="kk-delete-cancel">Cancel</button><button type="submit" id="kk-delete-submit" disabled>Delete KK Profile</button></div>
+ </form>
 </dialog><script src="./common.js"></script><script src="./shell.js"></script><script src="./duty-data.js"></script><script src="./account.js"></script><script src="./awards-management.js"></script><script src="./duty-management.js"></script><script src="./kk-staff.js"></script><script src="./kk-service-staff.js"></script><script src="./disclosure-admin.js"></script><script>document.addEventListener("click",function(e){const b=e.target.closest(".password-toggle");if(!b)return;const input=b.parentElement.querySelector("input");const visible=input.type==="text";input.type=visible?"password":"text";b.textContent=visible?"Show":"Hide";b.setAttribute("aria-label",visible?"Show password":"Hide password");b.setAttribute("aria-pressed",String(!visible));});</script></body></html>
