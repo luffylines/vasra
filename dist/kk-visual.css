@@ -1,0 +1,65 @@
+/* SK VASRA 5-step youth view, visual parity with the approved layout */
+.kk-youth-shell{display:grid;grid-template-columns:238px minmax(0,1fr);min-height:100dvh}
+.kk-youth-sidebar{background:linear-gradient(160deg,#162f59,#0a1d3b);color:#d7e6f7;padding:27px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100dvh}
+.kk-youth-brand{display:flex;align-items:center;gap:12px;padding:0 6px 23px;border-bottom:1px solid #33517b;color:#fff;text-decoration:none}
+.kk-youth-brand img{width:44px;height:44px;border:3px solid #fff;border-radius:12px;object-fit:cover}
+.kk-youth-brand strong{display:block;font:800 16px Manrope,sans-serif}
+.kk-youth-brand small{display:block;color:#aac4e7;font-size:11px;line-height:1.5}
+.kk-youth-nav-label{font-size:10px;letter-spacing:1.4px;color:#a7bfdd;font-weight:800;margin:26px 10px 13px}
+.kk-youth-sidebar nav{display:flex;flex-direction:column;gap:6px}
+.kk-youth-sidebar nav a{display:flex;align-items:center;gap:13px;padding:12px 14px;color:#c9ddf5;border-radius:10px;text-decoration:none;font-size:13px;font-weight:750;min-height:44px}
+.kk-youth-sidebar nav a span{font-size:21px}
+.kk-youth-sidebar nav a:hover,.kk-youth-sidebar nav a[aria-current=page]{background:#2d528b;color:#fff}
+.kk-youth-sidebar nav a[aria-current=page]{box-shadow:inset 3px 0 #96bcff}
+.kk-youth-nav-foot{margin:auto 6px 0;padding-top:20px;border-top:1px solid #39527a;font-size:10px;line-height:2;color:#b3c8e4}
+.kk-youth-page{min-width:0;background:#f8faff}
+.kk-youth-page .kk-main{max-width:none;padding:27px clamp(16px,2.2vw,36px) 48px;margin:0;min-height:0}
+.kk-youth-page .kk-dashboard{max-width:none}
+.kk-youth-page .kk-footer{max-width:none;margin:0 25px;padding:18px}
+.kk-youth-page .kk-dashboard-head h1{font-size:clamp(24px,2.6vw,32px);color:#102e59}
+.kk-youth-page .kk-dashboard-head p,.kk-youth-page .kk-helper{font-size:13px;line-height:1.7}
+.kk-youth-page .kk-summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:21px}
+.kk-youth-page .kk-summary article{padding:13px 16px;border-radius:12px}
+.kk-youth-page .kk-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin:25px 0}
+.kk-youth-page .kk-step{border:0;background:transparent;position:relative;padding:0 4px 3px;gap:6px}
+.kk-youth-page .kk-step:after{content:"";position:absolute;top:21px;left:calc(50% + 28px);right:calc(-50% + 28px);height:2px;background:#cbd9ea}
+.kk-youth-page .kk-step:last-child:after{display:none}
+.kk-youth-page .kk-step.done:after{background:#386fc7}
+.kk-youth-page .kk-step span{width:43px;height:43px;border-radius:50%;font-size:16px;background:#bfcbdc;color:#fff;z-index:1}
+.kk-youth-page .kk-step.active span,.kk-youth-page .kk-step.done span{background:#2056ae;color:#fff}
+.kk-youth-page .kk-step strong{font-size:13px;font-weight:800;color:#304d77}
+.kk-youth-page .kk-step small{font-size:11px;line-height:1.5}
+.kk-youth-page .kk-profile-workspace{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(290px,.85fr);gap:17px}
+.kk-youth-page .kk-profile-sheet{padding:22px!important;border-radius:12px}
+.kk-youth-page .kk-profile-sheet h2{font-size:23px;color:#173b6e}
+.kk-youth-page .kk-form-intro{font-size:13px;color:#647f9d}
+.kk-youth-page .kk-form-fields{gap:16px}
+.kk-youth-page .kk-section-with-icon{grid-column:1/-1;display:flex;align-items:center;gap:12px;border-bottom:1px solid #dde7f3;padding:7px 0 12px;margin:5px 0}
+.kk-youth-page .kk-heading-icon{width:43px;height:43px;display:grid;place-items:center;flex:none;border-radius:10px;background:#e7f1ff;color:#215cbb;font-size:23px}
+.kk-youth-page .kk-section-with-icon b{display:block;font:800 17px Manrope,sans-serif;color:#1a3d6b}
+.kk-youth-page .kk-section-with-icon small{display:block;color:#6c86a3;font-size:12px}
+.kk-youth-page .kk-form label:not(.kk-checkbox),.kk-youth-page .kk-yn-field legend{font-size:14px;font-weight:750;line-height:1.5;color:#25436f}
+.kk-youth-page .kk-label-title{display:inline-flex;gap:4px;align-items:baseline}
+.kk-youth-page .kk-required{color:#de2434!important;display:inline!important;font-size:15px!important;font-weight:900!important;vertical-align:baseline!important;white-space:nowrap!important}
+.kk-youth-page .kk-form select,.kk-youth-page .kk-form input:not([type=checkbox]):not([type=radio]){font-size:16px!important;min-height:45px;border-radius:9px}
+.kk-youth-page .kk-id-upload{margin-top:12px;padding-top:20px}
+.kk-youth-page .kk-form-section-head h3{font-size:17px}
+.kk-youth-page .kk-form-section-head p{font-size:13px}
+.kk-youth-page .kk-id-drop{background:linear-gradient(150deg,#f8fcff,#f0f7ff);border:1.5px dashed #9bc2ed;border-radius:11px;min-height:175px}
+.kk-youth-page .kk-id-chip-row span{font-size:12px}
+.kk-youth-page .kk-yn-field{border:0;padding:5px 0;background:transparent}
+.kk-youth-page .kk-yn-field legend{font-size:14px}
+.kk-youth-page .kk-yn-field>label{font-size:14px!important}
+.kk-youth-page .kk-profile-preview{position:sticky;top:14px;background:#fff;border-radius:12px;padding:16px;max-height:calc(100dvh - 27px);overflow:auto}
+.kk-youth-page .kk-preview-title{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.kk-youth-page .kk-preview-title>span{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:#e8f1ff;color:#235eb1;font-size:23px}
+.kk-youth-page .kk-preview-title h3{font:800 17px Manrope,sans-serif;color:#173d70;margin:0}
+.kk-youth-page .kk-preview-title p{color:#6f87a7;font-size:12px;margin:3px 0 0}
+.kk-youth-page .kk-preview-card{padding:12px;border-radius:10px}
+.kk-youth-page .kk-preview-card h4{font-size:14px;padding-bottom:8px;border-bottom:1px solid #e2ebf6}
+.kk-youth-page .kk-preview-card dt{font-size:12px}
+.kk-youth-page .kk-preview-card dd{font-size:13px}
+.kk-youth-page #kk-next{background:#235ac1}
+@media(max-width:1150px){.kk-youth-page .kk-profile-workspace{grid-template-columns:minmax(0,1.4fr) minmax(260px,.9fr)}}
+@media(max-width:970px){.kk-youth-shell{grid-template-columns:1fr}.kk-youth-sidebar{position:relative;height:auto;padding:13px 17px}.kk-youth-brand{padding-bottom:10px}.kk-youth-sidebar nav{flex-direction:row;overflow-x:auto;padding-top:8px}.kk-youth-sidebar nav a{white-space:nowrap;padding:9px 12px}.kk-youth-nav-label,.kk-youth-nav-foot{display:none}.kk-youth-page .kk-main{padding:22px 18px}}
+@media(max-width:730px){.kk-youth-page .kk-profile-workspace{grid-template-columns:1fr}.kk-youth-page .kk-profile-preview{position:static;max-height:none}.kk-youth-page .kk-profile-sheet{padding:15px!important}.kk-youth-page .kk-form-fields{grid-template-columns:1fr}.kk-youth-page .kk-step span{width:32px;height:32px;font-size:13px}.kk-youth-page .kk-step:after{top:16px;left:calc(50% + 19px);right:calc(-50% + 19px)}.kk-youth-page .kk-step strong{font-size:10px}.kk-youth-page .kk-step small{font-size:9px}.kk-youth-page .kk-summary article{padding:10px 8px}.kk-youth-page .kk-summary article strong{font-size:13px}}

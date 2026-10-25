@@ -3,6 +3,7 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - feature/kk-youth-profiling-20261024
       - migration/vercel-supabase
       - ui/sk-council-branding-home-icons-20261024
       - feature/officer-contact-details-20261024

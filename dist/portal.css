@@ -414,3 +414,46 @@
 @media(max-width:390px){
  .portal-refresh #duty-officer-portraits[data-layout="group"]{grid-template-columns:minmax(0,1fr)}
 }
+
+
+/* When the SK has not uploaded a dedicated duty portrait, do not stretch the
+   initials across a giant blank poster. The organizational portrait remains
+   independent and is never silently substituted for an SK Duty picture. */
+.portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"][data-photo-state="missing"]{
+ min-height:0;height:auto;padding:16px;background:#f1f6fd;border-radius:0
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile{
+ position:relative;display:flex;flex-direction:column;justify-content:center;
+ align-items:center;gap:7px;width:100%;height:auto;min-height:0;
+ padding:20px 12px;background:#fff;border:1px solid #d7e4f4;border-radius:15px
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile-frame{
+ position:relative;inset:auto;display:grid;place-items:center;
+ width:90px;height:106px;min-height:0;max-width:100%;aspect-ratio:90/106;
+ background:#dbeaf9;border:1px solid #c8d9ee;border-radius:13px
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile-fallback{
+ position:static;inset:auto;display:block;color:#244f89;font-size:27px;line-height:1.2
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile:after{display:none}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile strong,
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile small{
+ position:static;inset:auto;display:block;margin:0;text-shadow:none;
+ text-align:center;color:#214674
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile small{
+ color:#58749a
+}
+.portal-refresh #duty-officer-portraits .duty-photo-notice{
+ display:block;margin:6px auto 0;font:500 12px/1.5 'DM Sans',sans-serif;
+ color:#5d7596;text-align:center;max-width:230px
+}
+.portal-refresh #duty-officer-portraits .duty-photo-notice[hidden]{display:none!important}
+@media(max-width:650px){
+ .portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"][data-photo-state="missing"]{
+  min-height:0;padding:12px;border-top:1px solid #c8dbef
+ }
+ .portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile{
+  min-height:0;padding:16px 12px
+ }
+}

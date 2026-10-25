@@ -220,7 +220,7 @@
   const saved=String(data.residence_barangay||'');
   const barangays=barangayList.slice();
   if(saved&&!barangays.some(([n])=>n===saved))barangays.push([saved,saved+' (saved; check against official list)']);
-  return '<div class="kk-section-heading">RESIDENT ADDRESS</div>'+
+  return '<div class="kk-section-heading kk-section-with-icon kk-address-heading"><span class="kk-heading-icon">⌖</span><span><b>Address Information</b><small>RESIDENT ADDRESS · Provide your complete residential address</small></span></div>'+
    field('residence_region','Region',{select:regionOptions,required:true})+
    field('residence_province','Province',{select:province,required:true})+
    field('residence_city','City / Municipality',{select:city,required:true})+
@@ -302,7 +302,7 @@
   items.map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(v||'—')+'</dd></div>').join('')+'</dl></section>';
  const renderPreview=()=>{
   const node=$('#kk-profile-preview');if(!node)return;
-  node.innerHTML='<h3>Profile Preview</h3><p>Details are updated as you complete each step.</p>'+
+  node.innerHTML='<div class="kk-preview-title"><span aria-hidden="true">♙</span><div><h3>Profile Preview</h3><p>Information will be updated as you complete the form.</p></div></div>'+
    previewSection('Personal Information',[['Name',[account.member.first_name,account.member.last_name].join(' ')],['Date of Birth',account.member.birthdate],['Gender',data.gender],['Civil Status',data.civil_status]])+
    previewSection('Address',[['Sitio/Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name],['House No./Street',data.street],['Barangay',data.residence_barangay]])+
    previewSection('Education',[['Attainment',data.education],['School',data.school_name],['Year Level',data.year_level]])+
@@ -322,7 +322,7 @@
   $('#kk-step-label').textContent='STEP '+current+' OF 5';
   $('#kk-step-title').textContent=titles[current-1];
   if(current===1)return '<div class="kk-form-fields kk-step-one">'+
-   '<div class="kk-section-heading">PERSONAL INFORMATION</div>'+
+   '<div class="kk-section-heading kk-section-with-icon"><span class="kk-heading-icon">♙</span><span><b>Personal Information</b><small>Basic information for your KK membership</small></span></div>'+
    field('religion','Religion',{select:options.religion,required:true})+
    field('civil_status','Civil Status',{select:options.civil,required:true})+
    field('gender','Gender',{select:options.gender,required:true})+
@@ -337,7 +337,7 @@
    const schoolRequired=!['no-formal','out-of-school'].includes(data.education)&&data.education_status!=='osy';
    const courseRequired=['senior-high','vocational','college','graduate'].includes(data.education)&&data.education_status!=='osy';
    return '<div class="kk-form-fields">'+
-    '<div class="kk-section-heading">EDUCATIONAL STATUS</div>'+
+    '<div class="kk-section-heading kk-section-with-icon"><span class="kk-heading-icon">▤</span><span><b>Educational Status</b><small>School, course and grade or year level</small></span></div>'+
     field('education_status','Current Educational Status',{select:options.educationStatus,required:true})+
     field('education','Educational Level',{select:options.edu,required:true})+
     field('year_level','Year / Grade Level',{select:yearLevelOptions[data.education]||[],required:true})+
@@ -346,6 +346,7 @@
     '</div><p class="kk-helper">Piliin muna ang Educational Level. Nakaayon dito ang mga Year / Grade Level choices. Required ang Course/Program para sa senior high, vocational, college o postgraduate kapag naaangkop.</p>';
   }
   if(current===3)return '<div class="kk-form-fields">'+
+   '<div class="kk-section-heading kk-section-with-icon"><span class="kk-heading-icon">ⓘ</span><span><b>Additional Information</b><small>Answer these four voter and KK Assembly questions</small></span></div>'+
    yesNoField('sk_voter','Are you a Registered SK Voter?')+
    yesNoField('national_voter','Registered National Voter?')+
    yesNoField('voted_last_election','Did You Vote Last Election?')+
@@ -378,9 +379,17 @@
   let result;
   try{result=await getApi('me');}
   catch(err){
-   loading.innerHTML='<div class="kk-load-error"><strong>Hindi ma-load ang KK profile</strong><p>'+esc(err.message)+
-   '</p><p>Siguraduhing sa iisang preview domain ka nag-login. Kung expired ang session, mag-login muli.</p>'+
-   '<a href="./kk-login">Go to KK Login</a> · <button type="button" id="kk-retry-load">Retry</button></div>';
+   // A missing KK database RPC cannot be repaired by logging in again. Keep
+   // setup/service failures separate from real authentication failures.
+   const reason=String(err?.message||'Hindi ma-load ang KK account.');
+   const setupUnavailable=/Hindi available ang database|migration|server configuration/i.test(reason);
+   const guidance=setupUnavailable
+    ? 'Hindi pa ready ang KK Profiling database para sa preview na ito. Kailangang i-verify ng SK administrator ang database migration at server settings bago makapag-save ng KK records.'
+    : 'Kung expired ang session, mag-login muli gamit ang parehong website domain. Kung paulit-ulit ang error, ipasuri ang KK service.';
+   loading.innerHTML='<div class="kk-load-error" role="alert"><strong>'+ (setupUnavailable?'KK Profiling database is not ready':'Hindi ma-load ang KK profile')+'</strong><p>'+esc(reason)+
+    '</p><p>'+esc(guidance)+'</p>'+
+    (setupUnavailable?'':'<a href="./kk-login">Go to KK Login</a> · ')+
+    '<button type="button" id="kk-retry-load">Retry</button></div>';
    $('#kk-retry-load')?.addEventListener('click',()=>{loading.textContent='Checking your KK account…';load();});
    return;
   }
