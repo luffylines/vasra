@@ -3,6 +3,7 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - feature/kk-session-dashboard-theme-20261025
       - fix/kk-readiness-duty-mobile-placeholder-20261025
       - feature/kk-youth-profiling-20261024
       - migration/vercel-supabase
