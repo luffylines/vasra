@@ -45,7 +45,7 @@ test('Shared dark mode is persistent and does not modify staff theme',()=>{
  assert.match(themeCss,/\.kk-form input/);
  assert.match(dashCss,/@media\(max-width:900px\)/);
  for(const file of ['dist/kk-profile.html','dist/kk-register.html','dist/kk-login.html','dist/kk-dashboard.html'])
-  assert.match(read(file),/script src="\.\/theme\.js"/,file);
+  assert.match(read(file),/script src="\.\/theme\.js(?:\?v=[a-zA-Z0-9-]+)?"/,file);
  for(const file of ['dist/shell.js','dist/kk.js','dist/theme.js','dist/kk-dashboard.js'])
   assert.doesNotThrow(()=>new vm.Script(read(file),{filename:file}));
 });
