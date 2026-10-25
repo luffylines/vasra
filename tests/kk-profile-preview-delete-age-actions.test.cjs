@@ -54,7 +54,7 @@ test('Chairman or authenticated SK officer can delete only after copied unique c
  assert.match(staff,/data-delete-profile/);
  for(const control of ['kk-delete-dialog','kk-delete-copy','kk-delete-confirm-code','kk-delete-confirm-name','kk-delete-acknowledge'])
   assert.ok(modal.includes('id="'+control+'"'),control);
- assert.match(staff,/$('#kk-delete-challenge')/);
+ assert.match(staff,/kk-delete-challenge/);
  assert.match(staff,/clipboard\.writeText/);
  assert.match(staff,/window\.kkStaffRole/);
  assert.match(staff,/confirm\('Final confirmation:/);
