@@ -140,7 +140,7 @@ async function loadOfficerContacts(){
   const result=await api('./api/officer-contacts/me');
   const c=result.contact||{};
   for(const key of ['address','email','phone','facebook_url']){
-   form.elements.namedItem(key).value=c[key]||'';
+   form.elements.namedItem(key).value=key==='phone'?staffMobileTen(c[key]):c[key]||'';
   }
   form.elements.namedItem('is_public').checked=c.is_public===true;
   officerContactMessage('Only your own account can edit these details. Public sharing is '+(c.is_public===true?'ON.':'OFF.'),'info');
@@ -151,6 +151,23 @@ async function loadOfficerContacts(){
   submit.disabled=true;
  }
 }
+const staffMobileTen=value=>{
+ let digits=String(value||'').replace(/[^0-9]/g,'');
+ if(digits.startsWith('63')&&digits.length>=12)digits=digits.slice(2);
+ if(digits.startsWith('0')&&digits.length>=11)digits=digits.slice(1);
+ return digits.slice(0,10);
+};
+$('#officer-contact-form')?.addEventListener('input',event=>{
+ if(!event.target.matches('input[data-ph-mobile]'))return;
+ const digits=staffMobileTen(event.target.value);
+ event.target.value=digits.startsWith('9')?digits:'';
+});
+$('#officer-contact-form')?.addEventListener('paste',event=>{
+ if(!event.target.matches('input[data-ph-mobile]'))return;
+ event.preventDefault();
+ const digits=staffMobileTen(event.clipboardData?.getData('text')||'');
+ event.target.value=digits.startsWith('9')?digits:'';
+});
 $('#officer-contact-form').onsubmit=async e=>{
  e.preventDefault();
  const form=e.currentTarget,submit=form.querySelector('[type="submit"]');
@@ -159,7 +176,7 @@ $('#officer-contact-form').onsubmit=async e=>{
  const data={
   address:String(fields.address||'').trim(),
   email:String(fields.email||'').trim(),
-  phone:String(fields.phone||'').trim(),
+  phone:String(fields.phone||'').trim()?'+63'+staffMobileTen(fields.phone):'',
   facebook_url:String(fields.facebook_url||'').trim(),
   is_public:form.elements.namedItem('is_public').checked
  };
