@@ -194,9 +194,7 @@
     '<div class="kk-document-preview-toolbar"><strong>Private Document Preview</strong><div>'+
     '<button type="button" data-view-id="'+escVal(m.id)+'">Open Full View</button>'+
     '<a href="./api/kk/staff/id/'+encodeURIComponent(m.id)+'" download>Download File</a></div></div>'+
-    (m.document.mime==='application/pdf'||/\.pdf$/i.test(m.document.name||'')?
-    '<iframe title="Full size uploaded ID PDF" loading="lazy" referrerpolicy="no-referrer" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview"></iframe>':
-    '<img alt="Uploaded KK Valid ID, staff-only preview" loading="lazy" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview">')+
+    '<iframe title="Full uploaded Valid ID preview (image or PDF)" loading="lazy" referrerpolicy="no-referrer" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview"></iframe>'+
     '</div>':'')+'</section>';
   }else if(detailTab==='history'){
    details='<section class="kk-child-card"><header><span class="kk-child-icon">'+svgIcon('clock')+'</span><h4>Review Activity</h4></header><p class="kk-muted">'+
