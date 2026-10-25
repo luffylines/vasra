@@ -176,17 +176,34 @@
    <div class="staff-delete-actions"><button type="button" id="staff-delete-copy" class="secondary">Copy Name</button><button type="submit" class="secondary" value="cancel">Cancel</button><button id="staff-delete-confirm" type="submit" class="danger" value="confirm" disabled>Confirm Deactivation</button></div>
   </form>
  </dialog>
- </section><section id="panel-audit" hidden><h2>Activity log</h2><p class="muted">Awtomatikong tala ng mga ginawa. Walang edit o delete sa dashboard.</p><div id="audit-list"></div><div class="pagination"><button id="audit-prev"><svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5m6-6-6 6 6 6"/></svg> Bago</button><span id="audit-page"></span><button id="audit-next">Mas luma <svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></section><section id="panel-kk-profiling" class="kk-staff-panel" hidden>
- <div class="kk-staff-heading"><div><span class="eyebrow">SANGGUNIANG KABATAAN VASRA · SK STAFF</span>
- <h2>KK Profiling</h2><p>Official youth profiling, verified membership, Sitio/Purok directory at secure review.</p></div>
- <a class="kk-staff-export" href="./api/kk/staff/export" download="SK-Vasra-Verified-KK.xlsx">Export Verified to Excel <svg class="ui-action-icon" data-direction="external" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/></svg></a></div>
- <p id="kk-staff-message" role="status" aria-live="polite"></p>
- <div id="kk-staff-stats" class="kk-staff-stats"></div>
- <section class="kk-staff-card" aria-labelledby="kk-applications-title"><div class="kk-staff-heading"><div><h3 id="kk-applications-title">Member Applications</h3><p>SK officers review submitted applications before verification. Automatic 50 welcome points kapag Verified.</p></div></div>
- <div class="kk-staff-filters"><label>Review Status<select id="kk-staff-filter"><option value="all">All profiles</option><option value="pending">Pending</option><option value="verified">Verified</option><option value="rejected">Rejected</option><option value="draft">Draft</option></select></label>
- <label>Search Member<input id="kk-staff-search" type="search" placeholder="Name / email / KK ID / Sitio"></label><button id="kk-staff-refresh" type="button" class="secondary">Refresh</button></div>
+ </section><section id="panel-audit" hidden><h2>Activity log</h2><p class="muted">Awtomatikong tala ng mga ginawa. Walang edit o delete sa dashboard.</p><div id="audit-list"></div><div class="pagination"><button id="audit-prev"><svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5m6-6-6 6 6 6"/></svg> Bago</button><span id="audit-page"></span><button id="audit-next">Mas luma <svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></section><section id="panel-kk-profiling" class="kk-staff-panel kk-reference-layout" hidden>
+ <div class="kk-profiling-topline">
+  <div class="kk-profiling-intro">
+   <h2>KK Profiling</h2>
+   <p>Review submitted applications before verification. Automatic 50 welcome points kapag Verified.</p>
+  </div>
+  <div class="kk-staff-filters" role="group" aria-label="KK applicant search and filters">
+   <label class="kk-toolbar-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.2 16.2 4.3 4.3"/></svg>
+    <input id="kk-staff-search" type="search" aria-label="Search KK members" placeholder="Search name, email, or KK ID..." autocomplete="off">
+   </label>
+   <label class="kk-toolbar-filter"><span class="sr-only">Review Status</span><select id="kk-staff-filter" aria-label="Review Status"><option value="all">All profiles</option><option value="pending">Pending</option><option value="verified">Verified</option><option value="rejected">Rejected</option><option value="draft">Draft</option></select></label>
+   <button id="kk-staff-refresh" type="button" class="kk-toolbar-refresh secondary" aria-label="Refresh KK applications">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.7 9A7 7 0 0 1 18 6l2 6M4 12l2 6A7 7 0 0 0 18.3 15"/></svg>
+    <span>Refresh</span>
+   </button>
+  </div>
+ </div>
+ <p id="kk-staff-message" class="kk-profile-feedback" role="status" aria-live="polite"></p>
+ <section class="kk-applications-section kk-staff-card" aria-label="Member Applications">
  <div class="kk-applications-layout"><div class="kk-applicants-column"><header class="kk-applicant-list-head"><h4 id="kk-applicant-count">Applicants</h4><label>Sort <select id="kk-staff-order" aria-label="Sort member applicants"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="name">Name A–Z</option></select></label></header><div id="kk-staff-list" class="kk-staff-members"></div></div><div id="kk-staff-detail" class="kk-applicant-detail" aria-live="polite"><p>Choose an applicant to review.</p></div></div>
  </section>
+ <div class="kk-profile-secondary-tools">
+  <details class="kk-staff-stats-details">
+   <summary>Membership summary and Excel export</summary>
+   <div id="kk-staff-stats" class="kk-staff-stats"></div>
+   <a class="kk-staff-export" href="./api/kk/staff/export" download="SK-Vasra-Verified-KK.xlsx">Export Verified to Excel <svg class="ui-action-icon" data-direction="external" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/></svg></a>
+  </details>
  <section class="kk-staff-card kk-sitio-section" aria-labelledby="kk-sitio-title">
   <div class="kk-staff-heading kk-sitio-head"><div><h3 id="kk-sitio-title">Sitio / Purok Management</h3>
    <p>Official sitios ng Barangay Vasra at bilang ng registered residents sa bawat sitio.</p></div>
@@ -220,6 +237,7 @@
   <h4>Published & Unpublished Rewards</h4><div id="kk-staff-reward-list" class="kk-staff-members"></div>
   <h4>Member Redemption Requests</h4><div id="kk-staff-redemption-list" class="kk-staff-members"></div>
  </section>
+ </div>
  </section><section id="panel-settings" class="account-settings-panel" hidden>
 <div class="settings-header"><div class="eyebrow">PERSONAL ACCOUNT</div><h2>Account Settings</h2><p>Manage your email and password securely.</p></div>
 <div class="settings-layout">
