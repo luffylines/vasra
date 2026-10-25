@@ -4,7 +4,7 @@
  const escVal=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
  const request=(path,body)=>api('./api/kk/staff'+(path?'/'+path:''),body?{method:'POST',body:JSON.stringify(body)}:{});
  let members=[],sitios=[],perks=[],redemptions=[],participation=[];
- let loading=false, selectedMemberId=null, detailTab='profile';
+ let loading=false, selectedMemberId=null, detailTab='profile',hasSelectedInitialMember=false;
  const status=(message='',error=false)=>{const target=$('#kk-staff-message');if(!target)return;target.textContent=message;target.dataset.kind=error?'error':'info';};
  const initials=m=>[m.first_name,m.middle_name,m.last_name].filter(Boolean).join(' ');
  const stats=()=>{
@@ -150,6 +150,9 @@
   showing.sort((a,b)=>chosen==='name'?initials(a).localeCompare(initials(b)):
     chosen==='old'?(a.created_at||'').localeCompare(b.created_at||''):
     (b.created_at||'').localeCompare(a.created_at||''));
+  // Select the first real applicant on initial successful load, like the reference design.
+  // Never insert mock applicants or reset an officer's manual selection on refresh.
+  if(showing.length && !hasSelectedInitialMember){selectedMemberId=showing[0].id;hasSelectedInitialMember=true;detailTab='profile';}
   list.innerHTML=showing.length?showing.map(memberCard).join(''):
    '<p class="kk-muted">Walang KK records na tumutugma sa filter.</p>';
   renderMemberDetail();
@@ -159,17 +162,26 @@
   try{
    // Separate calls avoid falsely claiming that the KK schema is missing
    // when a different, optional endpoint fails.
-   const [result,sitioResult,catalog]=await Promise.all([request(''),request('sitios'),request('catalog')]);
-   if(!Array.isArray(result?.members)||!Array.isArray(sitioResult?.sitios))
-    throw Error('Invalid KK staff response.');
-   members=result.members;sitios=sitioResult.sitios;
+   const result=await request('');
+   if(!Array.isArray(result?.members))throw Error('Invalid KK staff member response.');
+   // Optional modules must never blank the applications directory when unavailable.
+   const [sitiosResult,catalogResult]=await Promise.allSettled([request('sitios'),request('catalog')]);
+   const sitioData=sitiosResult.status==='fulfilled'?sitiosResult.value:null;
+   const catalog=catalogResult.status==='fulfilled'?catalogResult.value:null;
+   members=result.members;sitios=Array.isArray(sitioData?.sitios)?sitioData.sitios:[];
    perks=Array.isArray(catalog?.perks)?catalog.perks:[];
    redemptions=Array.isArray(result?.redemptions)?result.redemptions:[];
    participation=Array.isArray(result?.participation)?result.participation:[];
    stats();displayMembers();displaySitios();displayParticipants();displayRewards();
-   status('Updated · '+members.length+' KK members · '+sitios.length+' official sitios.');
+   status('Updated · '+members.length+' KK members · '+sitios.length+' official sitios.'+
+     (sitiosResult.status==='rejected'||catalogResult.status==='rejected'?' Some optional management data could not load.':''));
   }catch(e){
-   status('Hindi ma-load ang KK records: '+e.message+' I-check ang staff session at kung sa tamang preview domain ka naka-login.',true);
+   const needsLogin=/mag-login|session|401|unauthorized|not authenticated/i.test(String(e.message||''));
+   status(needsLogin?
+    'SK session is not valid on this preview domain. Mag-login sa SK Staff account sa parehong preview domain, pagkatapos i-click ang Refresh.':
+    'Hindi ma-load ang KK records: '+e.message+' Suriin ang database connection at subukang mag-refresh.',true);
+   const list=$('#kk-staff-list');
+   if(list && !members.length)list.innerHTML='<p class="kk-muted">Hindi na-load ang KK applications. '+(needsLogin?'<a href="./account">Open SK Staff Login</a>':'Subukang muli gamit ang Refresh button.')+'</p>';
   }finally{loading=false;}
  }
  window.loadKKStaff=refresh;
