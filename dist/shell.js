@@ -24,8 +24,15 @@
   if(target.endsWith('/index.html')||target.endsWith('/'))return 'home';
   return null;
  };
+ // One authoritative active state, derived from the current public URL.
+ // Corrects stale/mismatched markup and supports both .html and clean routes.
+ const currentPage=match(location.pathname);
  for(const a of nav.querySelectorAll('a[href]')){
   const route=routes.find(item=>item.key===match(a.getAttribute('href')));
+  a.querySelectorAll(':scope > i').forEach(dot=>dot.remove());
+  if(route && route.key===currentPage)a.setAttribute('aria-current','page');
+  else a.removeAttribute('aria-current');
+
   if(!route)continue;
   const old=a.querySelector(':scope > svg, :scope > span[aria-hidden="true"]');
   if(old)old.outerHTML=icon(route.icon);
@@ -36,6 +43,19 @@
   if(!link.querySelector('svg'))link.insertAdjacentHTML('afterbegin',icon(fbPath));
   link.classList.add('social-footer-link');
  });
+ // Public KK entry is separate from the SK Officer/Chairman account.
+ // Desktop: beside Barangay Vasra / Philippine live time.
+ // Mobile: inside the accessible hamburger navigation.
+ if(!document.body.classList.contains('account-workspace')){
+  const loginIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>';
+  nav.insertAdjacentHTML('beforeend','<a class="kk-mobile-nav-link" href="./kk-login">'+loginIcon+'<span>KK Login / Register</span></a>');
+  const locationTag=document.querySelector('.page-top .location-tag');
+  if(locationTag){
+   const actions=document.createElement('div');actions.className='kk-page-actions';
+   locationTag.before(actions);actions.append(locationTag);
+   actions.insertAdjacentHTML('beforeend','<a class="kk-top-login" href="./kk-login" aria-label="KK Login and Registration">'+loginIcon+'<span>Login</span></a>');
+  }
+ }
  const topbar=document.createElement('div');
  topbar.className='mobile-appbar';
  topbar.innerHTML='<a class="mobile-brand" href="./" aria-label="SK Vasra homepage"><img src="./sk%20logo.jpg" alt=""><span>SK VASRA<small>Sangguniang Kabataan Vasra</small></span></a><button class="mobile-menu-toggle" type="button" aria-controls="vasra-sidebar" aria-expanded="false" aria-label="Buksan ang menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>';

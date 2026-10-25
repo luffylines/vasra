@@ -26,6 +26,22 @@
     {
       "source": "/youth-leaders",
       "destination": "/youth-leaders.html"
+    },
+    {
+      "source": "/kk-login",
+      "destination": "/kk-login.html"
+    },
+    {
+      "source": "/kk-register",
+      "destination": "/kk-register.html"
+    },
+    {
+      "source": "/kk-profile",
+      "destination": "/kk-profile.html"
+    },
+    {
+      "source": "/kk-dashboard",
+      "destination": "/kk-dashboard.html"
     }
   ],
   "redirects": [
@@ -52,6 +68,26 @@
     {
       "source": "/youth-leaders.html",
       "destination": "/youth-leaders",
+      "permanent": true
+    },
+    {
+      "source": "/kk-login.html",
+      "destination": "/kk-login",
+      "permanent": true
+    },
+    {
+      "source": "/kk-register.html",
+      "destination": "/kk-register",
+      "permanent": true
+    },
+    {
+      "source": "/kk-profile.html",
+      "destination": "/kk-profile",
+      "permanent": true
+    },
+    {
+      "source": "/kk-dashboard.html",
+      "destination": "/kk-dashboard",
       "permanent": true
     }
   ]

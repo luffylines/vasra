@@ -60,7 +60,7 @@ test('SK Council owns the chart route and navigation while Duty presentation sta
  for(const file of ['index.html','projects.html','duty.html','contacts.html','transparency.html','account.html','youth-leaders.html']){
   const s=fs.readFileSync(path.join(dist,file),'utf8');const nav=s.slice(s.indexOf('<nav aria-label="Pangunahing navigation">'),s.indexOf('</nav>'));if(file==='account.html'){assert.match(s,/id="staff-nav"/);continue;}assert(nav.includes('SK Duty'));assert(nav.includes('SK Council'));assert(nav.includes('Contacts'));
  }
- const trans=fs.readFileSync(path.join(dist,'transparency.html'),'utf8');assert.doesNotMatch(trans,/id="officials"|id="officials-grid"/);for(const id of ['about-sk','annual-budget','project-spending','monthly-reports'])assert(trans.includes('id="'+id+'"'));
+ const trans=fs.readFileSync(path.join(dist,'transparency.html'),'utf8');assert.doesNotMatch(trans,/id="officials"|id="officials-grid"/);for(const id of ['about-sk','disclosure-board','sk-fdp-cards','monthly-reports'])assert(trans.includes('id="'+id+'"'));
  const config=JSON.parse(fs.readFileSync(path.join(dist,'../vercel.json'),'utf8'));assert(config.rewrites.some(r=>r.source==='/youth-leaders'&&r.destination==='/youth-leaders.html'));
 });
 test('Youth Leaders provides retryable loading errors and published-record rendering',async()=>{

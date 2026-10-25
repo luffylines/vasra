@@ -34,7 +34,8 @@
    const result=await api('./api/contact-message',{method:'POST',body:JSON.stringify(payload)});
    if(result?.accepted!==true)throw Error('Hindi pa naipasa ang mensahe. Subukan muli.');
    form.reset();
-   status('Tinanggap ng email service ang iyong mensahe. Hinihintay pa ang delivery sa SK Vasra inbox; maaari ka ring makipag-ugnay sa kanilang official Facebook page.','success');
+   const reference=typeof result.reference==='string'?result.reference:'';
+   status('Naipasa sa Resend, ngunit hindi pa kumpirmadong dumating sa Gmail inbox ng SK Vasra.'+(reference?' Email tracking ID: '+reference+'.':'')+' Kung hindi natanggap, tingnan ang Delivery/Email Logs sa Resend dashboard at Spam/All Mail ng official Gmail.','info');
   }catch(error){
    status((error?.message||'Hindi naipadala ang mensahe.')+' Maaari ka ring direktang mag-email sa skbrgyvasraqc@gmail.com.','error');
   }finally{

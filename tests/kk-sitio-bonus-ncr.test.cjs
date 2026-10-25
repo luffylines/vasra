@@ -1,0 +1,71 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
+const html=read('dist/account.html'),staff=read('dist/kk-staff.js'),profile=read('dist/kk-profile.html'),kk=read('dist/kk.js'),handler=read('lib/handler.cjs');
+const bonus=read('supabase/migrations/20261025001500_kk_verified_welcome_points.sql');
+test('KK staff uses searchable sitio directory with grouped resident and verification counts',()=>{
+ assert.match(html,/id="kk-sitio-add-toggle"/);
+ assert.match(html,/id="kk-sitio-editor" hidden/);
+ assert.match(html,/id="kk-sitio-search"/);
+ assert.match(html,/id="kk-sitio-totals"/);
+ assert.match(staff,/const sitioCounts=id=>/);
+ assert.match(staff,/members\.filter\(m=>String\(m\.profile\?\.sitio_id/);
+ assert.match(staff,/counts\.registered/);
+ assert.match(staff,/counts\.verified/);
+ assert.match(staff,/aria-expanded/);
+ assert.match(staff, /kk-sitio-search'\)\?\.addEventListener\('input',displaySitios/);
+});
+test('SK decides which rewards become available and redemption requests require staff review',()=>{
+ assert.match(html,/id="kk-perk-form"/);
+ assert.match(html,/id="kk-staff-redemption-list"/);
+ assert.match(staff,/data-redemption/);
+ assert.match(staff,/request\('perks'/);
+ for(const route of ["if(path==='/api/kk/staff/perks'","if(path==='/api/kk/staff/redemption'","if(path==='/api/kk/redeem'"]){
+  const start=handler.indexOf(route);assert.ok(start>=0,route);
+  assert.doesNotMatch(handler.slice(start,start+270),/Points & Perks are temporarily unavailable/);
+ }
+ assert.match(read('dist/kk-dashboard.js'),/request\('redeem'/);
+});
+test('50 bonus is awarded once on status transition pending to verified, with database uniqueness',()=>{
+ assert.match(bonus,/create unique index if not exists kk_points_unique_verification_bonus/);
+ assert.match(bonus,/new\.status='verified' and old\.status is distinct from 'verified'/);
+ assert.match(bonus,/new\.reviewer_id is null/);
+ assert.match(bonus,/values\(new\.member_id,50,'KK verified profile welcome bonus',new\.reviewer_id\)/);
+ assert.match(bonus,/on conflict \(member_id\) where reason='KK verified profile welcome bonus' do nothing/);
+ assert.match(bonus,/after update of status on vasra\.kk_profiles/);
+ assert.match(bonus,/where pr\.status='verified' and pr\.reviewer_id is not null/);
+ assert.doesNotMatch(bonus,/\bDROP TABLE\b|\bTRUNCATE\b/);
+});
+test('Five steps keep official Vasra identity and use a single required address picker',()=>{
+ for(const v of ['Personal Information','Education','Additional Information','Emergency Contact','Review & Submit'])assert.ok(kk.includes(v),v);
+ assert.match(kk,/const metroCities=\['Caloocan','Las Piñas'/);
+ assert.match(kk,/addressFields\(\)/);
+ assert.match(kk,/data\.residence_city\|\|'Quezon City'/);
+ assert.match(kk,/fetch\('https:\/\/psgc\.cloud\/api\/v2\/cities-municipalities\//);
+ assert.match(kk,/credentials:'omit'/);
+ assert.doesNotMatch(kk,/metroAreaSelection\(\)|Current Barangay in Metro Manila|Reload Barangay List/);
+ assert.match(kk,/field\('year_level','Year \/ Grade Level',\{select:yearLevelOptions/);
+ assert.match(handler,/profile\.city='Quezon City';profile\.barangay='Vasra'/);
+ assert.match(handler,/'residence_region','residence_province','residence_city','residence_barangay'/);
+ assert.match(handler,/const ncrCities=new Set/);
+});
+test('Error states explain session or network instead of falsely claiming missing KK database',()=>{
+ assert.doesNotMatch(staff,/KK database is not active yet/);
+ assert.match(staff,/Hindi ma-load ang KK records:/);
+ assert.match(kk,/Hindi ma-load ang KK profile/);
+ assert.match(kk,/id="kk-retry-load"/);
+ assert.match(kk,/Go to KK Login/);
+ assert.match(read('dist/sw.js'),/vasra-v59-kk-form-registration-fix-20261025/);
+ for(const [p,s] of [['kk-staff.js',staff],['kk.js',kk],['handler.cjs',handler]])assert.doesNotThrow(()=>new vm.Script(s,{filename:p}));
+});
+
+test('Ten SK-supplied Sitio names are seeded once without inventing resident counts',()=>{
+ const migration=read('supabase/migrations/20261025003000_kk_vasra_sitio_directory.sql');
+ for(const sitio of ['BAI Lower','BAI Upper','BPI Compound','Central VASRA',
+  'DENR-NCR Compound','Fisheries Street','Palanas A','Palanas B','Palanas C','Palanas D'])
+  assert.ok(migration.includes("'"+sitio+"'"),sitio);
+ assert.match(migration,/on conflict \(normalized_name\) do nothing/);
+ assert.match(migration,/from vasra\.users where role='chairman'/);
+ assert.doesNotMatch(migration,/\bTRUNCATE\b|\bDELETE\b|\bDROP TABLE\b/i);
+ assert.doesNotMatch(migration,/registered_count|verified_count|members_assigned/);
+});

@@ -1,0 +1,51 @@
+<!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css"><link rel="stylesheet" href="./kk-dashboard.css"></head>
+<body class="kk-body kk-member-dashboard">
+<main class="kk-main"><div class="kk-dashboard">
+ <div class="kk-reg-toolbar"><a class="kk-register-brand" href="./"><img src="./sk%20logo.jpg" alt="SK Vasra logo"><span><strong>SK VASRA</strong><small>Sangguniang Kabataan Vasra</small></span></a>
+ <a class="kk-register-home" href="./">⌂ Home</a><button id="kk-dashboard-logout" type="button" class="kk-btn kk-btn-quiet">Logout ↗</button></div>
+ <div class="kk-dashboard-head"><div><span class="kk-tag">VERIFIED KATIPUNAN NG KABATAAN MEMBER</span><h1>My KK Dashboard</h1><p id="kk-welcome">Mga programa at serbisyo para sa kabataang Vasra.</p></div></div>
+ <p id="kk-dash-loading" class="kk-loading" role="status">Loading your secure dashboard…</p>
+ <div id="kk-dash-content" hidden>
+  <section class="kk-summary" aria-label="Membership overview">
+   <article><span>Membership</span><strong id="kk-dash-status">Verified</strong></article>
+   <article><span>KK ID</span><strong id="kk-dash-id">—</strong></article>
+   <article><span>Available Points</span><strong id="kk-dash-points">0</strong></article>
+  </section>
+  <nav class="kk-dashboard-tabs" aria-label="Member dashboard sections">
+   <button type="button" data-tab="projects" aria-current="page">Upcoming Projects</button>
+   <button type="button" data-tab="rewards">Points & Rewards</button>
+   <button type="button" data-tab="settings">Account Settings</button>
+  </nav>
+  <section data-section="projects" class="kk-dashboard-panel" aria-labelledby="kk-projects-title">
+   <h2 id="kk-projects-title">Upcoming SK Projects</h2><p>Mga published na Pinaplano o Isinasagawa na proyekto. Isang click lang ang registration; wala pang automatic points sa pag-join.</p>
+   <p id="kk-project-message" class="kk-feedback" role="status" hidden></p>
+   <div id="kk-upcoming-projects" class="kk-dashboard-grid"></div>
+   <h3>My Registered Activities</h3><div id="kk-joined-list"></div>
+  </section>
+  <section data-section="rewards" class="kk-dashboard-panel" aria-labelledby="kk-rewards-title" hidden>
+   <h2 id="kk-rewards-title">My Points & SK Rewards</h2>
+   <p>Ang SK Chairman ang magpo-publish ng rewards. Ang Redeem ay request muna at kailangang i-approve ng SK bago bawasan ang points.</p>
+   <p id="kk-redeem-message" class="kk-feedback" role="status" hidden></p>
+   <h3>Available Rewards</h3><div id="kk-reward-list" class="kk-dashboard-grid"></div>
+   <h3>Redemption History</h3><div id="kk-redemption-list"></div>
+  </section>
+  <section data-section="settings" class="kk-dashboard-panel" aria-labelledby="kk-settings-title" hidden>
+   <h2 id="kk-settings-title">My Account Settings</h2><p>Palitan ang password at email ng iyong KK account. Hindi ito ang SK Officer login.</p>
+   <div class="kk-settings-grid"><form id="kk-dash-password" class="kk-form kk-settings-card">
+    <h3>Change Password</h3>
+    <label>Current password<input type="password" name="current" autocomplete="current-password" minlength="1" required></label>
+    <label>New password<input type="password" name="password" autocomplete="new-password" minlength="10" maxlength="128" required></label>
+    <label>Confirm new password<input type="password" name="confirm" autocomplete="new-password" minlength="10" maxlength="128" required></label>
+    <button class="kk-btn" type="submit">Update Password</button><p id="kk-password-message" class="kk-feedback" role="status" hidden></p>
+   </form><form id="kk-dash-email" class="kk-form kk-settings-card">
+    <h3>Change Email</h3><p>Current email: <strong id="kk-current-email">—</strong></p>
+    <label>New email address<input type="email" name="email" autocomplete="email" maxlength="160" required></label>
+    <label>Current password<input type="password" name="current" autocomplete="current-password" required></label>
+    <button class="kk-btn" type="submit">Send Verification Link</button>
+    <p class="kk-helper">Buksan ang confirmation link gamit ang naka-login na KK account sa device na ito. Expires after 15 minutes.</p>
+    <p id="kk-email-message" class="kk-feedback" role="status" hidden></p>
+   </form></div>
+  </section>
+ </div>
+</div></main><footer class="kk-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
+<script src="./common.js"></script><script src="./kk-dashboard.js" defer></script></body></html>

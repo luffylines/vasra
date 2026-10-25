@@ -97,3 +97,41 @@
 
 /* Five public destinations wrap comfortably on narrow screens. */
 @media(max-width:600px){.site-header nav{flex-wrap:wrap}.site-header nav a{min-width:0;flex-basis:28%}}
+
+/* SK Full Disclosure Policy Board — 5 public Drive disclosure categories. */
+.sk-fdp-board{position:relative;isolation:isolate;border-color:#d1e1f5!important;
+ background:linear-gradient(137deg,#ffffff 55%,#f2f7ff 100%)!important;padding:27px!important;overflow:hidden}
+.sk-fdp-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}
+.sk-fdp-board h2{font:800 clamp(24px,3vw,34px)/1.22 Manrope,sans-serif;letter-spacing:-1px;color:#163a69;margin:9px 0 12px}
+.sk-fdp-board h2 em{font-style:normal;color:#3d79c7}
+.sk-fdp-heading p{font-size:13px;line-height:1.7;max-width:720px;margin:0;color:#607d9f}
+.sk-fdp-heading-mark{display:inline-flex;align-items:center;white-space:nowrap;gap:7px;border:1px solid #d4e5f9;
+ background:#eaf3ff;color:#245a99;padding:9px 12px;border-radius:999px;font:800 11px 'DM Sans',sans-serif}
+.sk-fdp-heading-mark svg{width:16px;height:16px}
+.sk-fdp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.sk-fdp-card{display:flex;flex-direction:column;min-width:0;min-height:240px;padding:20px;border:1px solid #dce7f6;
+ border-radius:15px;background:#fff;box-shadow:0 4px 16px #113d6e0b;color:inherit;text-decoration:none}
+.sk-fdp-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:19px}
+.sk-fdp-card-icon{width:43px;height:43px;display:grid;place-items:center;background:#eaf2ff;border-radius:12px;color:#2869bd}
+.sk-fdp-card-icon svg{width:23px;height:23px}
+.sk-fdp-card-number{font:800 10px/1.3 'DM Sans',sans-serif;letter-spacing:1px;color:#8fa4c0}
+.sk-fdp-card-body{flex:1;min-width:0}
+.sk-fdp-card-year{display:inline-block;font:800 10px 'DM Sans',sans-serif;letter-spacing:.8px;color:#3b6aab;margin-bottom:4px}
+.sk-fdp-board .sk-fdp-card h3{font:800 15px/1.38 Manrope,sans-serif;letter-spacing:-.2px;color:#173d6d;margin:5px 0 9px}
+.sk-fdp-board .sk-fdp-card p{font:400 11px/1.65 'DM Sans',sans-serif;color:#6983a5;margin:0}
+.sk-fdp-card-action{margin-top:18px;padding-top:12px;border-top:1px solid #e8eef7;
+ display:flex;align-items:center;justify-content:space-between;gap:10px;font:750 11px/1.5 'DM Sans',sans-serif;color:#7d8faa}
+.sk-fdp-card-action svg{width:17px;height:17px;flex:none;opacity:.35}
+.sk-fdp-card-live{cursor:pointer;border-color:#b5d2f5;box-shadow:0 4px 20px #1b5bad13;transition:transform .18s,border-color .18s,box-shadow .18s}
+.sk-fdp-card-live .sk-fdp-card-action{color:#2865af}
+.sk-fdp-card-live .sk-fdp-card-action svg{opacity:1}
+.sk-fdp-card-live:hover{transform:translateY(-3px);border-color:#6b9fdc;box-shadow:0 15px 35px #204c811f}
+.sk-fdp-card-live:focus-visible{outline:3px solid #347dcf;outline-offset:3px}
+.sk-fdp-footer{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ margin-top:20px;padding-top:16px;border-top:1px solid #dce7f6}
+.sk-fdp-footer #sk-fdp-status{font:500 11px/1.65 'DM Sans',sans-serif;color:#5d7898;max-width:680px}
+.sk-fdp-source{font:800 10px/1.4 'DM Sans',sans-serif;color:#91a3b9}
+@media(max-width:1080px){.sk-fdp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:660px){.sk-fdp-board{padding:17px!important}.sk-fdp-heading{flex-direction:column}.sk-fdp-card{padding:16px;min-height:220px}.sk-fdp-grid{gap:10px}}
+@media(max-width:470px){.sk-fdp-grid{grid-template-columns:minmax(0,1fr)}.sk-fdp-card{min-height:170px}.sk-fdp-card-top{margin-bottom:10px}.sk-fdp-board h2{font-size:25px}.sk-fdp-heading-mark{white-space:normal}}
+@media(prefers-reduced-motion:reduce){.sk-fdp-card-live{transition:none}}

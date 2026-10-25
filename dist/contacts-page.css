@@ -107,3 +107,30 @@
  .contacts-info-card small{margin-bottom:4px}
  .contacts-form-actions #contact-send{width:100%}
 }
+
+/* Required markers must remain on the same line as the contact-field title.
+   The outer label is a flex column; only the inner title is one inline text run. */
+.contacts-redesign .contacts-message-form .contacts-label-title{
+ display:block;width:100%;min-width:0;margin:0;color:#314e75;
+ font-size:12px;font-weight:750;line-height:1.5;white-space:normal
+}
+.contacts-redesign .contacts-message-form .contacts-required{
+ display:inline!important;white-space:nowrap!important;position:static!important;
+ color:#c14651!important;font-size:12px;font-weight:800;margin-left:2px;vertical-align:baseline
+}
+.contacts-redesign .contacts-message-form label:not(.contacts-consent)>input,
+.contacts-redesign .contacts-message-form label:not(.contacts-consent)>select,
+.contacts-redesign .contacts-message-form label:not(.contacts-consent)>textarea{
+ margin:0;min-width:0
+}
+@media(max-width:560px){
+ .contacts-redesign .contacts-message-form .contacts-form-pair{grid-template-columns:minmax(0,1fr)}
+ .contacts-redesign .contacts-message-form label:not(.contacts-consent){min-width:0}
+ .contacts-redesign .contacts-form-panel,.contacts-redesign .contacts-location-panel{min-width:0}
+}
+
+@media (hover:none) and (pointer:coarse){
+ .contacts-redesign .contacts-message-form input:not([type="checkbox"]),
+ .contacts-redesign .contacts-message-form select,
+ .contacts-redesign .contacts-message-form textarea{font-size:16px!important}
+}
