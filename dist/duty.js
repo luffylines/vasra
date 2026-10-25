@@ -85,18 +85,26 @@ function selectDay(index){
   if(managedDutyDays){
    const list=managedDutyProfiles.filter(p=>Array.isArray(p.duty_days)&&p.duty_days.includes(index+1));
    photos.dataset.layout=list.length===1?'single':list.length>1?'group':'empty';
+   photos.dataset.photoState=list.length===1&&!list[0].duty_photo_id?'missing':'ready';
    photos.innerHTML=list.length?list.map(p=>{
     const initials=String(p.name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
     const picture=p.duty_photo_id?'<img class="duty-photo-primary" src="./api/images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager">'+
      '<img class="duty-photo-backdrop" src="./api/images/'+encodeURIComponent(p.duty_photo_id)+'" alt="" aria-hidden="true" loading="eager">':'';
+    const photoNotice='<span class="duty-photo-notice"'+(p.duty_photo_id?' hidden':'')+'>'+(p.duty_photo_id?'Hindi ma-load ang SK Duty photo.':'Wala pang naka-upload na SK Duty photo.')+'</span>';
     return '<article class="duty-profile"><span class="duty-profile-frame">'+
      '<span class="duty-profile-fallback" aria-hidden="true">'+esc(initials||'SK')+'</span>'+picture+
      '</span><strong>'+esc(p.name)+'</strong><small>'+esc(({
       chairman:'SK Chairperson',kagawad:'SK Kagawad',secretary:'SK Secretary',treasurer:'SK Treasurer'
-     })[p.position]||'SK Officer')+'</small></article>';
+     })[p.position]||'SK Officer')+'</small>'+photoNotice+'</article>';
    }).join(''):'<p class="duty-profile-empty">Walang naka-assign na officer sa araw na ito. Makipag-ugnay sa SK Office.</p>';
    photos.querySelectorAll('img').forEach(img=>{
-    img.addEventListener('error',()=>{img.hidden=true;},{once:true});
+    img.addEventListener('error',()=>{
+     img.hidden=true;
+     if(img.classList.contains('duty-photo-primary')){
+      img.closest('.duty-profile')?.querySelector('.duty-photo-notice')?.removeAttribute('hidden');
+      if(list.length===1)photos.dataset.photoState='missing';
+     }
+    },{once:true});
    });
   }else{
    const src='./duty/'+d.file+'.jpg';
