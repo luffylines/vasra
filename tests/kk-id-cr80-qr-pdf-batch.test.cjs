@@ -46,7 +46,7 @@ test('The downloaded PDF has exact CR80 MediaBox on two pages',async()=>{
 });
 test('Member and staff preview run the SAME QR & artwork renderer',()=>{
  const memberHTML=read('dist/kk-dashboard.html'),staffHTML=read('dist/account.html');
- for(const html of [memberHTML,staffHTML])assert.match(html,/src="\.\/kk-id-render\.js"/);
+ for(const html of [memberHTML,staffHTML])assert.match(html,/src="\.\/kk-id-render\.js(?:\?v=[a-zA-Z0-9-]+)?"/);
  assert.match(member,/window\.KKIDRender\.pair/);
  assert.match(staff,/window\.KKIDRender\.pair/);
  assert.match(staff,/KKIDRender\.pdf\(pages/);
