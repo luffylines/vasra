@@ -40,10 +40,41 @@
     'senior-high':'Senior High School',yes:'Yes',no:'No'};
    return dictionary[String(value)]||String(value).replace(/-/g,' ').replace(/^./,c=>c.toUpperCase());
  };
+ const svgIcon=name=>{
+  const shapes={
+   person:'<circle cx="12" cy="7" r="3.4"/><path d="M5 21v-2.5a7 7 0 0 1 14 0V21"/>',
+   pin:'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.4"/>',
+   school:'<path d="m2 10 10-6 10 6-10 6-10-6Z"/><path d="M6 13v5c3 2 9 2 12 0v-5M22 10v7"/>',
+   note:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6m-6 4h6m-6 4h4"/>',
+   phone:'<path d="M7 3h3l2 5-2 2a14 14 0 0 0 4 4l2-2 5 2v3a3 3 0 0 1-3 3C10 20 4 14 4 6a3 3 0 0 1 3-3Z"/>',
+   document:'<path d="M5 2h9l5 5v15H5z"/><path d="M14 2v6h5M8 13h8M8 17h6"/>',
+   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
+   shield:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(shapes[name]||shapes.note)+'</svg>';
+ };
  const detailPairs=entries=>'<dl class="kk-child-pairs">'+entries.map(([key,value,kind])=>
-   '<div><dt>'+escVal(key)+'</dt><dd>'+escVal(pretty(value,kind))+'</dd></div>').join('')+'</dl>';
- const detailCard=(heading,icon,entries)=>'<section class="kk-child-card"><header><span class="kk-child-icon" aria-hidden="true">'+icon+'</span><h4>'+
+  '<div><dt>'+escVal(key)+'</dt><dd>'+escVal(pretty(value,kind))+'</dd></div>').join('')+'</dl>';
+ const detailCard=(heading,icon,entries)=>
+  '<section class="kk-child-card"><header><span class="kk-child-icon" aria-hidden="true">'+svgIcon(icon)+'</span><h4>'+
   escVal(heading)+'</h4></header>'+detailPairs(entries)+'</section>';
+ const yesNoRow=(label,value)=>{
+  const selected=pretty(value,'yesno');
+  return '<div class="kk-binary-row"><span class="kk-binary-label">'+escVal(label)+'</span><span class="kk-binary-values" aria-label="'+escVal(label)+': '+escVal(selected==='—'?'Not provided':selected)+'">'+
+   '<span class="kk-choice'+(selected==='Yes'?' selected':'')+'">Yes</span>'+
+   '<span class="kk-choice'+(selected==='No'?' selected':'')+'">No</span></span></div>';
+ };
+ const verifiedIdCard=m=>{
+  const doc=m.document;
+  return '<section class="kk-child-card kk-validid-card"><header><span class="kk-child-icon" aria-hidden="true">'+svgIcon('document')+'</span><h4>Uploaded Valid ID</h4></header>'+
+   (doc?.exists?'<div class="kk-document-summary">'+
+    '<div class="kk-document-thumbnail" aria-label="Private uploaded ID document">'+svgIcon('shield')+'</div>'+
+    '<div class="kk-document-info"><strong>'+escVal(doc.name||'Submitted Valid ID')+'</strong>'+
+    '<small>Uploaded: '+escVal(doc.uploaded_at?new Date(doc.uploaded_at).toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Manila'}):'Date not provided')+'</small>'+
+    '<small>Secured file · staff-only access</small></div>'+
+    '<button type="button" data-view-id="'+escVal(m.id)+'" aria-label="View secured valid ID for '+escVal(initials(m))+'">'+svgIcon('document')+' View File</button></div>':
+    '<p class="kk-muted">No document uploaded. Identity proof must be reviewed before verification, if required.</p>')+'</section>';
+ };
  const selectedMember=()=>members.find(m=>m.id===selectedMemberId);
  const memberCard=m=>{
    const full=initials(m),active=m.id===selectedMemberId;
@@ -51,7 +82,7 @@
     '" aria-pressed="'+String(active)+'"><span class="kk-applicant-avatar">'+escVal((m.first_name||'?')[0]+(m.last_name||'?')[0])+
     '</span><span class="kk-applicant-main"><strong>'+escVal(full)+'</strong><small>'+escVal(m.email)+
     '</small><small>KK ID: '+escVal(m.kk_id||'For verification')+' · '+escVal(m.birthdate||'—')+
-    ' · '+escVal(m.profile?.residence_city||'Quezon City')+'</small></span><span class="kk-applicant-meta">'+
+    ' · '+escVal(m.profile?.residence_city||'Not provided')+'</small></span><span class="kk-applicant-meta">'+
     '<span class="kk-state kk-state-'+escVal(m.status)+'">'+escVal(m.status)+'</span><b>'+
     escVal(m.points||0)+' pts</b></span><span class="kk-row-arrow" aria-hidden="true">›</span></button>';
  };
@@ -62,54 +93,51 @@
   if(!m){container.innerHTML='<div class="kk-child-empty"><strong>Select an applicant</strong><p>Pumili ng pangalan sa kaliwa para makita ang personal details at SK verification status.</p></div>';return;}
   const p=m.profile||{},full=initials(m),short=(m.first_name||'?')[0]+(m.last_name||'?')[0];
   const tab='<div class="kk-child-tabs" role="tablist" aria-label="Applicant details">'+
-   [['profile','Profile Details'],['history','Activity Log'],['documents','Documents']].map(([value,label])=>
-    '<button type="button" role="tab" data-child-tab="'+value+'" aria-selected="'+String(detailTab===value)+'">'+label+'</button>').join('')+'</div>';
+   [['profile','Profile Details','person'],['history','Activity Log','clock'],['documents','Documents','document']].map(([value,label,icon])=>
+    '<button type="button" role="tab" data-child-tab="'+value+'" aria-selected="'+String(detailTab===value)+'">'+svgIcon(icon)+
+    '<span>'+label+'</span></button>').join('')+'</div>';
   let details='';
   if(detailTab==='documents'){
-   details='<section class="kk-child-card"><header><span class="kk-child-icon">▣</span><h4>Uploaded Valid ID</h4></header>'+
-    (m.document?.exists?'<div class="kk-document-summary"><div><strong>'+escVal(m.document.name||'Submitted ID')+'</strong><small>Uploaded: '+escVal(m.document.uploaded_at||'—')+
-    '</small></div><button type="button" data-view-id="'+escVal(m.id)+'">View Valid ID securely</button></div>':
-    '<p class="kk-muted">Wala pang valid ID sa secured document storage. Huwag mag-verify kung kailangan pa ng identity proof.</p>')+'</section>';
+   details=verifiedIdCard(m);
   }else if(detailTab==='history'){
-   details='<section class="kk-child-card"><header><span class="kk-child-icon">◷</span><h4>Review Activity</h4></header><p class="kk-muted">'+
+   details='<section class="kk-child-card"><header><span class="kk-child-icon">'+svgIcon('clock')+'</span><h4>Review Activity</h4></header><p class="kk-muted">'+
     (m.status==='rejected'?'For correction · '+escVal(m.review_note||'No explanation'):
     m.status==='verified'?'SK verification approved.':'Application status: '+escVal(m.status))+'</p>'+
-    '<p class="kk-muted">Full audit records are in the staff Activity Log workspace.</p></section>';
+    '<p class="kk-muted">Detailed entries remain in the authorized staff Activity Log workspace. No activity is invented.</p></section>';
   }else{
    details='<div class="kk-child-grid">'+
-    detailCard('Personal Information','♙',[
+    detailCard('Personal Information','person',[
      ['Full Name',full],['Date of Birth',m.birthdate],['Gender',p.gender],['Civil Status',p.civil_status],
-     ['Religion',p.religion],['Solo Parent',p.solo_parent,'yesno'],['Family Members',p.family_count],['Siblings',p.siblings]])+
-    detailCard('Address','⌖',[
-     ['Region',p.residence_region||'NCR'],['Province',p.residence_province||'Metro Manila'],
-     ['City / Municipality',p.residence_city||'Quezon City'],['Barangay',p.residence_barangay||'Vasra'],
-     ['Sitio/Purok',sitioName(p.sitio_id)],['House No./Street',p.street],['Address Line 2',p.address_line_2]])+
-    detailCard('Education','▤',[
-     ['Educational Status',p.education_status],['Educational Attainment',p.education],
-     ['School',p.school_name],['Year Level',p.year_level],['Course / Program',p.course_program],
-     ['Employment',p.employment]])+
-    detailCard('Additional Information','≡',[
-     ['Registered SK Voter?',p.sk_voter||p.voter,'yesno'],
-     ['Registered National Voter?',p.national_voter,'yesno'],
-     ['Voted Last Election?',p.voted_last_election,'yesno'],
-     ['Attended KK Assembly?',p.kk_assembly,'yesno'],
-     ['Skills/Interests',p.interests]])+
-    detailCard('Emergency Contact','☏',[
-     ['Contact Person',p.emergency_name],['Contact Number',p.emergency_phone],
-     ['Relationship',p.emergency_relation]])+
-    '<section class="kk-child-card"><header><span class="kk-child-icon">▣</span><h4>Uploaded Valid ID</h4></header>'+
-    (m.document?.exists?'<p><strong>'+escVal(m.document.name||'Valid ID')+'</strong></p><button type="button" data-view-id="'+escVal(m.id)+'">View File</button>':
-    '<p class="kk-muted">No document uploaded</p>')+'</section></div>';
+     ['Solo Parent',p.solo_parent,'yesno'],['Family Members',p.family_count],['Religion',p.religion],['Siblings',p.siblings]])+
+    detailCard('Address','pin',[
+     ['Region',p.residence_region],['City',p.residence_city],
+     ['Barangay',p.residence_barangay],['Sitio/Purok',p.sitio_id?sitioName(p.sitio_id):null],
+     ['House No./Street',p.street],['Province',p.residence_province],['Address Line 2',p.address_line_2]])+
+    detailCard('Education','school',[
+     ['Educational Attainment',p.education],['School',p.school_name],
+     ['Year Level',p.year_level],['Employment Status',p.employment],
+     ['Educational Status',p.education_status],['Course / Program',p.course_program]])+
+    '<section class="kk-child-card kk-binary-card"><header><span class="kk-child-icon" aria-hidden="true">'+svgIcon('note')+
+    '</span><h4>Additional Information</h4></header>'+
+    yesNoRow('Are you a Registered SK Voter?',p.sk_voter||p.voter)+
+    yesNoRow('Registered National Voter?',p.national_voter)+
+    yesNoRow('Did You Vote Last Election?',p.voted_last_election)+
+    yesNoRow('Have you already attended a KK Assembly?',p.kk_assembly)+
+    (p.interests?'<p class="kk-binary-interests"><strong>Skills / Interests:</strong> '+escVal(p.interests)+'</p>':'')+
+    '</section>'+
+    detailCard('Emergency Contact','phone',[
+     ['Contact Person',p.emergency_name],['Contact Number',p.emergency_phone],['Relationship',p.emergency_relation]])+
+    verifiedIdCard(m)+'</div>';
   }
   container.innerHTML='<div class="kk-child-heading"><span class="kk-child-avatar">'+escVal(short)+'</span>'+
    '<div class="kk-child-title"><h3>'+escVal(full)+' <span class="kk-state kk-state-'+escVal(m.status)+'">'+escVal(m.status)+'</span></h3>'+
-   '<p>'+escVal(m.email)+' · KK ID: '+escVal(m.kk_id||'For verification')+'</p></div>'+
-   '<div class="kk-child-points"><strong>'+escVal(m.points||0)+' pts</strong><small>Current points</small></div>'+
+   '<p>'+escVal(m.email)+' <span aria-hidden="true"> · </span> KK ID: '+escVal(m.kk_id||'For verification')+'</p></div>'+
+   '<div class="kk-child-points"><strong>'+escVal(m.points||0)+' pts</strong><small>Current Points</small></div>'+
    '<button type="button" class="kk-child-close" data-close-member aria-label="Close member details">×</button></div>'+
    tab+details+
    (m.review_note?'<p class="kk-note">Review Note: '+escVal(m.review_note)+'</p>':'')+
    (m.status==='pending'?'<div class="kk-child-actions"><button type="button" class="primary" data-review="verified" data-id="'+escVal(m.id)+
-    '">✓ Verify Profile</button><button type="button" class="secondary" data-review="rejected" data-id="'+escVal(m.id)+
+    '">'+svgIcon('shield')+' Verify Profile</button><button type="button" class="secondary" data-review="rejected" data-id="'+escVal(m.id)+
     '">✕ Reject / Request Correction</button></div>':'');
  };
  const displayParticipants=()=>{
@@ -150,6 +178,8 @@
   showing.sort((a,b)=>chosen==='name'?initials(a).localeCompare(initials(b)):
     chosen==='old'?(a.created_at||'').localeCompare(b.created_at||''):
     (b.created_at||'').localeCompare(a.created_at||''));
+  if(!selectedMemberId&&showing.length)selectedMemberId=showing[0].id;
+  if(selectedMemberId&&!showing.some(m=>m.id===selectedMemberId))selectedMemberId=showing[0]?.id||null;
   list.innerHTML=showing.length?showing.map(memberCard).join(''):
    '<p class="kk-muted">Walang KK records na tumutugma sa filter.</p>';
   renderMemberDetail();
