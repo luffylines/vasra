@@ -1,6 +1,6 @@
 
 /* Purpose-built compact organizational chart page; does not affect SK Duty posters. */
-.leaders-compact .page-top{height:56px;margin-bottom:16px}
+.leaders-compact .page-top{height:78px;margin-bottom:28px}
 .leaders-compact .leaders-heading{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
 .leaders-compact .leaders-heading .eyebrow{font-size:10px;letter-spacing:1.5px;color:#6f8ab0;font-weight:800}
 .leaders-compact .leaders-heading h1{font-size:clamp(22px,2.2vw,32px);letter-spacing:-1px;color:#1b3864;line-height:1.2;margin:0}
@@ -27,7 +27,7 @@
 .leaders-compact #leaders-directory>.trans-empty{padding:35px 12px}
 .leaders-compact .portal-footer{margin-top:12px}
 @media(max-width:850px){
- .leaders-compact .page-top{height:48px;margin-bottom:12px}
+ .leaders-compact .page-top{height:auto;min-height:49px;margin-bottom:15px}
  .leaders-compact .leaders-chart-section{padding:12px 14px 18px}
  .leaders-compact .org-tier-grid>.org-card{width:calc(33.33% - 8px);max-width:none}
 }
