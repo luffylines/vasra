@@ -117,3 +117,97 @@ html[data-theme="dark"] body.kk-body :is(.kk-school-picker,.kk-school-list,.kk-a
 html[data-theme="dark"] body.kk-body :is(.kk-review>div,.kk-profile-preview,.kk-id-drop,.kk-school-list,.kk-address-list){
  background:#172a45}
 html[data-theme="dark"] body.kk-body :is(.kk-id-drop>strong,.kk-yn-field legend,.kk-form-section-head h3){color:#eef6ff}
+
+
+/* Unified public pages: dark-mode coverage for the specific content cards
+   that are not represented by the generic portal .card / .org-card classes.
+   Retain the published content, chart connectors and official photos. */
+html[data-theme="dark"] body.portal-refresh.leaders-compact .leaders-heading h1,
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-tier-heading h3,
+html[data-theme="dark"] body.portal-refresh .awards-toolbar h2,
+html[data-theme="dark"] body.portal-refresh .sk-fdp-heading h2,
+html[data-theme="dark"] body.portal-refresh .trans-section h2{
+ color:#eff6ff}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .leaders-heading :is(p,.eyebrow),
+html[data-theme="dark"] body.portal-refresh .awards-toolbar span,
+html[data-theme="dark"] body.portal-refresh .trans-section .eyebrow{
+ color:#b5c9e7}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .leaders-chart-section,
+html[data-theme="dark"] body.portal-refresh .trans-section,
+html[data-theme="dark"] body.portal-refresh .trans-report,
+html[data-theme="dark"] body.portal-refresh .trans-legal,
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card,
+html[data-theme="dark"] body.portal-refresh .award-card,
+html[data-theme="dark"] body.portal-refresh .awards-empty{
+ background:#162740;border-color:#3c5373;color:#e4efff;box-shadow:0 8px 24px #030c1b3b}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-board{
+ background:linear-gradient(137deg,#182b47,#10203a)!important;
+ border-color:#3c567a!important}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card{
+ background:#1b304e;border-color:#435c7f}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card:hover{
+ background:#243f62;border-color:#6287b2}
+html[data-theme="dark"] body.portal-refresh :is(.award-card-body h3,.sk-fdp-card-body h3,
+ .sk-fdp-card-body strong,.trans-report h3,.trans-report strong,.awards-empty strong){color:#f1f7ff}
+html[data-theme="dark"] body.portal-refresh :is(.award-card-body p,.award-card-body dt,
+ .award-card-body dd,.award-category,.award-reference,.trans-report p,.sk-fdp-card-body p,
+ .sk-fdp-card-year,.sk-fdp-source,.trans-report time){color:#b9d0ed}
+html[data-theme="dark"] body.portal-refresh .award-card-cover{background:#243954}
+html[data-theme="dark"] body.portal-refresh .award-card-body dl{border-color:#3c5575}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card-icon{background:#2c507e;color:#d7eaff}
+html[data-theme="dark"] body.portal-refresh :is(.trans-empty,.awards-empty){
+ background:#192d4b;color:#bed1eb;border-color:#4a6487}
+html[data-theme="dark"] body.portal-refresh .trans-picker :is(select,input),
+html[data-theme="dark"] body.portal-refresh .trans-section :is(select,input){
+ background:#142944;color:#e7f2ff;border-color:#4a678d}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-card{
+ background:#1b304e;color:#eaf4ff;border-color:#455e80}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-card :is(strong,b){color:#eff6ff}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-card small{color:#bed0e9}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-tier-heading span{color:#b3c9e8}
+
+/* Contacts includes its own strongly scoped light cards, forms and map overlay.
+   Override them at higher specificity than contacts-page.css in dark mode. */
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-overview{
+ background:transparent;color:#e5efff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-overview .contacts-info-card,
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-form-panel,.contacts-location-panel){
+ background:#172a46;border-color:#3a5578;color:#e9f3ff;
+ box-shadow:0 7px 24px #030b1d48}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-overview .contacts-info-card:hover{
+ background:#1e3658;border-color:#6c92c4}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-info-icon{
+ background:#274770;color:#c4dcff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-info-label,.contacts-section-kicker){
+ color:#a5c5f4}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-info-card strong,
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-form-panel,.contacts-location-panel) h2{
+ color:#edf5ff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-info-card small,.contacts-section-sub,
+ .contacts-consent,.contacts-message-note,.contacts-map-tip,.contacts-office-meta small){
+ color:#b6cce9}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-info-action,.contacts-office-meta>a,
+ .contacts-map-tip a){color:#9dc7ff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form label:not(.contacts-consent),
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form .contacts-label-title{
+ color:#dcecff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form :is(input:not([type=checkbox]),select,textarea){
+ background:#0f2139;color:#f0f7ff;border-color:#46638a}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form :is(input,select,textarea):focus{
+ background:#172b48;border-color:#78abec}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form :is(input,textarea)::placeholder{
+ color:#a2b9d7}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-office-meta{
+ background:#1e3554;border-color:#446388}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-office-meta :is(strong,span){
+ color:#d9eaff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-map-wrap{
+ background:#213a58;border-color:#456286}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-map-open{
+ background:#213d62;color:#dcecff;border-color:#5578a8}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback{
+ background:#233a59;border-color:#496b99;color:#dcecff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback[data-kind="success"]{
+ background:#153d32;border-color:#287554;color:#aaf0d2}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback[data-kind="error"]{
+ background:#45262e;border-color:#9a5360;color:#ffdbd7}
