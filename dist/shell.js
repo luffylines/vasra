@@ -80,6 +80,12 @@
    mobileSignout.href='./';mobileSignout.className='kk-mobile-nav-link kk-mobile-signout';
    mobileSignout.innerHTML=logoutIcon+'<span>Logout KK Account</span>';
    mobileLink?.after(mobileSignout);
+   // On phones the KK Logout icon is available without opening the drawer.
+   const phoneLogout=document.createElement('button');
+   phoneLogout.type='button';phoneLogout.className='kk-appbar-logout';
+   phoneLogout.setAttribute('aria-label','Logout KK Account');phoneLogout.title='Logout KK Account';
+   phoneLogout.innerHTML=logoutIcon;
+   topbar.querySelector('.mobile-menu-toggle')?.before(phoneLogout);
    const signOut=async event=>{
     event.preventDefault();
     const pressed=event.currentTarget;
@@ -99,6 +105,7 @@
    };
    actions?.querySelector('.kk-signout')?.addEventListener('click',signOut);
    mobileSignout.addEventListener('click',signOut);
+   phoneLogout.addEventListener('click',signOut);
   };
   fetch('./api/kk/me',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}})
    .then(r=>r.ok?r.json():null)
