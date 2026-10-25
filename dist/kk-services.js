@@ -9,7 +9,7 @@
  };
  let loading=false;
  const formatDetails=record=>{
-  const d=record.details||{};
+  const d=record.effective_details||record.details||{};
   if(record.service_type==='printing')return [d.paper_size==='long'?'Long':'Short','bond paper',d.color==='colored'?'Colored':'Black & White',
    String(d.pages||0)+' page(s) per copy',String(d.copies||0)+' copies'].join(' · ');
   if(record.service_type==='computer')return String(d.hours||0)+' hour(s) requested';
@@ -24,6 +24,8 @@
    container.innerHTML=rows.length?rows.map(r=>'<article class="kk-service-history-row">'+
     '<div><strong>'+esc(formatDetails(r))+'</strong><small>'+esc(new Date(r.requested_at).toLocaleString('en-PH',{timeZone:'Asia/Manila',
      dateStyle:'medium',timeStyle:'short'}))+'</small>'+
+    (r.approved_details&&JSON.stringify(r.approved_details)!==JSON.stringify(r.details)
+      ?'<small>Confirmed / adjusted by SK officer</small>':'')+
     (r.review_note?'<small>SK Note: '+esc(r.review_note)+'</small>':'')+'</div>'+
     '<span class="kk-service-status kk-service-status-'+esc(r.status)+'">'+esc(r.status)+'</span></article>').join(''):
     '<div class="kk-dash-empty">Wala pang '+(type==='printing'?'printing':type==='computer'?'computer use':'RetaBox')+' requests.</div>';

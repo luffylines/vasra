@@ -31,9 +31,9 @@ test('Every SK staff officer can review but rate configuration remains chairman-
  assert.match(backend,/if\(path==='\/api\/kk\/staff\/services'&&method==='GET'\)\{\s*await user\(\['sk','chairman'\]\)/);
  assert.match(backend,/if\(path==='\/api\/kk\/staff\/services'&&method==='POST'\)\{\s*await user\(\['sk','chairman'\]\)/);
  assert.match(backend,/if\(path==='\/api\/kk\/staff\/services\/config'&&method==='POST'\)\{\s*await user\(\['chairman'\]\)/);
- assert.match(staffClient,/data-verified-grams/);
+ assert.match(staffClient,/name="verified_grams"/);
  assert.match(staffClient,/pointsRate/);
- assert.match(staffClient,/result\.points_awarded/);
+ assert.match(staffClient,/payload\.verified_grams=grams/);
  assert.doesNotThrow(()=>new vm.Script(staffClient));
 });
 

@@ -101,3 +101,80 @@ body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-officer
  background:#253d5a;color:#bfd2ed}
 body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-review-actions .secondary{
  background:#39272f;color:#ffced2;border-color:#855360}
+
+
+/* SK Services v2: reference-aligned responsive management workspace */
+#panel-kk-services .kk-service-heading-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#panel-kk-services .kk-service-heading-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 17px;border-radius:10px;font-weight:750}
+#panel-kk-services .kk-service-heading-actions .primary{background:#235ccc;color:white;border:1px solid #235ccc}
+#panel-kk-services .kk-service-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px;margin:18px 0 23px}
+#panel-kk-services .kk-service-stats article{min-width:0;border:1px solid #d8e5f7;background:linear-gradient(143deg,#fff,#f9fbff);border-radius:13px;padding:17px 15px;box-shadow:0 4px 13px #153f800a}
+#panel-kk-services .kk-service-stats article span{display:block;font:750 11px 'DM Sans',sans-serif;color:#677f9e;line-height:1.5}
+#panel-kk-services .kk-service-stats article strong{display:block;font:800 26px/1.45 Manrope,sans-serif;color:#193e76;margin-top:6px}
+#panel-kk-services .kk-service-stats article:nth-child(2) strong{color:#ab6b10}
+#panel-kk-services .kk-service-stats article:nth-child(3) strong{color:#2266b1}
+#panel-kk-services .kk-service-stats article:nth-child(4) strong{color:#168755}
+#panel-kk-services .kk-service-stats article:nth-child(5) strong{color:#bc3c47}
+#panel-kk-services .kk-service-admin-filters{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:0 0 26px;background:white;border:1px solid #dce6f5;border-radius:14px;padding:18px}
+#panel-kk-services .kk-service-admin-filters label{flex:1 1 150px;min-width:0;font-size:11px}
+#panel-kk-services .kk-service-admin-filters label:first-child{flex:2 1 230px}
+#panel-kk-services .kk-service-admin-filters input,
+#panel-kk-services .kk-service-admin-filters select{width:100%;min-height:43px;box-sizing:border-box;padding:10px 12px;border:1px solid #cbdcf2;border-radius:10px;background:#f9fbff;color:#264367;font:600 14px 'DM Sans',sans-serif}
+#panel-kk-services .kk-service-admin-filters input::placeholder{color:#7089aa}
+#panel-kk-services .kk-service-requests-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:13px}
+#panel-kk-services .kk-service-requests-header h3{font:800 20px/1.4 Manrope,sans-serif;color:#1d3c69;margin:0}
+#panel-kk-services .kk-service-requests-header p{margin:5px 0 0;font:500 12px/1.5 'DM Sans',sans-serif;color:#7290ae}
+#panel-kk-services #kk-service-result-count{font:700 11px 'DM Sans',sans-serif;color:#5f7fa4}
+#panel-kk-services .kk-service-admin-queue{align-items:start;margin-bottom:28px}
+#panel-kk-services .kk-service-admin-card{display:flex;flex-direction:column;gap:12px;padding:19px;border-radius:14px}
+#panel-kk-services .kk-service-request-label{display:inline-block;font:800 10px 'DM Sans',sans-serif;letter-spacing:.07em;text-transform:uppercase;color:#3b73b4}
+#panel-kk-services .kk-service-admin-card-header h4{font:800 16px Manrope,sans-serif;color:#17345e;margin:6px 0 4px;overflow-wrap:anywhere}
+#panel-kk-services .kk-service-admin-card-header small{line-height:1.6;overflow-wrap:anywhere}
+#panel-kk-services .kk-service-request-summary{background:#f3f7ff;border:1px solid #e1eafa;border-radius:10px;padding:12px}
+#panel-kk-services .kk-service-request-summary strong{font:800 11px 'DM Sans',sans-serif;color:#43698f}
+#panel-kk-services .kk-service-request-summary p{margin:4px 0 10px;font-size:12px;color:#294c73}
+#panel-kk-services .kk-service-request-summary p:last-child{margin-bottom:0}
+#panel-kk-services .kk-service-review-caption{font-size:12px;color:#607c9f;margin:0 0 12px}
+#panel-kk-services .kk-service-review-form{display:grid;gap:12px;border-top:1px solid #e0e9f5;padding-top:14px}
+#panel-kk-services .kk-service-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#panel-kk-services .kk-service-review-form label{display:flex;flex-direction:column;gap:6px;min-width:0;font:700 11px 'DM Sans',sans-serif;color:#486585}
+#panel-kk-services .kk-service-review-form :is(input,select){width:100%;box-sizing:border-box;min-height:44px;border-radius:9px;border:1px solid #ccddef;background:white;color:#25466f;padding:10px;font:600 16px 'DM Sans',sans-serif}
+#panel-kk-services .kk-service-review-form :is(input,select):focus-visible{outline:3px solid #9ec2fa;outline-offset:1px}
+#panel-kk-services .kk-service-rate-note{align-self:end;font-size:11px;color:#5e83a7;line-height:1.55}
+#panel-kk-services .kk-service-review-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:13px}
+#panel-kk-services .kk-service-review-actions button{width:100%;min-height:44px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;margin:0}
+#panel-kk-services .kk-service-request-footer{border-top:1px solid #e3eafb;padding-top:12px}
+#panel-kk-services .kk-service-request-footer small{font-size:11px;color:#6982a2}
+#panel-kk-services .kk-service-request-footer p{color:#456787;font-size:12px}
+#panel-kk-services .kk-service-complete-button{min-height:40px;margin-top:10px;background:#e1f4ec;border:1px solid #9dcdb8;color:#166949;padding:10px 15px;border-radius:9px;font-weight:800}
+#panel-kk-services .kk-service-history-panel{padding:21px;border:1px solid #dce6f5;border-radius:14px;background:white;margin-top:8px}
+#panel-kk-services #kk-service-history-search{width:min(290px,100%);min-height:43px;border:1px solid #cbdcf1;background:#f9fbff;color:#213f6b;padding:10px 12px;border-radius:9px;font:500 14px 'DM Sans',sans-serif}
+#panel-kk-services .kk-service-history-scroll{overflow-x:auto;width:100%;border:1px solid #dde8f4;border-radius:12px}
+#panel-kk-services .kk-service-history-table{border-collapse:collapse;width:100%;min-width:880px;table-layout:auto}
+#panel-kk-services .kk-service-history-table th{background:#f0f5fd;color:#49698e;text-align:left;font:800 11px 'DM Sans',sans-serif;padding:13px;border-bottom:1px solid #dbe6f4}
+#panel-kk-services .kk-service-history-table td{color:#2a4469;font:500 12px/1.5 'DM Sans',sans-serif;padding:13px;border-bottom:1px solid #e9eff7;vertical-align:middle}
+#panel-kk-services .kk-service-history-table tbody tr:last-child td{border-bottom:0}
+#panel-kk-services .kk-service-history-table td strong{display:block;color:#183b67}
+#panel-kk-services .kk-service-history-table td small{display:block;color:#738bad;font-size:11px;margin-top:2px}
+#panel-kk-services .kk-service-no-history{text-align:center;padding:26px!important;color:#758cad!important}
+#panel-kk-services .kk-service-empty{grid-column:1/-1}
+@media(max-width:1150px){#panel-kk-services .kk-service-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){#panel-kk-services .kk-service-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+#panel-kk-services .kk-service-admin-queue{grid-template-columns:1fr}
+#panel-kk-services .kk-service-history-panel{padding:12px}
+#panel-kk-services .kk-service-requests-header h3{font-size:17px}}
+@media(max-width:450px){#panel-kk-services .kk-service-stats{gap:8px}
+#panel-kk-services .kk-service-stats article{padding:12px}
+#panel-kk-services .kk-service-stats article strong{font-size:22px}
+#panel-kk-services .kk-service-edit-grid{grid-template-columns:1fr}
+#panel-kk-services .kk-service-admin-filters{padding:12px}
+#panel-kk-services .kk-service-heading-actions button{flex:1}
+#panel-kk-services .kk-service-review-actions{grid-template-columns:1fr}}
+body.account-workspace[data-theme="dark"] #panel-kk-services :is(.kk-service-stats article,.kk-service-admin-filters,.kk-service-history-panel,.kk-service-request-summary){background:#172a45;border-color:#3a567a}
+body.account-workspace[data-theme="dark"] #panel-kk-services :is(.kk-service-requests-header h3,.kk-service-admin-card-header h4,.kk-service-history-table td strong,.kk-service-stats article strong){color:#eef7ff}
+body.account-workspace[data-theme="dark"] #panel-kk-services :is(.kk-service-stats article span,.kk-service-admin-card-header small,.kk-service-request-summary strong,.kk-service-request-summary p,.kk-service-history-table td,.kk-service-review-form label,.kk-service-review-caption,.kk-service-requests-header p){color:#c3d5ee}
+body.account-workspace[data-theme="dark"] #panel-kk-services :is(.kk-service-admin-filters input,.kk-service-admin-filters select,.kk-service-review-form input,.kk-service-review-form select,#kk-service-history-search){background:#11253e;border-color:#4b6588;color:#eff7ff}
+body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-table th{background:#263f60;color:#daecff;border-color:#4e698a}
+body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-scroll{border-color:#3b5577}
+body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-table td{border-color:#344e70}
+body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-complete-button{background:#183f37;color:#a2f0cf;border-color:#31775d}
