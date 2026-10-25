@@ -3,7 +3,7 @@
  const $=selector=>document.querySelector(selector);
  const escVal=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
  const request=(path,body)=>api('./api/kk/staff'+(path?'/'+path:''),body?{method:'POST',body:JSON.stringify(body)}:{});
- let members=[],sitios=[],perks=[],redemptions=[];
+ let members=[],sitios=[],perks=[],redemptions=[],participation=[];
  let loading=false;
  const status=(message='',error=false)=>{const target=$('#kk-staff-message');if(!target)return;target.textContent=message;target.dataset.kind=error?'error':'info';};
  const initials=m=>[m.first_name,m.middle_name,m.last_name].filter(Boolean).join(' ');
@@ -52,6 +52,17 @@
     (m.status==='verified'?'<span class="kk-verification-reward">✓ Verified · 50 welcome points awarded once</span>':'')+
    '</div></div></details>';
  };
+ const displayParticipants=()=>{
+  const target=$('#kk-participant-list');if(!target)return;
+  const search=String($('#kk-participant-search')?.value||'').trim().toLowerCase();
+  const list=participation.filter(entry=>(entry.project_title+' '+entry.member_name).toLowerCase().includes(search));
+  $('#kk-participant-total').textContent=participation.length+' registration(s) saved · '+list.length+' matching';
+  target.innerHTML=list.length?list.map(r=>'<article class="kk-sitio-item"><div class="kk-sitio-label"><strong>'+
+   escVal(r.project_title)+'</strong><small>'+escVal(r.member_name)+' · Joined '+
+   escVal(new Date(r.joined_at).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}))+
+   '</small></div><div>✓ Registered</div></article>').join(''):
+   '<p class="kk-muted">Wala pang registered KK participants para sa mga proyekto.</p>';
+ };
  const displayRewards=()=>{
   const container=$('#kk-staff-reward-list');
   if(container)container.innerHTML=perks.length?perks.map(p=>
@@ -87,7 +98,8 @@
    members=result.members;sitios=sitioResult.sitios;
    perks=Array.isArray(catalog?.perks)?catalog.perks:[];
    redemptions=Array.isArray(result?.redemptions)?result.redemptions:[];
-   stats();displayMembers();displaySitios();displayRewards();
+   participation=Array.isArray(result?.participation)?result.participation:[];
+   stats();displayMembers();displaySitios();displayParticipants();displayRewards();
    status('Updated · '+members.length+' KK members · '+sitios.length+' official sitios.');
   }catch(e){
    status('Hindi ma-load ang KK records: '+e.message+' I-check ang staff session at kung sa tamang preview domain ka naka-login.',true);
@@ -181,6 +193,7 @@
   $('#kk-sitio-form').reset();
  });
  $('#kk-sitio-search')?.addEventListener('input',displaySitios);
+ $('#kk-participant-search')?.addEventListener('input',displayParticipants);
  $('#kk-staff-search')?.addEventListener('input',displayMembers);
  $('#kk-staff-filter')?.addEventListener('change',displayMembers);
  $('#kk-staff-refresh')?.addEventListener('click',refresh);
