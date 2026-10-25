@@ -2,7 +2,13 @@
 <div class="kk-id-heading"><p class="kk-id-section-description" id="kk-id-title">I-upload muna ang iyong larawan, pagkatapos ay suriin ang harap at likod ng KK ID bago aprubahan ng SK officer.</p></div>
 <div class="kk-id-workspace-grid"><article class="kk-id-upload-card"><h3>Step 1 · Upload Your Photo</h3>
 <p>Magdagdag ng malinaw na portrait photo para makumpleto ang ID. JPG, PNG o WEBP · hanggang 2 MB.</p>
-<form id="kk-id-upload-form"><label for="kk-id-photo" class="kk-id-upload-zone">Choose Photo<input type="file" accept="image/jpeg,image/png,image/webp" id="kk-id-photo" required></label>
+<form id="kk-id-upload-form">
+<label for="kk-id-photo" class="kk-id-upload-zone">
+ <span class="kk-id-upload-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
+ <strong>Choose Your Portrait Photo</strong><small>Click to select JPG, PNG or WEBP (max 2 MB)</small>
+ <input type="file" accept="image/jpeg,image/png,image/webp" id="kk-id-photo" required>
+</label><div class="kk-id-selected-photo" id="kk-id-selected-photo" hidden>
+<img id="kk-id-selected-thumbnail" alt="Selected portrait preview"><span id="kk-id-selected-filename"></span></div>
 <button type="submit" class="kk-btn">Submit Photo for SK Approval</button></form>
 <p id="kk-id-upload-status" class="kk-feedback" role="status" aria-live="polite"></p>
 <p class="kk-id-helper">Approved ID photos become available to SK officers for front-and-back CR80 ID printing. Changing your photo requires approval again.</p>
