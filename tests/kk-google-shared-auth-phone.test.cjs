@@ -55,7 +55,7 @@ test('Philippine phone helpers reject overlong or non-mobile numbers without tru
  assert.equal(normalize('+639123456789'),'+639123456789');
  assert.equal(normalize('09123456789'),'+639123456789');
  assert.equal(normalize('9123456789'),'+639123456789');
- for(const bad of ['+6391234567898','912345678','8123456789','09876543210','+638123456789'])
+ for(const bad of ['+6391234567898','912345678','8123456789','08876543210','+638123456789'])
   assert.throws(()=>normalize(bad),{code:400},bad);
 });
 test('Server code and browser scripts parse with no new secret keys in browser',()=>{
