@@ -2,7 +2,6 @@
 (()=>{
  const $=s=>document.querySelector(s),upload=$('#kk-id-upload-form');
  if(!upload)return;
- const status=$('#kk-id-upload-status');
  const chooser=$('#kk-id-photo'),chosen=$('#kk-id-selected-photo');
  let selectedPhotoUrl=null;
  const clearPreview=()=>{if(selectedPhotoUrl)URL.revokeObjectURL(selectedPhotoUrl);
@@ -22,7 +21,7 @@
  window.addEventListener('pagehide',clearPreview);
 
  let revision=0;
- const tell=(s,err=false)=>{status.textContent=s;status.dataset.kind=err?'error':'success';status.hidden=!s;};
+ const tell=(s,err=false)=>window.showVasraToast(s,err?'error':'success');
  const load=async()=>{
   const version=++revision;
   $('#kk-id-display-name').textContent=[window.kkCardMember?.first_name,window.kkCardMember?.middle_name,window.kkCardMember?.last_name].filter(Boolean).join(' ')||'Verified KK Member';
@@ -66,7 +65,7 @@
    tell('Choose a valid JPG/PNG/WEBP portrait with a maximum size of 2 MB.',true);return;
   }
   const button=upload.querySelector('button[type=submit]');button.disabled=true;
-  tell('Uploading portrait securely…');
+  window.showVasraToast('Uploading portrait securely…','loading');
   try{
    const buf=await file.arrayBuffer(),bytes=new Uint8Array(buf);
    let binary='';for(let i=0;i<bytes.length;i+=32768)
