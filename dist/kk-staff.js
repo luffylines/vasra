@@ -5,7 +5,7 @@
  const request=(path,body)=>api('./api/kk/staff'+(path?'/'+path:''),body?{method:'POST',body:JSON.stringify(body)}:{});
  let members=[],sitios=[],perks=[],redemptions=[],participation=[];
  let loading=false, selectedMemberId=null, detailTab='profile', pendingDeleteMemberId=null;
- const status=(message='',error=false)=>{const target=$('#kk-staff-message');if(!target)return;target.textContent=message;target.dataset.kind=error?'error':'info';};
+ const status=(message='',error=false,success=false)=>{const target=$('#kk-staff-message');if(!target)return;if(message&&(error||success)){target.textContent='';window.showVasraToast(message,error?'error':'success');return;}target.textContent=message;target.dataset.kind='info';};
  const initials=m=>[m.first_name,m.middle_name,m.last_name].filter(Boolean).join(' ');
  // Parse YYYY-MM-DD as a calendar date. Date.parse() UTC conversion can make
  // birthdays inaccurate near midnight; compare against today's Manila date.
@@ -319,12 +319,12 @@
    const result=await task();await refresh();
    if(result?.deletion)status(result.storage_cleanup_pending
     ?'KK profile deleted; private ID file still requires storage cleanup.'
-    :'KK profile deleted, session revoked, related KK records removed and audit saved.',!!result.storage_cleanup_pending);
+    :'KK profile deleted, session revoked, related KK records removed and audit saved.',!!result.storage_cleanup_pending,true);
    if(result?.notification){
     status(result.notification.status==='provider_accepted'
      ?'SK review saved. Notification accepted by email provider (delivery to inbox is not yet confirmed).'+(result.notification.reference?' Tracking ID: '+result.notification.reference:'')
      :'SK review saved, pero hindi pa naipadala ang email. I-check ang Resend configuration at contact the member through an authorized channel.',
-     result.notification.status!=='provider_accepted');
+     result.notification.status!=='provider_accepted',true);
    }
   }
   catch(e){status(e.message,true);}
@@ -425,7 +425,7 @@
    // Keep the same selected applicant and tab, reload from the database.
    closeChildEditor();
    await refresh();
-   status('Profile updated by SK staff. Changes recorded in Activity Log.');
+   status('Profile updated by SK staff. Changes recorded in Activity Log.',false,true);
   }catch(error){response.textContent='Hindi na-save: '+String(error.message||'Unknown error');}
   finally{button.disabled=false;}
  });
