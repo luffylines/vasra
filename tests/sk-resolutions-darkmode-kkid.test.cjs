@@ -40,7 +40,10 @@ test('Existing KK ID photo approvals and sequential database issuance retained',
  assert.match(member,/kk-copy-id/);assert.match(member,/kk-id-photo/);
  assert.match(staff,/data-tab="kk-ids"/);assert.match(staff,/85\.6 × 54 mm/);
  assert.match(dashboard,/summary\.hidden=!\['overview','settings'\]\.includes\(which\)/);
- assert.match(read('dist/kk-id-staff.js'),/window\.print|print\(/);
+ const staffJS=read('dist/kk-id-staff.js');
+ assert.ok(staffJS.includes('window.KKIDRender.pdf([pair.front,pair.back]'));
+ assert.match(staffJS,/data-card-printed/); // Physical printing still needs an audited confirmation.
+ assert.doesNotMatch(staffJS,/data-card-print="/);
  assert.match(read('dist/kk-id-member.js'),/loadKKIDCard/);
 });
 test('New scripts are syntactically valid',()=>{
