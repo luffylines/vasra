@@ -45,7 +45,7 @@ test('unified theme fixes logged in KK pages and authentication/profile without 
  assert.match(themeJs,/theme\.css\?v=20261025-kk-upload-first-dark-v3/);
  for(const page of ['kk-dashboard','kk-login','kk-register','kk-profile'])
   assert.match(read('dist/'+page+'.html'),/theme\.js\?v=20261025-kk-upload-first-dark-v3/,page);
- assert.match(dash,/kk-id-card\.css\?v=20261025-kk-toast-square-v1/);
+ assert.match(dash,/kk-id-card\.css\?v=20261025-kk-approved-pdf-v2/);
 });
 test('member and theme scripts compile and PDF printing renderer remains available',()=>{
  for(const src of ['dist/kk-dashboard.js','dist/kk-id-member.js','dist/theme.js','dist/kk-id-render.js'])
