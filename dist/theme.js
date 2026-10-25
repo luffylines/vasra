@@ -17,6 +17,9 @@
  const paint=()=>{
   const dark=root.dataset.theme==='dark';
   for(const b of document.querySelectorAll('[data-vasra-theme-toggle]')){
+   if(!b.querySelector('svg'))b.innerHTML=icon+moon;
+  }
+  for(const b of document.querySelectorAll('[data-vasra-theme-toggle]')){
    b.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');
    b.setAttribute('title',dark?'Light mode':'Dark mode');
    b.setAttribute('aria-pressed',String(dark));
