@@ -99,5 +99,6 @@
       "destination": "/sk-resolutions",
       "permanent": true
     }
-  ]
+  ],
+  "buildCommand": "npm run check:deploy"
 }
