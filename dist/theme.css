@@ -1,0 +1,105 @@
+/* SK VASRA shared dark theme. Light mode keeps the current visual design.
+   This stylesheet is deliberately scoped away from SK staff workspace. */
+.vasra-theme-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;
+ width:41px;height:41px;min-height:41px;padding:8px;color:#285b97;border:1px solid #c6d8ee;
+ background:#eaf2ff;border-radius:11px;cursor:pointer;transition:background .15s,color .15s}
+.vasra-theme-toggle svg{width:19px;height:19px;flex:none}
+.vasra-theme-toggle svg:nth-child(2){display:none}
+html[data-theme="dark"] .vasra-theme-toggle svg:first-child{display:none}
+html[data-theme="dark"] .vasra-theme-toggle svg:nth-child(2){display:block}
+.vasra-theme-toggle:focus-visible{outline:3px solid #82b4ff;outline-offset:2px}
+body.portal-refresh .mobile-appbar .vasra-theme-toggle{display:none}
+body.kk-body .kk-auth-card{position:relative}
+body.kk-body .kk-auth-theme-button{position:absolute;right:16px;top:15px}
+body.kk-body .kk-reg-toolbar>.vasra-theme-toggle{margin-left:auto}
+@media(max-width:850px){
+ body.portal-refresh .mobile-appbar .vasra-theme-toggle{display:inline-flex;margin-left:auto;margin-right:3px}
+ body.portal-refresh .kk-page-actions>.vasra-theme-toggle{display:none}
+}
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body:not(.account-workspace){background:#0b1425;color:#e3eeff}
+html[data-theme="dark"] body:not(.account-workspace) .vasra-theme-toggle{
+ background:#1b3355;border-color:#3b5680;color:#e9f3ff}
+html[data-theme="dark"] body:not(.account-workspace) :is(a,button,input,textarea,select):focus-visible{
+ outline:3px solid #79b5ff;outline-offset:2px}
+/* Consistent dark contrast across all public routes: projects, duty, council,
+   awards, contacts, transparency and their existing cards. */
+html[data-theme="dark"] body.portal-refresh{--line:#304467;--muted:#afc4e2;color:#e2edff;background:#0c1629}
+html[data-theme="dark"] body.portal-refresh .portal-main{color:#e2edff}
+html[data-theme="dark"] body.portal-refresh .page-top{color:#b1c4e1;border-bottom-color:#334769}
+html[data-theme="dark"] body.portal-refresh .page-top b{color:#e5efff}
+html[data-theme="dark"] body.portal-refresh .location-tag{background:#1d3453;color:#bcd4f5}
+html[data-theme="dark"] body.portal-refresh :is(.page-heading,.schedule-heading,.section-heading,.duty-contact-heading) h1,
+html[data-theme="dark"] body.portal-refresh :is(.page-heading,.schedule-heading,.section-heading,.duty-contact-heading) h2,
+html[data-theme="dark"] body.portal-refresh :is(.home-panel,.home-section,.contact-grid,.projects-layout,.org-tier-heading) h2{
+ color:#ecf4ff}
+html[data-theme="dark"] body.portal-refresh :is(.home-panel,.home-feature,.home-card,.home-officer,.home-metric,
+ .project-card,.project-tile,.project-item,.card,.cardbody,.org-card,.trans-person,.trans-org-group,
+ .duty-info,.duty-profile,.duty-contact-card,.duty-contact-section,.contact-card,.contact-form-panel,
+ .contacts-form-panel,.contacts-location-panel,.contacts-overview,.trans-card,.transparency-card,
+ .award-card,.awards-card,.metric-card,.notice-panel,.detail-card,.news-card,.schedule-card,
+ .home-shortcut,.contact-item,.office-card,.disclosure-card,.trans-empty,.kk-dash-empty){
+ background-color:#15233b;color:#e3eeff;border-color:#304664}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.duty-profile,.home-shortcut){background-image:linear-gradient(145deg,#182b4b,#111e34)}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.trans-person,.duty-profile,.duty-info,.duty-contact-card,.contact-card,.home-card,.home-panel,.project-card,.cardbody,.award-card,.awards-card,.disclosure-card) :is(h2,h3,h4,strong,b){
+ color:#e4efff}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.trans-person,.duty-profile,.duty-info,.duty-contact-card,.contact-card,.home-panel,.project-card,.cardbody,.award-card,.awards-card,.disclosure-card) :is(p,small,time,span){
+ color:inherit}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.trans-person,.duty-profile,.duty-contact-card,.home-card,.project-card,.award-card,.awards-card) small{color:#b3c7e5}
+html[data-theme="dark"] body.portal-refresh :is(.day-switch button,.service-chips span,.duty-contact-detail,.org-source-note,.org-note,
+ .home-filter button,.filter-bar button,.tab-button,.tag-chip,.contacts-form-panel input,.contacts-form-panel textarea,
+ .contacts-form-panel select,.contact-form input,.contact-form textarea,.contact-form select){
+ background:#1c3151;color:#dbeaff;border-color:#385277}
+html[data-theme="dark"] body.portal-refresh .day-switch button.selected{background:#315da2}
+html[data-theme="dark"] body.portal-refresh .day-switch button.selected :is(span,small){color:#fff}
+html[data-theme="dark"] body.portal-refresh :is(input,select,textarea){
+ background:#182b45;color:#f0f6ff;border-color:#435d80}
+html[data-theme="dark"] body.portal-refresh :is(input,textarea)::placeholder{color:#9fb4d0}
+html[data-theme="dark"] body.portal-refresh :is(.home-panel,.home-section,.page-heading,.org-tier,.schedule-heading,.duty-contact-section) p{color:#b9cbe6}
+html[data-theme="dark"] body.portal-refresh .portal-footer{border-color:#304467;color:#a9c0dd}
+html[data-theme="dark"] body.portal-refresh .site-header{background:linear-gradient(165deg,#102648,#09172e)}
+html[data-theme="dark"] body.portal-refresh .mobile-appbar{background:#102748;color:#f1f6ff}
+html[data-theme="dark"] body.portal-refresh .mobile-menu-toggle{color:#e5efff;border-color:#4e698d}
+html[data-theme="dark"] body.portal-refresh .kk-top-login{background:#233f69;color:#f0f7ff;border-color:#466893}
+html[data-theme="dark"] body.portal-refresh .kk-member-entry{background:#1d3455;border-color:#466893;color:#eaf3ff}
+/* KK login, register, profile and verified member dashboard */
+html[data-theme="dark"] body.kk-body{--line:#344969;--ink:#e5efff;--muted:#aac0dd;background:#0c1527;color:#e8f1ff}
+html[data-theme="dark"] body.kk-body :is(.kk-registration,.kk-auth-layout,.kk-auth-card,.kk-profile-sheet,.kk-perks,
+ .kk-summary article,.kk-step,.kk-dashboard-panel,.kk-activity-card,.kk-settings-card,.kk-review>div,
+ .kk-dash-empty,.kk-dashboard-list,.kk-profile-preview,.kk-preview-card,.kk-dashboard,.kk-privacy,
+ .kk-readiness,.kk-id-drop,.kk-yn-field,.kk-auth-icon,.kk-register-prompt){
+ background-color:#15253f;color:#e9f3ff;border-color:#334d71}
+html[data-theme="dark"] body.kk-body :is(.kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-dashboard-panel,.kk-summary article,.kk-step,.kk-settings-card,.kk-activity-card){
+ background-image:none}
+html[data-theme="dark"] body.kk-body :is(h1,h2,h3,h4,.kk-register-brand strong,.kk-summary strong,.kk-dashboard-list strong,
+ .kk-form-section-head h3,.kk-label-title,.kk-auth-card h2,.kk-dashboard-head h1,.kk-profile-sheet h2,
+ .kk-settings-card h3,.kk-activity-card h3,.kk-yn-field legend){
+ color:#f0f6ff}
+html[data-theme="dark"] body.kk-body :is(.kk-tag,.kk-dashboard-head p,.kk-helper,.kk-form label,.kk-auth-card .kk-sub,
+ .kk-summary span,.kk-review span,.kk-review strong,.kk-dashboard-panel p,.kk-dashboard-list span,
+ .kk-register-brand small,.kk-form-section-head p,.kk-id-drop>span,.kk-id-drop>strong,.kk-footer,.kk-steps small){
+ color:#b5c9e6}
+html[data-theme="dark"] body.kk-body :is(input:not([type=checkbox]),select,textarea,
+ .kk-form input:not([type=checkbox]),.kk-form select,.kk-form textarea){
+ background:#0e2038;color:#edf5ff;border-color:#425f84}
+html[data-theme="dark"] body.kk-body :is(input,textarea)::placeholder{color:#93abcd}
+html[data-theme="dark"] body.kk-body .kk-form :is(input,textarea,select):focus{background:#192d4b}
+html[data-theme="dark"] body.kk-body :is(.kk-btn-quiet,.kk-register-home,.kk-password-toggle,.kk-register-action,
+ .kk-dashboard-tabs button,.kk-ph-number,.kk-ph-prefix,.kk-step span,.kk-id-chip-row span){
+ background:#203958;color:#e4f0ff;border-color:#48668c}
+html[data-theme="dark"] body.kk-body :is(.kk-btn,.kk-dashboard-tabs button[aria-current=page]){
+ border-color:#5585c7}
+html[data-theme="dark"] body.kk-body .kk-form .kk-ph-number input[name="phone"]{background:#0e2038}
+html[data-theme="dark"] body.kk-body .kk-auth-story{background:radial-gradient(circle at 100% 80%,#23477e,#0c1d38)}
+html[data-theme="dark"] body.kk-body .kk-auth-story :is(h1,h2,h3,.kk-story-brand strong){color:#fff}
+html[data-theme="dark"] body.kk-body .kk-auth-story :is(p,small){color:#cadfff}
+html[data-theme="dark"] body.kk-body .kk-feedback{background:#1b3556;color:#bfe1ff;border-color:#3e6597}
+html[data-theme="dark"] body.kk-body .kk-feedback[data-kind="error"],
+html[data-theme="dark"] body.kk-body .kk-readiness[data-status="unavailable"],
+html[data-theme="dark"] body.kk-body .kk-load-error{background:#3b202a;color:#ffd0cc;border-color:#95525b}
+html[data-theme="dark"] body.kk-body .kk-feedback[data-kind="success"]{background:#173f36;color:#b3efce;border-color:#287855}
+html[data-theme="dark"] body.kk-body .kk-step.active{background:#23446f;border-color:#5385c1}
+html[data-theme="dark"] body.kk-body .kk-step.active :is(strong,small){color:#f0f7ff}
+html[data-theme="dark"] body.kk-body .kk-dashboard-panel[hidden],
+html[data-theme="dark"] body.kk-body .kk-feedback[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){.vasra-theme-toggle{transition:none}}
