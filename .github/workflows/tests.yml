@@ -3,6 +3,7 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - fix/projects-darkmode-contrast-20261025
       - fix/public-sidebar-darkmode-unification-20261025
       - feature/kk-session-dashboard-theme-20261025
       - fix/kk-readiness-duty-mobile-placeholder-20261025
