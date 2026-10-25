@@ -1,0 +1,136 @@
+
+/* Member KK ID child page, staff review and 1:1 physical CR80 duplex print. */
+.kk-copy-id{display:inline-flex;align-items:center;justify-content:center;margin-top:8px;
+ border:1px solid #aac5e9;background:#ecf4ff;color:#225a9d;border-radius:8px;padding:7px 11px;font:800 11px 'DM Sans',sans-serif}
+#kk-copy-message{display:inline-block;margin-left:8px;color:#2c805c;font-size:11px}
+.kk-summary[hidden]{display:none!important}
+.kk-sidebar-nav .kk-subnav-item{padding-left:30px;font-size:12px}
+.kk-settings-id-link{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+ background:#eff5ff;border:1px solid #d4e3f6;border-radius:13px;padding:17px;margin:16px 0 21px}
+.kk-settings-id-link strong{color:#26558d;font:800 15px Manrope,sans-serif}
+.kk-settings-id-link p{color:#6682a3;font:500 12px 'DM Sans',sans-serif;margin:4px 0 0}
+.kk-id-heading .kk-tag{color:#4a76b0;font-size:10px;letter-spacing:.13em;font-weight:800}
+.kk-id-heading h2{font:800 25px Manrope,sans-serif;color:#1c4272;margin:8px 0}
+.kk-id-heading p{color:#6781a0;line-height:1.7;font-size:13px}
+.kk-id-workspace-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:16px;margin-top:20px}
+.kk-id-profile-card,.kk-id-upload-card{background:#fff;border:1px solid #d8e6f7;border-radius:16px;padding:22px;min-width:0}
+.kk-id-member-preview{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;background:#f3f8ff;
+ border:1px solid #d8e7f9;border-radius:14px;padding:20px}
+.kk-id-logo{width:42px;height:42px;object-fit:contain;border-radius:8px;background:white}
+.kk-id-member-preview>strong{font:800 15px Manrope,sans-serif;color:#204878;overflow-wrap:anywhere}
+.kk-id-member-preview>small{font:750 12px 'DM Sans',sans-serif;color:#2b619e}
+.kk-id-live-preview{height:138px;width:122px;display:grid;place-items:center;border:1px solid #a3c2e9;border-radius:10px;overflow:hidden;background:#dceafe}
+.kk-id-live-preview img{width:100%;height:100%;object-fit:cover}
+.kk-id-live-preview>span{color:#53749e;font-weight:900;font-size:11px}
+.kk-id-pill{display:inline-block;border-radius:20px;background:#edf2f9;color:#597897;padding:6px 11px;font-size:10px;font-weight:800}
+.kk-id-pill[data-status=approved]{background:#d7f6e4;color:#236947}
+.kk-id-pill[data-status=pending]{background:#fff0d8;color:#9b6621}
+.kk-id-pill[data-status=rejected]{background:#ffe3e5;color:#a82f40}
+.kk-id-upload-card h3{font:800 18px Manrope,sans-serif;color:#244d7c;margin:0 0 10px}
+.kk-id-upload-card p{color:#637f9e;font-size:12px;line-height:1.7}
+.kk-id-upload-card form{display:grid;gap:13px;margin:20px 0}
+.kk-id-upload-zone{display:grid;gap:7px;border:1px dashed #adc9eb;border-radius:12px;padding:18px;background:#f5f9ff;font-weight:800;font-size:12px;color:#2c5c96}
+.kk-id-upload-zone input{min-width:0;width:100%;font-size:13px}
+.kk-id-upload-card .kk-btn{min-height:43px}
+.kk-id-upload-card .kk-feedback{margin-top:10px}
+.kk-id-staff-panel{max-width:1190px;width:100%;margin:0 auto;padding:9px 0 25px}
+.kk-id-staff-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.kk-id-staff-heading h2{font:800 26px Manrope,sans-serif;color:#224672;margin:4px 0}
+.kk-id-staff-heading p{font:500 12px/1.7 'DM Sans',sans-serif;color:#607d9b;max-width:760px}
+.kk-id-staff-heading>button{background:#f1f6fe;border:1px solid #cbdcf1;border-radius:9px;color:#2b609a;padding:11px 15px;font-size:12px}
+#kk-id-staff-status{font:600 12px 'DM Sans',sans-serif;color:#52759d;margin:15px 0}
+#kk-id-staff-status[data-kind=error]{color:#b53d46}
+.kk-id-staff-search{display:grid;grid-template-columns:1fr auto;gap:10px;margin:15px 0}
+.kk-id-staff-search :is(input,select){min-width:0;width:100%;box-sizing:border-box;
+ border:1px solid #cbdcf0;border-radius:10px;background:#fff;color:#23517f;padding:11px 13px;font-size:13px}
+.kk-id-staff-list{display:grid;gap:11px}
+.kk-id-staff-item{display:grid;grid-template-columns:95px minmax(0,1fr) auto;gap:17px;align-items:center;
+ background:#fff;border:1px solid #dbe6f6;border-radius:15px;padding:17px;min-width:0}
+.kk-id-staff-photo{display:grid;place-items:center;background:#e3effe;border-radius:11px;border:1px solid #cadef6;
+ width:95px;height:105px;overflow:hidden;color:#486e9f;font-size:10px;font-weight:800}
+.kk-id-staff-photo img{width:100%;height:100%;object-fit:cover}
+.kk-id-staff-details h3{font:800 17px Manrope,sans-serif;color:#1d4678;margin:0}
+.kk-id-staff-details p{font-size:12px;color:#54759b;margin:4px 0}
+.kk-id-staff-details small{display:block;color:#6881a2;font-size:11px}
+.kk-id-review-badge{display:inline-block;border-radius:22px;background:#e9f0f9;color:#42648d;
+ padding:5px 9px;font-size:10px;font-weight:800;margin-top:9px;text-transform:capitalize}
+.kk-id-review-badge[data-state=approved]{background:#d7f7e4;color:#24734e}
+.kk-id-review-badge[data-state=pending]{background:#fff1d8;color:#97641e}
+.kk-id-review-badge[data-state=rejected]{background:#ffe4e5;color:#a3313e}
+.kk-id-staff-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap;max-width:250px}
+.kk-id-staff-actions button{border-radius:9px;padding:10px 13px;border:1px solid #c1d5ef;background:#eaf3ff;
+ color:#23538e;font:800 11px 'DM Sans',sans-serif;min-height:40px}
+.kk-id-staff-actions .kk-id-print-button{background:#255db2;border-color:#255db2;color:#fff}
+.kk-id-print-guide{margin-top:16px;border:1px solid #d2e2f5;background:#f3f8ff;border-radius:12px;padding:16px}
+.kk-id-print-guide strong{color:#245783;font-weight:800}
+.kk-id-print-guide p{color:#6380a1;font-size:12px;line-height:1.7;margin:5px 0}
+.kk-id-empty{padding:26px;text-align:center;color:#6584a6;background:#f6faff;border:1px dashed #c5d8f1;border-radius:11px}
+@media(max-width:800px){.kk-id-workspace-grid{grid-template-columns:1fr}
+.kk-id-staff-item{grid-template-columns:80px minmax(0,1fr)}.kk-id-staff-photo{width:80px;height:90px}
+.kk-id-staff-actions{grid-column:1/-1;max-width:none;justify-content:flex-start}}
+@media(max-width:500px){.kk-id-staff-search{grid-template-columns:1fr}
+.kk-id-staff-item{padding:12px;gap:11px}.kk-id-staff-details h3{font-size:14px}
+.kk-id-staff-actions button{flex:1}}
+html[data-theme=dark] body.kk-body :is(.kk-id-profile-card,.kk-id-upload-card,.kk-id-member-preview,.kk-settings-id-link){
+ background:#162b47;color:#eef6ff;border-color:#405d80}
+html[data-theme=dark] body.kk-body :is(.kk-id-heading h2,.kk-id-member-preview>strong,.kk-id-upload-card h3,.kk-settings-id-link strong){color:#edf7ff}
+html[data-theme=dark] body.kk-body :is(.kk-id-heading p,.kk-id-upload-card p,.kk-settings-id-link p,.kk-id-member-preview>small){color:#bad0ea}
+html[data-theme=dark] body.account-workspace :is(.kk-id-staff-item,.kk-id-print-guide){background:#152b47;border-color:#3d587c}
+html[data-theme=dark] body.account-workspace :is(.kk-id-staff-heading h2,.kk-id-staff-details h3,.kk-id-print-guide strong){color:#eaf5ff}
+html[data-theme=dark] body.account-workspace :is(.kk-id-staff-details p,.kk-id-staff-details small,.kk-id-staff-heading p,.kk-id-print-guide p){color:#c0d3ee}
+html[data-theme=dark] body.account-workspace .kk-id-staff-search :is(input,select){background:#122944;color:#f1f8ff;border-color:#46678b}
+/* Actual duplex: each page is A4, same center placement, each face CR80 (85.6 × 54mm). */
+.kk-print-root{display:none}
+@media print{
+ @page{size:A4 portrait;margin:0}
+ html,body{width:210mm;height:auto!important;margin:0!important;padding:0!important;background:white!important}
+ body>*:not(.kk-print-root){display:none!important}
+ body>.kk-print-root{display:block!important;margin:0!important;padding:0!important}
+ .kk-print-page{display:block!important;position:relative!important;box-sizing:border-box!important;
+  width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;
+  page-break-after:always;break-after:page;background:#fff!important}
+ .kk-print-page:last-child{page-break-after:auto;break-after:auto}
+ .kk-physical-card{position:absolute!important;top:35mm!important;left:62.2mm!important;
+  width:85.6mm!important;height:54mm!important;box-sizing:border-box!important;
+  border:0.24mm solid #c2d5ed!important;border-radius:2.5mm!important;
+  overflow:hidden!important;background:#fff!important;color:#102c50!important;
+  -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ .kk-physical-card.front{background:linear-gradient(135deg,#f4faff,#deeaff)!important}
+ .kk-print-header{display:flex;gap:2mm;align-items:center;background:#193d72!important;color:#fff!important;
+  height:15mm;padding:2.5mm}
+ .kk-print-header img{height:10mm;width:10mm;object-fit:contain;border-radius:2mm;background:#fff}
+ .kk-print-header span{display:flex;flex-direction:column;gap:.5mm}
+ .kk-print-header strong{font:bold 12pt Arial!important;color:#fff!important}
+ .kk-print-header small{font:bold 5.7pt Arial!important;color:#e2edff!important;letter-spacing:.02mm}
+ .kk-print-front-main{display:flex;align-items:center;gap:3mm;height:32.5mm;padding:3mm}
+ .kk-print-member-photo{width:24mm;height:29mm;object-fit:cover;border-radius:1.5mm;border:.2mm solid #bed3ea}
+ .kk-print-front-main>div{display:flex;flex-direction:column;gap:1.2mm;min-width:0}
+ .kk-print-front-main small{font:bold 6pt Arial;color:#2e67aa}
+ .kk-print-member-name{font:bold 11pt Arial!important;color:#14396a!important;line-height:1.15;overflow-wrap:anywhere}
+ .kk-print-member-code{font:bold 9pt Arial;color:#225ca4}
+ .kk-print-front-footer{position:absolute;bottom:0;left:0;right:0;background:#245ca7!important;color:#fff!important;
+  height:6.5mm;padding:1.7mm 3mm;font:bold 6pt Arial;text-align:center}
+ .kk-physical-card.back{background:linear-gradient(145deg,#f4f9ff,#e5f1ff)!important}
+ .kk-print-back-top{height:12mm;display:flex;align-items:center;gap:3mm;background:#193d72!important;color:#fff!important;padding:2mm 3mm}
+ .kk-print-back-top img{width:8mm;height:8mm;object-fit:contain;background:white;border-radius:1mm}
+ .kk-print-back-top span{font:bold 11pt Arial;color:#fff}
+ .kk-physical-card.back h2{margin:2mm 3mm;font:bold 8pt Arial;color:#1d4b89}
+ .kk-print-back-details{display:grid;grid-template-columns:18mm 1fr;gap:.5mm 2mm;margin:0 3mm}
+ .kk-print-back-details span{font:6pt Arial;color:#47719d}
+ .kk-print-back-details strong{font:bold 7pt Arial;color:#153e73;overflow-wrap:anywhere}
+ .kk-print-card-note{font:5.2pt/1.25 Arial;color:#486a8a;margin:2mm 3mm}
+}
+
+/* Optional SK ID layout position, applied only to the printed front card. */
+.kk-id-print-preference{padding:15px 18px;margin:18px 0;border:1px solid #d6e4f5;border-radius:12px;background:#f5f9ff}
+.kk-id-print-preference>strong{color:#244d81;font:800 14px Manrope,sans-serif}
+.kk-id-print-preference>p{font-size:12px;color:#5a799f;margin:6px 0 12px}
+.kk-id-print-preference>div{display:flex;gap:12px;flex-wrap:wrap}
+.kk-id-print-preference label{display:flex;align-items:center;gap:8px;border:1px solid #cedff5;border-radius:10px;
+ padding:10px 14px;background:#fff;color:#315d93;font-weight:750;font-size:12px;cursor:pointer}
+.kk-id-print-preference input{accent-color:#245bb0}
+.kk-physical-card.front.kk-logo-right .kk-print-header{flex-direction:row-reverse;text-align:right}
+body.account-workspace[data-theme="dark"] .kk-id-print-preference{background:#1b3350;border-color:#466587}
+body.account-workspace[data-theme="dark"] .kk-id-print-preference :is(strong,p){color:#e1efff}
+body.account-workspace[data-theme="dark"] .kk-id-print-preference label{background:#263f60;color:#eff6ff;border-color:#54759c}
+@media print{.kk-id-print-preference{display:none!important}}

@@ -18,7 +18,7 @@ test('Verified KK dashboard includes three working SK service forms',()=>{
   assert.match(youth,new RegExp('name="'+name+'"'));
  assert.match(youth,/src="\.\/kk-services.js"/);
  assert.match(youth,/href="\.\/kk-services.css"/);
- assert.match(read('dist/kk-dashboard.js'),/new Set\(\['overview','projects','activities','rewards','printing','computer','retabox','settings'\]\)/);
+ assert.match(read('dist/kk-dashboard.js'),/new Set\(\['overview','projects','activities','rewards','printing','computer','retabox','settings','kk-id'\]\)/);
  assert.match(youthClient,/api\('\.\/api\/kk\/services'/);
  assert.doesNotThrow(()=>new vm.Script(youthClient));
 });
