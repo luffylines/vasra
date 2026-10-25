@@ -103,8 +103,11 @@
     .some(d=>d&&phDate(d)===now)&&
    (!q||[r.name,r.kk_id,r.id,r.service_type].some(x=>String(x||'').toLowerCase().includes(q))));
   $('#kk-service-history-body').innerHTML=data.length?data.map(r=>
-   '<tr><td>'+esc(new Date(r.requested_at).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',
-    hour:'numeric',minute:'2-digit'}))+'</td><td><strong>'+esc(r.name)+'</strong><small>'+esc(r.kk_id||r.id.slice(0,8))+
+   '<tr><td>'+esc(new Date(
+    (r.completed_at&&phDate(r.completed_at)===now?r.completed_at:null)||
+    (r.reviewed_at&&phDate(r.reviewed_at)===now?r.reviewed_at:null)||r.requested_at
+   ).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'}))+
+   '</td><td><strong>'+esc(r.name)+'</strong><small>'+esc(r.kk_id||r.id.slice(0,8))+
    '</small></td><td>'+esc(kindLabels[r.service_type])+'</td><td>'+describe(r)+'</td><td>'+badge(r)+
    '</td><td>'+esc(r.reviewed_by||'—')+'</td><td>'+esc(r.completed_by||'—')+'</td></tr>').join(''):
    '<tr><td colspan="7" class="kk-service-no-history">Wala pang service requests ngayong araw.</td></tr>';
