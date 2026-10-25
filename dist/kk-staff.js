@@ -55,9 +55,10 @@
  };
  const detailPairs=entries=>'<dl class="kk-child-pairs">'+entries.map(([key,value,kind])=>
   '<div><dt>'+escVal(key)+'</dt><dd>'+escVal(pretty(value,kind))+'</dd></div>').join('')+'</dl>';
- const detailCard=(heading,icon,entries)=>
+ const detailCard=(heading,icon,entries,section)=>
   '<section class="kk-child-card"><header><span class="kk-child-icon" aria-hidden="true">'+svgIcon(icon)+'</span><h4>'+
-  escVal(heading)+'</h4></header>'+detailPairs(entries)+'</section>';
+  escVal(heading)+'</h4>'+(section?'<button type="button" class="kk-card-edit" data-edit-section="'+escVal(section)+'" aria-label="Edit '+escVal(heading)+'">Edit</button>':'')+
+  '</header>'+detailPairs(entries)+'</section>';
  const yesNoRow=(label,value)=>{
   const selected=pretty(value,'yesno');
   return '<div class="kk-binary-row"><span class="kk-binary-label">'+escVal(label)+'</span><span class="kk-binary-values" aria-label="'+escVal(label)+': '+escVal(selected==='—'?'Not provided':selected)+'">'+
@@ -74,6 +75,74 @@
     '<small>Secured file · staff-only access</small></div>'+
     '<button type="button" data-view-id="'+escVal(m.id)+'" aria-label="View secured valid ID for '+escVal(initials(m))+'">'+svgIcon('document')+' View File</button></div>':
     '<p class="kk-muted">No document uploaded. Identity proof must be reviewed before verification, if required.</p>')+'</section>';
+ };
+
+ // A child edit view overlays only the selected applicant detail (parent stays
+ // mounted). This preserves the active selection, original section/tab and sidebar.
+ const editSchema={
+  personal:[['gender','Gender','select',['male','female','lesbian','gay','bisexual','transgender','queer','other','undisclosed']],
+   ['civil_status','Civil Status','select',['single','married','divorced','widowed','separated','other']],
+   ['solo_parent','Solo Parent','select',['yes','no','undisclosed']],
+   ['family_count','Family Members','number'],['religion','Religion','text'],['siblings','Siblings','number']],
+  address:[['residence_region','Region','text'],['residence_city','City','text'],
+   ['residence_province','Province','text'],['residence_barangay','Barangay','text'],
+   ['sitio_id','Sitio / Purok','sitio'],['street','House No. / Street','text'],['address_line_2','Address Line 2','text']],
+  education:[['education','Educational Attainment','text'],['school_name','School','text'],
+   ['year_level','Year Level','text'],['employment','Employment Status','text'],
+   ['education_status','Educational Status','text'],['course_program','Course / Program','text']],
+  additional:[['sk_voter','Are you a Registered SK Voter?','yesno'],['national_voter','Registered National Voter?','yesno'],
+   ['voted_last_election','Did You Vote Last Election?','yesno'],['kk_assembly','Have you already attended a KK Assembly?','yesno'],
+   ['interests','Skills / Interests','text']],
+  emergency:[['emergency_name','Contact Person','text'],['emergency_phone','Contact Number','tel'],
+   ['emergency_relation','Relationship','text']]
+ };
+ const editLabels={personal:'Personal Information',address:'Address',education:'Education',
+  additional:'Additional Information',emergency:'Emergency Contact'};
+ let editingSection=null;
+ const editField=([key,label,type,options],data)=>{
+  const val=String(data[key]??(key==='sk_voter'?data.voter??'':''));
+  let field='';
+  if(type==='select'||type==='yesno'||type==='sitio'){
+   const choices=type==='yesno'?[['yes','Yes'],['no','No']]:type==='sitio'?
+    [['','Select Sitio / Purok'],...sitios.map(o=>[o.id,o.name])]:
+    [['','Select…'],...options.map(v=>[v,pretty(v)])];
+   field='<select name="'+escVal(key)+'"'+(type==='yesno'?' required':'')+'>'+
+    (type==='yesno'?'<option value="">Select Yes or No</option>':'')+
+    choices.map(([v,t])=>'<option value="'+escVal(v)+'"'+(v===val?' selected':'')+'>'+escVal(t)+'</option>').join('')+'</select>';
+  }else field='<input name="'+escVal(key)+'" type="'+(type==='number'?'number':type==='tel'?'tel':'text')+
+   '" maxlength="160"'+(type==='number'?' min="'+(key==='family_count'?1:0)+'" max="99"':'')+
+   ' value="'+escVal(val)+'" autocomplete="off">';
+  return '<label class="kk-edit-field"><span>'+escVal(label)+'</span>'+field+'</label>';
+ };
+ const openChildEditor=section=>{
+  const m=selectedMember(),fields=editSchema[section];
+  if(!m||!fields)return;
+  editingSection=section;
+  const area=$('#kk-staff-detail');
+  area.querySelector('.kk-child-edit-view')?.remove();
+  const child=document.createElement('div');child.className='kk-child-edit-view';
+  child.setAttribute('role','region');child.setAttribute('aria-label','Edit '+editLabels[section]);
+  const hint=section==='personal'?'Official name and birthdate are kept read-only for identity protection. Other details can be corrected with an audit trail.':
+   'Changes are saved to the official KK record with an audit entry. Confirm the information before saving.';
+  child.innerHTML='<div class="kk-edit-heading"><button type="button" class="kk-edit-back" data-cancel-edit aria-label="Back to applicant">← Back to Profile</button>'+
+   '<span class="kk-tag">KK PROFILE · EDIT DETAILS</span><h3>Edit '+escVal(editLabels[section])+'</h3>'+
+   '<p>'+escVal(initials(m))+' · '+escVal(m.kk_id||'For verification')+'</p></div>'+
+   '<form class="kk-child-edit-form" id="kk-child-edit-form"><p class="kk-edit-help">'+escVal(hint)+'</p>'+
+   '<div class="kk-edit-fields">'+fields.map(f=>editField(f,m.profile||{})).join('')+'</div>'+
+   '<p class="kk-edit-response" role="status" aria-live="polite"></p>'+
+   '<div class="kk-edit-actions"><button type="button" class="secondary" data-cancel-edit>Cancel</button>'+
+   '<button type="submit" class="primary">Save Changes</button></div></form>';
+  area.append(child);
+  area.classList.add('kk-editing-child');
+  area.scrollTop=0;
+  child.querySelector('[data-cancel-edit]')?.focus();
+ };
+ const closeChildEditor=()=>{
+  editingSection=null;
+  const area=$('#kk-staff-detail');
+  area?.classList.remove('kk-editing-child');
+  area?.querySelector('.kk-child-edit-view')?.remove();
+  area?.querySelector('[data-edit-section]')?.focus();
  };
  const selectedMember=()=>members.find(m=>m.id===selectedMemberId);
  const memberCard=m=>{
@@ -108,17 +177,17 @@
    details='<div class="kk-child-grid">'+
     detailCard('Personal Information','person',[
      ['Full Name',full],['Date of Birth',m.birthdate],['Gender',p.gender],['Civil Status',p.civil_status],
-     ['Solo Parent',p.solo_parent,'yesno'],['Family Members',p.family_count],['Religion',p.religion],['Siblings',p.siblings]])+
+     ['Solo Parent',p.solo_parent,'yesno'],['Family Members',p.family_count],['Religion',p.religion],['Siblings',p.siblings]],'personal')+
     detailCard('Address','pin',[
      ['Region',p.residence_region],['City',p.residence_city],
      ['Barangay',p.residence_barangay],['Sitio/Purok',p.sitio_id?sitioName(p.sitio_id):null],
-     ['House No./Street',p.street],['Province',p.residence_province],['Address Line 2',p.address_line_2]])+
+     ['House No./Street',p.street],['Province',p.residence_province],['Address Line 2',p.address_line_2]],'address')+
     detailCard('Education','school',[
      ['Educational Attainment',p.education],['School',p.school_name],
      ['Year Level',p.year_level],['Employment Status',p.employment],
-     ['Educational Status',p.education_status],['Course / Program',p.course_program]])+
+     ['Educational Status',p.education_status],['Course / Program',p.course_program]],'education')+
     '<section class="kk-child-card kk-binary-card"><header><span class="kk-child-icon" aria-hidden="true">'+svgIcon('note')+
-    '</span><h4>Additional Information</h4></header>'+
+    '</span><h4>Additional Information</h4><button type="button" class="kk-card-edit" data-edit-section="additional">Edit</button></header>'+
     yesNoRow('Are you a Registered SK Voter?',p.sk_voter||p.voter)+
     yesNoRow('Registered National Voter?',p.national_voter)+
     yesNoRow('Did You Vote Last Election?',p.voted_last_election)+
@@ -126,7 +195,7 @@
     (p.interests?'<p class="kk-binary-interests"><strong>Skills / Interests:</strong> '+escVal(p.interests)+'</p>':'')+
     '</section>'+
     detailCard('Emergency Contact','phone',[
-     ['Contact Person',p.emergency_name],['Contact Number',p.emergency_phone],['Relationship',p.emergency_relation]])+
+     ['Contact Person',p.emergency_name],['Contact Number',p.emergency_phone],['Relationship',p.emergency_relation]],'emergency')+
     verifiedIdCard(m)+'</div>';
   }
   container.innerHTML='<div class="kk-child-heading"><span class="kk-child-avatar">'+escVal(short)+'</span>'+
@@ -219,8 +288,10 @@
  };
  document.addEventListener('click',e=>{
   if(!e.target.closest('#panel-kk-profiling'))return;
-  const target=e.target.closest('[data-open-member],[data-close-member],[data-child-tab],[data-view-id],[data-review],[data-sitio-action],[data-perk-edit],[data-perk-toggle],[data-redemption]');
+  const target=e.target.closest('[data-open-member],[data-close-member],[data-child-tab],[data-view-id],[data-review],[data-sitio-action],[data-perk-edit],[data-perk-toggle],[data-redemption],[data-edit-section],[data-cancel-edit]');
   if(!target)return;
+  if(target.dataset.cancelEdit!==undefined){closeChildEditor();return;}
+  if(target.dataset.editSection){openChildEditor(target.dataset.editSection);return;}
   if(target.dataset.openMember){
    selectedMemberId=target.dataset.openMember;detailTab='profile';displayMembers();
    if(matchMedia('(max-width:950px)').matches)$('#kk-staff-detail')?.scrollIntoView({behavior:'smooth',block:'start'});
@@ -276,6 +347,24 @@
    }
   }
 
+ });
+ document.addEventListener('submit',async e=>{
+  if(e.target.id!=='kk-child-edit-form')return;
+  e.preventDefault();
+  const form=e.target,m=selectedMember(),section=editingSection;
+  if(!m||!section||!form.reportValidity())return;
+  const changes=Object.fromEntries(new FormData(form));
+  const button=form.querySelector('[type=submit]'),response=form.querySelector('.kk-edit-response');
+  button.disabled=true;response.textContent='Saving verified staff changes…';
+  try{
+   const data=await request('profile-edit',{id:m.id,section,changes});
+   if(data?.ok!==true)throw Error('Hindi na-save ang profile.');
+   // Keep the same selected applicant and tab, reload from the database.
+   closeChildEditor();
+   await refresh();
+   status('Profile updated by SK staff. Changes recorded in Activity Log.');
+  }catch(error){response.textContent='Hindi na-save: '+String(error.message||'Unknown error');}
+  finally{button.disabled=false;}
  });
  $('#kk-perk-form')?.addEventListener('submit',e=>{
   e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;

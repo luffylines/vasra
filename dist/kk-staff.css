@@ -506,3 +506,100 @@ body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-toolbar-search
 body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-toolbar-search svg{color:#b5d4ff}
 body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-actions .secondary{background:#2d273b;color:#ffd8db;border-color:#885d70}
 body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-staff-stats-details>summary{color:#b3d4ff}
+
+
+/* Child edit screen nested inside selected applicant details, like reference.
+   Parent remains mounted to preserve the selected applicant & sidebar. */
+#panel-kk-profiling .kk-card-edit{
+ margin-left:auto;min-height:31px;padding:6px 12px;border:1px solid #b8ccef;
+ border-radius:8px;background:#f7faff;color:#225db4;
+ font:800 11px 'DM Sans',sans-serif;cursor:pointer
+}
+#panel-kk-profiling .kk-card-edit:hover{background:#e8f0ff;border-color:#80aaf3}
+#panel-kk-profiling .kk-applicant-detail.kk-editing-child{
+ position:relative;isolation:isolate;overflow-y:auto;min-height:610px
+}
+#panel-kk-profiling .kk-child-edit-view{
+ position:absolute;z-index:12;inset:0;min-height:100%;
+ padding:20px clamp(12px,2vw,25px) 28px;
+ background:#fff;border-radius:12px;overflow:auto;color:#1a3559
+}
+#panel-kk-profiling .kk-edit-heading{
+ border-bottom:1px solid #e1eafa;padding:0 0 17px;margin:0 0 15px
+}
+#panel-kk-profiling .kk-edit-back{
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:35px;
+ padding:7px 12px;background:#eaf2fe;color:#2859a1;border:1px solid #d0e0f6;
+ border-radius:9px;font:800 12px 'DM Sans',sans-serif;cursor:pointer;margin-bottom:16px
+}
+#panel-kk-profiling .kk-edit-heading .kk-tag{
+ display:block;width:max-content;font-size:10px;letter-spacing:1.4px;color:#5a83ba
+}
+#panel-kk-profiling .kk-edit-heading h3{
+ font:800 clamp(20px,2vw,26px) Manrope,sans-serif;color:#152f58;margin:6px 0
+}
+#panel-kk-profiling .kk-edit-heading p{
+ margin:0;font:500 12px 'DM Sans',sans-serif;color:#768fac
+}
+#panel-kk-profiling .kk-child-edit-form{
+ background:#fff;max-width:850px;margin:0 auto;display:block
+}
+#panel-kk-profiling .kk-edit-help{
+ background:#f1f6ff;color:#4c6f99;border:1px solid #dbe8fa;border-radius:10px;
+ padding:12px 14px;font-size:12px;line-height:1.6;margin:0 0 19px
+}
+#panel-kk-profiling .kk-edit-fields{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px
+}
+#panel-kk-profiling .kk-edit-field{
+ display:flex;flex-direction:column;gap:7px;min-width:0
+}
+#panel-kk-profiling .kk-edit-field>span{font:700 12px 'DM Sans',sans-serif;color:#425f81}
+#panel-kk-profiling .kk-edit-field :is(input,select){
+ display:block;width:100%;max-width:100%;box-sizing:border-box;min-height:45px;
+ padding:11px 12px;font:500 16px 'DM Sans',sans-serif;color:#1d3d69;
+ background:#fff;border:1px solid #c9d9ef;border-radius:9px
+}
+#panel-kk-profiling .kk-edit-field :is(input,select):focus{
+ outline:3px solid #88b9ff;outline-offset:1px;border-color:#407ddd
+}
+#panel-kk-profiling .kk-edit-actions{
+ display:flex;align-items:center;justify-content:flex-end;gap:11px;
+ padding:21px 0 0;margin-top:19px;border-top:1px solid #e1eafa
+}
+#panel-kk-profiling .kk-edit-actions button{
+ min-width:132px;min-height:44px;padding:11px 15px;border-radius:9px;
+ font:800 12px 'DM Sans',sans-serif
+}
+#panel-kk-profiling .kk-edit-actions .primary{background:#245dcc;color:white;border:1px solid #245dcc}
+#panel-kk-profiling .kk-edit-actions .secondary{background:#f4f8ff;color:#2d5995;border:1px solid #c6d9f5}
+#panel-kk-profiling .kk-edit-response{font-size:12px;color:#ac3742;min-height:0;margin:12px 0 0}
+#panel-kk-profiling .kk-edit-response:empty{display:none}
+@media(max-width:690px){
+ #panel-kk-profiling .kk-applicant-detail.kk-editing-child{min-height:630px;overflow:visible}
+ #panel-kk-profiling .kk-child-edit-view{position:relative;inset:auto;padding:16px;margin:-13px;border-radius:12px}
+ #panel-kk-profiling .kk-applicant-detail.kk-editing-child>:not(.kk-child-edit-view){display:none}
+ #panel-kk-profiling .kk-edit-fields{grid-template-columns:1fr;gap:13px}
+ #panel-kk-profiling .kk-edit-actions button{flex:1;min-width:0}
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-edit-view,
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-edit-form{
+ background:#172942;color:#edf6ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-heading{border-color:#3b5477}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-heading h3{color:#eef6ff}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-heading p,
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-field>span{color:#c0d3ee}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling :is(.kk-edit-back,.kk-card-edit){
+ background:#2a456c;border-color:#5579a9;color:#e8f3ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-help{
+ background:#213a5a;border-color:#3e597b;color:#c8d9ef
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-field :is(input,select){
+ background:#11253f;border-color:#4b688c;color:#f0f7ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-actions{border-color:#3b5477}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-actions .secondary{
+ background:#273f61;border-color:#5678a3;color:#eaf4ff
+}

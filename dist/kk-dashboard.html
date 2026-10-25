@@ -1,4 +1,4 @@
-<!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css"><link rel="stylesheet" href="./kk-dashboard.css"></head>
+<!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css"><link rel="stylesheet" href="./kk-dashboard.css"><link rel="stylesheet" href="./kk-services.css"></head>
 <body class="kk-body kk-member-dashboard">
 <div class="kk-workspace">
  <aside class="kk-workspace-sidebar" id="kk-sidebar" aria-label="KK member navigation">
@@ -9,6 +9,9 @@
    <button type="button" data-tab="projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7h18v14H3zM8 3v4m8-4v4M3 12h18"/></svg><span>Upcoming Projects</span></button>
    <button type="button" data-tab="activities"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8 12 3 3 5-6"/></svg><span>My Activities</span></button>
    <button type="button" data-tab="rewards"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9h18v12H3zM12 9v12M3 9h18V5H3z"/><path d="M12 5c-4-7-10-2-2 0M12 5c4-7 10-2 2 0"/></svg><span>Points & Rewards</span></button>
+   <button type="button" data-tab="printing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/><path d="M18 11h.01"/></svg><span>Free Printing</span></button>
+   <button type="button" data-tab="computer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>Computer Use</span></button>
+   <button type="button" data-tab="retabox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l8-4 8 4v12l-8 4-8-4zM4 7l8 5 8-5M12 12v11"/><path d="M9 8h6"/></svg><span>RetaBox Donations</span></button>
    <button type="button" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3.9a8 8 0 0 0-1.7-1L14.5 3h-4L10 6a8 8 0 0 0-1.7 1L6 6.1 4 9.5 6 11a8 8 0 0 0 0 2l-2 1.5L6 18l2.3-.9a8 8 0 0 0 1.7 1l.5 2.9h4l.4-2.9a8 8 0 0 0 1.7-1l2.3.9 2-3.5-2-1.5c.1-.3.1-.7.1-1Z"/></svg><span>Account Settings</span></button>
   </nav>
   <div class="kk-sidebar-bottom">
@@ -63,6 +66,37 @@
    <h3>Available Rewards</h3><div id="kk-reward-list" class="kk-dashboard-grid"></div>
    <h3>Redemption History</h3><div id="kk-redemption-list"></div>
   </section>
+  <section data-section="printing" class="kk-dashboard-panel kk-services-panel" aria-labelledby="kk-printing-title" hidden>
+   <h2 id="kk-printing-title">Free Printing</h2><p>Ipasa ang printing request para ma-double-check ng SK officer bago i-approve. Hindi pa ito automatic print job at walang file na ina-upload.</p>
+   <form id="kk-printing-form" class="kk-service-form">
+    <label>Paper Size <select name="paper_size" required><option value="short">Short Bond Paper</option><option value="long">Long Bond Paper</option></select></label>
+    <label>Print Type <select name="color" required><option value="bw">Black & White</option><option value="colored">Colored</option></select></label>
+    <label>Pages per Copy <input name="pages" type="number" min="1" max="100" value="1" required></label>
+    <label>Number of Copies <input name="copies" type="number" min="1" max="100" value="1" required></label>
+    <button class="kk-btn" type="submit">Request Printing Approval</button>
+   </form>
+   <p id="kk-printing-message" class="kk-feedback" role="status" hidden></p>
+   <h3>My Printing Requests</h3><div id="kk-printing-history"></div>
+  </section>
+  <section data-section="computer" class="kk-dashboard-panel kk-services-panel" aria-labelledby="kk-computer-title" hidden>
+   <h2 id="kk-computer-title">Computer Use</h2><p>Pumili ng hours para sa paggamit ng computer sa SK office. For approval at availability check muna ito.</p>
+   <form id="kk-computer-form" class="kk-service-form">
+    <label>Number of Hours <input name="hours" type="number" min="1" max="8" value="1" required></label>
+    <button class="kk-btn" type="submit">Request Computer Use</button>
+   </form>
+   <p id="kk-computer-message" class="kk-feedback" role="status" hidden></p>
+   <h3>My Computer Requests</h3><div id="kk-computer-history"></div>
+  </section>
+  <section data-section="retabox" class="kk-dashboard-panel kk-services-panel" aria-labelledby="kk-retabox-title" hidden>
+   <h2 id="kk-retabox-title">RetaBox Donations</h2><p>Ilagay ang estimated grams ng iyong recyclable donation. Ibe-verify ng SK officer ang actual grams bago ma-approve at ma-award ang points ayon sa SK-approved rate.</p>
+   <form id="kk-retabox-form" class="kk-service-form">
+    <label>Estimated Donation Weight (grams) <input name="grams" type="number" min="1" max="100000" value="100" required></label>
+    <label>Donation Description <textarea name="description" maxlength="180" rows="3" placeholder="Hal. plastic bottles, paper, cartons"></textarea></label>
+    <button class="kk-btn" type="submit">Submit Donation Request</button>
+   </form>
+   <p id="kk-retabox-message" class="kk-feedback" role="status" hidden></p>
+   <h3>My RetaBox Requests</h3><div id="kk-retabox-history"></div>
+  </section>
   <section data-section="settings" class="kk-dashboard-panel" aria-labelledby="kk-settings-title" hidden>
    <h2 id="kk-settings-title">My Account Settings</h2><p>Palitan ang password at email ng iyong KK account. Hindi ito ang SK Officer login.</p>
    <div class="kk-settings-grid"><form id="kk-dash-password" class="kk-form kk-settings-card">
@@ -85,4 +119,4 @@
  <button class="kk-sidebar-backdrop" type="button" aria-label="Close KK navigation" id="kk-sidebar-backdrop"></button>
 </div>
 <footer class="kk-footer kk-workspace-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
-<script src="./common.js"></script><script src="./theme.js"></script><script src="./kk-dashboard.js" defer></script></body></html>
+<script src="./common.js"></script><script src="./theme.js"></script><script src="./kk-dashboard.js" defer></script><script src="./kk-services.js" defer></script></body></html>

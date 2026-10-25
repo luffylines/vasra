@@ -4,9 +4,8 @@
  width:41px;height:41px;min-height:41px;padding:8px;color:#285b97;border:1px solid #c6d8ee;
  background:#eaf2ff;border-radius:11px;cursor:pointer;transition:background .15s,color .15s}
 .vasra-theme-toggle svg{width:19px;height:19px;flex:none}
-.vasra-theme-toggle svg:nth-child(2){display:none}
-html[data-theme="dark"] .vasra-theme-toggle svg:first-child{display:none}
-html[data-theme="dark"] .vasra-theme-toggle svg:nth-child(2){display:block}
+.vasra-theme-toggle svg{display:block!important;width:19px;height:19px}
+.vasra-theme-toggle svg:nth-child(n+2){display:none!important}
 .vasra-theme-toggle:focus-visible{outline:3px solid #82b4ff;outline-offset:2px}
 body.portal-refresh .mobile-appbar .vasra-theme-toggle{display:none}
 body.kk-body .kk-auth-card{position:relative}
