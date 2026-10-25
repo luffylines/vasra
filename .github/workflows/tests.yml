@@ -3,6 +3,7 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - feature/kk-sk-services-20261025
       - feature/kk-profiling-reference-layout-20261025
       - fix/projects-darkmode-contrast-20261025
       - fix/public-sidebar-darkmode-unification-20261025

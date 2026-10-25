@@ -7,6 +7,23 @@
  let loading=false, selectedMemberId=null, detailTab='profile';
  const status=(message='',error=false)=>{const target=$('#kk-staff-message');if(!target)return;target.textContent=message;target.dataset.kind=error?'error':'info';};
  const initials=m=>[m.first_name,m.middle_name,m.last_name].filter(Boolean).join(' ');
+ // Parse YYYY-MM-DD as a calendar date. Date.parse() UTC conversion can make
+ // birthdays inaccurate near midnight; compare against today's Manila date.
+ const memberAge=birthdate=>{
+  if(typeof birthdate!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(birthdate))return null;
+  const [year,month,day]=birthdate.split('-').map(Number);
+  const birthday=new Date(Date.UTC(year,month-1,day));
+  if(birthday.getUTCFullYear()!==year||birthday.getUTCMonth()+1!==month||birthday.getUTCDate()!==day)return null;
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'})
+   .formatToParts(new Date());
+  const now=Object.fromEntries(parts.filter(p=>p.type!=='literal').map(p=>[p.type,Number(p.value)]));
+  const age=now.year-year-(now.month<month||(now.month===month&&now.day<day)?1:0);
+  return age>=0&&age<=120?age:null;
+ };
+ const nameWithAge=m=>{
+  const age=memberAge(m.birthdate);
+  return initials(m)+(age===null?'':' ('+age+')');
+ };
  const stats=()=>{
   const states=['draft','pending','verified','rejected'];
   $('#kk-staff-stats').innerHTML=states.map(state=>'<div class="kk-stat"><span>'+state+'</span><b>'+members.filter(x=>x.status===state).length+'</b></div>').join('');
@@ -49,7 +66,8 @@
    phone:'<path d="M7 3h3l2 5-2 2a14 14 0 0 0 4 4l2-2 5 2v3a3 3 0 0 1-3 3C10 20 4 14 4 6a3 3 0 0 1 3-3Z"/>',
    document:'<path d="M5 2h9l5 5v15H5z"/><path d="M14 2v6h5M8 13h8M8 17h6"/>',
    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
-   shield:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/>'
+   shield:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/>',
+   trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 10v7m4-7v7"/>'
   };
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(shapes[name]||shapes.note)+'</svg>';
  };
@@ -67,9 +85,11 @@
  };
  const verifiedIdCard=m=>{
   const doc=m.document;
+  const image=doc?.exists&&(doc.mime==='image/jpeg'||doc.mime==='image/png'||/\.(jpg|jpeg|png)$/i.test(doc.name||''));
   return '<section class="kk-child-card kk-validid-card"><header><span class="kk-child-icon" aria-hidden="true">'+svgIcon('document')+'</span><h4>Uploaded Valid ID</h4></header>'+
    (doc?.exists?'<div class="kk-document-summary">'+
-    '<div class="kk-document-thumbnail" aria-label="Private uploaded ID document">'+svgIcon('shield')+'</div>'+
+    '<div class="kk-document-thumbnail" aria-label="Private uploaded ID document">'+
+    (image?'<img loading="lazy" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview" alt="Protected thumbnail of uploaded Valid ID">':svgIcon('shield'))+'</div>'+
     '<div class="kk-document-info"><strong>'+escVal(doc.name||'Submitted Valid ID')+'</strong>'+
     '<small>Uploaded: '+escVal(doc.uploaded_at?new Date(doc.uploaded_at).toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Manila'}):'Date not provided')+'</small>'+
     '<small>Secured file · staff-only access</small></div>'+
@@ -146,7 +166,7 @@
  };
  const selectedMember=()=>members.find(m=>m.id===selectedMemberId);
  const memberCard=m=>{
-   const full=initials(m),active=m.id===selectedMemberId;
+   const full=nameWithAge(m),active=m.id===selectedMemberId;
    return '<button type="button" class="kk-applicant-row'+(active?' active':'')+'" data-open-member="'+escVal(m.id)+
     '" aria-pressed="'+String(active)+'"><span class="kk-applicant-avatar">'+escVal((m.first_name||'?')[0]+(m.last_name||'?')[0])+
     '</span><span class="kk-applicant-main"><strong>'+escVal(full)+'</strong><small>'+escVal(m.email)+
@@ -160,14 +180,23 @@
   if(!container)return;
   const m=selectedMember();
   if(!m){container.innerHTML='<div class="kk-child-empty"><strong>Select an applicant</strong><p>Pumili ng pangalan sa kaliwa para makita ang personal details at SK verification status.</p></div>';return;}
-  const p=m.profile||{},full=initials(m),short=(m.first_name||'?')[0]+(m.last_name||'?')[0];
+  const p=m.profile||{},full=nameWithAge(m),short=(m.first_name||'?')[0]+(m.last_name||'?')[0];
   const tab='<div class="kk-child-tabs" role="tablist" aria-label="Applicant details">'+
    [['profile','Profile Details','person'],['history','Activity Log','clock'],['documents','Documents','document']].map(([value,label,icon])=>
     '<button type="button" role="tab" data-child-tab="'+value+'" aria-selected="'+String(detailTab===value)+'">'+svgIcon(icon)+
-    '<span>'+label+'</span></button>').join('')+'</div>';
+    '<span>'+label+'</span></button>').join('')+
+   (window.kkStaffRole==='chairman'?'<button type="button" class="kk-delete-tab" data-delete-profile aria-label="Delete KK Profile">'+svgIcon('trash')+
+    '<span>Delete KK Profile</span></button>':'')+'</div>';
   let details='';
   if(detailTab==='documents'){
-   details=verifiedIdCard(m);
+   details='<section class="kk-document-workspace" aria-label="KK applicant documents">'+
+    '<div class="kk-document-intro"><h4>Uploaded Valid ID</h4><p>Secure full-size view for authorized SK staff only. Huwag i-share ang dokumento.</p></div>'+
+    verifiedIdCard(m)+(m.document?.exists?'<div class="kk-document-inline-viewer">'+
+    '<div class="kk-document-preview-toolbar"><strong>Private Document Preview</strong><div>'+
+    '<button type="button" data-view-id="'+escVal(m.id)+'">Open Full View</button>'+
+    '<a href="./api/kk/staff/id/'+encodeURIComponent(m.id)+'" download>Download File</a></div></div>'+
+    '<iframe title="Full uploaded Valid ID preview (image or PDF)" loading="lazy" referrerpolicy="no-referrer" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview"></iframe>'+
+    '</div>':'')+'</section>';
   }else if(detailTab==='history'){
    details='<section class="kk-child-card"><header><span class="kk-child-icon">'+svgIcon('clock')+'</span><h4>Review Activity</h4></header><p class="kk-muted">'+
     (m.status==='rejected'?'For correction · '+escVal(m.review_note||'No explanation'):
@@ -176,7 +205,7 @@
   }else{
    details='<div class="kk-child-grid">'+
     detailCard('Personal Information','person',[
-     ['Full Name',full],['Date of Birth',m.birthdate],['Gender',p.gender],['Civil Status',p.civil_status],
+     ['Full Name',initials(m)],['Date of Birth',m.birthdate],['Gender',p.gender],['Civil Status',p.civil_status],
      ['Solo Parent',p.solo_parent,'yesno'],['Family Members',p.family_count],['Religion',p.religion],['Siblings',p.siblings]],'personal')+
     detailCard('Address','pin',[
      ['Region',p.residence_region],['City',p.residence_city],
@@ -276,6 +305,9 @@
   button.disabled=true;
   try{
    const result=await task();await refresh();
+   if(result?.deletion)status(result.storage_cleanup_pending
+    ?'KK profile deleted; private ID file still requires storage cleanup.'
+    :'KK profile deleted, session revoked, related KK records removed and audit saved.',!!result.storage_cleanup_pending);
    if(result?.notification){
     status(result.notification.status==='provider_accepted'
      ?'SK review saved. Notification accepted by email provider (delivery to inbox is not yet confirmed).'+(result.notification.reference?' Tracking ID: '+result.notification.reference:'')
@@ -288,7 +320,7 @@
  };
  document.addEventListener('click',e=>{
   if(!e.target.closest('#panel-kk-profiling'))return;
-  const target=e.target.closest('[data-open-member],[data-close-member],[data-child-tab],[data-view-id],[data-review],[data-sitio-action],[data-perk-edit],[data-perk-toggle],[data-redemption],[data-edit-section],[data-cancel-edit]');
+  const target=e.target.closest('[data-open-member],[data-close-member],[data-child-tab],[data-view-id],[data-delete-profile],[data-review],[data-sitio-action],[data-perk-edit],[data-perk-toggle],[data-redemption],[data-edit-section],[data-cancel-edit]');
   if(!target)return;
   if(target.dataset.cancelEdit!==undefined){closeChildEditor();return;}
   if(target.dataset.editSection){openChildEditor(target.dataset.editSection);return;}
@@ -299,10 +331,27 @@
   }
   if(target.hasAttribute('data-close-member')){selectedMemberId=null;displayMembers();return;}
   if(target.dataset.childTab){detailTab=target.dataset.childTab;renderMemberDetail();return;}
+  if(target.hasAttribute('data-delete-profile')){
+   const member=selectedMember();
+   if(!member||window.kkStaffRole!=='chairman')return;
+   const name=initials(member);
+   const confirmation=prompt('PERMANENT DELETE KK PROFILE: '+name+
+    '\nMawawala ang KK login, profile, points, registrations, service requests at ID. I-type ang buong pangalan para kumpirmahin:');
+   if(confirmation===null)return;
+   if(confirmation.trim()!==name){status('Hindi tugma ang pangalan. Walang profile na nabura.',true);return;}
+   if(!confirm('Final confirmation: Permanently delete KK member '+name+' and related records? This cannot be undone.'))return;
+   bind(target,async()=>{
+    const result=await request('profile-delete',{id:member.id,confirm_name:confirmation.trim()});
+    if(result?.ok!==true)throw Error('Hindi natuloy ang deletion.');
+    selectedMemberId=null;detailTab='profile';editingSection=null;
+    return {deletion:true,storage_cleanup_pending:!!result.storage_cleanup_pending};
+   });
+   return;
+  }
   if(target.dataset.viewId){
    const id=encodeURIComponent(target.dataset.viewId);
    // Same-origin authenticated document route. This URL is never publicly listed.
-   window.open('./api/kk/staff/id/'+id,'_blank','noopener,noreferrer');
+   window.open('./api/kk/staff/id/'+id+'/preview','_blank','noopener,noreferrer');
    return;
   }
   if(target.dataset.perkEdit){
