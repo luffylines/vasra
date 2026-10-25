@@ -45,7 +45,8 @@
    // Other member views keep their existing theme-toggle placement.
    const authNav=document.querySelector('.kk-auth-top-actions');
    const target=authNav||document.querySelector('.kk-reg-toolbar')||document.querySelector('.kk-auth-card');
-   if(target){const b=button();target.prepend(b);
+   if(target){const b=button();
+    if(authNav)target.prepend(b);else target.append(b);
     if(target.classList.contains('kk-auth-card'))b.classList.add('kk-auth-theme-button');}
   }
  }
