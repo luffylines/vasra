@@ -84,9 +84,11 @@
  };
  const verifiedIdCard=m=>{
   const doc=m.document;
+  const image=doc?.exists&&(doc.mime==='image/jpeg'||doc.mime==='image/png'||/\.(jpg|jpeg|png)$/i.test(doc.name||''));
   return '<section class="kk-child-card kk-validid-card"><header><span class="kk-child-icon" aria-hidden="true">'+svgIcon('document')+'</span><h4>Uploaded Valid ID</h4></header>'+
    (doc?.exists?'<div class="kk-document-summary">'+
-    '<div class="kk-document-thumbnail" aria-label="Private uploaded ID document">'+svgIcon('shield')+'</div>'+
+    '<div class="kk-document-thumbnail" aria-label="Private uploaded ID document">'+
+    (image?'<img loading="lazy" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview" alt="Protected thumbnail of uploaded Valid ID">':svgIcon('shield'))+'</div>'+
     '<div class="kk-document-info"><strong>'+escVal(doc.name||'Submitted Valid ID')+'</strong>'+
     '<small>Uploaded: '+escVal(doc.uploaded_at?new Date(doc.uploaded_at).toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Manila'}):'Date not provided')+'</small>'+
     '<small>Secured file · staff-only access</small></div>'+
@@ -192,7 +194,7 @@
     '<div class="kk-document-preview-toolbar"><strong>Private Document Preview</strong><div>'+
     '<button type="button" data-view-id="'+escVal(m.id)+'">Open Full View</button>'+
     '<a href="./api/kk/staff/id/'+encodeURIComponent(m.id)+'" download>Download File</a></div></div>'+
-    (m.document.mime==='application/pdf'?
+    (m.document.mime==='application/pdf'||/\.pdf$/i.test(m.document.name||'')?
     '<iframe title="Full size uploaded ID PDF" loading="lazy" referrerpolicy="no-referrer" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview"></iframe>':
     '<img alt="Uploaded KK Valid ID, staff-only preview" loading="lazy" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview">')+
     '</div>':'')+'</section>';
@@ -204,7 +206,7 @@
   }else{
    details='<div class="kk-child-grid">'+
     detailCard('Personal Information','person',[
-     ['Full Name',full],['Date of Birth',m.birthdate],['Gender',p.gender],['Civil Status',p.civil_status],
+     ['Full Name',initials(m)],['Date of Birth',m.birthdate],['Gender',p.gender],['Civil Status',p.civil_status],
      ['Solo Parent',p.solo_parent,'yesno'],['Family Members',p.family_count],['Religion',p.religion],['Siblings',p.siblings]],'personal')+
     detailCard('Address','pin',[
      ['Region',p.residence_region],['City',p.residence_city],
@@ -304,6 +306,9 @@
   button.disabled=true;
   try{
    const result=await task();await refresh();
+   if(result?.deletion)status(result.storage_cleanup_pending
+    ?'KK profile deleted; private ID file still requires storage cleanup.'
+    :'KK profile deleted, session revoked, related KK records removed and audit saved.',!!result.storage_cleanup_pending);
    if(result?.notification){
     status(result.notification.status==='provider_accepted'
      ?'SK review saved. Notification accepted by email provider (delivery to inbox is not yet confirmed).'+(result.notification.reference?' Tracking ID: '+result.notification.reference:'')
@@ -340,8 +345,7 @@
     const result=await request('profile-delete',{id:member.id,confirm_name:confirmation.trim()});
     if(result?.ok!==true)throw Error('Hindi natuloy ang deletion.');
     selectedMemberId=null;detailTab='profile';editingSection=null;
-    if(result.storage_cleanup_pending)status('Deleted from database. Uploaded document needs private storage cleanup.',true);
-    return result;
+    return {deletion:true,storage_cleanup_pending:!!result.storage_cleanup_pending};
    });
    return;
   }
