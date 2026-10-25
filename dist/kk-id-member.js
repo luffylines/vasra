@@ -3,11 +3,15 @@
  const $=s=>document.querySelector(s),upload=$('#kk-id-upload-form');
  if(!upload)return;
  const chooser=$('#kk-id-photo'),chosen=$('#kk-id-selected-photo'),
-  submission=$('#kk-id-photo-submission'),approvedPhoto=$('#kk-id-approved-photo'),
+  submission=$('#kk-id-photo-submission'),uploadCard=$('#kk-id-upload-card'),
+  approvedPhoto=$('#kk-id-approved-photo'),
   approvedPortrait=$('#kk-id-approved-portrait'),download=$('#kk-id-member-download');
  let selectedPhotoUrl=null,memberApproval='not_uploaded',exportReady=false,downloading=false;
  const approvalView=(approved,picture)=>{
-  submission.hidden=approved;approvedPhoto.hidden=!approved;
+  // The entire upload article disappears after approval — no empty bordered strip.
+  uploadCard.hidden=approved;
+  submission.hidden=approved;
+  approvedPhoto.hidden=!approved;
   if(approved&&picture)approvedPortrait.src=picture;
   else approvedPortrait.removeAttribute('src');
   download.disabled=!approved||!exportReady||downloading;
@@ -42,6 +46,7 @@
    if(response?.ok!==true)throw Error('Unable to load KK ID details.');
    const found=!!response.photo_exists,state=response.status||'not_uploaded';
    memberApproval=state;
+   if(version!==revision)return;
    approvalView(found&&state==='approved',found?'./api/kk/id-card/photo?t='+Date.now():null);
    $('#kk-id-card-approval').textContent=found?(state==='approved'?
     (response.printed_at?'Printed · Official ID':'Photo Approved · Ready for Print'):
