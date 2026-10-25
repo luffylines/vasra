@@ -205,6 +205,18 @@
  <label>Search Member<input id="kk-staff-search" type="search" placeholder="Name / email / KK ID / Sitio"></label><button id="kk-staff-refresh" type="button" class="secondary">Refresh</button></div>
  <div id="kk-staff-list" class="kk-staff-members"></div>
  </section>
+ <section class="kk-staff-card kk-staff-rewards" aria-labelledby="kk-staff-rewards-title">
+  <div class="kk-staff-heading"><div><h3 id="kk-staff-rewards-title">KK Rewards & Redemption Management</h3><p>SK Chairman: publish or disable rewards. SK Officers: review member redemption requests.</p></div></div>
+  <form id="kk-perk-form" class="kk-sitio-form">
+   <input type="hidden" name="id">
+   <label>Reward Title<input name="title" required minlength="3" maxlength="120" placeholder="SK-approved reward"></label>
+   <label>Points Required<input name="cost" type="number" min="1" max="10000" required placeholder="Points"></label>
+   <label>Reward Details<input name="description" maxlength="500" placeholder="Conditions / pickup instructions"></label>
+   <div class="kk-sitio-form-actions"><button type="submit" class="primary">Save Reward (Chairman)</button><button type="reset" class="secondary">Clear</button></div>
+  </form>
+  <h4>Published & Unpublished Rewards</h4><div id="kk-staff-reward-list" class="kk-staff-members"></div>
+  <h4>Member Redemption Requests</h4><div id="kk-staff-redemption-list" class="kk-staff-members"></div>
+ </section>
  </section><section id="panel-settings" class="account-settings-panel" hidden>
 <div class="settings-header"><div class="eyebrow">PERSONAL ACCOUNT</div><h2>Account Settings</h2><p>Manage your email and password securely.</p></div>
 <div class="settings-layout">

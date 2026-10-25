@@ -52,6 +52,23 @@
     (m.status==='verified'?'<span class="kk-verification-reward">✓ Verified · 50 welcome points awarded once</span>':'')+
    '</div></div></details>';
  };
+ const displayRewards=()=>{
+  const container=$('#kk-staff-reward-list');
+  if(container)container.innerHTML=perks.length?perks.map(p=>
+   '<article class="kk-sitio-item"><div class="kk-sitio-label"><strong>'+escVal(p.title)+'</strong>'+
+   '<small>'+escVal(p.description||'')+' · '+escVal(p.cost)+' points · '+(p.active?'Active':'Inactive')+
+   '</small></div><div class="kk-sitio-buttons">'+
+   '<button type="button" data-perk-edit="'+escVal(p.id)+'">Edit</button>'+
+   '<button type="button" data-perk-toggle="'+escVal(p.id)+'">'+(p.active?'Disable':'Publish')+'</button></div></article>').join(''):
+   '<p class="kk-muted">Wala pang SK-approved rewards.</p>';
+  const redemptionsContainer=$('#kk-staff-redemption-list');
+  if(redemptionsContainer)redemptionsContainer.innerHTML=redemptions.length?
+   redemptions.map(r=>'<article class="kk-sitio-item"><div class="kk-sitio-label"><strong>'+escVal(r.name)+'</strong><small>'+
+    escVal(r.perk)+' · '+escVal(r.cost)+' pts · '+escVal(r.status)+'</small></div>'+
+    (r.status==='pending'?'<div class="kk-sitio-buttons"><button type="button" data-redemption="approved" data-id="'+escVal(r.id)+'">Approve</button>'+
+    '<button type="button" data-redemption="rejected" data-id="'+escVal(r.id)+'">Reject</button></div>':'')+'</article>').join(''):
+   '<p class="kk-muted">Wala pang redemption requests.</p>';
+ };
  const displayMembers=()=>{
   const text=$('#kk-staff-search').value.trim().toLowerCase(),state=$('#kk-staff-filter').value;
   const showing=members.filter(m=>(state==='all'||m.status===state)&&
@@ -64,11 +81,13 @@
   try{
    // Separate calls avoid falsely claiming that the KK schema is missing
    // when a different, optional endpoint fails.
-   const [result,sitioResult]=await Promise.all([request(''),request('sitios')]);
+   const [result,sitioResult,catalog]=await Promise.all([request(''),request('sitios'),request('catalog')]);
    if(!Array.isArray(result?.members)||!Array.isArray(sitioResult?.sitios))
     throw Error('Invalid KK staff response.');
    members=result.members;sitios=sitioResult.sitios;
-   stats();displayMembers();displaySitios();
+   perks=Array.isArray(catalog?.perks)?catalog.perks:[];
+   redemptions=Array.isArray(result?.redemptions)?result.redemptions:[];
+   stats();displayMembers();displaySitios();displayRewards();
    status('Updated · '+members.length+' KK members · '+sitios.length+' official sitios.');
   }catch(e){
    status('Hindi ma-load ang KK records: '+e.message+' I-check ang staff session at kung sa tamang preview domain ka naka-login.',true);
@@ -91,8 +110,28 @@
  };
  document.addEventListener('click',e=>{
   if(!e.target.closest('#panel-kk-profiling'))return;
-  const target=e.target.closest('[data-review],[data-sitio-action]');
+  const target=e.target.closest('[data-review],[data-sitio-action],[data-perk-edit],[data-perk-toggle],[data-redemption]');
   if(!target)return;
+  if(target.dataset.perkEdit){
+   const perk=perks.find(item=>item.id===target.dataset.perkEdit);
+   if(!perk)return;
+   const form=$('#kk-perk-form');for(const key of ['id','title','cost','description'])
+    form.elements[key].value=perk[key]??'';
+   form.scrollIntoView({behavior:'smooth',block:'center'});
+   form.elements.title.focus();return;
+  }
+  if(target.dataset.perkToggle){
+   const perk=perks.find(item=>item.id===target.dataset.perkToggle);
+   if(!perk||!confirm((perk.active?'Disable':'Publish')+' '+perk.title+'?'))return;
+   bind(target,()=>request('perks',{id:perk.id,title:perk.title,cost:perk.cost,
+     description:perk.description,active:!perk.active}));return;
+  }
+  if(target.dataset.redemption){
+   const approved=target.dataset.redemption==='approved';
+   const note=prompt(approved?'Optional redemption approval note:':'Reason for rejecting this redemption:','');
+   if(note===null||!confirm((approved?'Approve':'Reject')+' redemption request?'))return;
+   bind(target,()=>request('redemption',{id:target.dataset.id,status:target.dataset.redemption,note}));return;
+  }
   if(target.dataset.review){
    const decision=target.dataset.review;
    const note=decision==='rejected'?prompt('Dahilan o kailangang itama ng applicant (required):'):prompt('Optional review note para sa verified profile:','');
@@ -115,6 +154,15 @@
    }
   }
 
+ });
+ $('#kk-perk-form')?.addEventListener('submit',e=>{
+  e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;
+  const v=Object.fromEntries(new FormData(form)),btn=form.querySelector('[type=submit]');
+  bind(btn,async()=>{
+   await request('perks',{id:v.id||null,title:v.title.trim(),
+     description:v.description.trim(),cost:Number(v.cost),active:true});
+   form.reset();
+  });
  });
  $('#kk-sitio-form')?.addEventListener('submit',e=>{
   e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;

@@ -38,6 +38,10 @@
     {
       "source": "/kk-profile",
       "destination": "/kk-profile.html"
+    },
+    {
+      "source": "/kk-dashboard",
+      "destination": "/kk-dashboard.html"
     }
   ],
   "redirects": [
@@ -79,6 +83,11 @@
     {
       "source": "/kk-profile.html",
       "destination": "/kk-profile",
+      "permanent": true
+    },
+    {
+      "source": "/kk-dashboard.html",
+      "destination": "/kk-dashboard",
       "permanent": true
     }
   ]

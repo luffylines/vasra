@@ -66,7 +66,7 @@ test('No guessed document URLs, invalid unpublished links cannot be shown public
  assert.match(sql,/on conflict\(category\) do nothing/);
  assert.match(sql,/disclosure_link_updated/);
  assert.match(staffJs,/if\(body\.published&&!url\)/);
- assert.match(read('dist/sw.js'),/vasra-v56-kk-required-review-email-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v57-kk-verified-dashboard-20261025/);
  for(const [p,src] of [['public',publicJs],['staff',staffJs],['monthly',transJs],
   ['handler',api],['db',db],['account',accountJs]])
   assert.doesNotThrow(()=>new vm.Script(src,{filename:p}));

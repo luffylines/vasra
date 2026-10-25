@@ -355,6 +355,7 @@
   }
   if(!result.member){location.replace('./kk-login');return;}
   account=result;profile=result.profile||{};data={...(profile.data||{})};
+  if(profile.status==='verified'){location.replace('./kk-dashboard');return;}
   data.region='NCR';data.province='N/A (NCR)';data.city='Quezon City';data.barangay='Vasra';
   data.residence_region=data.residence_region||'NCR';data.residence_province=data.residence_province||'Metro Manila';
   data.residence_city=data.residence_city||'Quezon City';

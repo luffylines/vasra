@@ -297,3 +297,9 @@
 .kk-step-one .kk-count-field button:focus-visible,.kk-addline-controls button:focus-visible{outline:3px solid #78a9ec;outline-offset:1px}
 @media(max-width:760px){.kk-step-one{grid-template-columns:1fr;gap:13px}.kk-step-one>.kk-section-heading:not(:first-child){margin-top:7px;padding-top:16px}.kk-step-one .kk-count-field button{width:40px}}
 @media(min-width:761px){.kk-step-one .kk-section-heading{margin-bottom:2px}}
+
+/* KK profile controls stay together on desktop and mobile. */
+.kk-reg-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kk-reg-toolbar .kk-toolbar-logout{min-height:36px;padding:8px 13px;white-space:nowrap}
+.kk-reg-toolbar .kk-register-home{margin-left:auto}
+@media(max-width:480px){.kk-reg-toolbar .kk-register-brand{margin-right:auto}.kk-reg-toolbar .kk-register-home,.kk-reg-toolbar .kk-toolbar-logout{font-size:12px;padding:8px 10px}}

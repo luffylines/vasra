@@ -15,15 +15,16 @@ test('KK staff uses searchable sitio directory with grouped resident and verific
  assert.match(staff,/aria-expanded/);
  assert.match(staff, /kk-sitio-search'\)\?\.addEventListener\('input',displaySitios/);
 });
-test('Manual perks and award management is paused without disabling 50 verified bonus',()=>{
- assert.doesNotMatch(html,/id="kk-perk-form"|Points & Perks|Perk Redemption Requests/);
- assert.doesNotMatch(profile,/Points & Perks|id="kk-perks-list"|id="kk-redemptions"/);
- assert.doesNotMatch(staff,/data-award|data-redemption|kk-perk-form/);
- assert.doesNotMatch(kk,/send\('redeem'/);
- for(const route of ["if(path==='/api/kk/staff/points'","if(path==='/api/kk/staff/perks'","if(path==='/api/kk/staff/redemption'","if(path==='/api/kk/redeem'"]){
+test('SK decides which rewards become available and redemption requests require staff review',()=>{
+ assert.match(html,/id="kk-perk-form"/);
+ assert.match(html,/id="kk-staff-redemption-list"/);
+ assert.match(staff,/data-redemption/);
+ assert.match(staff,/request\('perks'/);
+ for(const route of ["if(path==='/api/kk/staff/perks'","if(path==='/api/kk/staff/redemption'","if(path==='/api/kk/redeem'"]){
   const start=handler.indexOf(route);assert.ok(start>=0,route);
-  assert.ok(handler.slice(start,start+330).includes("S.fail(403,'Points & Perks are temporarily unavailable"),route);
+  assert.doesNotMatch(handler.slice(start,start+270),/Points & Perks are temporarily unavailable/);
  }
+ assert.match(read('dist/kk-dashboard.js'),/request\('redeem'/);
 });
 test('50 bonus is awarded once on status transition pending to verified, with database uniqueness',()=>{
  assert.match(bonus,/create unique index if not exists kk_points_unique_verification_bonus/);
@@ -54,7 +55,7 @@ test('Error states explain session or network instead of falsely claiming missin
  assert.match(kk,/Hindi ma-load ang KK profile/);
  assert.match(kk,/id="kk-retry-load"/);
  assert.match(kk,/Go to KK Login/);
- assert.match(read('dist/sw.js'),/vasra-v56-kk-required-review-email-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v57-kk-verified-dashboard-20261025/);
  for(const [p,s] of [['kk-staff.js',staff],['kk.js',kk],['handler.cjs',handler]])assert.doesNotThrow(()=>new vm.Script(s,{filename:p}));
 });
 
