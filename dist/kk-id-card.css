@@ -373,3 +373,27 @@ html[data-theme="dark"] body.account-workspace #panel-kk-ids .kk-id-close-previe
  #panel-kk-ids .kk-id-close-preview{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){#panel-kk-ids .kk-id-staff-preview{animation:none}}
+
+
+/* The uploader must completely leave the layout when the SK review approves it. */
+.kk-member-dashboard #kk-id-upload-card[hidden]{display:none!important;padding:0!important;margin:0!important;border:0!important}
+.kk-member-dashboard #kk-id-photo-submission[hidden],
+.kk-member-dashboard #kk-id-approved-photo[hidden]{display:none!important}
+.kk-member-dashboard .kk-id-reference-card #kk-id-approved-photo{
+ margin:0 0 18px;padding:16px;border:1px solid #d7e6f6;
+ border-radius:13px;background:#f6faff;max-width:none;width:100%
+}
+.kk-member-dashboard .kk-id-reference-card #kk-id-approved-photo>img{
+ width:90px;height:90px;aspect-ratio:1/1;object-fit:cover
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-reference-card #kk-id-approved-photo{
+ background:#243f60;border-color:#52769c
+}
+@media(max-width:500px){
+ .kk-member-dashboard .kk-id-reference-card #kk-id-approved-photo{
+  padding:12px;gap:12px
+ }
+ .kk-member-dashboard .kk-id-reference-card #kk-id-approved-photo>img{
+  width:76px;height:76px
+ }
+}
