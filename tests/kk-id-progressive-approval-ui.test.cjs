@@ -20,6 +20,8 @@ test('Approved member view replaces uploader with square portrait and downloadab
    'approved PDF controls must live in the ID preview, not in the hidden uploader');
  assert.match(member,/exportReady=state==='approved'&&found&&photoLoaded/);
  assert.match(css,/#kk-id-approved-photo\[hidden\]/);
+ assert.match(css,/kk-id-reference-card\.kk-id-photo-approved #kk-id-duplex-preview/);
+ assert.match(member,/classList\.toggle\('kk-id-photo-approved',approved\)/);
  assert.match(css,/\.kk-id-approved-photo>img\{[\s\S]*?aspect-ratio:1\/1/);
 });
 
