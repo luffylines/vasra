@@ -3,6 +3,7 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - fix/kk-profile-editor-variable-collision-20261025
       - feature/sk-resolutions-home-darkmode-20261025
       - fix/duty-persistent-public-photo-20261025
       - fix/kk-google-shared-oauth-auth-phone-20261025
@@ -21,6 +22,7 @@ on:
       - feature/officer-contact-details-20261024
   push:
     branches:
+      - fix/kk-profile-editor-variable-collision-20261025
       - feature/sk-resolutions-home-darkmode-20261025
       - feature/sk-resolutions-home-darkmode-20261025
       - fix/duty-persistent-public-photo-20261025
