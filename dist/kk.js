@@ -378,9 +378,17 @@
   let result;
   try{result=await getApi('me');}
   catch(err){
-   loading.innerHTML='<div class="kk-load-error"><strong>Hindi ma-load ang KK profile</strong><p>'+esc(err.message)+
-   '</p><p>Siguraduhing sa iisang preview domain ka nag-login. Kung expired ang session, mag-login muli.</p>'+
-   '<a href="./kk-login">Go to KK Login</a> · <button type="button" id="kk-retry-load">Retry</button></div>';
+   // A missing KK database RPC cannot be repaired by logging in again. Keep
+   // setup/service failures separate from real authentication failures.
+   const reason=String(err?.message||'Hindi ma-load ang KK account.');
+   const setupUnavailable=/Hindi available ang database|migration|server configuration/i.test(reason);
+   const guidance=setupUnavailable
+    ? 'Hindi pa ready ang KK Profiling database para sa preview na ito. Kailangang i-verify ng SK administrator ang database migration at server settings bago makapag-save ng KK records.'
+    : 'Kung expired ang session, mag-login muli gamit ang parehong website domain. Kung paulit-ulit ang error, ipasuri ang KK service.';
+   loading.innerHTML='<div class="kk-load-error" role="alert"><strong>'+ (setupUnavailable?'KK Profiling database is not ready':'Hindi ma-load ang KK profile')+'</strong><p>'+esc(reason)+
+    '</p><p>'+esc(guidance)+'</p>'+
+    (setupUnavailable?'':'<a href="./kk-login">Go to KK Login</a> · ')+
+    '<button type="button" id="kk-retry-load">Retry</button></div>';
    $('#kk-retry-load')?.addEventListener('click',()=>{loading.textContent='Checking your KK account…';load();});
    return;
   }
