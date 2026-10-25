@@ -66,7 +66,7 @@ test('KK photo stored privately, officer-reviewed, printable only on approved st
  assert.match(handler,/if\(path==='\/api\/kk\/id-card\/photo'&&method==='GET'\)/);
  assert.match(handler,/await db\.getPrivate\(item\.path\)/);
  assert.match(handler,/'Cache-Control':'private,no-store'/);
- assert.match(read('dist/kk-id-staff.js'),/if\(m\.status!=='approved'\|\|!m\.photo_exists\)return/);
+ assert.match(read('dist/kk-id-staff.js'),/const approved=r=>r\.status==='approved'&&r\.photo_exists/);
  assert.match(read('dist/kk-id-card.css'),/width:85\.6mm!important;height:54mm!important/);
  assert.match(read('dist/kk-id-card.css'),/@page\{size:A4 portrait;margin:0\}/);
 });
