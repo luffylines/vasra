@@ -18,13 +18,15 @@
    });
   }finally{URL.revokeObjectURL(objectURL);}
  };
- const logoImage=()=>{
-  const img=new Image();img.src='./sk%20logo.jpg';
-  return new Promise(resolve=>{
-   if(img.complete){resolve(img.naturalWidth?img:null);return;}
-   img.onload=()=>resolve(img);img.onerror=()=>resolve(null);
-  });
- };
+ // Both official logos must be loaded before drawing an exportable ID.
+ // Keep their 112x112 canvas footprints equal on front and back.
+ const logoImage=source=>new Promise((resolve,reject)=>{
+  const img=new Image();
+  img.onload=()=>resolve(img);
+  img.onerror=()=>reject(new Error('KK ID seal is missing: '+source));
+  img.src=source;
+  if(img.complete&&img.naturalWidth>0)resolve(img);
+ });
  // A complete self-contained QR Version 1, level L: 19 data bytes + 7 RS ECC.
  const qr=value=>{
   const bytes=[...new TextEncoder().encode(String(value||''))];
@@ -112,7 +114,10 @@
  const valid=member=>/^VASRA-KK-[0-9]+$/.test(String(member?.kk_id||''));
  const art=async(member,face,options={})=>{
   const c=document.createElement('canvas');c.width=W;c.height=H;
-  const x=c.getContext('2d',{alpha:false}),logo=await logoImage();
+  const x=c.getContext('2d',{alpha:false});
+  const [barangayLogo,skLogo]=await Promise.all([
+   logoImage('./barangay-vasra-logo.jpg'),logoImage('./sk%20logo.jpg')
+  ]);
   let bg=x.createLinearGradient(0,0,W,H);
   bg.addColorStop(0,'#fffefb');bg.addColorStop(.34,'#faf0ff');
   bg.addColorStop(.73,'#f1e7fe');bg.addColorStop(1,'#fff2b0');
@@ -125,10 +130,20 @@
   for(let n=0;n<8;n++){x.beginPath();x.arc(110,760,120+n*50,Math.PI,Math.PI*1.85);x.stroke();}
   rounded(x,11,11,W-22,H-22,44,null,'#e2beef');
   rounded(x,20,20,W-40,H-40,40,null,'#fff8');
-  if(logo){x.drawImage(logo,56,52,112,112);x.drawImage(logo,1117,50,111,111);}
-  txt(x,'REPUBLIKA NG PILIPINAS',W/2,81,24,'#192640',700,530);
-  txt(x,'SANGGUNIANG KABATAAN',W/2,114,29,'#172441',800,575);
-  txt(x,'SK VASRA IDENTIFICATION CARD',W/2,147,20,'#3a4271',650,575);
+  // User-provided Barangay Vasra seal on the LEFT; SK VASRA on the RIGHT.
+  // Both occupy the exact same 112x112 slot. Clip source background noise
+  // outside the circular Barangay seal without distorting its proportions.
+  x.save();x.beginPath();x.arc(112,108,53,0,Math.PI*2);x.clip();
+  x.drawImage(barangayLogo,56,52,112,112);x.restore();
+  x.drawImage(skLogo,1116,52,112,112);
+  // Canvas fillText defaults to left alignment even when x===W/2.
+  // Center three header lines explicitly in the gap between the seals.
+  const centeredHeader=(value,y,size,color,weight,maxWidth)=>{
+   x.save();x.textAlign='center';txt(x,value,W/2,y,size,color,weight,maxWidth);x.restore();
+  };
+  centeredHeader('REPUBLIKA NG PILIPINAS',81,24,'#192640',700,700);
+  centeredHeader('SANGGUNIANG KABATAAN',114,29,'#172441',800,760);
+  centeredHeader('SK VASRA IDENTIFICATION CARD',147,20,'#3a4271',650,760);
   x.fillStyle='#edbcf4';x.fillRect(195,180,890,3);
   const code=String(member.kk_id||'VASRA-KK-—'),status=member.status||'not_uploaded';
   if(face==='front'){
@@ -148,7 +163,9 @@
    txt(x,address||'BARANGAY VASRA, QUEZON CITY',55,676,24,'#1e2b48',700,1172);
    rounded(x,55,706,260,50,8,'#ffe89a');
    txt(x,code,76,741,25,'#1b2541',800,236);
-   txt(x,'KATIPUNAN NG KABATAAN · VASRA',1096,743,18,'#5e5478',700,650);
+   x.save();x.textAlign='right';
+   txt(x,'KATIPUNAN NG KABATAAN · VASRA',1219,743,18,'#5e5478',700,650);
+   x.restore();
    if(status!=='approved'||!options.photo){rounded(x,416,570,450,42,12,'#ffffffc7');
     txt(x,'PHOTO FOR SK VERIFICATION',450,599,22,'#9d4a59',800);}
   }else{
