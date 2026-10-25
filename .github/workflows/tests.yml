@@ -3,6 +3,7 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - fix/kk-google-shared-oauth-auth-phone-20261025
       - fix/duty-persistent-public-photo-20261025
       - feature/sk-services-officer-workflow-20261025
       - fix/kk-profile-doc-preview-delete-age-actions-20261025
