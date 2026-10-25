@@ -110,6 +110,7 @@
    e.preventDefault();
    if(!databaseReady){feedback('Hindi pa active ang KK database. Walang na-create na account. Pindutin ang Retry o ipaalam sa SK administrator.','error');return;}
    if(!form.reportValidity())return;
+  if(current===1 && (!validID?.exists||idBusy)){feedback('Mag-upload muna ng valid ID bago mag-Save & Next.');return;}
    const f=Object.fromEntries(new FormData(form));
    if(f.email.trim().toLowerCase()!==f.confirm_email.trim().toLowerCase())return feedback('Hindi magkatugma ang email at confirm email.','error');
    if(f.password!==f.confirm_password)return feedback('Hindi magkatugma ang password.','error');
@@ -135,10 +136,13 @@
  const loading=$('#kk-loading'),content=$('#kk-content');
  let account=null,profile={},data={},current=1,sitios=[];
  const titles=['Personal Information','Education','Additional Information','Emergency Contact','Review & Submit'];
+ const subtitles=['Basic details and address','School and employment','Voter status and other details','Guardian information','Confirm all details'];
+ let validID=null,idBusy=false;
  const field=(name,label,opt={})=>{
   const value=data[name]??'',req=opt.required?' required':'';
+  const labelText=esc(label)+(opt.required?' <span class="kk-required" aria-label="required">*</span>':'');
   if(opt.select){
-   return '<label>'+esc(label)+(opt.required?' *':'')+'<select name="'+name+'"'+req+'><option value="">Pumili…</option>'+
+   return '<label><span class="kk-label-title">'+labelText+'</span><select name="'+name+'"'+req+'><option value="">Pumili…</option>'+
     opt.select.map(v=>{const [val,text]=Array.isArray(v)?v:[v,v];return '<option value="'+esc(val)+'"'+(value===val?' selected':'')+'>'+esc(text)+'</option>';}).join('')+'</select></label>';
   }
   if(name==='phone'){
@@ -148,18 +152,18 @@
   if(opt.type==='number'){
    const min=name==='family_count'?1:0;
    const num=value===''?(name==='family_count'?1:0):value;
-   return '<label>'+esc(label)+(opt.required?' <span class="kk-required">*</span>':'')+
+   return '<label><span class="kk-label-title">'+labelText+'</span>'+
     '<span class="kk-count-field"><button type="button" data-adjust="-1" aria-label="Decrease '+esc(label)+'">−</button>'+
     '<input name="'+name+'" type="number" inputmode="numeric" min="'+min+'" max="99" step="1" value="'+esc(num)+'"'+req+'>'+
     '<button type="button" data-adjust="1" aria-label="Increase '+esc(label)+'">+</button></span></label>';
   }
   const type=opt.type||'text';
-  return '<label>'+esc(label)+(opt.required?' *':'')+'<input name="'+name+'" type="'+type+'" maxlength="'+(opt.max||150)+'" placeholder="'+esc(opt.placeholder||'')+'" value="'+esc(value)+'"'+req+'></label>';
+  return '<label><span class="kk-label-title">'+labelText+'</span><input name="'+name+'" type="'+type+'" maxlength="'+(opt.max||150)+'" placeholder="'+esc(opt.placeholder||'')+'" value="'+esc(value)+'"'+req+'></label>';
  };
  const sitioSelect=()=>{
   const current=String(data.sitio_id||'');
   const selectedExists=sitios.some(x=>String(x.id)===current);
-  return '<label>Sitio / Purok *<select name="sitio_id" required>'+
+  return '<label><span class="kk-label-title">Sitio / Purok <span class="kk-required">*</span></span><select name="sitio_id" required>'+
    '<option value="">'+(sitios.length?'Piliin ang inyong Sitio / Purok':'Wala pang sitio na nilagay ang SK')+'</option>'+
    sitios.map(s=>'<option value="'+esc(s.id)+'"'+(current===String(s.id)?' selected':'')+'>'+esc(s.name)+'</option>').join('')+
    (!selectedExists&&current?'<option value="'+esc(current)+'" selected disabled>Hindi na available ang dating sitio — makipag-ugnay sa SK</option>':'')+
@@ -284,7 +288,30 @@
    data[name]=String(value);
   }
   if(current===5){data.consent=!!form.querySelector('[name="consent"]')?.checked;data.guardian_consent=!!form.querySelector('[name="guardian_consent"]')?.checked;}
+  renderPreview();
  };
+ const validIDSection=()=>'<section class="kk-id-upload kk-full-span" aria-label="Valid ID upload"><div class="kk-form-section-head"><span class="kk-form-section-icon">▣</span><div><h3>Valid ID <span class="kk-required">*</span></h3>'+
+  '<p>Upload a clear image or PDF of a valid ID (PSA, QCID, Voter ID, Driver’s License, Passport, National ID). Maximum 2.5 MB.</p></div></div>'+
+  '<label class="kk-id-drop"><span class="kk-upload-symbol" aria-hidden="true">☁</span><strong>'+ (validID?.exists?'Replace Valid ID':'Choose a file / Drag & Drop')+'</strong>'+
+  '<span id="kk-id-upload-status">'+(validID?.exists?'Uploaded: '+esc(validID.name||'Valid ID'):'Accepted: JPG, PNG or PDF · 2.5 MB maximum')+'</span>'+
+  '<input type="file" name="kk_valid_id" id="kk-valid-id-file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"'+(validID?.exists?'':' required')+'></label>'+
+  '<div class="kk-id-chip-row"><span>PSA / Birth Certificate</span><span>QCID</span><span>Voter’s ID</span><span>Driver’s License</span><span>Passport</span><span>National ID</span></div></section>';
+ const yesNoField=(name,label)=>'<fieldset class="kk-yn-field"><legend>'+esc(label)+' <span class="kk-required">*</span></legend>'+
+  '<label><input type="radio" name="'+name+'" value="yes" required'+(data[name]==='yes'?' checked':'')+'> Yes</label>'+
+  '<label><input type="radio" name="'+name+'" value="no" required'+(data[name]==='no'?' checked':'')+'> No</label></fieldset>';
+ const previewSection=(heading,items)=>'<section class="kk-preview-card"><h4>'+esc(heading)+'</h4><dl>'+
+  items.map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(v||'—')+'</dd></div>').join('')+'</dl></section>';
+ const renderPreview=()=>{
+  const node=$('#kk-profile-preview');if(!node)return;
+  node.innerHTML='<h3>Profile Preview</h3><p>Details are updated as you complete each step.</p>'+
+   previewSection('Personal Information',[['Name',[account.member.first_name,account.member.last_name].join(' ')],['Date of Birth',account.member.birthdate],['Gender',data.gender],['Civil Status',data.civil_status]])+
+   previewSection('Address',[['Sitio/Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name],['House No./Street',data.street],['Barangay',data.residence_barangay]])+
+   previewSection('Education',[['Attainment',data.education],['School',data.school_name],['Year Level',data.year_level]])+
+   previewSection('Additional Information',[['Registered SK Voter',data.sk_voter],['National Voter',data.national_voter],['Voted Last Election',data.voted_last_election],['KK Assembly',data.kk_assembly]])+
+   previewSection('Emergency Contact',[['Name',data.emergency_name],['Contact Number',data.emergency_phone]])+
+   previewSection('Valid ID',[['Document',validID?.exists?'Uploaded · '+(validID.name||'Valid ID'):'Required']]);
+ };
+
  const stepBody=()=>{
   if(!account.member.first_name||!account.member.birthdate){
    current=0;$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';
@@ -305,7 +332,7 @@
    '<label><input type="radio" name="solo_parent" value="no" required'+(data.solo_parent==='no'?' checked':'')+'> No</label></fieldset>'+
    field('family_count','Number of Family Members',{required:true,type:'number',placeholder:'1'})+
    field('siblings','Number of Siblings',{required:true,type:'number',placeholder:'0'})+
-   addressFields()+'</div>'+
+   addressFields()+validIDSection()+'</div>'+
    '<p class="kk-helper">Personal details are only accessible to authorized SK staff during KK verification.</p>';
   if(current===2){
    const schoolRequired=!['no-formal','out-of-school'].includes(data.education)&&data.education_status!=='osy';
@@ -319,9 +346,13 @@
     field('school_name','School / Institution',{required:schoolRequired,placeholder:'Ilagay ang paaralan o institution'})+
     '</div><p class="kk-helper">Piliin muna ang Educational Level. Nakaayon dito ang mga Year / Grade Level choices. Required ang Course/Program para sa senior high, vocational, college o postgraduate kapag naaangkop.</p>';
   }
-  if(current===3)return '<div class="kk-form-fields">'+field('employment','Occupation / Status',{select:options.employment,required:true})+
-   field('voter','Registered voter? (Optional)',{select:options.voter})+
-   field('interests','Interests / skills / youth organization (Optional)')+'</div>';
+  if(current===3)return '<div class="kk-form-fields">'+
+   yesNoField('sk_voter','Are you a Registered SK Voter?')+
+   yesNoField('national_voter','Registered National Voter?')+
+   yesNoField('voted_last_election','Did You Vote Last Election?')+
+   yesNoField('kk_assembly','Have you already attended a KK Assembly?')+
+   field('employment','Occupation / Status',{select:options.employment,required:true})+
+   field('interests','Interests / Skills / Youth Organization (Optional)')+'</div>';
   if(current===4)return '<div class="kk-form-fields">'+
    field('emergency_name','Emergency contact full name',{required:true})+
    field('emergency_phone','Emergency contact number',{required:true,placeholder:'+639XXXXXXXXX'})+
@@ -329,7 +360,7 @@
    '<p class="kk-helper">Ito ay gagamitin lamang sa naaangkop na emergency at hindi ilalathala.</p>';
   const items=[['Full Name',[account.member.first_name,account.member.middle_name,account.member.last_name].filter(Boolean).join(' ')],['Birthdate',account.member.birthdate],
    ['Email',account.member.email],['Resident Address',[data.residence_region||'NCR',data.residence_province||'Metro Manila',data.residence_city||'Quezon City',data.residence_barangay||''].filter(Boolean).join(' · ')],['Sitio / Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name||'—'],['Street',data.street||'—'],['Educational Status',data.education_status||'—'],['Education',data.education||'—'],['Course / Program',data.course_program||'—'],['Year / Grade Level',data.year_level||'—'],
-   ['Emergency Contact',data.emergency_name||'—']];
+   ['SK Voter',data.sk_voter||'—'],['National Voter',data.national_voter||'—'],['Voted Last Election',data.voted_last_election||'—'],['Attended KK Assembly',data.kk_assembly||'—'],['Valid ID',validID?.exists?'Uploaded':'Not uploaded'],['Emergency Contact',data.emergency_name||'—']];
   const age=(()=>{const now=new Date(),bd=new Date(account.member.birthdate+'T00:00:00Z');return now.getUTCFullYear()-bd.getUTCFullYear()-Number((now.getUTCMonth()*100+now.getUTCDate())<(bd.getUTCMonth()*100+bd.getUTCDate()));})();
   return '<div class="kk-review">'+items.map(([k,v])=>'<div><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join('')+'</div>'+
   '<label class="kk-checkbox"><input name="consent" type="checkbox"'+(data.consent?' checked':'')+' required><span>I certify that the details are accurate and consent to confidential SK KK profiling verification.</span></label>'+
@@ -337,10 +368,11 @@
   '<p class="kk-helper">Magtatapos ito sa Pending status. SK Officers lamang ang maaaring mag-verify o mag-reject.</p>';
  };
  const renderStep=()=>{
-  $('#kk-steps').innerHTML=titles.map((title,i)=>'<div class="kk-step '+(current===i+1?'active':current>i+1?'done':'')+'"><span>'+(i+1)+'</span>'+esc(title)+'</div>').join('');
+  $('#kk-steps').innerHTML=titles.map((title,i)=>'<div class="kk-step '+(current===i+1?'active':current>i+1?'done':'')+'"><span>'+(i+1)+'</span><strong>'+esc(title)+'</strong><small>'+esc(subtitles[i])+'</small></div>').join('');
   $('#kk-step-fields').innerHTML=stepBody();
-  $('#kk-back').disabled=current<=1;
+  $('#kk-back').disabled=current<=1;$('#kk-back').hidden=current<=1;
   $('#kk-next').textContent=current===5?'Submit for SK Review →':'Save & Next →';
+  renderPreview();
   if(current===0){$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';$('#kk-next').textContent='Save & Continue →';}
  };
  async function load(){
@@ -356,6 +388,7 @@
   if(!result.member){location.replace('./kk-login');return;}
   account=result;profile=result.profile||{};data={...(profile.data||{})};
   if(profile.status==='verified'){location.replace('./kk-dashboard');return;}
+  validID=result.document||null;
   data.region='NCR';data.province='N/A (NCR)';data.city='Quezon City';data.barangay='Vasra';
   data.residence_region=data.residence_region||'NCR';data.residence_province=data.residence_province||'Metro Manila';
   data.residence_city=data.residence_city||'Quezon City';
@@ -386,6 +419,26 @@
    renderStep();if(address2Expanded)$('#kk-step-form [name="address_line_2"]')?.focus();
   }
  });
+ $('#kk-step-form').addEventListener('change',async event=>{
+  if(event.target.id!=='kk-valid-id-file')return;
+  const file=event.target.files?.[0];if(!file)return;
+  const feedbackEl=$('#kk-feedback');
+  if(file.size>2_500_000 || file.size<100 || !['image/jpeg','image/png','application/pdf'].includes(file.type)){
+    feedback('JPG, PNG o PDF lamang, minimum 100 bytes at maximum 2.5 MB.');event.target.value='';return;
+  }
+  idBusy=true;feedback('Uploading Valid ID securely…');
+  try{
+    const bytes=await new Promise((resolve,reject)=>{const reader=new FileReader();
+      reader.onerror=()=>reject(Error('Cannot read file'));reader.onload=()=>resolve(String(reader.result||''));reader.readAsDataURL(file);});
+    const payload={name:file.name.slice(0,120),mime:file.type,data:bytes.split(',')[1]};
+    const reply=await send('id/upload',payload);
+    validID=reply.document;
+    feedback('Valid ID uploaded securely. SK Officers can view it during verification.','success');
+    if(feedbackEl)feedbackEl.hidden=false;
+    renderStep();
+  }catch(err){feedback('Valid ID upload failed: '+err.message);}
+  finally{idBusy=false;}
+});
  $('#kk-step-form').addEventListener('input',event=>{
   if(event.target.matches('input[name="phone"]'))kkNormalizePhoneInput(event.target);
  });
@@ -441,6 +494,8 @@
    if(current===1&&isVasraAddress()&&!sitios.some(s=>String(s.id)===String(data.sitio_id))){
     throw Error('Pumili ng Sitio / Purok na nasa opisyal na listahan ng SK. Kung wala pa, ipalagay muna sa SK Sitio Management.');
    }
+   if(current===3 && ['sk_voter','national_voter','voted_last_election','kk_assembly'].some(key=>!['yes','no'].includes(data[key])))
+    throw Error('Piliin ang Yes o No sa lahat ng required voter at KK Assembly questions.');
    if(current===2 && (!data.education_status || !yearLevelOptions[data.education] ||
       !yearLevelOptions[data.education].some(([value])=>value===data.year_level))){
      throw Error('Pumili ng Educational Status at Year / Grade Level na tugma sa iyong Educational Level.');

@@ -303,3 +303,37 @@
 .kk-reg-toolbar .kk-toolbar-logout{min-height:36px;padding:8px 13px;white-space:nowrap}
 .kk-reg-toolbar .kk-register-home{margin-left:auto}
 @media(max-width:480px){.kk-reg-toolbar .kk-register-brand{margin-right:auto}.kk-reg-toolbar .kk-register-home,.kk-reg-toolbar .kk-toolbar-logout{font-size:12px;padding:8px 10px}}
+
+/* KK form, inspired by approved two-column design. */
+.kk-profile-workspace{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(250px,.85fr);gap:17px;align-items:start}
+.kk-profile-workspace .kk-profile-sheet{padding:22px;margin-bottom:0;min-width:0}
+.kk-profile-preview{padding:16px;border:1px solid #dce6f3;background:#f9fbff;border-radius:15px;min-width:0;position:sticky;top:16px}
+.kk-profile-preview>h3{font:800 19px Manrope,sans-serif;color:#173c6d;margin:0}
+.kk-profile-preview>p{font-size:12px;color:#6e87a5;margin:3px 0 14px}
+.kk-preview-card{background:white;border:1px solid #dce6f4;border-radius:11px;padding:12px;margin-bottom:9px}
+.kk-preview-card h4{font:800 13px Manrope,sans-serif;color:#22589e;margin:0 0 10px}
+.kk-preview-card dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0}
+.kk-preview-card dt{font-size:11px;color:#7790aa}.kk-preview-card dd{font-weight:700;font-size:12px;color:#254971;overflow-wrap:anywhere;margin:0}
+.kk-profile-sheet .kk-required{display:inline!important;font-size:14px!important;font-weight:850;color:#d12437!important;vertical-align:baseline!important;margin-left:2px!important;white-space:nowrap}
+.kk-profile-sheet .kk-step-actions [hidden]{display:none!important}
+.kk-profile-sheet .kk-step-actions:has(#kk-back[hidden]){justify-content:flex-end}
+.kk-profile-sheet .kk-form label:not(.kk-checkbox){font-size:13px;line-height:1.55}
+.kk-profile-sheet .kk-helper{font-size:12px;line-height:1.7}
+.kk-steps .kk-step{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.kk-steps .kk-step strong{font-size:11px;line-height:1.3;color:#294b77}.kk-steps .kk-step small{font-size:10px;color:#7790ae;font-weight:500}
+.kk-form-fields>.kk-section-heading{grid-column:1/-1}
+.kk-id-upload{display:block;min-width:0;grid-column:1/-1;margin-top:10px;padding-top:17px;border-top:1px solid #dce6f5}
+.kk-form-section-head{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.kk-form-section-icon{height:39px;width:39px;border-radius:10px;display:grid;place-items:center;background:#e7f1ff;font-size:22px;color:#2b60ab}
+.kk-form-section-head h3{font:800 16px Manrope,sans-serif;color:#1b477d;margin:0}.kk-form-section-head p{font-size:12px;color:#6d86a5;line-height:1.6;margin:4px 0 0}
+.kk-profile-sheet .kk-id-drop{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:8px!important;min-height:165px;border:1px dashed #a8c6e8;border-radius:14px;background:#f6faff;padding:17px;text-align:center;cursor:pointer}
+.kk-id-drop .kk-upload-symbol{font-size:37px;color:#2867c1;line-height:1}.kk-id-drop>strong{font-size:14px;color:#245caa}
+.kk-id-drop>span:not(.kk-upload-symbol){font-size:12px;color:#617da1}
+.kk-profile-sheet .kk-id-drop input[type=file]{max-width:360px;min-height:0;font-size:12px;background:white;padding:8px;border:1px solid #c4d9f2;border-radius:8px}
+.kk-id-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.kk-id-chip-row span{font-size:11px;border-radius:999px;padding:5px 9px;color:#245da8;background:#eaf3ff}
+.kk-yn-field{border:1px solid #dce6f3;border-radius:10px;padding:13px 14px;margin:0;min-width:0}
+.kk-yn-field legend{font-size:13px;color:#264f7a;font-weight:750;padding:0 4px}
+.kk-yn-field>label{display:inline-flex!important;align-items:center!important;flex-direction:row!important;gap:8px!important;margin:5px 19px 0 0!important;font-size:13px!important}
+.kk-profile-sheet .kk-yn-field input[type=radio]{min-height:19px;width:19px;accent-color:#255cb8;flex:none}
+@media(max-width:1080px){.kk-profile-workspace{grid-template-columns:1fr}.kk-profile-preview{position:static}.kk-preview-card dl{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.kk-profile-workspace .kk-profile-sheet{padding:16px}.kk-profile-preview{padding:13px}.kk-preview-card dl{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-steps .kk-step strong{font-size:10px}.kk-steps .kk-step small{font-size:9px}.kk-id-drop{min-height:135px}}

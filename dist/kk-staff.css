@@ -88,3 +88,60 @@
  .kk-sitio-toolbar label{min-width:0;max-width:none;width:100%}
  .kk-sitio-totals{padding:0}
 }
+
+/* October 2026 KK Profile master-detail redesign — compact applicants + child record */
+#panel-kk-profiling .kk-applications-layout{display:grid;grid-template-columns:minmax(250px,.92fr) minmax(0,1.48fr);gap:14px;align-items:start}
+#panel-kk-profiling .kk-applicants-column,#panel-kk-profiling .kk-applicant-detail{background:#fff;border:1px solid #dce6f4;border-radius:15px;min-width:0}
+#panel-kk-profiling .kk-applicants-column{padding:13px;max-height:790px;overflow-y:auto;overscroll-behavior:contain}
+#panel-kk-profiling .kk-applicant-list-head{display:flex;justify-content:space-between;align-items:center;gap:9px;margin:0 1px 12px}
+#panel-kk-profiling .kk-applicant-list-head h4{font:800 16px Manrope,sans-serif;color:#183a64;margin:0}
+#panel-kk-profiling .kk-applicant-list-head label{display:flex;flex-direction:row;align-items:center;gap:7px;font-size:12px}
+#panel-kk-profiling .kk-applicant-list-head select{font-size:12px;min-height:37px;padding:5px 8px;max-width:145px}
+#panel-kk-profiling .kk-applicant-row{display:flex;align-items:center;gap:10px;min-width:0;width:100%;text-align:left;background:#fff;border:1px solid #dae5f5;padding:12px;border-radius:11px;margin-bottom:8px;color:#183e69;cursor:pointer}
+#panel-kk-profiling .kk-applicant-row:hover,#panel-kk-profiling .kk-applicant-row.active{background:#f0f6ff;border-color:#5d95e8}
+#panel-kk-profiling .kk-applicant-row:focus-visible{outline:3px solid #629bed;outline-offset:2px}
+#panel-kk-profiling .kk-applicant-avatar,#panel-kk-profiling .kk-child-avatar{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:50%;background:#dceafc;color:#1c4f99;font:800 15px Manrope,sans-serif}
+#panel-kk-profiling .kk-applicant-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+#panel-kk-profiling .kk-applicant-main strong{font:800 13px Manrope,sans-serif;line-height:1.4;color:#1c3e68}
+#panel-kk-profiling .kk-applicant-main small{color:#637f9e;font:500 11px/1.5 'DM Sans',sans-serif;overflow-wrap:anywhere}
+#panel-kk-profiling .kk-applicant-meta{display:flex;flex-direction:column;align-items:end;gap:4px;font-size:11px;white-space:nowrap}
+#panel-kk-profiling .kk-applicant-meta>b{color:#245aa2}
+#panel-kk-profiling .kk-row-arrow{font-size:23px;color:#3163a8}
+#panel-kk-profiling .kk-applicant-detail{padding:19px;max-height:790px;overflow:auto;overscroll-behavior:contain}
+#panel-kk-profiling .kk-child-heading{display:flex;align-items:center;gap:13px;padding:4px 0 17px}
+#panel-kk-profiling .kk-child-avatar{height:59px;width:59px;font-size:20px}
+#panel-kk-profiling .kk-child-title{min-width:0;flex:1}
+#panel-kk-profiling .kk-child-title h3{font:800 19px Manrope,sans-serif;display:flex;gap:9px;align-items:center;flex-wrap:wrap;line-height:1.35;margin:0 0 4px;color:#1b416f}
+#panel-kk-profiling .kk-child-title p{font-size:12px;line-height:1.6;color:#6b84a2;overflow-wrap:anywhere;margin:0}
+#panel-kk-profiling .kk-child-points{text-align:right;white-space:nowrap;padding:0 14px;border-left:1px solid #e0eaf6}
+#panel-kk-profiling .kk-child-points strong,#panel-kk-profiling .kk-child-points small{display:block}
+#panel-kk-profiling .kk-child-points strong{font:800 17px Manrope;color:#225ba2}
+#panel-kk-profiling .kk-child-points small{font-size:11px;color:#8497b0}
+#panel-kk-profiling .kk-child-close{background:transparent;border:0;color:#6d86a5;font-size:23px;min-width:25px}
+#panel-kk-profiling .kk-child-tabs{display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid #e0eafa;padding-bottom:5px;margin-bottom:14px}
+#panel-kk-profiling .kk-child-tabs button{border:0;background:transparent;padding:10px 13px;min-height:42px;border-bottom:3px solid transparent;color:#617c9e;font-size:12px;font-weight:800}
+#panel-kk-profiling .kk-child-tabs [aria-selected=true]{color:#235cb0;border-color:#326fcd}
+#panel-kk-profiling .kk-child-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#panel-kk-profiling .kk-child-card{background:#fff;border:1px solid #dce6f4;border-radius:12px;min-width:0;padding:13px}
+#panel-kk-profiling .kk-child-card>header{display:flex;align-items:center;gap:8px;background:#f5f8ff;padding:8px 9px;border-radius:8px;margin:-2px -2px 12px}
+#panel-kk-profiling .kk-child-icon{display:grid;place-items:center;width:24px;height:24px;border-radius:6px;background:#e0edff;color:#245cad;font-size:17px}
+#panel-kk-profiling .kk-child-card h4{font:800 13px Manrope,sans-serif;color:#1a426e;margin:0}
+#panel-kk-profiling .kk-child-pairs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px;margin:0}
+#panel-kk-profiling .kk-child-pairs>div{min-width:0}
+#panel-kk-profiling .kk-child-pairs dt{color:#748dab;font-size:11px;line-height:1.4}
+#panel-kk-profiling .kk-child-pairs dd{color:#23476e;font-size:12px;font-weight:750;overflow-wrap:anywhere;margin:3px 0 0}
+#panel-kk-profiling .kk-child-actions{display:flex;gap:10px;flex-wrap:wrap;padding-top:15px}
+#panel-kk-profiling .kk-child-actions button{padding:11px 16px;min-height:43px;border-radius:9px;font:800 12px Manrope,sans-serif}
+#panel-kk-profiling .kk-child-actions .primary{background:#285cc0;color:#fff;border:1px solid #285cc0}
+#panel-kk-profiling .kk-child-actions .secondary{background:#fff;color:#9a343d;border:1px solid #e5c7ce}
+#panel-kk-profiling .kk-child-empty{padding:30px 10px;text-align:center}
+#panel-kk-profiling .kk-child-empty strong{font:800 17px Manrope}
+#panel-kk-profiling .kk-child-empty p{font-size:13px;color:#728bab}
+#panel-kk-profiling .kk-document-summary{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+#panel-kk-profiling .kk-document-summary small{display:block;color:#7490b0}
+#panel-kk-profiling .kk-document-summary button,
+#panel-kk-profiling .kk-child-card button[data-view-id]{padding:10px 13px;border:1px solid #a8c5ed;background:#eaf3ff;color:#235fa6;border-radius:8px;font-weight:800}
+#panel-kk-profiling .kk-child-card p{font-size:12px;line-height:1.7}
+@media(max-width:1180px){#panel-kk-profiling .kk-applications-layout{grid-template-columns:minmax(235px,.9fr) minmax(0,1.1fr)}#panel-kk-profiling .kk-child-grid{grid-template-columns:1fr}}
+@media(max-width:950px){#panel-kk-profiling .kk-applications-layout{grid-template-columns:1fr}#panel-kk-profiling .kk-applicants-column{max-height:390px}#panel-kk-profiling .kk-applicant-detail{max-height:none}#panel-kk-profiling .kk-child-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:610px){#panel-kk-profiling .kk-child-grid{grid-template-columns:1fr}#panel-kk-profiling .kk-applicant-detail{padding:13px}#panel-kk-profiling .kk-child-heading{flex-wrap:wrap}#panel-kk-profiling .kk-child-points{padding-left:9px}#panel-kk-profiling .kk-applicant-row{padding:10px;gap:6px}#panel-kk-profiling .kk-applicant-meta{font-size:10px}#panel-kk-profiling .kk-applicant-avatar{width:34px;height:34px}}
