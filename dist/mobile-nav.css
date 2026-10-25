@@ -171,3 +171,23 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .a
 
 /* Public nav selection is represented by aria-current, never a trailing dot. */
 .site-header nav a > i{display:none!important}
+
+
+/* Logged-in KK controls: server-verified membership link plus real logout. */
+.kk-page-actions .kk-member-entry{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+ min-height:40px;padding:9px 12px;border-radius:10px;border:1px solid #c4d8f3;
+ color:#285d9b;background:#edf5ff;text-decoration:none;font:800 11px 'DM Sans',sans-serif}
+.kk-page-actions .kk-member-entry svg,.kk-page-actions .kk-top-login svg{
+ height:17px;width:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;
+ stroke-linecap:round;stroke-linejoin:round
+}
+.kk-page-actions .kk-top-login.kk-signout{cursor:pointer;min-height:40px}
+.site-header nav a.kk-mobile-signout{background:#7a2e414a;border-color:#df94a94a;color:#f5e9ee}
+.kk-logout-error{color:#a23542;border:1px solid #eca7b0;background:#fff4f5;
+ border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.5}
+@media(max-width:850px){
+ .kk-page-actions .kk-member-entry{display:none}
+ .kk-page-actions .kk-top-login.kk-signout{display:none}
+ .site-header nav a.kk-mobile-signout{display:flex}
+}
+@media(min-width:851px){.site-header nav a.kk-mobile-signout{display:none}}
