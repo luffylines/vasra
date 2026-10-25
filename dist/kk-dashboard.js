@@ -78,9 +78,7 @@
    location.replace('./');
   }catch(error){
    buttons.forEach(button=>{button.disabled=false;});
-   loading.hidden=false;
-   loading.textContent='Hindi natuloy ang KK logout: '+String(error.message||'Subukang muli.');
-   loading.dataset.kind='error';
+   window.showVasraToast('Hindi natuloy ang KK logout: '+String(error.message||'Subukang muli.'),'error');
   }
  };
  $('#kk-dashboard-logout').addEventListener('click',signOut);
