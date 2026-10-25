@@ -135,7 +135,10 @@
   // outside the circular Barangay seal without distorting its proportions.
   x.save();x.beginPath();x.arc(112,108,53,0,Math.PI*2);x.clip();
   x.drawImage(barangayLogo,56,52,112,112);x.restore();
-  x.drawImage(skLogo,1116,52,112,112);
+  // Clip the SK seal's white JPG background to a clean circular badge.
+  x.save();x.beginPath();x.arc(1172,108,53,0,Math.PI*2);x.clip();
+  x.fillStyle='#fff';x.fillRect(1116,52,112,112);
+  x.drawImage(skLogo,1116,52,112,112);x.restore();
   // Canvas fillText defaults to left alignment even when x===W/2.
   // Center three header lines explicitly in the gap between the seals.
   const centeredHeader=(value,y,size,color,weight,maxWidth)=>{
@@ -147,7 +150,7 @@
   x.fillStyle='#edbcf4';x.fillRect(195,180,890,3);
   const code=String(member.kk_id||'VASRA-KK-—'),status=member.status||'not_uploaded';
   if(face==='front'){
-   cover(x,options.photo,50,230,248,355);
+   cover(x,options.photo,50,264,260,260); // 1:1 square, not a passport crop
    txt(x,'APELYIDO / SURNAME',336,255,21,'#677091',600);
    txt(x,member.last_name||member.name||'—',336,296,41,'#18223c',800,880);
    txt(x,'PANGALAN / GIVEN NAME',336,337,21,'#677091',600);
