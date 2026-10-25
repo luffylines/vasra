@@ -33,7 +33,7 @@ test('Public theme toggle initializes on all four pages and does not interfere w
  assert.match(script,/vasra-staff-theme-v1/);
  assert.match(script,/location|document\.querySelector\('\.kk-page-actions'\)/);
  assert.match(script,/mobile-menu-toggle/);
- assert.match(script,/data\.vasraThemeToggle/);
+ assert.match(script,/dataset\.vasraThemeToggle/);
  assert.doesNotMatch(script,/document\.cookie\s*=/);
  assert.doesNotThrow(()=>new vm.Script(script));
  assert.doesNotThrow(()=>new vm.Script(shell));
