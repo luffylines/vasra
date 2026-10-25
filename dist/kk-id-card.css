@@ -397,3 +397,59 @@ html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-reference-card #
   width:76px;height:76px
  }
 }
+
+
+/* KK ID final spacing polish — approved portrait and CR80 previews are two distinct sections. */
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved{
+ padding:clamp(17px,2.5vw,26px)!important
+}
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-approved-photo{
+ box-sizing:border-box;display:flex;align-items:center;gap:20px;
+ max-width:none;width:100%;padding:20px 22px;margin:6px 0 24px!important;
+ border:1px solid #c9def4;border-radius:16px;background:#f3f8fe
+}
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-approved-photo>img{
+ flex:0 0 98px;width:98px;height:98px;aspect-ratio:1;object-fit:cover
+}
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved .kk-id-approved-details{
+ flex:1 1 auto;min-width:0;gap:8px
+}
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved .kk-id-approved-details>p{
+ max-width:640px;margin:0 0 5px;line-height:1.65
+}
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved .kk-id-download-pdf{
+ align-self:flex-start;margin-top:3px;min-height:42px;
+ border-radius:10px;padding:10px 16px;box-shadow:0 4px 10px #1b4e9923
+}
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-duplex-preview{
+ box-sizing:border-box;width:100%;max-width:1080px;
+ margin:0 auto!important;padding-top:24px;border-top:1px solid #dce9f8
+}
+.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved .kk-id-preview-note{
+ margin-top:18px
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-approved-photo{
+ background:#243f60;border-color:#57779d
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-duplex-preview{
+ border-top-color:#466387
+}
+@media(max-width:640px){
+ .kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-approved-photo{
+  gap:13px;padding:15px;margin:8px 0 20px!important
+ }
+ .kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-approved-photo>img{
+  flex-basis:78px;width:78px;height:78px
+ }
+ .kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-duplex-preview{
+  padding-top:20px
+ }
+}
+@media(max-width:390px){
+ .kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved #kk-id-approved-photo{
+  flex-wrap:wrap
+ }
+ .kk-member-dashboard .kk-id-reference-card.kk-id-photo-approved .kk-id-approved-details{
+  flex-basis:100%
+ }
+}
