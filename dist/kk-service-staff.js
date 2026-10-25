@@ -85,15 +85,22 @@
     '</div>')+'</article>';
  };
  const updateStats=()=>{
-  const now=today(),todays=records.filter(r=>phDate(r.requested_at)===now);
-  for(const status of ['total','pending','approved','completed','rejected']){
-   const el=$('#kk-service-stat-'+status);
-   el.textContent=String(status==='total'?todays.length:todays.filter(r=>r.status===status).length);
-  }
+  const now=today(),created=records.filter(r=>phDate(r.requested_at)===now);
+  const counts={
+   total:created.length,
+   pending:created.filter(r=>r.status==='pending').length,
+   approved:records.filter(r=>phDate(r.reviewed_at)===now&&['approved','completed'].includes(r.status)).length,
+   completed:records.filter(r=>phDate(r.completed_at)===now).length,
+   rejected:records.filter(r=>phDate(r.reviewed_at)===now&&r.status==='rejected').length
+  };
+  for(const [key,value] of Object.entries(counts))
+   $('#kk-service-stat-'+key).textContent=String(value);
  };
  const renderHistory=()=>{
   const q=$('#kk-service-history-search').value.trim().toLowerCase();
-  const data=records.filter(r=>phDate(r.requested_at)===today()&&
+  const now=today();
+  const data=records.filter(r=>[r.requested_at,r.reviewed_at,r.completed_at]
+    .some(d=>d&&phDate(d)===now)&&
    (!q||[r.name,r.kk_id,r.id,r.service_type].some(x=>String(x||'').toLowerCase().includes(q))));
   $('#kk-service-history-body').innerHTML=data.length?data.map(r=>
    '<tr><td>'+esc(new Date(r.requested_at).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',
