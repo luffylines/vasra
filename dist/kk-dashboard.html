@@ -1,4 +1,4 @@
-<!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css?v=20261025-kk-approved-pdf-v2"><link rel="stylesheet" href="./kk-dashboard.css?v=20261025-kk-approved-pdf-v2"><link rel="stylesheet" href="./kk-services.css?v=20261025-kk-approved-pdf-v2"><link rel="stylesheet" href="./kk-id-card.css?v=20261025-kk-approved-pdf-v2"><link rel="stylesheet" href="./theme.css?v=20261025-kk-all-dark-v4" data-vasra-theme="true"></head>
+<!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css?v=20261025-kk-approved-clean-v5"><link rel="stylesheet" href="./kk-dashboard.css?v=20261025-kk-approved-clean-v5"><link rel="stylesheet" href="./kk-services.css?v=20261025-kk-approved-clean-v5"><link rel="stylesheet" href="./kk-id-card.css?v=20261025-kk-approved-clean-v5"><link rel="stylesheet" href="./theme.css?v=20261025-kk-all-dark-v4" data-vasra-theme="true"></head>
 <body class="kk-body kk-member-dashboard">
 <div class="kk-workspace">
  <aside class="kk-workspace-sidebar" id="kk-sidebar" aria-label="KK member navigation">
@@ -36,7 +36,7 @@
  <div id="kk-dash-content" hidden>
   <section class="kk-summary" aria-label="Membership overview">
    <article><span>Membership</span><strong id="kk-dash-status">Verified</strong></article>
-   <article><span>KK ID</span><strong id="kk-dash-id">—</strong><button type="button" class="kk-copy-id" id="kk-copy-id">Copy ID</button><small id="kk-copy-message" role="status"></small></article>
+   <article class="kk-summary-id-card"><span>KK ID</span><div class="kk-summary-id-actions"><strong id="kk-dash-id">—</strong><button type="button" class="kk-copy-id" id="kk-copy-id">Copy ID</button></div><small id="kk-copy-message" role="status"></small></article>
    <article><span>Available Points</span><strong id="kk-dash-points">0</strong></article>
   </section>
   <section data-section="overview" class="kk-dashboard-panel kk-overview-panel" aria-labelledby="kk-overview-title">
@@ -99,7 +99,7 @@
   </section>
 <section data-section="kk-id" class="kk-dashboard-panel kk-id-workspace" aria-labelledby="kk-id-title" hidden>
 <div class="kk-id-heading"><p class="kk-id-section-description" id="kk-id-title">Suriin ang harap at likod ng iyong KK ID. Mada-download lamang ang official PDF kapag approved na ang larawan ng SK Officers.</p></div>
-<div class="kk-id-workspace-grid"><article class="kk-id-upload-card"><div id="kk-id-photo-submission" hidden><h3>Step 1 · Upload Your Photo</h3>
+<div class="kk-id-workspace-grid"><article id="kk-id-upload-card" class="kk-id-upload-card" hidden><div id="kk-id-photo-submission"><h3>Step 1 · Upload Your Photo</h3>
 <p>Magdagdag ng malinaw na portrait photo para makumpleto ang ID. JPG, PNG o WEBP · hanggang 2 MB.</p>
 <form id="kk-id-upload-form">
 <label for="kk-id-photo" class="kk-id-upload-zone">
@@ -111,7 +111,10 @@
 <button type="submit" class="kk-btn">Submit Photo for SK Approval</button></form>
 <p class="kk-id-helper">Your submitted portrait is reviewed by SK Officers before a downloadable ID is issued.</p>
 </div>
-<div id="kk-id-approved-photo" class="kk-id-approved-photo" hidden>
+</article><article class="kk-id-profile-card kk-id-reference-card">
+ <div class="kk-id-reference-title"><div><span class="kk-id-reference-overline">FRONT &amp; BACK PREVIEW · STANDARD CR80 (85.6 × 54 MM)</span><p>Makikita dito ang parehong disenyo na sinusuri at pini-print ng SK officers.</p></div>
+ <span id="kk-id-card-approval" class="kk-id-pill">No Photo Yet</span></div>
+ <div id="kk-id-approved-photo" class="kk-id-approved-photo" hidden>
  <img id="kk-id-approved-portrait" alt="Your approved KK ID portrait" loading="lazy">
  <div class="kk-id-approved-details">
   <span class="kk-id-approved-label">PHOTO VERIFIED BY SK</span>
@@ -123,9 +126,6 @@
   </button>
  </div>
 </div>
-</article><article class="kk-id-profile-card kk-id-reference-card">
- <div class="kk-id-reference-title"><div><span class="kk-id-reference-overline">FRONT &amp; BACK PREVIEW · STANDARD CR80 (85.6 × 54 MM)</span><p>Makikita dito ang parehong disenyo na sinusuri at pini-print ng SK officers.</p></div>
- <span id="kk-id-card-approval" class="kk-id-pill">No Photo Yet</span></div>
  <div id="kk-id-duplex-preview" class="kk-id-preview-pair" aria-live="polite">
   <figure class="kk-id-preview-side"><img id="kk-id-render-front" alt="Front of your KK identification card" loading="eager">
    <figcaption>Front · KK Identification Card</figcaption></figure>
@@ -159,4 +159,4 @@
  <button class="kk-sidebar-backdrop" type="button" aria-label="Close KK navigation" id="kk-sidebar-backdrop"></button>
 </div>
 <footer class="kk-footer kk-workspace-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
-<script src="./common.js?v=20261025-kk-approved-pdf-v2"></script><script src="./theme.js?v=20261025-kk-upload-first-dark-v3"></script><script src="./kk-dashboard.js?v=20261025-kk-approved-pdf-v2" defer></script><script src="./kk-id-render.js?v=20261025-kk-id-on-demand-v2" defer></script><script src="./kk-id-member.js?v=20261025-kk-approved-pdf-v2" defer></script><script src="./kk-services.js?v=20261025-kk-approved-pdf-v2" defer></script></body></html>
+<script src="./common.js?v=20261025-kk-approved-clean-v5"></script><script src="./theme.js?v=20261025-kk-upload-first-dark-v3"></script><script src="./kk-dashboard.js?v=20261025-kk-approved-clean-v5" defer></script><script src="./kk-id-render.js?v=20261025-kk-id-on-demand-v2" defer></script><script src="./kk-id-member.js?v=20261025-kk-approved-clean-v5" defer></script><script src="./kk-services.js?v=20261025-kk-approved-clean-v5" defer></script></body></html>
