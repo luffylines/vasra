@@ -348,3 +348,13 @@ html[data-theme="dark"] body.portal-refresh.projects-page #detail .trans-picker 
  background:#172d49;color:#edf6ff;border-color:#526c90
 }
 html[data-theme="dark"] body.portal-refresh.projects-page #detail :is(a,.close){color:#a9d2ff}
+
+
+/* Keep theme toggle inside the ordered KK login/registration action group. */
+body.kk-body .kk-auth-top-actions .vasra-theme-toggle{
+ position:static!important;inset:auto!important;margin:0!important;flex:none
+}
+html[data-theme="dark"] body.kk-body .kk-auth-top-actions .kk-auth-nav-link{
+ background:#1b3355;border-color:#3b5680;color:#e9f3ff
+}
+html[data-theme="dark"] body.kk-body .kk-auth-top-actions .kk-auth-nav-link:hover{background:#2a4772}

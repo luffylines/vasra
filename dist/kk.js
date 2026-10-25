@@ -4,21 +4,30 @@
  const $=s=>document.querySelector(s);
  const feedback=(message,kind='info')=>{const el=$('#kk-feedback');if(!el)return;el.textContent=message;el.dataset.kind=kind;el.hidden=!message;};
  const busy=(form,on)=>{const btn=form.querySelector('[type="submit"]');if(btn){btn.disabled=on;btn.setAttribute('aria-busy',String(on));}};
- // Fixed +63 9 is outside the editable box. Paste supports 09..., +639... or
- // the remaining nine digits, while typed content never exceeds nine digits.
- const kkMobileTail=value=>{
-  let digits=String(value||'').replace(/\D/g,'');
+ // +63 is fixed; users enter exactly 10 digits, beginning with 9.
+ // Pasted +639XXXXXXXXX, 09XXXXXXXXX, and 9XXXXXXXXX normalize to the same digits.
+ const kkMobileTen=value=>{
+  let digits=String(value||'').replace(/[^0-9]/g,'');
   if(digits.startsWith('63')&&digits.length>=12)digits=digits.slice(2);
   if(digits.startsWith('0')&&digits.length>=11)digits=digits.slice(1);
-  if(digits.startsWith('9')&&digits.length>=10)digits=digits.slice(1);
-  return digits.slice(0,9);
+  return digits.slice(0,10);
  };
  const kkNormalizePhoneInput=input=>{
-  if(!input||!input.matches('input[name="phone"]'))return;
-  const tail=kkMobileTail(input.value);
-  if(input.value!==tail)input.value=tail;
+  if(!input||!input.matches('input[data-ph-mobile]'))return;
+  const digits=kkMobileTen(input.value);
+  input.value=digits.startsWith('9')?digits:'';
  };
- const kkPhilippineMobile=value=>'+639'+kkMobileTail(value);
+ const kkPhilippineMobile=value=>{
+  const digits=kkMobileTen(value);
+  return /^9[0-9]{9}$/.test(digits)?'+63'+digits:null;
+ };
+ const kkHandlePhonePaste=event=>{
+  if(!event.target.matches('input[data-ph-mobile]'))return;
+  const pasted=event.clipboardData?.getData('text')||'';
+  if(!pasted)return;
+  event.preventDefault();event.target.value=kkMobileTen(pasted);
+  kkNormalizePhoneInput(event.target);
+ };
  const getApi=async path=>api('./api/kk/'+path);
  const send=async(path,data)=>api('./api/kk/'+path,{method:'POST',body:JSON.stringify(data)});
  if(view==='login'){
@@ -40,8 +49,10 @@
 
   try{
    const status=await getApi('google/status');
-   if(status.enabled===true){google.href='./api/kk/google/start';google.classList.remove('disabled');google.setAttribute('aria-disabled','false');note.textContent='Google account login is available for KK members.';}
-   else note.textContent='Google Sign-In needs a dedicated youth OAuth configuration. Email/password login works independently.';
+   if(status.enabled===true){google.href='./api/kk/google/start';google.classList.remove('disabled');google.setAttribute('aria-disabled','false');note.textContent='Google Sign-In is available. SK and KK accounts remain separate.';}
+   else note.textContent=status.reason==='callback_domain_mismatch'?
+    'Google callback does not match this preview domain. Use vasra.vercel.app/kk-login or ask the administrator to configure this preview.':
+    'Google OAuth is not yet configured for this domain. You can still use email/password.';
   }catch{note.textContent='Hindi ma-check ang Google Sign-In ngayon. Gamitin muna ang email/password.';}
   const query=new URLSearchParams(location.search);
   if(query.get('google_error'))feedback(query.get('google_error')==='link_required'?'May existing password account sa email na ito. Mag-login gamit ang password; hindi awtomatikong ili-link ang Google.':'Hindi natuloy ang Google Sign-In.','error');
@@ -110,12 +121,7 @@
   checkKKRegistration();
   const phone=form.elements.namedItem('phone');
   phone.addEventListener('input',()=>kkNormalizePhoneInput(phone));
-  phone.addEventListener('paste',e=>{
-   const pasted=e.clipboardData?.getData('text')||'';
-   if(pasted && (pasted.replace(/\D/g,'').length>=10)){
-    e.preventDefault();phone.value=kkMobileTail(pasted);
-   }
-  });
+  phone.addEventListener('paste',kkHandlePhonePaste);
   form.addEventListener('submit',async e=>{
    e.preventDefault();
    if(!databaseReady){feedback('Hindi pa active ang KK database. Walang na-create na account. Pindutin ang Retry o ipaalam sa SK administrator.','error');return;}
@@ -123,7 +129,8 @@
    const f=Object.fromEntries(new FormData(form));
    if(f.email.trim().toLowerCase()!==f.confirm_email.trim().toLowerCase())return feedback('Hindi magkatugma ang email at confirm email.','error');
    if(f.password!==f.confirm_password)return feedback('Hindi magkatugma ang password.','error');
-   const data={...f,email:f.email.trim().toLowerCase(),confirm_email:f.confirm_email.trim().toLowerCase(),phone:kkPhilippineMobile(f.phone),agree:form.agree.checked,confirm_email_correct:form.confirm_email_correct.checked};
+   if(!kkPhilippineMobile(f.phone))return feedback('Enter exactly 10 mobile digits beginning with 9 after +63.','error');
+  const data={...f,email:f.email.trim().toLowerCase(),confirm_email:f.confirm_email.trim().toLowerCase(),phone:kkPhilippineMobile(f.phone),agree:form.agree.checked,confirm_email_correct:form.confirm_email_correct.checked};
    busy(form,true);feedback('Creating your protected KK account…');
    try{
     const result=await send('register',data);
@@ -154,9 +161,12 @@
    return '<label><span class="kk-label-title">'+labelText+'</span><select name="'+name+'"'+req+'><option value="">Pumili…</option>'+
     opt.select.map(v=>{const [val,text]=Array.isArray(v)?v:[v,v];return '<option value="'+esc(val)+'"'+(value===val?' selected':'')+'>'+esc(text)+'</option>';}).join('')+'</select></label>';
   }
-  if(name==='phone'){
-   const tail=kkMobileTail(value);
-   return '<label>'+esc(label)+' *<span class="kk-ph-number"><span class="kk-ph-prefix" aria-hidden="true">+63 9</span><input name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="9" minlength="9" pattern="[0-9]{9}" placeholder="XXXXXXXXX" value="'+esc(tail)+'" required></span></label>';
+  if(name==='phone'||name==='emergency_phone'){
+   const digits=kkMobileTen(value);
+   return '<label><span class="kk-label-title">'+labelText+'</span><span class="kk-ph-number">'+
+    '<span class="kk-ph-prefix" aria-hidden="true">+63</span>'+
+    '<input name="'+name+'" data-ph-mobile type="tel" inputmode="numeric" autocomplete="tel-national" '+
+    'minlength="10" maxlength="10" pattern="9[0-9]{9}" placeholder="9XXXXXXXXX" value="'+esc(digits)+'"'+req+'></span></label>';
   }
   if(opt.type==='number'){
    const min=name==='family_count'?1:0;
@@ -294,7 +304,11 @@
  const savedFields=(form)=>{
   for(const [name,value] of new FormData(form)){
    if(name==='consent'||name==='guardian_consent')continue;
-   data[name]=String(value);
+   if(name==='emergency_phone'){
+    const mobile=kkPhilippineMobile(value);
+    if(!mobile)throw Error('Emergency contact must have 10 digits starting with 9 after +63.');
+    data[name]=mobile;
+   }else data[name]=String(value);
   }
   if(current===5){data.consent=!!form.querySelector('[name="consent"]')?.checked;data.guardian_consent=!!form.querySelector('[name="guardian_consent"]')?.checked;}
   renderPreview();
@@ -457,15 +471,9 @@
   finally{idBusy=false;}
 });
  $('#kk-step-form').addEventListener('input',event=>{
-  if(event.target.matches('input[name="phone"]'))kkNormalizePhoneInput(event.target);
+  if(event.target.matches('input[data-ph-mobile]'))kkNormalizePhoneInput(event.target);
  });
- $('#kk-step-form').addEventListener('paste',event=>{
-  if(!event.target.matches('input[name="phone"]'))return;
-  const pasted=event.clipboardData?.getData('text')||'';
-  if(pasted && pasted.replace(/\D/g,'').length>=10){
-   event.preventDefault();event.target.value=kkMobileTail(pasted);
-  }
- });
+ $('#kk-step-form').addEventListener('paste',kkHandlePhonePaste);
  $('#kk-step-form').addEventListener('change',event=>{
   if(current===1 && ['residence_region','residence_province','residence_city','residence_barangay'].includes(event.target.name)){
    const changed=event.target.name;
@@ -500,7 +508,10 @@
   if(!form.reportValidity())return;
   const identityRequired=!account.member.first_name||!account.member.birthdate;
   const identity=identityRequired?values(form):{};
-  if(identityRequired && identity.phone)identity.phone=kkPhilippineMobile(identity.phone);
+  if(identityRequired){
+   identity.phone=kkPhilippineMobile(identity.phone);
+   if(!identity.phone){feedback('Phone must have 10 digits starting with 9 after +63.','error');return;}
+  }
   savedFields(form);
   busy(form,true);feedback('Saving securely to your KK account…');
   try{

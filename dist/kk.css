@@ -351,3 +351,45 @@
 .kk-profile-sheet .kk-form input,.kk-profile-sheet .kk-form select{font-size:16px}
 .kk-profile-sheet .kk-form select,.kk-profile-sheet .kk-form input{max-width:100%}
 @media(max-width:650px){.kk-profile-sheet .kk-label-title{font-size:14px}.kk-profile-sheet .kk-id-drop{padding:14px}}
+
+
+/* Auth header controls: theme, home, login — same order on desktop and phones. */
+.kk-auth-page .kk-auth-card{position:relative;padding-top:82px}
+.kk-auth-top-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.kk-auth-page .kk-auth-card>.kk-auth-top-actions{
+ position:absolute;z-index:3;right:clamp(15px,2vw,27px);top:17px
+}
+.kk-reg-toolbar .kk-auth-top-actions{margin-left:auto}
+.kk-auth-top-actions .kk-auth-nav-link{
+ display:inline-flex;align-items:center;justify-content:center;gap:6px;
+ min-height:41px;box-sizing:border-box;padding:8px 10px;border-radius:11px;
+ border:1px solid #c6d8ee;background:#eaf2ff;color:#285b97;
+ font:800 11px 'DM Sans',sans-serif;text-decoration:none;white-space:nowrap
+}
+.kk-auth-top-actions .kk-auth-nav-link svg{display:block;width:18px;height:18px;flex:none}
+.kk-auth-top-actions .kk-auth-nav-link:hover{background:#d8e9ff}
+.kk-auth-top-actions .kk-auth-login-link[aria-current="page"]{background:#dbeafe;border-color:#9ebde8}
+.kk-auth-page .kk-story-bottom .kk-story-location{display:inline-flex;align-items:center;gap:7px}
+.kk-auth-page .kk-reg-toolbar{justify-content:space-between}
+.kk-auth-page .kk-reg-toolbar .kk-auth-top-actions .vasra-theme-toggle{margin-left:0}
+@media(max-width:760px){
+ .kk-auth-page .kk-auth-card{padding-top:83px}
+ .kk-auth-page .kk-auth-card>.kk-auth-top-actions{right:16px;top:13px}
+ .kk-auth-top-actions{gap:5px}
+ .kk-auth-top-actions .kk-auth-nav-link{padding:8px 9px;font-size:10px}
+ .kk-auth-page .kk-registration .kk-reg-toolbar{flex-wrap:wrap}
+ .kk-auth-page .kk-registration .kk-auth-top-actions{margin-left:auto}
+}
+@media(max-width:405px){
+ .kk-auth-top-actions .kk-auth-nav-link span{display:none}
+ .kk-auth-top-actions .kk-auth-nav-link{min-width:41px}
+ .kk-auth-top-actions .kk-auth-nav-link svg{width:19px;height:19px}
+}
+/* Unified Philippine mobile: fixed +63, editable ten digits beginning with 9. */
+.kk-form .kk-ph-prefix{min-width:62px!important;padding:0 11px!important}
+.kk-form .kk-ph-number :is(input[name="phone"],input[name="emergency_phone"]){
+ display:block;flex:1;min-width:0!important;width:100%!important;margin:0!important;
+ padding:10px 12px!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;background:#fbfcff;font-size:16px!important;letter-spacing:.65px
+}
+.kk-form .kk-ph-number:has(input:invalid){border-color:#c6d6eb}

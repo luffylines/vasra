@@ -12,21 +12,21 @@ test('Youth portal branding says Sangguniang Kabataan Vasra, staff auth remains 
  assert.match(staff,/Official staff workspace/);
  assert.match(staff,/id="auth-form"/);
 });
-test('KK Philippine phone prefix +63 9 is immutable with exactly nine editable digits',()=>{
+test('KK Philippine phone prefix +63 stays fixed with 10 editable digits starting 9',()=>{
  const reg=read('dist/kk-register.html'),css=read('dist/kk.css'),js=read('dist/kk.js');
- assert.match(reg,/class="kk-ph-prefix"[^>]*>\+63 9<\/span>/);
- assert.match(reg,/name="phone"[^>]*pattern="\[0-9\]\{9\}"/);
- assert.match(reg,/name="phone"[^>]*maxlength="9"/);
+ assert.match(reg,/class="kk-ph-prefix"[^>]*>\+63<\/span>/);
+ assert.match(reg,/name="phone"[^>]*pattern="9\[0-9\]\{9\}"/);
+ assert.match(reg,/name="phone"[^>]*maxlength="10"/);
  assert.match(reg,/inputmode="numeric"/);
- assert.match(js,/const kkMobileTail=value=>/);
- assert.match(js,/return digits\.slice\(0,9\)/);
- assert.match(js,/const kkPhilippineMobile=value=>'\+639'\+kkMobileTail\(value\)/);
+ assert.match(js,/const kkMobileTen=value=>/);
+ assert.match(js,/return digits\.slice\(0,10\)/);
+ assert.match(js,/const kkPhilippineMobile=value=>/);
  assert.match(js,/phone:kkPhilippineMobile\(f\.phone\)/);
  assert.match(js,/identity\.phone=kkPhilippineMobile\(identity\.phone\)/);
- assert.match(js,/name==='phone'/);
+ assert.match(js,/name==='phone'\|\|name==='emergency_phone'/);
  assert.match(css,/\.kk-form \.kk-ph-prefix/);
- assert.match(css,/\.kk-ph-number input\[name="phone"\]/);
- assert.match(read('lib/handler.cjs'),/!\/\^\(\?:\\\+63\|0\)9\\d\{9\}\$\/\.test\(phone\)/);
+ assert.match(css,/\.kk-ph-number :is\(input\[name="phone"\],input\[name="emergency_phone"\]\)/);
+ assert.match(read('lib/handler.cjs'),/const phMobile=value=>/);
 });
 test('Duty assignment requests confirmation and cancels before any save',()=>{
  const duty=read('dist/duty-management.js');

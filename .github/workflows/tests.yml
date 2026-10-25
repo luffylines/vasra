@@ -3,6 +3,7 @@ name: SK VASRA Tests
 on:
   pull_request:
     branches:
+      - feature/sk-services-officer-workflow-20261025
       - fix/kk-profile-doc-preview-delete-age-actions-20261025
       - feature/kk-sk-services-20261025
       - feature/kk-profiling-reference-layout-20261025

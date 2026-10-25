@@ -15,7 +15,7 @@ test('KK Login mimics staff two-panel composition without reusing staff accounts
  assert.match(login,/id="kk-google-login"/);
  assert.match(login,/name="email"/);
  assert.match(login,/name="password"/);
- assert.match(login,/class="kk-story-home" href="\.\/"/);
+ assert.match(login,/class="kk-auth-top-actions"/);
  assert.match(login,/class="kk-register-action" href="\.\/kk-register"/);
  assert.doesNotMatch(login,/<header class="kk-header">/);
  assert.doesNotMatch(login,/href="\.\/account"/);
@@ -30,7 +30,8 @@ test('Registration and youth profile have card-internal brand/Home and no separa
   assert.doesNotMatch(html,/<header class="kk-header">/);
   assert.match(html,/class="kk-reg-toolbar"/);
   assert.match(html,/class="kk-register-brand" href="\.\/"/);
-  assert.match(html,/class="kk-register-home" href="\.\/"/);
+  if(html===register)assert.match(html,/class="kk-auth-top-actions"/);
+  else assert.match(html,/class="kk-register-home" href="\.\/"/);
   assert.doesNotMatch(html,/aria-label="KK Portal navigation"/);
  }
  assert.match(register,/Already have a KK account\?/);
@@ -74,7 +75,7 @@ test('Responsive layout handles desktop, phone and narrow phone without viewport
  assert.match(css,/grid-template-columns:minmax\(0,1fr\) minmax\(0,\.96fr\)/);
  assert.match(css,/@media\(max-width:760px\)/);
  assert.match(css,/@media\(max-width:380px\)/);
- assert.match(css,/\.kk-mobile-home\{display:flex/);
+ assert.match(css,/\.kk-auth-page \.kk-auth-card>\.kk-auth-top-actions/);
  assert.match(css,/\.kk-auth-page\[data-view="register"\] \.kk-field-grid\{grid-template-columns:minmax\(0,1fr\)\}/);
  assert.match(css,/font:500 16px 'DM Sans'/);
  assert.match(contactCss,/@media\(max-width:560px\)/);

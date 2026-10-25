@@ -178,3 +178,15 @@ body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history
 body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-scroll{border-color:#3b5577}
 body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-table td{border-color:#344e70}
 body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-complete-button{background:#183f37;color:#a2f0cf;border-color:#31775d}
+
+/* Public SK officer contact forms use the same fixed-prefix mobile format. */
+body.account-workspace .staff-contact-mobile{display:flex;align-items:stretch;min-width:0;width:100%;
+ border:1px solid #c8d8ed;border-radius:9px;overflow:hidden;background:#fff;min-height:44px}
+body.account-workspace .staff-contact-mobile .kk-ph-prefix{display:flex;align-items:center;justify-content:center;
+ min-width:54px;padding:8px 10px;flex:none;background:#ebf3ff;border-right:1px solid #c8d8ed;
+ font-weight:800;color:#275b9d}
+body.account-workspace .staff-contact-mobile input[type="tel"]{flex:1;width:100%;min-width:0;border:0!important;
+ border-radius:0!important;background:transparent;padding:10px 12px;font-size:16px}
+body.account-workspace[data-theme="dark"] .staff-contact-mobile{background:#142942;border-color:#47678b}
+body.account-workspace[data-theme="dark"] .staff-contact-mobile .kk-ph-prefix{background:#284567;
+ border-color:#47678b;color:#edf5ff}

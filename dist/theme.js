@@ -41,8 +41,13 @@
  }else if(document.body.classList.contains('kk-body')){
   // KK Dashboard provides its own toolbar control in its fixed app shell.
   if(!document.querySelector('[data-vasra-theme-toggle]')){
-   const target=document.querySelector('.kk-reg-toolbar')||document.querySelector('.kk-auth-card');
-   if(target){const b=button();target.append(b);if(target.classList.contains('kk-auth-card'))b.classList.add('kk-auth-theme-button');}
+   // Authentication pages share one ordered toolbar: Theme, Home, Login.
+   // Other member views keep their existing theme-toggle placement.
+   const authNav=document.querySelector('.kk-auth-top-actions');
+   const target=authNav||document.querySelector('.kk-reg-toolbar')||document.querySelector('.kk-auth-card');
+   if(target){const b=button();
+    if(authNav)target.prepend(b);else target.append(b);
+    if(target.classList.contains('kk-auth-card'))b.classList.add('kk-auth-theme-button');}
   }
  }
  document.addEventListener('click',event=>{
