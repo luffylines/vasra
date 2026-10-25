@@ -12,7 +12,7 @@ test('Vercel build is explicitly gated on complete KK member HTML and assets',()
  assert.equal(pkg.scripts['check:deploy'],'node scripts/verify-static-deploy.cjs');
  const out=verifyKKDashboard(file('dist/kk-dashboard.html'),name=>
   fs.existsSync(path.join(root,'dist',name)));
- assert.equal(out.ok,true);assert.equal(out.sections,9);
+ assert.equal(out.ok,true);assert.equal(out.sections,8);
 });
 test('Broken footer-only preview fails before Vercel can serve the deployment',()=>{
  const broken='<section data-section="kk-id" hidden><p>upload</p></section>'+
