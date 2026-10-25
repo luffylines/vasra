@@ -66,7 +66,8 @@
    phone:'<path d="M7 3h3l2 5-2 2a14 14 0 0 0 4 4l2-2 5 2v3a3 3 0 0 1-3 3C10 20 4 14 4 6a3 3 0 0 1 3-3Z"/>',
    document:'<path d="M5 2h9l5 5v15H5z"/><path d="M14 2v6h5M8 13h8M8 17h6"/>',
    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
-   shield:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/>'
+   shield:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/>',
+   trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 10v7m4-7v7"/>'
   };
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(shapes[name]||shapes.note)+'</svg>';
  };
@@ -184,7 +185,7 @@
    [['profile','Profile Details','person'],['history','Activity Log','clock'],['documents','Documents','document']].map(([value,label,icon])=>
     '<button type="button" role="tab" data-child-tab="'+value+'" aria-selected="'+String(detailTab===value)+'">'+svgIcon(icon)+
     '<span>'+label+'</span></button>').join('')+
-   (window.kkStaffRole==='chairman'?'<button type="button" class="kk-delete-tab" data-delete-profile aria-label="Delete KK Profile">'+svgIcon('document')+
+   (window.kkStaffRole==='chairman'?'<button type="button" class="kk-delete-tab" data-delete-profile aria-label="Delete KK Profile">'+svgIcon('trash')+
     '<span>Delete KK Profile</span></button>':'')+'</div>';
   let details='';
   if(detailTab==='documents'){
