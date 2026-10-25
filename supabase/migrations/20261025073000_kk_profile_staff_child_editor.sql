@@ -54,30 +54,11 @@ BEGIN
   IF field_name IN ('family_count','siblings') AND field_value!~'^[0-9]{1,2}$'
   THEN RETURN jsonb_build_object('error',400); END IF;
   IF field_name='family_count' THEN
-   IF field_value!~'^[0-9]{1,2}
-  IF field_name='sitio_id' AND field_value<>'' AND NOT EXISTS(
-   SELECT 1 FROM vasra.kk_sitios s WHERE s.id::text=field_value AND s.active
-  ) THEN RETURN jsonb_build_object('error',400); END IF;
-  IF field_name='sitio_id' AND field_value='' AND profile_row.status='verified'
-  THEN RETURN jsonb_build_object('error',400); END IF;
-  patch=patch||jsonb_build_object(field_name,field_value);
-  changed_keys=array_append(changed_keys,field_name);
- END LOOP;
- UPDATE vasra.kk_profiles SET profile=coalesce(profile,'{}'::jsonb)||patch,
-  updated_at=clock_timestamp() WHERE vasra.kk_profiles.member_id=member_id;
- INSERT INTO vasra.audit(actor_id,actor_name,action,entity,details)
- VALUES(staff.id,staff.name,'kk_profile_field_corrected',member_id::text,
-  jsonb_build_object('section',section_name,'changed_keys',to_jsonb(changed_keys)));
- RETURN jsonb_build_object('ok',true,'member_id',member_id,'section',section_name);
-END;
-$$;
-REVOKE ALL ON FUNCTION public.vasra_kk_profile_editor(text,jsonb,text) FROM PUBLIC,anon,authenticated;
-GRANT EXECUTE ON FUNCTION public.vasra_kk_profile_editor(text,jsonb,text) TO service_role;
- OR field_value::integer NOT BETWEEN 1 AND 99
+   IF field_value::integer<1 OR field_value::integer>99
    THEN RETURN jsonb_build_object('error',400); END IF;
   END IF;
   IF field_name='sitio_id' AND field_value<>'' AND NOT EXISTS(
-   SELECT 1 FROM vasra.kk_sitios s WHERE s.id::text=field_value
+   SELECT 1 FROM vasra.kk_sitios s WHERE s.id::text=field_value AND s.active
   ) THEN RETURN jsonb_build_object('error',400); END IF;
   IF field_name='sitio_id' AND field_value='' AND profile_row.status='verified'
   THEN RETURN jsonb_build_object('error',400); END IF;
