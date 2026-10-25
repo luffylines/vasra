@@ -26,7 +26,7 @@ test('Verified KK dashboard includes three working SK service forms',()=>{
 test('Every SK staff officer can review but rate configuration remains chairman-only',()=>{
  assert.match(staff,/data-tab="kk-services"/);
  assert.match(staff,/id="panel-kk-services"/);
- assert.match(staff,/src="\.\/kk-service-staff.js"/);
+ assert.match(staff,/src="\.\/kk-service-staff\.js\?v=20261025-toast5-v1"/);
  assert.match(read('dist/account.js'),/window\.loadKKServiceStaff/);
  assert.match(backend,/if\(path==='\/api\/kk\/staff\/services'&&method==='GET'\)\{\s*await user\(\['sk','chairman'\]\)/);
  assert.match(backend,/if\(path==='\/api\/kk\/staff\/services'&&method==='POST'\)\{\s*await user\(\['sk','chairman'\]\)/);
