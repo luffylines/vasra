@@ -2,7 +2,15 @@
 (async()=>{
  const view=document.body.dataset.view;
  const $=s=>document.querySelector(s);
- const feedback=(message,kind='info')=>{const el=$('#kk-feedback');if(!el)return;if(message&&(kind==='error'||kind==='success')){el.textContent='';el.hidden=true;window.showVasraToast(message,kind);return;}el.textContent=message;el.dataset.kind=kind;el.hidden=!message;};
+ const feedback=(message,kind='info')=>{
+  const el=$('#kk-feedback');
+  if(el){el.textContent='';el.hidden=true;}
+  if(!message){window.showVasraToast('','info');return;}
+  // Login, registration and profile share the same floating right-side notice.
+  const type=kind==='error'||kind==='success'?kind:
+   /^(Uploading|Verifying|Creating|Saving)/i.test(message)?'loading':'info';
+  window.showVasraToast(message,type);
+ };
  const busy=(form,on)=>{const btn=form.querySelector('[type="submit"]');if(btn){btn.disabled=on;btn.setAttribute('aria-busy',String(on));}};
  // +63 is fixed; users enter exactly 10 digits, beginning with 9.
  // Pasted +639XXXXXXXXX, 09XXXXXXXXX, and 9XXXXXXXXX normalize to the same digits.
@@ -66,6 +74,7 @@
      // Go directly to the verified dashboard; incomplete/rejected users resume profiling.
      let next='./kk-profile';
      try{const active=await getApi('me');if(active?.profile?.status==='verified')next='./kk-dashboard';}catch{}
+     window.queueVasraToast?.('Successfully signed in to your KK account.','success');
      location.replace(next);
     }
    }catch(err){feedback(err.message,'error');}finally{busy(form,false);}
@@ -134,7 +143,10 @@
    busy(form,true);feedback('Creating your protected KK account…');
    try{
     const result=await send('register',data);
-    if(result?.ok)location.replace('./kk-profile');
+    if(result?.ok){
+     window.queueVasraToast?.('KK account created successfully. Complete your profile.','success');
+     location.replace('./kk-profile');
+    }
     else throw Error('Hindi makumpleto ang KK registration. Subukang mag-login.');
    }catch(err){
     const duplicate=/existing|registered|record o kailangang i-review|already/i.test(String(err.message||''));
@@ -143,7 +155,10 @@
      const link=document.createElement('a');
      link.href='./kk-login';link.textContent='Pumunta sa KK Login at ipagpatuloy ang profiling →';
      link.className='kk-existing-login-link';
-     $('#kk-feedback')?.append(link);
+     // Show this actionable link below the form, not inside the hidden toast placeholder.
+     document.getElementById('kk-existing-login-action')?.remove();
+     link.id='kk-existing-login-action';
+     form.insertAdjacentElement('afterend',link);
     }else feedback(err.message,'error');
    }finally{busy(form,false);}
   });
@@ -453,9 +468,8 @@
  $('#kk-step-form').addEventListener('change',async event=>{
   if(event.target.id!=='kk-valid-id-file')return;
   const file=event.target.files?.[0];if(!file)return;
-  const feedbackEl=$('#kk-feedback');
   if(file.size>2_500_000 || file.size<100 || !['image/jpeg','image/png','application/pdf'].includes(file.type)){
-    feedback('JPG, PNG o PDF lamang, minimum 100 bytes at maximum 2.5 MB.');event.target.value='';return;
+    feedback('JPG, PNG o PDF lamang, minimum 100 bytes at maximum 2.5 MB.','error');event.target.value='';return;
   }
   idBusy=true;feedback('Uploading Valid ID securely…');
   try{
@@ -465,9 +479,8 @@
     const reply=await send('id/upload',payload);
     validID=reply.document;
     feedback('Valid ID uploaded securely. SK Officers can view it during verification.','success');
-    if(feedbackEl)feedbackEl.hidden=false;
     renderStep();
-  }catch(err){feedback('Valid ID upload failed: '+err.message);}
+  }catch(err){feedback('Valid ID upload failed: '+err.message,'error');}
   finally{idBusy=false;}
 });
  $('#kk-step-form').addEventListener('input',event=>{
