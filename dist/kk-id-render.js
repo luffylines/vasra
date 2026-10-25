@@ -37,7 +37,7 @@
   const data=[];
   for(let i=0;i<bits.length;i+=8)data.push(bits.slice(i,i+8).reduce((v,b)=>(v<<1)|b,0));
   for(let pad=0;data.length<19;pad++)data.push(pad%2?0x11:0xec);
-  const mul=(a,b)=>{let z=0;for(let i=7;i>=0;i--){if((b>>>i)&1)z^=a;a=(a<<1)^((a&0x80)?0x11d:0);}return z&255;};
+  const mul=(a,b)=>{let z=0;while(b){if(b&1)z^=a;a=(a<<1)^((a&0x80)?0x11d:0);b>>>=1;}return z&255;};
   const gen=[127,122,154,164,11,68,117],ecc=new Array(7).fill(0);
   for(const byte of data){
    const factor=byte^ecc.shift();ecc.push(0);
