@@ -42,6 +42,11 @@ test('Retabox points are staff-only, based on verified grams and credited once',
  assert.match(sql,/for update/);
  assert.match(sql,/service_request_id/);
  assert.match(sql,/enable row level security/);
+ const grants=read('supabase/migrations/20261025051000_kk_services_backend_grants.sql');
+ assert.match(grants,/grant select,insert,update on vasra\.kk_service_requests to service_role/);
+ assert.match(grants,/grant select,insert,update on vasra\.kk_service_settings to service_role/);
+ assert.doesNotMatch(grants,/grant .* to anon|grant .* to authenticated/i);
+
  assert.match(sql,/revoke all on vasra.kk_service_requests from public,anon,authenticated/);
  assert.doesNotMatch(sql,/\bdrop table\b|\btruncate\b|\bdelete from vasra.kk_points\b/i);
 });
