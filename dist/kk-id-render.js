@@ -36,7 +36,7 @@
   while(bits.length%8)bits.push(0);
   const data=[];
   for(let i=0;i<bits.length;i+=8)data.push(bits.slice(i,i+8).reduce((v,b)=>(v<<1)|b,0));
-  while(data.length<19)data.push(data.length%2?0x11:0xec);
+  for(let pad=0;data.length<19;pad++)data.push(pad%2?0x11:0xec);
   const mul=(a,b)=>{let z=0;for(let i=7;i>=0;i--){if((b>>>i)&1)z^=a;a=(a<<1)^((a&0x80)?0x11d:0);}return z&255;};
   const gen=[87,229,146,149,238,102,21],ecc=new Array(7).fill(0);
   for(const byte of data){
@@ -79,11 +79,12 @@
   let format=8<<10;for(let i=14;i>=10;i--)if((format>>>i)&1)format^=0x537<<(i-10);
   format=((8<<10)|format)^0x5412;
   const fm=(x,y,i)=>set(x,y,(format>>>i)&1);
-  for(let i=0;i<=5;i++)fm(i,8,i);
-  fm(7,8,6);fm(8,8,7);fm(8,7,8);
-  for(let i=9;i<15;i++)fm(8,14-i,i);
-  for(let i=0;i<8;i++)fm(8,20-i,i);
-  for(let i=8;i<15;i++)fm(21-15+i,8,i);
+  for(let i=0;i<15;i++){
+   // Vertical format copy: row 0..5,7..8,14..20 at column 8.
+   fm(8,i<6?i:i<8?i+1:i+6,i);
+   // Horizontal format copy: columns 20..13,7,5..0 at row 8.
+   fm(i<8?20-i:i===8?7:14-i,8,i);
+  }
   set(8,13,true);
   return grid;
  };
