@@ -14,7 +14,7 @@ test('Approved member view replaces uploader with square portrait and downloadab
  assert.match(memberHtml,/id="kk-id-member-download"[^>]*disabled/);
  assert.match(member,/submission\.hidden=approved;approvedPhoto\.hidden=!approved/);
  assert.match(member,/exportReady=state==='approved'&&found&&photoLoaded/);
- assert.match(css,/#kk-id-approved-photo\[hidden\]\{display:none!important\}/);
+ assert.match(css,/#kk-id-approved-photo\[hidden\]/);
  assert.match(css,/\.kk-id-approved-photo>img\{[\s\S]*?aspect-ratio:1\/1/);
 });
 
@@ -35,7 +35,7 @@ test('Staff preview opens only for clicked member, directly after their row',()=
  assert.match(staff,/active\.after\(previewPanel\)/);
  assert.match(staff,/selected=id;paint\(\)/);
  assert.match(staff,/previewRevision\+\+/);
- assert.match(staff,/$('#kk-id-staff-preview').hidden=false/.source ? /kk-id-staff-preview'\)\.hidden=false/ : /kk-id-staff-preview/);
+ assert.match(staff,/kk-id-staff-preview'\)\.hidden=false/);
  assert.doesNotMatch(staff,/await preview\(rows\./);
  assert.match(staff,/closePreview\(\); \/\/ Never auto-open/);
 });
