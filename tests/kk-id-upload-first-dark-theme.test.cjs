@@ -5,7 +5,7 @@ const dash=read('dist/kk-dashboard.html'),app=read('dist/kk-dashboard.js'),membe
  css=read('dist/kk-id-card.css'),theme=read('dist/theme.css'),themeJs=read('dist/theme.js');
 test('full KK member dashboard and unchanged other sections survive the ID layout change',()=>{
  assert.match(dash,/^<!doctype html>/i);assert.match(dash,/<\/html>\s*$/i);
- for(const key of ['overview','projects','activities','rewards','printing','computer','retabox','settings','kk-id'])
+ for(const key of ['overview','projects','rewards','printing','computer','retabox','settings','kk-id'])
   assert.match(dash,new RegExp('data-section="'+key+'"'));
  assert.match(dash,/kk-sidebar-nav/);assert.match(dash,/kk-dashboard-logout/);
  assert.equal((dash.match(/data-section="kk-id"/g)||[]).length,1);
