@@ -727,3 +727,62 @@ body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-tabs .kk
 body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-field .kk-ph-number{background:#10233c;border-color:#536d92}
 body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-edit-field .kk-ph-prefix{
  background:#264164;color:#e4f0ff;border-color:#536d92}
+
+
+/* Confirmed duplicate KK deletion: the dialog is outside the panel scroll
+   and cannot be submitted until exact profile name, one-time record code
+   and acknowledgement all match. */
+.kk-delete-dialog{border:1px solid #e3cad0;border-radius:17px;box-shadow:0 28px 90px #14254455;
+ width:min(510px,calc(100vw - 26px));max-height:min(90dvh,850px);box-sizing:border-box;
+ overflow:auto;padding:0;background:#fff;color:#1a3558}
+.kk-delete-dialog::backdrop{background:#07162bbd;backdrop-filter:blur(3px)}
+.kk-delete-dialog form{display:grid;gap:10px;padding:22px}
+.kk-delete-modal-heading{display:flex;gap:13px;align-items:center;margin:0 0 4px}
+.kk-delete-symbol{display:grid;place-items:center;flex:none;width:45px;height:45px;
+ border-radius:12px;background:#fff0f1;border:1px solid #ffd3d8;color:#bf3343;font:900 27px Manrope,sans-serif}
+.kk-delete-overline{color:#bb4d5c;letter-spacing:.12em;font:800 9px 'DM Sans',sans-serif}
+.kk-delete-dialog h3{font:800 22px Manrope,sans-serif;margin:4px 0;color:#8d2032}
+.kk-delete-dialog p{font:500 12px/1.65 'DM Sans',sans-serif;color:#627994;margin:2px 0 8px}
+.kk-delete-target{background:#f5f8ff;border:1px solid #d8e4f6;border-radius:10px;padding:12px 14px;display:grid;gap:4px;margin:2px 0 10px}
+.kk-delete-target strong{font:800 14px Manrope,sans-serif;color:#244b7f}
+.kk-delete-target small{font:600 11px 'DM Sans',sans-serif;color:#6b84a2}
+.kk-delete-dialog label:not(.kk-delete-understand){font:800 11px 'DM Sans',sans-serif;color:#405d80}
+.kk-delete-dialog input:not([type=checkbox]){box-sizing:border-box;min-height:43px;width:100%;padding:10px 12px;
+ border:1px solid #c9d8eb;border-radius:9px;background:#f8fbff;color:#2c4f7b;font:650 13px 'DM Sans',sans-serif}
+.kk-delete-dialog input:focus-visible{outline:3px solid #98c1ff;outline-offset:1px}
+.kk-delete-copy-group{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.kk-delete-copy-group input{font-weight:800!important;letter-spacing:.04em}
+.kk-delete-copy-group button{border:1px solid #a9c5e9;border-radius:9px;background:#e8f2ff;
+ color:#20569b;font:800 11px 'DM Sans',sans-serif;padding:0 13px;min-height:43px}
+.kk-delete-understand{display:flex;align-items:flex-start;gap:9px;font:600 11px/1.5 'DM Sans',sans-serif;color:#456280;margin-top:10px}
+.kk-delete-understand input{width:17px;height:17px;margin:0;flex:none}
+#kk-delete-dialog-status{margin:3px 0;min-height:0;font-size:12px;color:#ad3745}
+#kk-delete-dialog-status:empty{display:none}
+.kk-delete-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid #e0e8f3;margin-top:10px;padding-top:16px}
+.kk-delete-modal-actions button{min-height:45px;display:flex;align-items:center;justify-content:center;
+ border-radius:9px;font:800 12px 'DM Sans',sans-serif;padding:10px}
+#kk-delete-cancel{border:1px solid #c9d8eb;background:#f5f8fd;color:#3c608d}
+#kk-delete-submit{border:1px solid #b72d41;background:#bc3044;color:#fff}
+#kk-delete-submit:disabled{border-color:#d4dce8;background:#e8edf5;color:#9aabc2;cursor:not-allowed}
+@media(max-width:430px){.kk-delete-dialog form{padding:15px}.kk-delete-dialog h3{font-size:19px}.kk-delete-copy-group button{padding:0 10px}}
+body.account-workspace[data-theme="dark"]~.kk-delete-dialog,
+html[data-theme="dark"] .kk-delete-dialog,
+body[data-theme="dark"] .kk-delete-dialog{background:#12263f;border-color:#46617f;color:#eaf3ff}
+html[data-theme="dark"] .kk-delete-dialog h3,
+body[data-theme="dark"] .kk-delete-dialog h3{color:#ffacba}
+html[data-theme="dark"] .kk-delete-dialog :is(.kk-delete-target,input:not([type=checkbox])),
+body[data-theme="dark"] .kk-delete-dialog :is(.kk-delete-target,input:not([type=checkbox])){background:#1c3654;color:#f1f7ff;border-color:#506d91}
+html[data-theme="dark"] .kk-delete-dialog :is(label,p,.kk-delete-target small),
+body[data-theme="dark"] .kk-delete-dialog :is(label,p,.kk-delete-target small){color:#c3d4eb}
+html[data-theme="dark"] .kk-delete-dialog :is(#kk-delete-copy,#kk-delete-cancel),
+body[data-theme="dark"] .kk-delete-dialog :is(#kk-delete-copy,#kk-delete-cancel){background:#28466a;color:#e5f1ff;border-color:#587aa3}
+/* Fit the full valid ID within Documents — do not crop it. */
+#panel-kk-profiling .kk-document-inline-viewer{height:auto;min-height:430px;max-width:100%}
+#panel-kk-profiling .kk-validid-full-image{object-fit:contain!important;object-position:center;
+ padding:12px!important;max-height:70vh!important;height:auto!important;
+ width:100%!important;min-height:300px;background:#eef4fd}
+#panel-kk-profiling .kk-document-inline-viewer iframe{min-height:580px;height:70vh;max-height:760px}
+#panel-kk-profiling .kk-document-error{color:#ab3544;margin:12px;font:700 12px 'DM Sans',sans-serif}
+#panel-kk-profiling .kk-document-error[hidden]{display:none}
+@media(max-width:690px){#panel-kk-profiling .kk-document-inline-viewer iframe{height:62vh;min-height:380px}
+#panel-kk-profiling .kk-validid-full-image{max-height:60vh!important}}
