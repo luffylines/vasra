@@ -12,9 +12,10 @@ const expected={
  'youth-leaders.html':'./youth-leaders',
  'achievements.html':'./achievements.html',
  'contacts.html':'./contacts.html',
- 'transparency.html':'./transparency'
+ 'transparency.html':'./transparency',
+ 'sk-resolutions.html':'./sk-resolutions'
 };
-test('All seven public pages highlight exactly their own route, without any sidebar dots',()=>{
+test('All eight public pages highlight exactly their own route, without any sidebar dots',()=>{
  for(const [page,route] of Object.entries(expected)){
   const content=fs.readFileSync(path.join(dist,page),'utf8');
   const match=content.match(/<nav aria-label="Pangunahing navigation">([\s\S]*?)<\/nav>/);
@@ -24,7 +25,7 @@ test('All seven public pages highlight exactly their own route, without any side
   assert.equal(selected.length,1,page+' must have one and only one selected link');
   assert.ok(selected[0][1].includes('href="'+route+'"'),page+' should highlight '+route);
   assert.doesNotMatch(nav,/<i\b|<\/i>/i,page+' should not have a trailing dot');
-  assert.equal((nav.match(/<a href=/g)||[]).length,7,page+' keeps all seven public routes');
+  assert.equal((nav.match(/<a href=/g)||[]).length,7,page+' keeps all eight public routes');
  }
 });
 test('Client-side shell reconciles active state from URL for clean and .html route aliases',()=>{
@@ -41,5 +42,5 @@ test('Client-side shell reconciles active state from URL for clean and .html rou
  assert.match(fs.readFileSync(path.join(dist,'mobile-nav.css'),'utf8'),/\.site-header nav a > i\{display:none!important\}/);
 });
 test('Service worker cache is bumped so old sidebar HTML cannot stay pinned on installed PWA',()=>{
- assert.match(fs.readFileSync(path.join(dist,'sw.js'),'utf8'),/vasra-v60-kk-services-and-theme-20261025/);
+ assert.match(fs.readFileSync(path.join(dist,'sw.js'),'utf8'),/vasra-v61-resolutions-kk-card-20261025/);
 });
