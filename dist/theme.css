@@ -759,3 +759,26 @@ html[data-theme="dark"] body.kk-body :is(
   border-color:#456388
  }
 }
+
+
+/* Login uses one two-column card; its parent must not stay white in dark mode. */
+html[data-theme="dark"] body.kk-auth-page .kk-auth-layout{
+ background:var(--kk-panel);border-color:var(--kk-outline);
+ box-shadow:0 15px 40px #040d1e55
+}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story{
+ background:radial-gradient(ellipse at 100% 0%,#476a9d45,transparent 64%),#122744;
+ color:#eff6ff
+}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story :is(h1,strong){color:#f1f7ff}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story :is(p,small){color:#c5d9f2}
+html[data-theme="dark"] body.kk-auth-page :is(
+ .kk-register-prompt,.kk-story-features>div,.kk-auth-footnote){
+ color:#cfddf0;border-color:#49688b
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a{
+ color:#d6e7fa
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a:hover{
+ background:#2a4770;color:#fff
+}
