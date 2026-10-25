@@ -1,8 +1,33 @@
 <!doctype html><html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="Verified KK member dashboard of Sangguniang Kabataan Vasra"><title>KK Dashboard — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css"><link rel="stylesheet" href="./kk-dashboard.css"></head>
 <body class="kk-body kk-member-dashboard">
-<main class="kk-main"><div class="kk-dashboard">
- <div class="kk-reg-toolbar"><a class="kk-register-brand" href="./"><img src="./sk%20logo.jpg" alt="SK Vasra logo"><span><strong>SK VASRA</strong><small>Sangguniang Kabataan Vasra</small></span></a>
- <a class="kk-register-home" href="./">⌂ Home</a><button id="kk-dashboard-logout" type="button" class="kk-btn kk-btn-quiet">Logout ↗</button></div>
+<div class="kk-workspace">
+ <aside class="kk-workspace-sidebar" id="kk-sidebar" aria-label="KK member navigation">
+  <a class="kk-sidebar-brand" href="./kk-dashboard"><img src="./sk%20logo.jpg" alt="Official SK Vasra logo"><span><strong>SK VASRA</strong><small>KK Member Portal</small></span></a>
+  <p class="kk-sidebar-label">KATIPUNAN NG KABATAAN</p>
+  <nav class="kk-sidebar-nav" aria-label="KK Dashboard sections">
+   <button type="button" data-tab="overview" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Dashboard</span></button>
+   <button type="button" data-tab="projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7h18v14H3zM8 3v4m8-4v4M3 12h18"/></svg><span>Upcoming Projects</span></button>
+   <button type="button" data-tab="activities"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8 12 3 3 5-6"/></svg><span>My Activities</span></button>
+   <button type="button" data-tab="rewards"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9h18v12H3zM12 9v12M3 9h18V5H3z"/><path d="M12 5c-4-7-10-2-2 0M12 5c4-7 10-2 2 0"/></svg><span>Points & Rewards</span></button>
+   <button type="button" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3.9a8 8 0 0 0-1.7-1L14.5 3h-4L10 6a8 8 0 0 0-1.7 1L6 6.1 4 9.5 6 11a8 8 0 0 0 0 2l-2 1.5L6 18l2.3-.9a8 8 0 0 0 1.7 1l.5 2.9h4l.4-2.9a8 8 0 0 0 1.7-1l2.3.9 2-3.5-2-1.5c.1-.3.1-.7.1-1Z"/></svg><span>Account Settings</span></button>
+  </nav>
+  <div class="kk-sidebar-bottom">
+   <div class="kk-sidebar-person"><span class="kk-sidebar-avatar" aria-hidden="true">KK</span><span><strong id="kk-sidebar-name">Verified KK Member</strong><small id="kk-sidebar-role">Sangguniang Kabataan Vasra</small></span></div>
+   <a href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Back to Website</span></a>
+   <button type="button" id="kk-sidebar-logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-5"/></svg><span>Logout</span></button>
+  </div>
+ </aside>
+ <main class="kk-workspace-content">
+  <header class="kk-workspace-topbar">
+   <button class="kk-mobile-menu" type="button" id="kk-menu-toggle" aria-label="Open KK navigation" aria-controls="kk-sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+   <div class="kk-workspace-brand"><img src="./sk%20logo.jpg" alt=""><span>SK VASRA<small>KK Dashboard</small></span></div>
+   <div class="kk-workspace-tools" role="group" aria-label="KK account actions">
+    <button type="button" class="kk-tool-button" data-vasra-theme-toggle aria-label="Switch to dark mode" title="Theme"></button>
+    <button type="button" id="kk-dashboard-settings" class="kk-tool-button" aria-label="Account Settings" title="Account Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3.9a8 8 0 0 0-1.7-1L14.5 3h-4L10 6a8 8 0 0 0-1.7 1L6 6.1 4 9.5 6 11a8 8 0 0 0 0 2l-2 1.5L6 18l2.3-.9a8 8 0 0 0 1.7 1l.5 2.9h4l.4-2.9a8 8 0 0 0 1.7-1l2.3.9 2-3.5-2-1.5c.1-.3.1-.7.1-1Z"/></svg></button>
+    <button type="button" id="kk-dashboard-logout" class="kk-tool-button" aria-label="Logout KK account" title="Logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-5"/></svg></button>
+   </div>
+  </header>
+  <div class="kk-main"><div class="kk-dashboard">
  <div class="kk-dashboard-head"><div><span class="kk-tag">VERIFIED KATIPUNAN NG KABATAAN MEMBER</span><h1>My KK Dashboard</h1><p id="kk-welcome">Mga programa at serbisyo para sa kabataang Vasra.</p></div></div>
  <p id="kk-dash-loading" class="kk-loading" role="status">Loading your secure dashboard…</p>
  <div id="kk-dash-content" hidden>
@@ -11,16 +36,25 @@
    <article><span>KK ID</span><strong id="kk-dash-id">—</strong></article>
    <article><span>Available Points</span><strong id="kk-dash-points">0</strong></article>
   </section>
-  <nav class="kk-dashboard-tabs" aria-label="Member dashboard sections">
-   <button type="button" data-tab="projects" aria-current="page">Upcoming Projects</button>
-   <button type="button" data-tab="rewards">Points & Rewards</button>
-   <button type="button" data-tab="settings">Account Settings</button>
-  </nav>
+  <section data-section="overview" class="kk-dashboard-panel kk-overview-panel" aria-labelledby="kk-overview-title">
+   <h2 id="kk-overview-title">My KK Membership</h2><p>Narito ang iyong KK account overview, upcoming activities at points rewards.</p>
+   <div class="kk-overview-cards">
+    <button type="button" data-tab="projects" class="kk-overview-card"><span class="kk-overview-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7h18v14H3zM8 3v4m8-4v4M3 12h18"/></svg></span><strong id="kk-dash-projects-count">0</strong><small>Upcoming projects</small><span>View projects →</span></button>
+    <button type="button" data-tab="activities" class="kk-overview-card"><span class="kk-overview-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8 12 3 3 5-6"/></svg></span><strong id="kk-dash-joined-count">0</strong><small>Registered activities</small><span>View my activities →</span></button>
+    <button type="button" data-tab="rewards" class="kk-overview-card"><span class="kk-overview-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9h18v12H3zM12 9v12M3 9h18V5H3z"/><path d="M12 5c-4-7-10-2-2 0M12 5c4-7 10-2 2 0"/></svg></span><strong id="kk-dash-rewards-count">0</strong><small>Available SK rewards</small><span>View rewards →</span></button>
+   </div>
+   <p class="kk-overview-note">Ang KK ID at membership status ay nakabase sa opisyal na SK verification.</p>
+  </section>
   <section data-section="projects" class="kk-dashboard-panel" aria-labelledby="kk-projects-title">
    <h2 id="kk-projects-title">Upcoming SK Projects</h2><p>Mga published na Pinaplano o Isinasagawa na proyekto. Isang click lang ang registration; wala pang automatic points sa pag-join.</p>
    <p id="kk-project-message" class="kk-feedback" role="status" hidden></p>
    <div id="kk-upcoming-projects" class="kk-dashboard-grid"></div>
-   <h3>My Registered Activities</h3><div id="kk-joined-list"></div>
+
+  </section>
+  <section data-section="activities" class="kk-dashboard-panel" aria-labelledby="kk-activities-title" hidden>
+   <h2 id="kk-activities-title">My Registered Activities</h2>
+   <p>Mga project na opisyal mong nirehistrahan gamit ang KK account.</p>
+   <div id="kk-joined-list"></div>
   </section>
   <section data-section="rewards" class="kk-dashboard-panel" aria-labelledby="kk-rewards-title" hidden>
    <h2 id="kk-rewards-title">My Points & SK Rewards</h2>
@@ -46,6 +80,9 @@
     <p id="kk-email-message" class="kk-feedback" role="status" hidden></p>
    </form></div>
   </section>
- </div>
-</div></main><footer class="kk-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
-<script src="./common.js"></script><script src="./kk-dashboard.js" defer></script></body></html>
+ </div></div>
+ </main>
+ <button class="kk-sidebar-backdrop" type="button" aria-label="Close KK navigation" id="kk-sidebar-backdrop"></button>
+</div>
+<footer class="kk-footer kk-workspace-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
+<script src="./common.js"></script><script src="./theme.js"></script><script src="./kk-dashboard.js" defer></script></body></html>
