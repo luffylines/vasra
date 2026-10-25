@@ -21,6 +21,8 @@
    (!q||[r.name,r.kk_id].some(v=>String(v||'').toLowerCase().includes(q))));
  };
  const paint=()=>{
+  const host=$('#kk-id-staff-list'),previewPanel=$('#kk-id-staff-preview');
+  if(previewPanel.parentElement===host)host.after(previewPanel);
   const list=filtered();
   const ready=rows.filter(approved),printed=rows.filter(r=>r.printed_at);
   $('#kk-id-approved-count').textContent=ready.length+' approved for PDF download';
@@ -47,6 +49,8 @@
        '<span>'+(r.printed_at?'Record Reprint':'Mark as Printed')+'</span></button>':'')+
     '</div></article>'
   ).join(''):'<div class="kk-id-empty">Walang KK ID cards na tumutugma sa filter.</div>';
+  const active=host.querySelector('.kk-id-staff-item.selected');
+  if(active)active.after(previewPanel); // On-demand preview appears beside the chosen member, not after hundreds of IDs.
  };
  const closePreview=()=>{
   selected=null;previewRevision++;
@@ -62,6 +66,7 @@
   if(!row)return;
   selected=id;paint();
   $('#kk-id-staff-preview').hidden=false;
+  $('#kk-id-staff-preview').scrollIntoView?.({behavior:'smooth',block:'nearest'});
   $('#kk-id-selected-title').textContent=row.name+' · '+(row.kk_id||'Pending KK ID');
   $('#kk-id-staff-front').removeAttribute('src');
   $('#kk-id-staff-back').removeAttribute('src');
