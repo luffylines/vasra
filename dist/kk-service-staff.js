@@ -133,7 +133,8 @@
  $('#kk-service-staff-refresh')?.addEventListener('click',refresh);
  $('#kk-service-export')?.addEventListener('click',()=>{
   const f=state(),date=f.period==='today'?today():f.period==='custom'?(f.custom||'all'):'all';
-  const q=new URLSearchParams({search:f.search,service:f.type,status:f.status,date});
+  const q=new URLSearchParams({search:f.search,service:f.type,status:f.status,date,
+   period:f.period==='week'?'week':'all'});
   // Export downloads an actual XLSX from the authenticated backend, not a public link.
   window.location.assign('./api/kk/staff/services/export?'+q.toString());
  });
