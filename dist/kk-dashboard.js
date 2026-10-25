@@ -31,8 +31,9 @@
   }
  });
  setMenu(false);
- const sections=new Set(['overview','projects','activities','rewards','printing','computer','retabox','settings','kk-id']);
+ const sections=new Set(['overview','projects','rewards','printing','computer','retabox','settings','kk-id']);
  const tab=(which,updateHash=true)=>{
+  if(which==='activities')which='projects'; // Old saved bookmarks lead to the active Projects tab.
   if(!sections.has(which))which='overview';
   for(const button of document.querySelectorAll('.kk-sidebar-nav [data-tab]')){
    if(button.dataset.tab===which)button.setAttribute('aria-current','page');
@@ -42,7 +43,7 @@
    section.hidden=section.dataset.section!==which;
   const summary=document.querySelector('.kk-summary');if(summary)summary.hidden=!['overview','settings'].includes(which);
   // Keep exactly one main heading regardless of the open KK workspace tab.
-  const headings={overview:'My KK Dashboard',projects:'Upcoming Projects',activities:'My Activities',
+  const headings={overview:'My KK Dashboard',projects:'Upcoming Projects',
    rewards:'Points & Rewards',printing:'Free Printing',computer:'Computer Use',
    retabox:'RetaBox Donations',settings:'Account Settings','kk-id':'My KK ID Card'};
   const title=$('#kk-current-section-title'),eyebrow=$('#kk-current-section-eyebrow'),welcome=$('#kk-welcome');
@@ -50,7 +51,7 @@
   if(eyebrow)eyebrow.textContent=which==='kk-id'?'OFFICIAL KATIPUNAN NG KABATAAN IDENTIFICATION':
    which==='overview'?'VERIFIED KATIPUNAN NG KABATAAN MEMBER':'SK VASRA · KK MEMBER PORTAL';
   if(welcome){
-   if(which==='kk-id')welcome.textContent='Mag-upload ng larawan at i-preview ang iyong official front-and-back KK ID.';
+   if(which==='kk-id')welcome.textContent='View your KK ID and download its PDF after SK photo approval.';
    else if(which==='overview')welcome.textContent=welcome.dataset.overviewText||welcome.textContent;
    else welcome.textContent='Manage your '+(headings[which]||'KK account').toLowerCase()+' in one secure place.';
   }
@@ -59,6 +60,7 @@
    history.replaceState(null,'',location.pathname+location.search+'#'+which);
   setMenu(false);
   if(['printing','computer','retabox'].includes(which))window.loadKKServices?.();
+  if(which==='projects')refreshProjects();
   if(which==='kk-id')window.loadKKIDCard?.();
  };
  document.querySelectorAll('button[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
@@ -91,9 +93,18 @@
    '<button class="kk-btn" type="button" data-join="'+safe(p.id)+'"'+(p.joined?' disabled':'')+'>'+
    (p.joined?'✓ Registered':'Register to Join')+'</button></article>').join(''):
    '<div class="kk-dash-empty">Wala pang upcoming projects na bukas para sa KK registration. Ang completed projects ay hindi puwedeng salihan. Magkakaroon ng bagong choices kapag may published Pinaplano o Isinasagawa na project ang SK.</div>';
-  $('#kk-joined-list').innerHTML=registrations.length?registrations.map(p=>
-   '<div class="kk-dashboard-list"><strong>'+safe(p.title)+'</strong><span>✓ Registered · '+safe(new Date(p.registered_at).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}))+'</span></div>').join(''):
-   '<div class="kk-dash-empty">Wala ka pang project registrations.</div>';
+  };
+ const applyProjectResponse=response=>{
+  if(!Array.isArray(response?.projects))throw Error('Invalid SK projects response.');
+  // A second client-side guard against displaying completed projects in Upcoming.
+  projects=response.projects.filter(p=>['Pinaplano','Isinasagawa'].includes(p.status));
+  registrations=Array.isArray(response.registrations)?response.registrations:[];
+  $('#kk-dash-projects-count').textContent=String(projects.length);
+  renderProjects();
+ };
+ const refreshProjects=async()=>{
+  try{applyProjectResponse(await request('dashboard'));}
+  catch(error){window.showVasraToast('Hindi ma-refresh ang upcoming projects: '+error.message,'error');}
  };
  const renderRewards=()=>{
   const list=Array.isArray(member.perks)?member.perks:[];
@@ -114,9 +125,8 @@
   if(data.profile?.status!=='verified'){location.replace('./kk-profile');return false;}
   member=data;
   const dashboard=await request('dashboard');
-  projects=Array.isArray(dashboard.projects)?dashboard.projects:[];
-  registrations=Array.isArray(dashboard.registrations)?dashboard.registrations:[];
-  $('#kk-welcome').textContent='Welcome, '+[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')+'! Tuklasin ang mga proyekto at reward programs ng SK Vasra.';
+  applyProjectResponse(dashboard);
+  $('#kk-welcome').textContent='Welcome, '+[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')+'! Tingnan ang SK projects, serbisyo, at mga reward mo.';
   $('#kk-welcome').dataset.overviewText=$('#kk-welcome').textContent;
   $('#kk-dash-status').textContent='VERIFIED';
   $('#kk-dash-id').textContent=data.profile.kk_id||'For issuance';
@@ -124,11 +134,9 @@
   $('#kk-dash-points').textContent=String(data.points||0);
   $('#kk-current-email').textContent=data.member.email||'—';
   $('#kk-sidebar-name').textContent=[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')||'Verified KK Member';
-  $('#kk-dash-projects-count').textContent=String(projects.length);
-  $('#kk-dash-joined-count').textContent=String(registrations.length);
   $('#kk-dash-rewards-count').textContent=String(Array.isArray(data.perks)?data.perks.length:0);
-  renderProjects();renderRewards();
-  if(['printing','computer','retabox'].includes(location.hash.slice(1)))window.loadKKServices?.();
+  renderRewards();
+  window.loadKKServices?.(); // Also populate the overview counts immediately, not only inside service tabs.
   loading.hidden=true;content.hidden=false;return true;
  }
  document.addEventListener('click',async event=>{
@@ -178,7 +186,7 @@
  });
  try{
   const ready=await reload();if(!ready)return;
-  if(sections.has(location.hash.slice(1)))tab(location.hash.slice(1),false);
+  if(sections.has(location.hash.slice(1))||location.hash==='#activities')tab(location.hash.slice(1),false);
   if(location.hash.startsWith('#confirm-email=')){
    const token=decodeURIComponent(location.hash.slice('#confirm-email='.length));
    tab('settings');
