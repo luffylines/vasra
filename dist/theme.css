@@ -358,3 +358,75 @@ html[data-theme="dark"] body.kk-body .kk-auth-top-actions .kk-auth-nav-link{
  background:#1b3355;border-color:#3b5680;color:#e9f3ff
 }
 html[data-theme="dark"] body.kk-body .kk-auth-top-actions .kk-auth-nav-link:hover{background:#2a4772}
+
+
+/* Homepage: every nested light-theme-only block needs explicit readable dark
+   surfaces AND foregrounds. The older generic card rule missed nested text. */
+html[data-theme="dark"] body.portal-refresh .home-main{
+ --line:#385477;--ink:#eff6ff;--muted:#bfcee4;color:#eaf3ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-panel,.home-shortcuts a,.home-project,.home-metrics article,.home-budget-total,
+ .home-award,.home-values article,.home-officials .trans-person,.home-status,
+ .home-year-tag,.home-note,.home-highlights .trans-empty){
+ color:#e7f1ff;border-color:#3e587b
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-panel,.home-shortcuts a,.home-project,.home-award,.home-officials .trans-person,
+ .home-highlights .trans-empty){background:#162a45;background-image:none;box-shadow:0 8px 18px #040c1e34}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-metrics article,.home-budget-total,.home-values article>span,
+ .home-year-tag,.home-status,.home-award-icon,.home-shortcut-symbol){
+ background:#203b5f;background-image:none;color:#d3e6ff;border-color:#527097
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-shortcuts a:hover,
+html[data-theme="dark"] body.portal-refresh .home-main .home-award:hover{
+ background:#254368;border-color:#82abe0
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-shortcuts strong,.home-shortcuts .home-shortcut-top span,.home-shortcuts small,
+ .home-panel h2,.home-panel h3,.home-values h3,.home-values article>span,
+ .home-metrics strong,.home-budget-total strong,.home-expense strong,
+ .home-award strong,.home-project h3,.home-officer h3,.home-year-tag,
+ .home-contact-links a,.home-date,.home-award-icon,.home-shortcut-symbol){
+ color:#f0f7ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-panel p,.home-panel .home-note,.home-values p,.home-metrics span,
+ .home-metrics small,.home-budget-total>span,.home-budget-total small,
+ .home-expense>span,.home-project p,.home-project small,
+ .home-award small,.home-award>span:last-child>span,.home-shortcuts small,
+ .home-about .eyebrow,.home-sectionhead .eyebrow,.home-shortcut-top span,
+ .home-date,.home-officer p,.home-duty #home-duty-status){
+ color:#c0d4f0
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-text-link,.home-project>a,.home-shortcuts a:focus-visible strong,
+ .home-sectionhead>a,.home-contact-links a:hover){
+ color:#a9d4ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-values article,.home-expense,.home-project,.home-award,
+ .home-sectionhead){border-bottom-color:#3e587b}
+html[data-theme="dark"] body.portal-refresh .home-main .home-status.is-open{
+ background:#194f43;color:#baf7d5
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-shortcuts .home-shortcut-symbol{
+ background:#244366;border-color:#567da9;color:#cce7ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-award-icon{
+ background:#294d77;color:#cfe6ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-contact-links :is(a,small){color:#d5e7ff}
+html[data-theme="dark"] body.portal-refresh .home-main :is(.home-shortcuts a,.home-award,.home-project):focus-within{
+ border-color:#93bef5;outline-color:#78b5ff
+}
+/* Preserve the contrast of bright action buttons inside darker home cards. */
+html[data-theme="dark"] body.portal-refresh .home-main .primary{
+ background:#2d62b0;color:#fff;border-color:#4f83ce
+}
+html[data-theme="dark"] body.portal-refresh .home-main .primary:hover{background:#3976ca;color:#fff}
+html[data-theme="dark"] body.portal-refresh .home-main .home-hero :is(h1,p,.hero-label,.home-actions a){
+ color:#fff
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-hero h1 em{color:#a9cfff}
