@@ -257,3 +257,20 @@ html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-selected-photo s
 html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-section-description{
  color:#c8ddf6
 }
+
+/* Compact KK portrait submission and 1:1 (2x2-style) photo previews. */
+.kk-member-dashboard .kk-id-upload-card form{align-items:center}
+.kk-member-dashboard .kk-id-upload-card form>.kk-btn{
+ box-sizing:border-box;width:fit-content;max-width:100%;min-width:0;min-height:40px;
+ align-self:center;justify-self:start;padding:10px 15px;border-radius:9px;
+ font-size:12px;line-height:1.35;white-space:normal;text-align:center
+}
+.kk-member-dashboard .kk-id-selected-photo img{width:58px;height:58px;aspect-ratio:1/1;object-fit:cover}
+.kk-id-live-preview{width:122px;height:122px;aspect-ratio:1/1}
+.kk-id-logo{border-radius:50%;overflow:hidden}
+#kk-id-upload-status{display:none!important}
+@media(max-width:690px){
+ .kk-member-dashboard .kk-id-upload-card form>.kk-btn{
+  width:fit-content;max-width:100%;min-width:0;min-height:40px;justify-self:start;align-self:start
+ }
+}
