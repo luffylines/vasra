@@ -51,7 +51,7 @@ test('Photo upload and removal require explicit confirmation; cancel skips uploa
 });
 test('Public duty portraits retain published duty photo ID and reflect confirmed assignment',()=>{
  const publicDuty=read('dist/duty.js'),staff=read('dist/duty-management.js');
- assert.match(publicDuty,/p\.duty_photo_id\?'<img class="duty-photo-primary" src="\.\/api\/images\//);
+ assert.match(publicDuty,/p\.duty_photo_id\?'<img class="duty-photo-primary" src="\.\/api\/duty-images\//);
  assert.match(publicDuty,/p\.duty_days\.includes\(index\+1\)/);
  assert.match(staff,/duty_photo_id:uploadedId/);
  assert.match(staff,/officer\.duty_days=payload\.duty_day\?\[payload\.duty_day\]:\[\]/);
