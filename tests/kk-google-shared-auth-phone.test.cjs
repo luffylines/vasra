@@ -58,6 +58,17 @@ test('Philippine phone helpers reject overlong or non-mobile numbers without tru
  for(const bad of ['+6391234567898','912345678','8123456789','08876543210','+638123456789'])
   assert.throws(()=>normalize(bad),{code:400},bad);
 });
+test('Auth icons cannot expand to giant size when browser has cached old CSS',()=>{
+ for(const html of [login,registration]){
+  assert.match(html,/<style id="kk-auth-actions-critical">/);
+  assert.match(html,/\.kk-auth-top-actions \.kk-auth-nav-link svg\{display:block!important;width:18px!important;height:18px!important/);
+  assert.match(html,/<svg width="18" height="18" style="width:18px;height:18px;display:block;flex:none"/);
+  assert.match(html,/href="\.\/kk\.css\?v=20261025-auth-nav-fix"/);
+  assert.match(html,/src="\.\/theme\.js\?v=20261025-auth-nav-fix"/);
+  assert.match(html,/src="\.\/kk\.js\?v=20261025-auth-nav-fix"/);
+  assert.match(html,/\.kk-auth-card>\.kk-auth-top-actions\{position:absolute/);
+ }
+});
 test('Server code and browser scripts parse with no new secret keys in browser',()=>{
  for(const p of ['lib/handler.cjs','dist/kk.js','dist/theme.js','dist/account.js','dist/kk-staff.js'])
   assert.doesNotThrow(()=>new vm.Script(read(p),{filename:p}));
