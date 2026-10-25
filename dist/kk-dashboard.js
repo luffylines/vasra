@@ -31,7 +31,7 @@
   }
  });
  setMenu(false);
- const sections=new Set(['overview','projects','activities','rewards','settings']);
+ const sections=new Set(['overview','projects','activities','printing','computer','retabox','rewards','settings']);
  const tab=(which,updateHash=true)=>{
   if(!sections.has(which))which='overview';
   for(const button of document.querySelectorAll('.kk-sidebar-nav [data-tab]')){

@@ -147,3 +147,6 @@ html[data-theme="dark"] .kk-youth-page .kk-id-chip-row span{background:#263f64;c
 html[data-theme="dark"] .kk-youth-page .kk-yn-field>label{color:#e9f3ff!important}
 html[data-theme="dark"] .kk-youth-page .kk-required{color:#ff818e!important}
 @media(max-width:970px){html[data-theme="dark"] .kk-youth-sidebar{box-shadow:0 1px 8px #0005}}
+
+/* KK theme uses a single accessible sun/moon SVG instead of overlapping icons. */
+html[data-theme="dark"] .vasra-theme-toggle svg:first-child{display:block!important}

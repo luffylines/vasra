@@ -76,5 +76,5 @@ test('Shared database preserves legacy production submissions until mandatory v2
 test('Updated code parses and PWA cache was bumped',()=>{
  for(const [name,src] of [['KK profile',js],['KK staff',read('dist/kk-staff.js')],['API',handler]])
   assert.doesNotThrow(()=>new vm.Script(src,{filename:name}));
- assert.match(read('dist/sw.js'),/vasra-v61-kk-reconciled-preview-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v62-kk-services-20261025/);
 });
