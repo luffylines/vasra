@@ -165,3 +165,344 @@
  #panel-kk-profiling .kk-child-pairs dd{font-size:14px}
  #panel-kk-profiling .kk-child-heading{gap:10px}
 }
+
+
+/* Reference-matched KK Profiling review workspace.
+   Scope everything to the staff KK content panel: public pages, the SK sidebar,
+   and top-right theme/settings/logout buttons retain their existing styles. */
+#panel-kk-profiling.kk-reference-layout{
+ padding:0 0 35px;min-width:0;font-family:'DM Sans',sans-serif
+}
+#panel-kk-profiling .kk-profiling-topline{
+ display:flex;align-items:center;justify-content:space-between;gap:18px;
+ flex-wrap:wrap;margin:0 0 18px
+}
+#panel-kk-profiling .kk-profiling-intro{flex:1 1 320px;min-width:0}
+#panel-kk-profiling .kk-profiling-intro h2{
+ margin:0 0 5px;font:800 clamp(25px,2.1vw,33px)/1.22 Manrope,sans-serif;
+ letter-spacing:-.8px;color:#132d55
+}
+#panel-kk-profiling .kk-profiling-intro p{
+ margin:0;color:#6d83a2;font-size:13px;line-height:1.65
+}
+#panel-kk-profiling .kk-staff-filters{
+ flex:0 1 auto;display:flex;align-items:center;justify-content:flex-end;
+ gap:9px;margin:0;flex-wrap:wrap
+}
+#panel-kk-profiling .kk-staff-filters .kk-toolbar-search{
+ position:relative;display:flex;align-items:center;flex:1 1 228px;
+ min-width:190px;max-width:300px
+}
+#panel-kk-profiling .kk-toolbar-search svg{
+ position:absolute;left:12px;z-index:1;pointer-events:none;
+ width:18px;height:18px;color:#6a83aa
+}
+#panel-kk-profiling .kk-staff-filters .kk-toolbar-search input{
+ width:100%;min-height:43px;padding:9px 13px 9px 38px;background:#fff;
+ border:1px solid #d6e3f4;border-radius:9px;color:#1b375f;font:500 13px 'DM Sans',sans-serif;
+ box-sizing:border-box
+}
+#panel-kk-profiling .kk-toolbar-search input::placeholder{color:#7a91b1}
+#panel-kk-profiling .kk-staff-filters .kk-toolbar-filter{display:block;min-width:145px}
+#panel-kk-profiling .kk-toolbar-filter select{
+ min-width:145px;min-height:43px;background:#fff;border:1px solid #d6e3f4;
+ border-radius:9px;color:#1b375f;padding:9px 12px;font:700 13px 'DM Sans',sans-serif
+}
+#panel-kk-profiling .kk-toolbar-refresh{
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:43px;
+ padding:9px 14px;background:#fff;border:1px solid #d1def0;
+ border-radius:9px;color:#315e9f;font:750 12px 'DM Sans',sans-serif;cursor:pointer
+}
+#panel-kk-profiling .kk-toolbar-refresh svg{width:16px;height:16px;flex:none}
+#panel-kk-profiling .kk-profiling-topline :is(input,select,button):focus-visible{
+ outline:3px solid #79b0fa;outline-offset:2px
+}
+#panel-kk-profiling .kk-profile-feedback{
+ margin:0 0 11px;font-size:11px;color:#6280a5
+}
+#panel-kk-profiling .kk-profile-feedback:empty{display:none}
+#panel-kk-profiling .kk-applications-section.kk-staff-card{
+ margin:0;padding:0;border:none;background:transparent;box-shadow:none
+}
+#panel-kk-profiling .kk-applications-layout{
+ display:grid;grid-template-columns:minmax(290px,.92fr) minmax(0,1.5fr);
+ align-items:stretch;gap:13px;min-width:0
+}
+#panel-kk-profiling .kk-applicants-column,
+#panel-kk-profiling .kk-applicant-detail{
+ border:1px solid #dce7f6;border-radius:13px;background:#fff;
+ min-width:0;box-shadow:0 4px 15px #1a477109
+}
+#panel-kk-profiling .kk-applicants-column{
+ padding:12px 6px 10px;max-height:min(870px,calc(100dvh - 193px));
+ min-height:540px;overflow:auto;scrollbar-gutter:stable
+}
+#panel-kk-profiling .kk-applicant-list-head{
+ padding:5px 8px 14px;margin:0 0 4px;position:sticky;top:-12px;z-index:2;
+ background:#fff;border-bottom:1px solid #eaf0f8
+}
+#panel-kk-profiling .kk-applicant-list-head h4{
+ font:800 17px Manrope,sans-serif;color:#182c4f
+}
+#panel-kk-profiling .kk-applicant-list-head label{
+ display:flex;flex-direction:row;align-items:center;gap:9px;white-space:nowrap;
+ font-size:11px;color:#627c9e
+}
+#panel-kk-profiling .kk-applicant-list-head select{
+ background:#fff;border:1px solid #d6e2f3;border-radius:8px;
+ min-height:37px;max-width:145px;padding:7px 8px;
+ color:#24436d;font-size:12px;font-weight:650
+}
+#panel-kk-profiling .kk-staff-members{padding:0 2px}
+#panel-kk-profiling .kk-applicant-row{
+ min-height:78px;padding:10px 12px;margin:0 0 8px;gap:10px;border-radius:9px;
+ border:1px solid #dfe8f5;background:#fff;color:#203b65;
+ box-shadow:0 1px 3px #1b3b6c04
+}
+#panel-kk-profiling .kk-applicant-row.active{
+ background:linear-gradient(110deg,#eff5ff,#e8f2ff);
+ border-color:#487bea;box-shadow:0 0 0 1px #83a8fa
+}
+#panel-kk-profiling .kk-applicant-row:hover:not(.active){background:#f5f9ff;border-color:#a3c1ed}
+#panel-kk-profiling .kk-applicant-avatar{
+ width:49px;height:49px;background:linear-gradient(145deg,#dceafe,#cadffb);
+ border-radius:50%;font:800 15px Manrope;color:#2853a1
+}
+#panel-kk-profiling .kk-applicant-main{gap:3px}
+#panel-kk-profiling .kk-applicant-main strong{font:800 13px/1.35 Manrope;color:#193357}
+#panel-kk-profiling .kk-applicant-main small{
+ font:500 11px/1.45 'DM Sans',sans-serif;color:#627c9f
+}
+#panel-kk-profiling .kk-applicant-meta{gap:5px}
+#panel-kk-profiling .kk-applicant-meta>b{font:800 11px Manrope;color:#2c5eaf}
+#panel-kk-profiling .kk-state{font:800 10px 'DM Sans',sans-serif;padding:6px 11px}
+#panel-kk-profiling .kk-state-pending{background:#fff0c9;color:#996100}
+#panel-kk-profiling .kk-state-verified{background:#dcf8e8;color:#13783d}
+#panel-kk-profiling .kk-state-rejected{background:#fee4e6;color:#ac2633}
+#panel-kk-profiling .kk-row-arrow{font-size:26px;color:#4572b4}
+#panel-kk-profiling .kk-applicant-detail{
+ padding:13px 14px 14px;max-height:min(870px,calc(100dvh - 193px));
+ min-height:540px;overflow-y:auto;scrollbar-gutter:stable
+}
+#panel-kk-profiling .kk-child-heading{
+ display:flex;align-items:center;gap:16px;padding:4px 1px 16px;min-width:0
+}
+#panel-kk-profiling .kk-child-avatar{
+ width:70px;height:70px;font:800 23px Manrope;color:#2455a8;
+ background:linear-gradient(145deg,#e0ecfe,#cee1fd)
+}
+#panel-kk-profiling .kk-child-title h3{
+ font:800 clamp(18px,1.6vw,23px)/1.3 Manrope,sans-serif;color:#102a4d;
+ letter-spacing:-.5px;gap:10px
+}
+#panel-kk-profiling .kk-child-title p{
+ font-size:12px;color:#7086a6;line-height:1.5
+}
+#panel-kk-profiling .kk-child-points{
+ min-width:110px;padding:4px 11px;border-color:#dee8f6
+}
+#panel-kk-profiling .kk-child-points strong{font:800 17px Manrope;color:#225dd2}
+#panel-kk-profiling .kk-child-points small{color:#738ba9;font-size:11px}
+#panel-kk-profiling .kk-child-close{align-self:flex-start;font-size:23px}
+#panel-kk-profiling .kk-child-tabs{
+ display:flex;align-items:center;gap:19px;flex-wrap:nowrap;padding:0;
+ margin:0 0 13px;border-bottom:1px solid #dce6f5;overflow-x:auto
+}
+#panel-kk-profiling .kk-child-tabs button{
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ flex:none;padding:10px 8px;min-height:42px;font:800 12px Manrope,sans-serif;
+ border:0;border-bottom:3px solid transparent;border-radius:0;color:#617799
+}
+#panel-kk-profiling .kk-child-tabs button[aria-selected="true"]{
+ color:#225dce;border-bottom-color:#2664df;background:transparent
+}
+#panel-kk-profiling .kk-child-tabs svg{width:18px;height:18px}
+#panel-kk-profiling .kk-child-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#panel-kk-profiling .kk-child-card{
+ background:#fff;border:1px solid #dfe8f5;border-radius:10px;
+ min-width:0;padding:0 11px 14px;overflow:hidden
+}
+#panel-kk-profiling .kk-child-card>header{
+ display:flex;align-items:center;gap:9px;background:#f2f6ff;
+ border-bottom:1px solid #e1e9f5;border-radius:0;
+ padding:10px 10px;margin:0 -11px 12px
+}
+#panel-kk-profiling .kk-child-icon{display:grid;place-items:center;flex:none;width:25px;height:25px;background:transparent;color:#2a5dbe}
+#panel-kk-profiling .kk-child-icon svg{width:20px;height:20px}
+#panel-kk-profiling .kk-child-card h4{font:800 14px Manrope;color:#183258;margin:0}
+#panel-kk-profiling .kk-child-pairs{gap:10px 12px}
+#panel-kk-profiling .kk-child-pairs dt{font:500 11px/1.4 'DM Sans',sans-serif;color:#6d81a0}
+#panel-kk-profiling .kk-child-pairs dd{font:700 12px/1.55 'DM Sans',sans-serif;color:#1c3358}
+#panel-kk-profiling .kk-binary-card{padding-bottom:12px}
+#panel-kk-profiling .kk-binary-row{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 0 9px;padding:0 1px
+}
+#panel-kk-profiling .kk-binary-label{font-size:11px;line-height:1.4;color:#405b7b;flex:1;min-width:0}
+#panel-kk-profiling .kk-binary-values{display:inline-flex;gap:4px;flex:none}
+#panel-kk-profiling .kk-choice{
+ display:inline-flex;align-items:center;justify-content:center;min-width:44px;
+ padding:5px 8px;border:1px solid #cbd9eb;border-radius:7px;
+ background:#fff;color:#61738e;font:750 11px 'DM Sans',sans-serif
+}
+#panel-kk-profiling .kk-choice.selected{
+ color:#fff;background:#285fcb;border-color:#285fcb;
+ box-shadow:0 2px 6px #2257bc24
+}
+#panel-kk-profiling .kk-binary-interests{
+ margin:8px 0 0;font-size:11px;line-height:1.5;color:#415c7f
+}
+#panel-kk-profiling .kk-document-summary{
+ display:flex;align-items:center;gap:9px;flex-wrap:nowrap
+}
+#panel-kk-profiling .kk-document-thumbnail{
+ display:grid;place-items:center;flex:none;width:61px;height:58px;
+ border:1px solid #d0e1f8;border-radius:7px;
+ background:linear-gradient(140deg,#e8f1ff,#c6ddf7);color:#285da2
+}
+#panel-kk-profiling .kk-document-thumbnail svg{width:29px;height:29px}
+#panel-kk-profiling .kk-document-info{min-width:0;flex:1}
+#panel-kk-profiling .kk-document-info strong{
+ display:block;font:750 11px/1.4 'DM Sans',sans-serif;color:#1d3d6c;overflow-wrap:anywhere
+}
+#panel-kk-profiling .kk-document-info small{
+ display:block;font-size:10px;line-height:1.5;color:#7389a8
+}
+#panel-kk-profiling .kk-document-summary button{
+ display:inline-flex;align-items:center;justify-content:center;gap:4px;
+ flex:none;min-height:34px;padding:7px 9px;border:1px solid #b9cff1;
+ background:#f8fbff;color:#285db5;border-radius:7px;
+ font:800 10px 'DM Sans',sans-serif;cursor:pointer
+}
+#panel-kk-profiling .kk-document-summary button svg{width:13px;height:13px}
+#panel-kk-profiling .kk-child-actions{
+ display:flex;gap:10px;align-items:center;margin-top:10px;padding:0;
+ position:sticky;bottom:-14px;z-index:4;background:#fff;
+ border-top:1px solid #e4ebf6;padding:10px 0 1px
+}
+#panel-kk-profiling .kk-child-actions button{
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ min-height:43px;padding:9px 15px;border-radius:9px;font:800 12px Manrope,sans-serif
+}
+#panel-kk-profiling .kk-child-actions button svg{width:18px;height:18px}
+#panel-kk-profiling .kk-child-actions .primary{
+ color:#fff;background:#255bd0;border-color:#255bd0
+}
+#panel-kk-profiling .kk-child-actions .secondary{
+ color:#bc2f3a;background:#fff;border-color:#cedbef
+}
+#panel-kk-profiling .kk-child-actions :is(button:focus-visible){
+ outline:3px solid #81b2ff;outline-offset:2px
+}
+#panel-kk-profiling .kk-child-empty{padding:56px 16px}
+#panel-kk-profiling .kk-profile-secondary-tools{margin-top:19px}
+#panel-kk-profiling .kk-staff-stats-details{
+ background:#fff;border:1px solid #dce6f3;border-radius:12px;margin:0 0 16px;padding:14px 17px
+}
+#panel-kk-profiling .kk-staff-stats-details>summary{
+ cursor:pointer;font-size:12px;font-weight:800;color:#315d93
+}
+#panel-kk-profiling .kk-staff-stats-details .kk-staff-stats{margin:15px 0}
+#panel-kk-profiling .kk-staff-stats-details .kk-staff-export{margin-top:3px}
+#panel-kk-profiling .sr-only{
+ position:absolute!important;width:1px!important;height:1px!important;
+ overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important
+}
+/* Actual mobile layout keeps the same applicant/detail components without
+   horizontal overflow, not a miniature desktop view or hidden content. */
+@media(max-width:1390px){
+ #panel-kk-profiling .kk-applications-layout{grid-template-columns:minmax(245px,.84fr) minmax(0,1.16fr)}
+ #panel-kk-profiling .kk-applicant-row{padding:10px 8px}
+ #panel-kk-profiling .kk-child-card{padding-left:9px;padding-right:9px}
+ #panel-kk-profiling .kk-child-card>header{margin-left:-9px;margin-right:-9px}
+}
+@media(max-width:1190px){
+ #panel-kk-profiling .kk-profiling-topline{align-items:flex-start}
+ #panel-kk-profiling .kk-staff-filters{justify-content:flex-start}
+ #panel-kk-profiling .kk-applications-layout{grid-template-columns:minmax(0,1fr)}
+ #panel-kk-profiling .kk-applicants-column{min-height:0;max-height:340px}
+ #panel-kk-profiling .kk-applicant-detail{min-height:0;max-height:none;overflow:visible}
+ #panel-kk-profiling .kk-child-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #panel-kk-profiling .kk-child-actions{position:static}
+}
+@media(max-width:690px){
+ #panel-kk-profiling .kk-staff-filters{width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,.7fr)}
+ #panel-kk-profiling .kk-staff-filters .kk-toolbar-search{max-width:none;min-width:0;grid-column:1/-1}
+ #panel-kk-profiling .kk-toolbar-filter select{width:100%;min-width:0}
+ #panel-kk-profiling .kk-profiling-intro h2{font-size:26px}
+ #panel-kk-profiling .kk-child-grid{grid-template-columns:1fr}
+ #panel-kk-profiling .kk-applicant-detail{padding:13px}
+ #panel-kk-profiling .kk-child-heading{gap:10px;flex-wrap:wrap}
+ #panel-kk-profiling .kk-child-avatar{width:56px;height:56px;font-size:20px}
+ #panel-kk-profiling .kk-child-points{min-width:0;margin-left:auto}
+ #panel-kk-profiling .kk-child-tabs{gap:3px}
+ #panel-kk-profiling .kk-child-tabs button{padding:10px 9px;font-size:11px}
+ #panel-kk-profiling .kk-applicants-column{max-height:315px}
+}
+@media(max-width:385px){
+ #panel-kk-profiling .kk-staff-filters{grid-template-columns:minmax(0,1fr)}
+ #panel-kk-profiling .kk-staff-filters .kk-toolbar-search{grid-column:auto}
+ #panel-kk-profiling .kk-toolbar-filter select{width:100%}
+ #panel-kk-profiling .kk-child-points{padding:0 5px}
+ #panel-kk-profiling .kk-child-tabs button svg{display:none}
+ #panel-kk-profiling .kk-applicant-main small{font-size:10px}
+ #panel-kk-profiling .kk-document-summary{flex-wrap:wrap}
+ #panel-kk-profiling .kk-document-summary button{width:100%}
+}
+/* Dark mode for new KK content only. Existing staff shell/nav toolbar are untouched. */
+body.account-workspace[data-theme="dark"] #panel-kk-profiling.kk-reference-layout{
+ color:#e5efff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling :is(
+ .kk-profiling-intro h2,.kk-applicant-list-head h4,.kk-child-title h3,
+ .kk-child-card h4,.kk-applicant-main strong,.kk-child-pairs dd,
+ .kk-document-info strong){color:#eaf3ff}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling :is(
+ .kk-profiling-intro p,.kk-child-title p,.kk-child-pairs dt,.kk-applicant-main small,
+ .kk-child-points small,.kk-document-info small,.kk-binary-label,.kk-profile-feedback){
+ color:#b9cce6
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling :is(
+ .kk-applicants-column,.kk-applicant-detail,.kk-applicant-list-head,
+ .kk-child-card,.kk-staff-stats-details,.kk-child-actions){
+ background:#172942;border-color:#364f71;color:#e8f2ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-card>header{
+ background:#213a5c;border-color:#395679
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-icon{color:#b6d7ff}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-applicant-row{
+ background:#1d314d;border-color:#385172;color:#e8f2ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-applicant-row.active{
+ background:linear-gradient(120deg,#243f69,#233855);border-color:#79a8ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling :is(.kk-applicant-row:hover:not(.active),.kk-child-card:hover){
+ background:#243c5c
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-tabs{border-color:#3d5576}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-tabs button{color:#b9cdea}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-tabs button[aria-selected="true"]{color:#9ac5ff;border-color:#88b7fa}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-points{border-color:#435e80}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-points strong,
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-applicant-meta>b{color:#9ec9ff}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-applicant-avatar,
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-avatar{
+ background:#31527d;color:#f0f7ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-choice{
+ background:#213b5d;border-color:#507094;color:#bfd2eb
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-choice.selected{
+ background:#366bd4;border-color:#78a7ff;color:#fff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-document-thumbnail{background:#294972;color:#c6e2ff;border-color:#476c9a}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-document-summary button{background:#294e79;border-color:#608bc0;color:#f0f7ff}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling :is(
+ .kk-toolbar-search input,.kk-toolbar-filter select,.kk-toolbar-refresh,.kk-applicant-list-head select){
+ background:#172c49;border:1px solid #476388;color:#edf5ff
+}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-toolbar-search input::placeholder{color:#b5c9e6}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-toolbar-search svg{color:#b5d4ff}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-child-actions .secondary{background:#2d273b;color:#ffd8db;border-color:#885d70}
+body.account-workspace[data-theme="dark"] #panel-kk-profiling .kk-staff-stats-details>summary{color:#b3d4ff}
