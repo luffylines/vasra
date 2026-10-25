@@ -65,6 +65,14 @@ test('Review email goes to database-verified destination only and accurately rep
  assert.match(staff,/hindi pa naipadala ang email/);
  assert.doesNotMatch(handler,/recipient:b\.email/);
 });
+test('Shared database preserves legacy production submissions until mandatory v2 form is deployed',()=>{
+ const compat=read('supabase/migrations/20261025032000_kk_legacy_profile_compat.sql');
+ assert.match(compat,/if coalesce\(pr\.profile->>'residence_region',''\)<>'' then/);
+ assert.match(compat,/residence_barangay/);
+ assert.match(compat,/education_status/);
+ assert.match(compat,/status=case when status='rejected' then 'rejected' else 'draft' end/);
+ assert.doesNotMatch(compat,/\\bTRUNCATE\\b|\\bDROP TABLE\\b/);
+});
 test('Updated code parses and PWA cache was bumped',()=>{
  for(const [name,src] of [['KK profile',js],['KK staff',read('dist/kk-staff.js')],['API',handler]])
   assert.doesNotThrow(()=>new vm.Script(src,{filename:name}));
