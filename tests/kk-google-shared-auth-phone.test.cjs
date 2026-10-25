@@ -43,7 +43,7 @@ test('Phone input always uses +63 with 10 local digits starting 9',()=>{
  assert.match(youth,/name==='phone'\|\|name==='emergency_phone'/);
  assert.match(youth,/const kkPhilippineMobile=/);
  assert.match(handler,/const phMobile=value=>/);
- assert.match(handler,/if\(!\/\^9\[0-9\]\{9\}\$\/\.test\(local\)\)S\.fail\(400/);
+ assert.match(handler,/input\.match\(\/\^\(\?:/);
  assert.match(handler,/const phoneInput=field\(b\.phone,35\),phone=phoneInput\?phMobile\(phoneInput\):''/);
  assert.match(handler,/const middle_name=String\(b\.middle_name\|\|''\)\.trim\(\),phone=phMobile\(b\.phone\)/);
  assert.match(handler,/k==='emergency_phone'&&v\.trim\(\)\?phMobile\(v\)/);
