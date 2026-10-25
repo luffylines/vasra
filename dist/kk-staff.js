@@ -4,7 +4,7 @@
  const escVal=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
  const request=(path,body)=>api('./api/kk/staff'+(path?'/'+path:''),body?{method:'POST',body:JSON.stringify(body)}:{});
  let members=[],sitios=[],perks=[],redemptions=[],participation=[];
- let loading=false, selectedMemberId=null, detailTab='profile';
+ let loading=false, selectedMemberId=null, detailTab='profile', pendingDeleteMemberId=null;
  const status=(message='',error=false)=>{const target=$('#kk-staff-message');if(!target)return;target.textContent=message;target.dataset.kind=error?'error':'info';};
  const initials=m=>[m.first_name,m.middle_name,m.last_name].filter(Boolean).join(' ');
  // Parse YYYY-MM-DD as a calendar date. Date.parse() UTC conversion can make
@@ -191,7 +191,7 @@
    [['profile','Profile Details','person'],['history','Activity Log','clock'],['documents','Documents','document']].map(([value,label,icon])=>
     '<button type="button" role="tab" data-child-tab="'+value+'" aria-selected="'+String(detailTab===value)+'">'+svgIcon(icon)+
     '<span>'+label+'</span></button>').join('')+
-   (window.kkStaffRole==='chairman'?'<button type="button" class="kk-delete-tab" data-delete-profile aria-label="Delete KK Profile">'+svgIcon('trash')+
+   (['chairman','sk'].includes(window.kkStaffRole)?'<button type="button" class="kk-delete-tab" data-delete-profile aria-label="Delete KK Profile">'+svgIcon('trash')+
     '<span>Delete KK Profile</span></button>':'')+'</div>';
   let details='';
   if(detailTab==='documents'){
@@ -201,7 +201,10 @@
     '<div class="kk-document-preview-toolbar"><strong>Private Document Preview</strong><div>'+
     '<button type="button" data-view-id="'+escVal(m.id)+'">Open Full View</button>'+
     '<a href="./api/kk/staff/id/'+encodeURIComponent(m.id)+'" download>Download File</a></div></div>'+
-    '<iframe title="Full uploaded Valid ID preview (image or PDF)" loading="lazy" referrerpolicy="no-referrer" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview"></iframe>'+
+    (m.document.mime==='application/pdf'?
+      '<iframe title="Full size uploaded Valid ID PDF" loading="lazy" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview"></iframe>':
+      '<img class="kk-validid-full-image" alt="Full uploaded valid ID for '+escVal(initials(m))+'" loading="lazy" src="./api/kk/staff/id/'+encodeURIComponent(m.id)+'/preview">')+
+    '<p class="kk-document-error" hidden>Hindi na-load ang preview. Subukan ang Open Full View o Download File.</p>'+
     '</div>':'')+'</section>';
   }else if(detailTab==='history'){
    details='<section class="kk-child-card"><header><span class="kk-child-icon">'+svgIcon('clock')+'</span><h4>Review Activity</h4></header><p class="kk-muted">'+
@@ -279,9 +282,12 @@
   const list=$('#kk-staff-list');
   $('#kk-applicant-count').textContent='Applicants ('+showing.length+')';
   const chosen=$('#kk-staff-order')?.value||'new';
-  showing.sort((a,b)=>chosen==='name'?initials(a).localeCompare(initials(b)):
-    chosen==='old'?(a.created_at||'').localeCompare(b.created_at||''):
-    (b.created_at||'').localeCompare(a.created_at||''));
+  const createdKey=m=>Date.parse(m.created_at||m.submitted_at||m.updated_at||'1970-01-01T00:00:00Z')||0;
+  showing.sort((a,b)=>{
+   if(chosen==='name')return initials(a).localeCompare(initials(b))||String(a.id).localeCompare(String(b.id));
+   const delta=createdKey(a)-createdKey(b);
+   return (chosen==='old'?delta:-delta)||String(a.id).localeCompare(String(b.id));
+  });
   if(!selectedMemberId&&showing.length)selectedMemberId=showing[0].id;
   if(selectedMemberId&&!showing.some(m=>m.id===selectedMemberId))selectedMemberId=showing[0]?.id||null;
   list.innerHTML=showing.length?showing.map(memberCard).join(''):
@@ -339,19 +345,17 @@
   if(target.dataset.childTab){detailTab=target.dataset.childTab;renderMemberDetail();return;}
   if(target.hasAttribute('data-delete-profile')){
    const member=selectedMember();
-   if(!member||window.kkStaffRole!=='chairman')return;
-   const name=initials(member);
-   const confirmation=prompt('PERMANENT DELETE KK PROFILE: '+name+
-    '\nMawawala ang KK login, profile, points, registrations, service requests at ID. I-type ang buong pangalan para kumpirmahin:');
-   if(confirmation===null)return;
-   if(confirmation.trim()!==name){status('Hindi tugma ang pangalan. Walang profile na nabura.',true);return;}
-   if(!confirm('Final confirmation: Permanently delete KK member '+name+' and related records? This cannot be undone.'))return;
-   bind(target,async()=>{
-    const result=await request('profile-delete',{id:member.id,confirm_name:confirmation.trim()});
-    if(result?.ok!==true)throw Error('Hindi natuloy ang deletion.');
-    selectedMemberId=null;detailTab='profile';editingSection=null;
-    return {deletion:true,storage_cleanup_pending:!!result.storage_cleanup_pending};
-   });
+   if(!member||!['chairman','sk'].includes(window.kkStaffRole))return;
+   const dialog=$('#kk-delete-dialog'),form=$('#kk-delete-confirm-form');
+   pendingDeleteMemberId=member.id;
+   form.reset();
+   $('#kk-delete-target-name').textContent=initials(member);
+   $('#kk-delete-target-id').textContent='KK ID: '+(member.kk_id||'For verification')+
+      ' · '+member.id.slice(0,8);
+   $('#kk-delete-challenge').value='DELETE KK '+member.id.slice(0,8).toUpperCase();
+   $('#kk-delete-dialog-status').textContent='';
+   $('#kk-delete-submit').disabled=true;
+   if(typeof dialog.showModal==='function')dialog.showModal();
    return;
   }
   if(target.dataset.viewId){
@@ -454,6 +458,52 @@
  $('#kk-participant-search')?.addEventListener('input',displayParticipants);
  $('#kk-staff-search')?.addEventListener('input',displayMembers);
  $('#kk-staff-filter')?.addEventListener('change',displayMembers);
+ document.addEventListener('error',e=>{
+  if(e.target.matches('#kk-staff-detail .kk-validid-full-image')){
+   e.target.hidden=true;
+   e.target.closest('.kk-document-inline-viewer')?.querySelector('.kk-document-error')?.removeAttribute('hidden');
+  }
+ },true);
+ const deleteDialog=$('#kk-delete-dialog');
+ const validateDelete=()=>{
+  const member=members.find(m=>m.id===pendingDeleteMemberId),confirmBtn=$('#kk-delete-submit');
+  if(!member||!confirmBtn)return;
+  confirmBtn.disabled=$('#kk-delete-confirm-code').value.trim()!==$('#kk-delete-challenge').value||
+   $('#kk-delete-confirm-name').value.trim()!==initials(member)||
+   !$('#kk-delete-acknowledge').checked;
+ };
+ for(const id of ['kk-delete-confirm-code','kk-delete-confirm-name','kk-delete-acknowledge'])
+  $('#'+id)?.addEventListener('input',validateDelete);
+ $('#kk-delete-cancel')?.addEventListener('click',()=>deleteDialog.close());
+ $('#kk-delete-copy')?.addEventListener('click',async()=>{
+  const input=$('#kk-delete-challenge'),notice=$('#kk-delete-dialog-status');
+  try{await navigator.clipboard.writeText(input.value);notice.textContent='Code copied. Paste it in Step 2.';}
+  catch{input.focus();input.select();notice.textContent='Select the code, press Ctrl+C, then paste in Step 2.';}
+ });
+ deleteDialog?.addEventListener('close',()=>{pendingDeleteMemberId=null;$('#kk-delete-dialog-status').textContent='';});
+ $('#kk-delete-confirm-form')?.addEventListener('submit',async e=>{
+  e.preventDefault();
+  validateDelete();
+  const target=$('#kk-delete-submit'),member=members.find(m=>m.id===pendingDeleteMemberId);
+  if(!member||target.disabled)return;
+  if(!confirm('Final confirmation: Permanently delete '+initials(member)+' and their KK account, points, requests and ID?'))return;
+  target.disabled=true;
+  $('#kk-delete-dialog-status').textContent='Securely deleting the selected KK record…';
+  try{
+   const result=await request('profile-delete',{
+    id:member.id,confirm_name:initials(member),confirm_code:$('#kk-delete-confirm-code').value.trim()
+   });
+   if(result?.ok!==true)throw Error('Deletion was not confirmed by the server.');
+   deleteDialog.close();
+   selectedMemberId=null;detailTab='profile';editingSection=null;
+   await refresh();
+   status(result.storage_cleanup_pending
+    ?'KK profile deleted. Private ID file cleanup is still pending.'
+    :'Duplicate KK profile deleted with audit trail and related data removed.',!!result.storage_cleanup_pending);
+  }catch(error){
+   $('#kk-delete-dialog-status').textContent='Hindi nabura ang account: '+String(error.message||'Unknown error');
+  }finally{validateDelete();}
+ });
  $('#kk-staff-order')?.addEventListener('change',displayMembers);
  $('#kk-staff-refresh')?.addEventListener('click',refresh);
 })();
