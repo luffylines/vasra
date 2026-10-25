@@ -210,7 +210,7 @@
  </dialog>
  </section><section id="panel-audit" hidden><h2>Activity log</h2><p class="muted">Awtomatikong tala ng mga ginawa. Walang edit o delete sa dashboard.</p><div id="audit-list"></div><div class="pagination"><button id="audit-prev"><svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5m6-6-6 6 6 6"/></svg> Bago</button><span id="audit-page"></span><button id="audit-next">Mas luma <svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></section><section id="panel-kk-ids" class="kk-id-staff-panel" hidden>
  <div class="kk-id-staff-heading"><div><span class="eyebrow">SK VASRA · ID PRODUCTION</span><h2>KK IDs</h2>
- <p>Review member portrait photos, approve them, and print front-and-back ID cards at standard CR80 size (85.6 × 54 mm).</p></div>
+ <p>Review and approve portraits, then download printable front-and-back CR80 PDFs (85.6 × 54 mm).</p></div>
  <div class="kk-id-toolbar-actions"><button type="button" id="kk-id-bulk-pdf" class="primary" disabled>Download All Approved IDs (PDF)</button>
  <button type="button" id="kk-id-staff-refresh" class="secondary">Refresh List</button></div></div>
  <p id="kk-id-staff-status" role="status" aria-live="polite"></p>
@@ -220,9 +220,9 @@
  <span id="kk-id-approved-count">0 approved for PDF</span><span id="kk-id-printed-count">0 printed IDs</span>
  </div>
  <div id="kk-id-staff-list" class="kk-id-staff-list"></div>
- <section class="kk-id-staff-preview" aria-labelledby="kk-id-selected-title">
-  <div class="kk-id-staff-preview-heading"><div><span>CR80 · 85.6 × 54 MM</span><h3 id="kk-id-selected-title">Selected KK ID · Front &amp; Back</h3></div>
-   <p>Same official artwork as member preview and PDF exports.</p></div>
+ <section class="kk-id-staff-preview" id="kk-id-staff-preview" aria-labelledby="kk-id-selected-title" hidden>
+  <div class="kk-id-staff-preview-heading"><div><span>CR80 · 85.6 × 54 MM</span><h3 id="kk-id-selected-title">Selected KK ID · Front &amp; Back</h3><p>Same approved artwork as the member's ID and PDF.</p></div>
+ <button id="kk-id-preview-close" type="button" class="kk-id-close-preview" aria-label="Close selected KK ID preview">Close Preview <span aria-hidden="true">×</span></button></div>
   <div class="kk-id-preview-pair">
    <figure class="kk-id-preview-side"><img id="kk-id-staff-front" alt="KK ID front preview"><figcaption>Front · Portrait &amp; Member Details</figcaption></figure>
    <figure class="kk-id-preview-side"><img id="kk-id-staff-back" alt="KK ID back with QR"><figcaption>Back · Scannable KK ID QR</figcaption></figure>
@@ -510,4 +510,4 @@
   <p id="kk-delete-dialog-status" role="status" aria-live="polite"></p>
   <div class="kk-delete-modal-actions"><button type="button" id="kk-delete-cancel">Cancel</button><button type="submit" id="kk-delete-submit" disabled>Delete KK Profile</button></div>
  </form>
-</dialog><script src="./common.js?v=20261025-toast5-v1"></script><script src="./shell.js"></script><script src="./duty-data.js"></script><script src="./account.js?v=20261025-toast5-v1"></script><script src="./awards-management.js"></script><script src="./duty-management.js"></script><script src="./kk-staff.js?v=20261025-toast5-v1"></script><script src="./kk-service-staff.js?v=20261025-toast5-v1"></script><script src="./disclosure-admin.js"></script><script src="./sk-resolutions-admin.js"></script><script src="./kk-id-render.js?v=20261025-kk-toast-square-v1"></script><script src="./kk-id-staff.js?v=20261025-toast5-v1"></script><script>document.addEventListener("click",function(e){const b=e.target.closest(".password-toggle");if(!b)return;const input=b.parentElement.querySelector("input");const visible=input.type==="text";input.type=visible?"password":"text";b.textContent=visible?"Show":"Hide";b.setAttribute("aria-label",visible?"Show password":"Hide password");b.setAttribute("aria-pressed",String(!visible));});</script><div id="kk-id-print-root" class="kk-print-root" aria-hidden="true"></div></body></html>
+</dialog><script src="./common.js?v=20261025-kk-staff-preview-v2"></script><script src="./shell.js"></script><script src="./duty-data.js"></script><script src="./account.js?v=20261025-kk-staff-preview-v2"></script><script src="./awards-management.js"></script><script src="./duty-management.js"></script><script src="./kk-staff.js?v=20261025-kk-staff-preview-v2"></script><script src="./kk-service-staff.js?v=20261025-kk-staff-preview-v2"></script><script src="./disclosure-admin.js"></script><script src="./sk-resolutions-admin.js"></script><script src="./kk-id-render.js?v=20261025-kk-staff-preview-v2"></script><script src="./kk-id-staff.js?v=20261025-kk-staff-preview-v2"></script><script>document.addEventListener("click",function(e){const b=e.target.closest(".password-toggle");if(!b)return;const input=b.parentElement.querySelector("input");const visible=input.type==="text";input.type=visible?"password":"text";b.textContent=visible?"Show":"Hide";b.setAttribute("aria-label",visible?"Show password":"Hide password");b.setAttribute("aria-pressed",String(!visible));});</script><div id="kk-id-print-root" class="kk-print-root" aria-hidden="true"></div></body></html>
