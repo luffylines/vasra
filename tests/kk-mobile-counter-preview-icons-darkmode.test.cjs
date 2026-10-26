@@ -54,7 +54,7 @@ test('Dark profile separators harmonize and refreshed assets load on KK and publ
   const markup=read(file);
   assert.match(markup,/\.\/theme\.css\?v=20261026-kk-mobile-profile-v8/);
   assert.match(markup,new RegExp('\\.\\/kk\\.css\\?v='+
-   (file==='kk-login.html'?'20261026-kk-password-reset-v1':'20261026-kk-mobile-profile-v8')));
+   (file==='kk-login.html'?'20261026-login-options-aligned-v2':'20261026-kk-mobile-profile-v8')));
  }
  for(const file of ['duty.html','index.html','contacts.html'])
   assert.match(read(file),/\.\/shell\.js\?v=20261026-kk-mobile-profile-v8/);
