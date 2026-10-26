@@ -1431,7 +1431,7 @@ const transMoney=v=>{
 const transExpenseParse=value=>{
  const valueText=String(value??'').trim();
  if(valueText==='')return null;
- if(!/^(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d{1,2})?$/.test(valueText))
+ if(!/^(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?$/.test(valueText))
   throw Error('Amount spent must be a valid PHP amount (e.g., ₱100,000.00).');
  const amount=Number(valueText.replace(/,/g,''));
  if(!Number.isFinite(amount)||amount<0||amount>999999999999)
