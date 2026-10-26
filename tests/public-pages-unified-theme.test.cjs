@@ -14,7 +14,7 @@ test('SK Council, Awards, Transparency and Contacts share the Home shell and the
   const html=read('dist/'+name+'.html');
   assert.match(html,/<body class="[^"]*portal-refresh/,'missing unified layout in '+name);
   assert.match(html,/<link rel="stylesheet" href="\.\/portal\.css">/,'missing Home sidebar CSS in '+name);
-  assert.match(html,/<script src="\.\/shell\.js">/,'missing Home nav controller in '+name);
+  assert.match(html,/<script src="\.\/shell\.js(?:\?v=[a-zA-Z0-9-]+)?">/,'missing Home nav controller in '+name);
   assert.match(html,/<div class="page-top">/,'missing Home header in '+name);
   assert.match(html,/<span class="location-tag">/,'missing Philippine Time header in '+name);
   assert.match(html,/<a class="brand" href="\.\/"><span class="sk-logo">/,'incorrect official logo in '+name);
