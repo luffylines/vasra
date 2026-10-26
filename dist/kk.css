@@ -393,3 +393,25 @@
  box-shadow:none!important;background:#fbfcff;font-size:16px!important;letter-spacing:.65px
 }
 .kk-form .kk-ph-number:has(input:invalid){border-color:#c6d6eb}
+
+/* Mobile family and sibling counters: allow pinch zoom but not fast double-tap zoom. */
+.kk-step-one .kk-count-field button{
+ touch-action:manipulation;-webkit-user-select:none;user-select:none;
+ -webkit-tap-highlight-color:transparent;
+}
+.kk-step-one .kk-count-field input[type=number]{touch-action:manipulation;font-size:16px!important}
+@media(hover:none) and (pointer:coarse){
+ .kk-step-one .kk-count-field button{min-width:44px;min-height:44px}
+ .kk-profile-sheet .kk-count-field input{padding-left:49px!important;padding-right:49px!important}
+}
+/* Pending/review mobile profile: predictable icon and accessible button size. */
+.kk-reg-toolbar .kk-toolbar-logout{
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;touch-action:manipulation;
+ padding:9px 13px;line-height:1.35;min-height:40px;border-radius:10px
+}
+.kk-reg-toolbar .kk-toolbar-logout svg{display:block;width:18px;height:18px;flex:none}
+.kk-profile-sheet .kk-step-actions .kk-btn svg{width:16px;height:16px;flex:none}
+.kk-profile-sheet .kk-step-actions .kk-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+@media(max-width:430px){
+ .kk-reg-toolbar .kk-toolbar-logout{min-height:40px;padding:9px 11px}
+}
