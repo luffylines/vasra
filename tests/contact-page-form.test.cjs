@@ -89,7 +89,10 @@ test('Valid inquiry is sent through Resend to SK office with reply-to, subject a
   assert.match(sent.subject,/SK Vasra Inquiry/);
   assert.match(sent.text,/Test Resident/);
   assert.match(sent.text,/Magandang araw/);
-  assert.ok(!('html' in sent));
+  assert.match(sent.html,/SK VASRA/);
+  assert.match(sent.html,/sk%20logo\.jpg/);
+  assert.match(sent.html,/New Community Inquiry/);
+  assert.match(sent.html,/Magandang araw/);
   assert.equal(db.calls.filter(c=>c.action==='rate_limit').length,2);
  }finally{
   global.fetch=original;
