@@ -4,7 +4,7 @@
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const kindLabels={printing:'Free Printing',computer:'Computer Use',retabox:'RetaBox Donations'};
  const statusLabels={pending:'Pending',approved:'Approved',completed:'Completed',rejected:'Rejected'};
- let records=[],pointsRate=0,loading=false,reviewingId=null,historyPage=1;
+ let records=[],historyRecords=[],historyTotal=0,pointsRate=0,loading=false,reviewingId=null,historyPage=1,historyTicket=0,historyTimer=null;
  const historyPageSize=25;
  const isOpen=r=>r.status==='pending'||r.status==='approved';
  const isArchived=r=>r.status==='completed'||r.status==='rejected';
@@ -118,44 +118,15 @@
   for(const [key,value] of Object.entries(counts))
    $('#kk-service-stat-'+key).textContent=String(value);
  };
- const searchableDate=value=>{
-  if(!value)return '';
-  const time=new Date(value);
-  if(!Number.isFinite(time.getTime()))return '';
-  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',
-   month:'2-digit',day:'2-digit',year:'numeric'}).formatToParts(time);
-  const get=part=>parts.find(x=>x.type===part)?.value||'';
-  const iso=get('year')+'-'+get('month')+'-'+get('day');
-  const short=time.toLocaleDateString('en-US',{timeZone:'Asia/Manila',month:'short',day:'numeric',year:'numeric'});
-  const long=time.toLocaleDateString('en-US',{timeZone:'Asia/Manila',month:'long',day:'numeric',year:'numeric'});
-  const monthDay=Number(get('month'))+'/'+Number(get('day'))+'/'+get('year');
-  return [iso,get('month')+'/'+get('day')+'/'+get('year'),monthDay,short,long].join(' ').toLowerCase();
- };
- const historyMatches=(r,query,date)=>{
-  if(date&&phDate(processedAt(r))!==date)return false;
-  if(!query)return true;
-  const haystack=[r.name,r.kk_id,r.id,kindLabels[r.service_type],r.service_type,
-   statusLabels[r.status],r.reviewed_by,r.completed_by,pht(r.requested_at),
-   pht(r.reviewed_at),pht(r.completed_at),searchableDate(r.requested_at),
-   searchableDate(r.reviewed_at),searchableDate(r.completed_at),
-   searchableDate(processedAt(r))].join(' ').toLowerCase();
-  return query.split(/\s+/).filter(Boolean).every(word=>haystack.includes(word));
- };
  const renderHistory=()=>{
-  const q=$('#kk-service-history-search').value.trim().toLowerCase(),
-    date=$('#kk-service-history-date').value;
-  const all=records.filter(isArchived).sort((a,b)=>new Date(processedAt(b))-new Date(processedAt(a)));
-  const matches=all.filter(r=>historyMatches(r,q,date));
-  const pages=Math.max(1,Math.ceil(matches.length/historyPageSize));
-  historyPage=Math.min(Math.max(1,historyPage),pages);
-  const visible=matches.slice((historyPage-1)*historyPageSize,historyPage*historyPageSize);
-  $('#kk-service-history-count').textContent=matches.length+' matching · '+all.length+' archived service(s) · PHT';
-  $('#kk-service-history-page-label').textContent=matches.length?
-   ((historyPage-1)*historyPageSize+1)+'–'+Math.min(historyPage*historyPageSize,matches.length)+' of '+matches.length:
-   'No matching records';
+  const pages=Math.max(1,Math.ceil(historyTotal/historyPageSize));
+  $('#kk-service-history-count').textContent=historyTotal+' archived service(s) · Philippine Time';
+  $('#kk-service-history-page-label').textContent=historyTotal?
+    ((historyPage-1)*historyPageSize+1)+'–'+Math.min(historyPage*historyPageSize,historyTotal)+' of '+historyTotal:
+    'No matching history';
   $('#kk-service-history-prev').disabled=historyPage<=1;
   $('#kk-service-history-next').disabled=historyPage>=pages;
-  $('#kk-service-history-body').innerHTML=visible.length?visible.map(r=>
+  $('#kk-service-history-body').innerHTML=historyRecords.length?historyRecords.map(r=>
    '<tr><td>'+esc(pht(r.requested_at))+'</td>'+
    '<td><strong>'+esc(pht(processedAt(r)))+'</strong><small>'+
    esc(r.status==='completed'?'Completed':'Rejected')+' (PHT)</small></td>'+
@@ -164,6 +135,26 @@
    '<td>'+describe(r)+'</td><td>'+badge(r)+
    '</td><td>'+esc(r.reviewed_by||'—')+'</td><td>'+esc(r.completed_by||'—')+'</td></tr>').join(''):
    '<tr><td colspan="8" class="kk-service-no-history">Walang completed o rejected service para sa napiling search o petsa.</td></tr>';
+ };
+ const loadHistory=async()=>{
+  const ticket=++historyTicket;
+  const date=$('#kk-service-history-date').value||'';
+  const search=$('#kk-service-history-search').value.trim();
+  $('#kk-service-history-body').innerHTML='<tr><td colspan="8" class="kk-service-no-history">Loading service history…</td></tr>';
+  try{
+   const params=new URLSearchParams({page:String(historyPage),date,search});
+   const data=await apiCall('./api/kk/staff/services/history?'+params.toString());
+   if(ticket!==historyTicket)return;
+   if(data?.ok!==true||!Array.isArray(data.requests))throw Error('Unable to load archived service history.');
+   historyRecords=data.requests;historyTotal=Number(data.total)||0;
+   renderHistory();
+  }catch(e){
+   if(ticket!==historyTicket)return;
+   historyRecords=[];historyTotal=0;
+   $('#kk-service-history-body').innerHTML='<tr><td colspan="8" class="kk-service-no-history">Unable to load service history. Try again.</td></tr>';
+   $('#kk-service-history-count').textContent='History unavailable';
+   info('Hindi ma-load ang Service History: '+e.message,true);
+  }
  };
  const render=()=>{
   const f=state(),visible=records.filter(r=>isOpen(r)&&filter(r,f));
@@ -187,7 +178,7 @@
    if(data?.error)throw Error('Service not ready. Check database migration.');
    records=Array.isArray(data.requests)?data.requests:[];
    pointsRate=Number(data.retabox_points_per_kg||0);
-   render();info(records.length+' total service request(s) · '+today()+' PHT');
+   render();await loadHistory();info(records.length+' recent service request(s) · '+today()+' PHT');
   }catch(e){info('Hindi ma-load ang SK Services: '+e.message,true);}
   finally{loading=false;}
  };
@@ -195,14 +186,18 @@
  for(const id of ['kk-service-type-filter','kk-service-status-filter','kk-service-date-filter','kk-service-custom-date'])
   $('#'+id)?.addEventListener('change',render);
  $('#kk-service-search')?.addEventListener('input',render);
- $('#kk-service-history-search')?.addEventListener('input',()=>{historyPage=1;renderHistory();});
- $('#kk-service-history-date')?.addEventListener('change',()=>{historyPage=1;renderHistory();});
+ $('#kk-service-history-search')?.addEventListener('input',()=>{
+  historyPage=1;
+  if(historyTimer)clearTimeout(historyTimer);
+  historyTimer=setTimeout(loadHistory,300);
+ });
+ $('#kk-service-history-date')?.addEventListener('change',()=>{historyPage=1;loadHistory();});
  $('#kk-service-history-clear')?.addEventListener('click',()=>{
   $('#kk-service-history-date').value='';$('#kk-service-history-search').value='';
-  historyPage=1;renderHistory();
+  historyPage=1;loadHistory();
  });
- $('#kk-service-history-prev')?.addEventListener('click',()=>{if(historyPage>1){historyPage--;renderHistory();}});
- $('#kk-service-history-next')?.addEventListener('click',()=>{historyPage++;renderHistory();});
+ $('#kk-service-history-prev')?.addEventListener('click',()=>{if(historyPage>1){historyPage--;loadHistory();}});
+ $('#kk-service-history-next')?.addEventListener('click',()=>{historyPage++;loadHistory();});
  $('#kk-service-export')?.addEventListener('click',()=>{
   // Export *all* completed/rejected service history, including past dates and search-filtered-out rows.
   window.location.assign('./api/kk/staff/services/export?scope=history');
