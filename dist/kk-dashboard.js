@@ -104,7 +104,7 @@
   renderProjects();
  };
  const refreshProjects=async()=>{
-  try{applyProjectResponse(await request('dashboard'));}
+  try{applyProjectResponse(await request('dashboard?updated='+Date.now()));}
   catch(error){window.showVasraToast('Hindi ma-refresh ang upcoming projects: '+error.message,'error');}
  };
  const renderRewards=()=>{
@@ -140,6 +140,12 @@
   $('#kk-dash-rewards-count').textContent=String(rewards.rewards.length);
   renderRewards();
  };
+ window.addEventListener('focus',()=>{
+  if(member&&location.hash==='#projects')refreshProjects();
+ });
+ document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&member&&location.hash==='#projects')refreshProjects();
+ });
  async function reload(){
   const data=await request('me');
   if(!data?.member){location.replace('./kk-login');return false;}
@@ -173,7 +179,7 @@
     await request('join',{project_id:button.dataset.join});
     message('#kk-project-message','Successfully registered for this project.','success');
    }else{
-    await request('redeem',{id:button.dataset.redeem});
+    await request('rewards',{id:button.dataset.redeem});
     message('#kk-redeem-message','Redemption request sent for SK review. Points are deducted only when the SK approves.','success');
    }
    await reload();
