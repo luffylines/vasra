@@ -15,8 +15,8 @@ test('public and staff pages share responsive viewport, drawer and CSS',()=>{
  for(const page of pages){
   const html=read(page);
   assert.match(html,/name="viewport"/,page);
-  assert.match(html,/href="\.\/mobile-nav\.css"/,page);
-  assert.match(html,/src="\.\/shell\.js"/,page);
+  assert.match(html,/href="\.\/mobile-nav\.css(?:\?v=[a-zA-Z0-9-]+)?"/,page);
+  assert.match(html,/src="\.\/shell\.js(?:\?v=[a-zA-Z0-9-]+)?"/,page);
  }
  assert.match(mobile,/max-width:850px/);
  assert.match(mobile,/body\.mobile-menu-ready \.portal-main\{width:100%/);

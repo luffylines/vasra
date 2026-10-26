@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="SK Vasra KK youth member login and secure profiling portal"><title>KK Login — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css?v=20261025-auth-nav-fix"><style id="kk-auth-actions-critical">
+<html lang="fil"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f54"><meta name="description" content="SK Vasra KK youth member login and secure profiling portal"><title>KK Login — SK Vasra</title><link rel="icon" type="image/jpeg" href="./sk%20logo.jpg"><link rel="stylesheet" href="./kk.css?v=20261026-login-options-aligned-v2"><style id="kk-auth-actions-critical">
 /* Keep the navigation usable even when an older cached KK stylesheet loads. */
 .kk-auth-page .kk-auth-card{position:relative}
 .kk-auth-page .kk-auth-top-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
@@ -11,7 +11,7 @@
 .kk-auth-page .kk-reg-toolbar .kk-auth-top-actions{margin-left:auto}
 html[data-theme="dark"] .kk-auth-page .kk-auth-top-actions .kk-auth-nav-link{background:#1b3355;border-color:#3b5680;color:#e9f3ff}
 @media(max-width:420px){.kk-auth-page .kk-auth-top-actions{gap:5px}.kk-auth-page .kk-auth-top-actions .kk-auth-nav-link{padding:7px 8px}.kk-auth-page .kk-auth-top-actions .kk-auth-nav-link span{display:none}}
-</style></head>
+</style><link rel="stylesheet" href="./theme.css?v=20261026-kk-mobile-profile-v8" data-vasra-theme="true"></head>
 <body class="kk-body kk-auth-page" data-view="login">
 <main class="kk-main"><section class="kk-auth-layout" aria-label="Sangguniang Kabataan Vasra member sign in">
  <div class="kk-auth-story">
@@ -31,7 +31,7 @@ html[data-theme="dark"] .kk-auth-page .kk-auth-top-actions .kk-auth-nav-link{bac
   <form id="kk-login-form" class="kk-form">
    <label><span class="kk-label-title">Email</span><input type="email" name="email" autocomplete="email" required maxlength="160" placeholder="Enter your email"></label>
    <label><span class="kk-label-title">Password</span><span class="kk-password-field"><input id="kk-login-password" type="password" name="password" autocomplete="current-password" required maxlength="200" placeholder="Enter your password"><button type="button" class="kk-password-toggle" aria-controls="kk-login-password" aria-label="Show password" aria-pressed="false">Show</button></span></label>
-   <div class="kk-session-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg><span>Stay signed in for up to 7 days</span></div>
+   <div class="kk-login-options"><div class="kk-session-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg><span>Stay signed in for up to 7 days</span></div><div class="kk-forgot-row"><a href="./kk-reset" class="kk-forgot-link">Forgot Password?</a></div></div>
    <button class="kk-btn kk-auth-submit" type="submit">Sign in <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
   </form>
   <div class="kk-or"><span>or continue with</span></div>
@@ -43,4 +43,4 @@ html[data-theme="dark"] .kk-auth-page .kk-auth-top-actions .kk-auth-nav-link{bac
  </div>
 </section></main>
 <footer class="kk-footer"><span>© 2026 SK Vasra</span><span>Arang Kada-Kabataang Vasra</span></footer>
-<script src="./common.js"></script><script src="./theme.js?v=20261025-kk-upload-first-dark-v3"></script><script src="./kk.js?v=20261025-auth-nav-fix" defer></script></body></html>
+<script src="./common.js?v=20261025-kk-toast-right-v5"></script><script src="./theme.js?v=20261025-kk-upload-first-dark-v3"></script><script src="./kk.js?v=20261026-kk-password-reset-v1" defer></script></body></html>

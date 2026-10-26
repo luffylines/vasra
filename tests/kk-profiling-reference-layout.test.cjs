@@ -16,7 +16,8 @@ test('KK reference screen displays header controls above side-by-side applicants
  assert.ok(panel.indexOf('kk-sitio-section')>app,'Other management tools must follow the application review');
  assert.match(panel,/href="\.\/api\/kk\/staff\/export"/);
  assert.match(panel,/id="kk-sitio-list"/);
- assert.match(panel,/id="kk-staff-reward-list"/);
+ assert.doesNotMatch(panel,/id="kk-staff-reward-list"|id="kk-participant-list"/);
+ assert.match(html,/id="panel-kk-rewards"/);
 });
 test('Member details match reference sections without creating fake applicants or editable controls',()=>{
  for(const title of ['Personal Information','Address','Education','Additional Information','Emergency Contact','Uploaded Valid ID'])

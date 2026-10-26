@@ -1,6 +1,11 @@
 // Monthly accomplishments remain public; historical finance records stay in the DB
 // but no longer occupy the public Full Disclosure Board.
-const money=v=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(Number(v));
+const money=v=>{
+ const amount=Number(v);
+ return Number.isFinite(amount)?'₱'+new Intl.NumberFormat('en-PH',{
+   minimumFractionDigits:2,maximumFractionDigits:2
+ }).format(amount):'Not reported';
+};
 const monthLabel=v=>new Intl.DateTimeFormat('en-PH',{month:'long',year:'numeric',timeZone:'UTC'})
  .format(new Date(String(v).slice(0,10)+'T12:00:00Z'));
 const nowParts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{

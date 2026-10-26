@@ -51,7 +51,7 @@ test('Both CR80 faces center all ID title lines and show Barangay LEFT / SK RIGH
 });
 test('Member and officer previews use a fresh, shared artwork asset',()=>{
  const member=read('dist/kk-dashboard.html'),officer=read('dist/account.html');
- const path='./kk-id-render.js?v=20261025-brgy-vasra-centered-v2';
+ const path='./kk-id-render.js?v=20261025-kk-id-on-demand-v2';
  assert.ok(member.includes(path),'Member script not refreshed');
  assert.ok(officer.includes(path),'Staff script not refreshed');
  assert.match(render,/x\.arc\(112,108,53,0,Math\.PI\*2\)/);

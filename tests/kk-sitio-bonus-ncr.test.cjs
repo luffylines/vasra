@@ -15,16 +15,17 @@ test('KK staff uses searchable sitio directory with grouped resident and verific
  assert.match(staff,/aria-expanded/);
  assert.match(staff, /kk-sitio-search'\)\?\.addEventListener\('input',displaySitios/);
 });
-test('SK decides which rewards become available and redemption requests require staff review',()=>{
- assert.match(html,/id="kk-perk-form"/);
- assert.match(html,/id="kk-staff-redemption-list"/);
- assert.match(staff,/data-redemption/);
- assert.match(staff,/request\('perks'/);
- for(const route of ["if(path==='/api/kk/staff/perks'","if(path==='/api/kk/staff/redemption'","if(path==='/api/kk/redeem'"]){
-  const start=handler.indexOf(route);assert.ok(start>=0,route);
-  assert.doesNotMatch(handler.slice(start,start+270),/Points & Perks are temporarily unavailable/);
- }
- assert.match(read('dist/kk-dashboard.js'),/request\('redeem'/);
+test('Reward publishing and redemption review use protected inventory-aware SK endpoint',()=>{
+ assert.match(html,/id="panel-kk-rewards"/);
+ assert.match(html,/id="kk-reward-editor"/);
+ assert.match(html,/id="kk-rewards-claims"/);
+ const ui=read('dist/kk-rewards-staff.js');
+ assert.match(ui,/data-claim-decision/);
+ assert.match(ui,/data-reward-publish/);
+ assert.match(ui,/action:'toggle'/);
+ assert.match(handler,/path==='\/api\/kk\/staff\/rewards'&&method==='POST'/);
+ assert.match(handler,/rewardRpc\('review'/);
+ assert.match(read('dist/kk-dashboard.js'),/request\('rewards'/);
 });
 test('50 bonus is awarded once on status transition pending to verified, with database uniqueness',()=>{
  assert.match(bonus,/create unique index if not exists kk_points_unique_verification_bonus/);

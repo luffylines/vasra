@@ -14,7 +14,7 @@ function verifyKKDashboard(document,assetExists=()=>true){
   fail('missing member sidebar');
  if(!document.includes('id="kk-dash-content"'))fail('missing main dashboard content');
  if(!document.includes('id="kk-current-section-title"'))fail('missing heading controller');
- const sections=['overview','projects','activities','rewards','printing','computer','retabox','settings','kk-id'];
+ const sections=['overview','projects','rewards','printing','computer','retabox','settings','kk-id'];
  for(const section of sections){
   if(!document.includes('data-section="'+section+'"'))fail('missing '+section+' panel');
  }

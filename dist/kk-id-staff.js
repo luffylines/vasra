@@ -5,7 +5,14 @@
  const request=(path,body)=>api('./api/kk/staff/id-cards'+path,body?{method:'POST',body:JSON.stringify(body)}:{});
  const photo=id=>'./api/kk/staff/id-cards/'+encodeURIComponent(id)+'/photo';
  let rows=[],selected=null,previewRevision=0,busy=false;
- const report=(msg,error=false)=>{const target=$('#kk-id-staff-status');if(!target)return;target.textContent=msg;target.dataset.kind=error?'error':'info';};
+ const icon={
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></svg>',
+  pdf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v6h5M10 16h6m-6 3h5"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>',
+  reject:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>',
+  printed:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M7 7V3h10v4M7 15h10"/></svg>'
+ };
+ const report=(msg,error=false,success=false)=>{const target=$('#kk-id-staff-status');if(!target)return;if(msg&&(error||success)){target.textContent='';window.showVasraToast(msg,error?'error':'success');return;}target.textContent=msg;target.dataset.kind='info';};
  const approved=r=>r.status==='approved'&&r.photo_exists&&/^VASRA-KK-\d+$/.test(r.kk_id||'');
  const date=v=>v?new Date(v).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',timeZone:'Asia/Manila'}):'—';
  const filtered=()=>{
@@ -14,6 +21,8 @@
    (!q||[r.name,r.kk_id].some(v=>String(v||'').toLowerCase().includes(q))));
  };
  const paint=()=>{
+  const host=$('#kk-id-staff-list'),previewPanel=$('#kk-id-staff-preview');
+  if(previewPanel.parentElement===host)host.after(previewPanel);
   const list=filtered();
   const ready=rows.filter(approved),printed=rows.filter(r=>r.printed_at);
   $('#kk-id-approved-count').textContent=ready.length+' approved for PDF download';
@@ -31,19 +40,36 @@
      ' · '+esc(r.print_count||1)+' time(s)</span>':'')+
     (r.review_note?'<p class="kk-id-staff-reason">SK note: '+esc(r.review_note)+'</p>':'')+
     '</div><div class="kk-id-staff-actions">'+
-    '<button type="button" data-card-preview="'+esc(r.member_id)+'">View Front & Back</button>'+
-    (r.status==='pending'?'<button type="button" data-card-approve="'+esc(r.member_id)+'">Approve Photo</button>'+
-     '<button type="button" data-card-reject="'+esc(r.member_id)+'">Reject</button>':'')+
-    (approved(r)?'<button type="button" class="kk-id-download-button" data-card-download="'+esc(r.member_id)+'">Download PDF</button>'+
-     '<button type="button" class="kk-id-print-button" data-card-print="'+esc(r.member_id)+'">Print Front & Back</button>'+
-     '<button type="button" class="kk-id-mark-printed" data-card-printed="'+esc(r.member_id)+'">'+
-       (r.printed_at?'Record Reprint':'Mark as Printed')+'</button>':'')+
+    '<button type="button" class="kk-id-view-button" data-card-preview="'+esc(r.member_id)+
+       '" aria-controls="kk-id-staff-preview" aria-expanded="'+String(selected===r.member_id)+'">'+icon.eye+'<span>View Front & Back</span></button>'+
+    (r.status==='pending'?'<button type="button" class="kk-id-approve-button" data-card-approve="'+esc(r.member_id)+'">'+icon.check+'<span>Approve Photo</span></button>'+
+     '<button type="button" class="kk-id-reject-button" data-card-reject="'+esc(r.member_id)+'">'+icon.reject+'<span>Reject</span></button>':'')+
+    (approved(r)?'<button type="button" class="kk-id-download-button" data-card-download="'+esc(r.member_id)+'">'+icon.pdf+'<span>Download PDF</span></button>'+
+     '<button type="button" class="kk-id-mark-printed" data-card-printed="'+esc(r.member_id)+'">'+icon.printed+
+       '<span>'+(r.printed_at?'Record Reprint':'Mark as Printed')+'</span></button>':'')+
     '</div></article>'
   ).join(''):'<div class="kk-id-empty">Walang KK ID cards na tumutugma sa filter.</div>';
+  const active=host.querySelector('.kk-id-staff-item.selected');
+  if(active)active.after(previewPanel); // On-demand preview appears beside the chosen member, not after hundreds of IDs.
+ };
+ const closePreview=()=>{
+  selected=null;previewRevision++;
+  $('#kk-id-staff-preview').hidden=true;
+  $('#kk-id-staff-front').removeAttribute('src');
+  $('#kk-id-staff-back').removeAttribute('src');
+  $('#kk-id-selected-title').textContent='Selected KK ID · Front & Back';
+  $('#kk-id-staff-preview-status').textContent='Select a member to preview both sides.';
+  paint();
  };
  const preview=async(id)=>{
-  selected=id;paint();const row=rows.find(r=>r.member_id===id);
+  const row=rows.find(r=>r.member_id===id);
   if(!row)return;
+  selected=id;paint();
+  $('#kk-id-staff-preview').hidden=false;
+  $('#kk-id-staff-preview').scrollIntoView?.({behavior:'smooth',block:'nearest'});
+  $('#kk-id-selected-title').textContent=row.name+' · '+(row.kk_id||'Pending KK ID');
+  $('#kk-id-staff-front').removeAttribute('src');
+  $('#kk-id-staff-back').removeAttribute('src');
   const revision=++previewRevision,message=$('#kk-id-staff-preview-status');
   message.textContent='Rendering official front and back preview…';
   try{
@@ -60,13 +86,10 @@
   try{
    const response=await request('');
    if(response?.ok!==true||!Array.isArray(response.members))throw Error('Invalid SK ID response.');
-   rows=response.members;paint();
+   rows=response.members;
+   closePreview(); // Never auto-open an ID preview, even after a refresh or review.
    report(rows.length+' verified members · '+rows.filter(approved).length+' ready for PDF · '+
     rows.filter(r=>r.printed_at).length+' printed');
-   if(rows.length)await preview(rows.some(r=>r.member_id===selected)?selected:
-    (rows.find(r=>r.photo_exists)?.member_id||rows[0].member_id));
-   else{$('#kk-id-staff-front').removeAttribute('src');$('#kk-id-staff-back').removeAttribute('src');
-    $('#kk-id-staff-preview-status').textContent='No verified KK ID members yet.';}
   }catch(e){report('Unable to load KK IDs: '+e.message,true);}
  };
  const make=async(member)=>{
@@ -91,20 +114,9 @@
     pages.push(pair.front,pair.back);
    }
    window.KKIDRender.pdf(pages,'SK-VASRA-all-approved-KK-IDs-CR80.pdf');
-   report('Downloaded '+items.length+' approved KK IDs: '+pages.length+' exact-size front/back PDF pages.');
+   report('Downloaded '+items.length+' approved KK IDs: '+pages.length+' exact-size front/back PDF pages.',false,true);
   }catch(e){report('Batch PDF failed: '+e.message+' — no partial set was exported.',true);}
   finally{busy=false;paint();}
- };
- const print=async member=>{
-  if(!approved(member))return;
-  try{
-   const root=$('#kk-id-print-root'),{front,back}=await make(member);
-   root.innerHTML='<div class="kk-print-page"><img class="kk-id-print-canvas" src="'+front.toDataURL('image/jpeg',.98)+'" alt="Front"></div>'+
-    '<div class="kk-print-page"><img class="kk-id-print-canvas" src="'+back.toDataURL('image/jpeg',.98)+'" alt="Back"></div>';
-   await Promise.all([...root.querySelectorAll('img')].map(i=>i.decode()));
-   report('Printing '+member.kk_id+' at actual CR80 size (85.6 × 54 mm). After physically printing, select Mark as Printed.');
-   window.print();
-  }catch(e){report('Printing failed: '+e.message,true);$('#kk-id-print-root').replaceChildren();}
  };
  const mark=async member=>{
   if(!approved(member))return;
@@ -113,25 +125,25 @@
   try{
    const result=await request('/printed',{id:member.member_id,confirmed:true});
    if(result?.ok!==true)throw Error('No server confirmation.');
-   await load();report('Recorded printed KK ID: '+member.kk_id+' · print count '+result.print_count+'.');
+   await load();report('Recorded printed KK ID: '+member.kk_id+' · print count '+result.print_count+'.',false,true);
   }catch(e){report('Could not mark ID as printed: '+e.message,true);}
  };
- $('#kk-id-staff-query')?.addEventListener('input',paint);
- $('#kk-id-staff-filter')?.addEventListener('change',paint);
+ $('#kk-id-staff-query')?.addEventListener('input',()=>{closePreview();});
+ $('#kk-id-staff-filter')?.addEventListener('change',()=>{closePreview();});
+ $('#kk-id-preview-close')?.addEventListener('click',closePreview);
  $('#kk-id-bulk-pdf')?.addEventListener('click',all);
  $('#kk-id-staff-refresh')?.addEventListener('click',load);
  $('#kk-id-staff-list')?.addEventListener('click',async event=>{
   if(busy)return;
-  const target=event.target.closest('button[data-card-preview],button[data-card-approve],button[data-card-reject],button[data-card-download],button[data-card-print],button[data-card-printed]');
+  const target=event.target.closest('button[data-card-preview],button[data-card-approve],button[data-card-reject],button[data-card-download],button[data-card-printed]');
   if(!target)return;
   const id=target.dataset.cardPreview||target.dataset.cardApprove||target.dataset.cardReject||
-   target.dataset.cardDownload||target.dataset.cardPrint||target.dataset.cardPrinted;
+   target.dataset.cardDownload||target.dataset.cardPrinted;
   const member=rows.find(r=>r.member_id===id);if(!member)return;
   if(target.dataset.cardPreview){await preview(id);return;}
   if(target.dataset.cardDownload){try{target.disabled=true;report('Preparing '+member.kk_id+' PDF…');await pdfOne(member);
-   report('Downloaded '+member.kk_id+' front/back PDF · CR80 85.6 × 54 mm.');}
+   report('Downloaded '+member.kk_id+' front/back PDF · CR80 85.6 × 54 mm.',false,true);}
    catch(e){report('Download failed: '+e.message,true);}finally{target.disabled=false;}return;}
-  if(target.dataset.cardPrint){await print(member);return;}
   if(target.dataset.cardPrinted){await mark(member);return;}
   if(member.status!=='pending')return;
   const yes=!!target.dataset.cardApprove;
@@ -146,9 +158,8 @@
   try{
    const result=await request('/review',{id,status:yes?'approved':'rejected',note});
    if(result?.ok!==true)throw Error('Photo review not confirmed by server.');
-   await load();report('KK ID photo '+(yes?'approved':'rejected')+' for '+member.kk_id+'.');
+   await load();report('KK ID photo '+(yes?'approved':'rejected')+' for '+member.kk_id+'.',false,true);
   }catch(e){report('Review failed: '+e.message,true);target.disabled=false;}
  });
- window.addEventListener('afterprint',()=>$('#kk-id-print-root')?.replaceChildren());
  window.loadKKIDStaff=load;
 })();

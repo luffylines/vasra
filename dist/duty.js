@@ -53,7 +53,7 @@ function dutyContactRows(){
    try{
     const link=new URL(c.facebook_url);
     if(link.protocol==='https:'&&['facebook.com','www.facebook.com','m.facebook.com'].includes(link.hostname)&&!link.username&&!link.password)
-     parts.push(row(web,'<a href="'+esc(link.href)+'" target="_blank" rel="noopener noreferrer">Facebook profile / page ↗</a>'));
+     parts.push(row(web,'<a href="'+esc(link.href)+'" target="_blank" rel="noopener noreferrer">Facebook profile / page <svg class="duty-contact-link-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/></svg></a>'));
    }catch{/* hide malformed legacy URL */}
   }
   return '<article class="duty-contact-card"><h3>'+esc(c.name)+'</h3><small>'+esc(names[c.position]||'SK Officer')+'</small><div class="duty-contact-details">'+parts.join('')+'</div></article>';
@@ -75,7 +75,9 @@ function selectDay(index){
   const d=managedDutyDays?managedDutyDays[index]:days[index];
   document.querySelectorAll('[data-day]').forEach((b,i)=>{b.classList.toggle('selected',i===index);b.setAttribute('aria-pressed',String(i===index))});
   $('#day-kicker').textContent=d.day.toUpperCase()+' / OFFICER'+(d.names.length>1?'S':'')+' OF THE DAY';
-  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(name)}<small>${esc(d.roles[i])}</small></span>`).join('')||'Walang naka-assign';
+  const displayOfficerName=name=>String(name||'').normalize('NFKC').trim().replace(/\s+/g,' ')
+   .toLocaleLowerCase('en-PH').replace(/(^|[\s'-])([a-z])/g,(_,prefix,letter)=>prefix+letter.toUpperCase());
+  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(displayOfficerName(name))}<small>${esc(d.roles[i])}</small></span>`).join('')||'Walang naka-assign';
   const times=publishedDutyHours?.find(h=>h.weekday===index+1);
   const fmt=clock=>{const [h,m]=String(clock).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
   $('#officer-role').textContent='Office hours · '+fmt(times?.open_time||'09:00')+'–'+fmt(times?.close_time||'18:00')+' (PHT)';

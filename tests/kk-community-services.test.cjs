@@ -18,7 +18,7 @@ test('Verified KK dashboard includes three working SK service forms',()=>{
   assert.match(youth,new RegExp('name="'+name+'"'));
  assert.match(youth,/src="\.\/kk-services\.js(?:\?v=[a-zA-Z0-9-]+)?"/);
  assert.match(youth,/href="\.\/kk-services\.css(?:\?v=[a-zA-Z0-9-]+)?"/);
- assert.match(read('dist/kk-dashboard.js'),/new Set\(\['overview','projects','activities','rewards','printing','computer','retabox','settings','kk-id'\]\)/);
+ assert.match(read('dist/kk-dashboard.js'),/new Set\(\['overview','projects','rewards','printing','computer','retabox','settings','kk-id'\]\)/);
  assert.match(youthClient,/api\('\.\/api\/kk\/services'/);
  assert.doesNotThrow(()=>new vm.Script(youthClient));
 });
@@ -26,7 +26,7 @@ test('Verified KK dashboard includes three working SK service forms',()=>{
 test('Every SK staff officer can review but rate configuration remains chairman-only',()=>{
  assert.match(staff,/data-tab="kk-services"/);
  assert.match(staff,/id="panel-kk-services"/);
- assert.match(staff,/src="\.\/kk-service-staff.js"/);
+ assert.match(staff,/src="\.\/kk-service-staff\.js\?v=[a-zA-Z0-9-]+"/);
  assert.match(read('dist/account.js'),/window\.loadKKServiceStaff/);
  assert.match(backend,/if\(path==='\/api\/kk\/staff\/services'&&method==='GET'\)\{\s*await user\(\['sk','chairman'\]\)/);
  assert.match(backend,/if\(path==='\/api\/kk\/staff\/services'&&method==='POST'\)\{\s*await user\(\['sk','chairman'\]\)/);

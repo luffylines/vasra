@@ -28,3 +28,45 @@
 .duty-contact-detail a{color:#1c579f;font-weight:700;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;min-width:0}
 .duty-contact-empty{margin:0;border:1px dashed #cfddef;border-radius:13px;padding:17px;color:#6a809d;font-size:13px;line-height:1.6;background:#f7faff}
 @media(max-width:680px){.settings-card-contact .contact-input-grid{grid-template-columns:1fr}.duty-contact-section{padding:17px}.duty-contact-heading{align-items:flex-start;flex-direction:column}.duty-contact-heading h2{font-size:20px}.duty-contact-list{grid-template-columns:1fr}}
+
+.duty-contact-detail a:has(.duty-contact-link-icon){
+ display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap
+}
+.duty-contact-detail .duty-contact-link-icon{
+ width:15px;height:15px;flex:none;vertical-align:middle;margin:0;
+ color:currentColor;stroke-linecap:round;stroke-linejoin:round
+}
+html[data-theme="dark"] body.portal-refresh .duty-contact-card{
+ background:#192d48;border-color:#435f85
+}
+html[data-theme="dark"] body.portal-refresh .duty-contact-detail{
+ border-color:#405c80;color:#c7dcf6
+}
+
+
+/* Official SK contact cards: no horizontal link strokes or underlines in either theme.
+   Preserve semantic links and clear keyboard focus outlines. */
+.duty-contact-card .duty-contact-detail,
+.duty-contact-card .duty-contact-details{background-image:none!important;box-shadow:none!important}
+.duty-contact-card .duty-contact-detail a,
+.duty-contact-card .duty-contact-detail a:link,
+.duty-contact-card .duty-contact-detail a:visited,
+.duty-contact-card .duty-contact-detail a:hover,
+.duty-contact-card .duty-contact-detail a:active{
+ text-decoration:none!important;text-decoration-line:none!important;border-bottom:0!important;
+ box-shadow:none!important;background-image:none!important;overflow-wrap:anywhere;
+}
+.duty-contact-card .duty-contact-detail a:hover{color:#175eaf}
+.duty-contact-card .duty-contact-detail a:focus-visible{outline:2px solid #79b2f3;outline-offset:3px;border-radius:3px}
+html[data-theme="dark"] body.portal-refresh .duty-contact-section{background:#1b304c;border-color:#46668e;color:#eaf4ff}
+html[data-theme="dark"] body.portal-refresh .duty-contact-card{background:#243f5f;border-color:#486a90;box-shadow:none}
+html[data-theme="dark"] body.portal-refresh .duty-contact-card h3{color:#f1f7ff}
+html[data-theme="dark"] body.portal-refresh .duty-contact-card>small,
+html[data-theme="dark"] body.portal-refresh .duty-contact-detail{color:#c8ddf5}
+html[data-theme="dark"] body.portal-refresh .duty-contact-detail svg{color:#a8d0ff}
+html[data-theme="dark"] body.portal-refresh .duty-contact-detail a{color:#c6e1ff;text-decoration:none!important;
+ border:0!important;box-shadow:none!important;background-image:none!important}
+html[data-theme="dark"] body.portal-refresh .duty-contact-detail a:hover{color:#fff}
+html[data-theme="dark"] body.portal-refresh .duty-contact-heading h2{color:#eef7ff}
+html[data-theme="dark"] body.portal-refresh .duty-contact-heading p{color:#b8d0ec}
+html[data-theme="dark"] body.portal-refresh .duty-contact-empty{background:#243e5d;border-color:#58789d;color:#d3e5fa}

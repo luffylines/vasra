@@ -46,7 +46,7 @@ test('When office status is unavailable, only the actionable small Retry is visi
  assert.match(js,/closed\.disabled=true;auto\.disabled=true;retry\.hidden=false/);
 });
 test('Dedicated mobile stylesheet loads after other account dashboard styles',()=>{
- const admin=html.indexOf('href="./admin-dashboard.css"');
+ const admin=html.indexOf('href="./admin-dashboard.css?v=20261026-kk-export-no-gallery-v3"');
  const mobile=html.indexOf('href="./staff-duty-ui.css"');
  assert(admin>=0&&mobile>admin);
  assert.match(html,/href="\.\/style\.css"/);

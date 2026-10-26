@@ -2573,3 +2573,29 @@ body.account-workspace[data-theme="dark"] .staff-account-edit-form{background:#1
 @media(max-width:1080px){#panel-users .staff-officer-create{grid-template-columns:repeat(2,minmax(0,1fr))}#panel-users .staff-officer-create button{width:100%}}
 @media(max-width:650px){.staff-account-create-card,.staff-account-directory{padding:15px}.staff-account-overview{padding:13px;flex-wrap:wrap;gap:10px}.staff-account-actions{width:100%;justify-content:flex-start;padding-left:0}.staff-account-edit-fields{grid-template-columns:minmax(0,1fr)}.staff-account-search{width:100%;max-width:none}.staff-account-delete-dialog form{padding:18px}}
 @media(max-width:430px){#panel-users .staff-officer-create{grid-template-columns:minmax(0,1fr)}.staff-account-avatar{width:42px;height:42px}.staff-account-summary{width:100%;justify-content:center}.staff-delete-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.staff-delete-actions .danger{grid-column:1/-1}}
+
+/* Real Philippine peso entry, comma-grouped preview; numeric API values remain unformatted. */
+#monthly-form .trans-peso-field{min-width:0}
+#monthly-form .trans-peso-wrap{position:relative;display:block;width:100%;margin-top:5px}
+#monthly-form .trans-peso-symbol{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+ font:800 17px/1 'DM Sans',sans-serif;color:#1b598e;pointer-events:none}
+#monthly-form .trans-peso-wrap input{box-sizing:border-box;width:100%;min-height:44px;padding:10px 14px 10px 35px;
+ font-size:16px;font-variant-numeric:tabular-nums;text-align:left;letter-spacing:.01em}
+#monthly-form #trans-expense-preview{display:block;margin-top:6px;font-size:11px;line-height:1.5;color:#567ca5}
+#monthly-form .trans-peso-wrap input:invalid{border-color:#ce5469}
+body.account-workspace[data-theme="dark"] #monthly-form .trans-peso-symbol{color:#a1d5ff}
+body.account-workspace[data-theme="dark"] #monthly-form #trans-expense-preview{color:#c5d8f2}
+
+
+/* A closed native dialog must not leak its old plain-text gallery chevrons
+   onto every staff page. The viewer is only displayed while actually open. */
+body.account-workspace #staff-project-gallery:not([open]),
+body.account-workspace dialog:not([open]){
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+body.account-workspace #staff-project-gallery[open] .staff-gallery-arrow{
+ display:inline-flex;align-items:center;justify-content:center;
+}
+body.account-workspace #staff-project-gallery[open] .staff-gallery-arrow svg{
+ width:18px;height:18px;flex:none;stroke:currentColor;
+}

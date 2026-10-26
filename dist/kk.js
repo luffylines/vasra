@@ -2,7 +2,15 @@
 (async()=>{
  const view=document.body.dataset.view;
  const $=s=>document.querySelector(s);
- const feedback=(message,kind='info')=>{const el=$('#kk-feedback');if(!el)return;el.textContent=message;el.dataset.kind=kind;el.hidden=!message;};
+ const feedback=(message,kind='info')=>{
+  const el=$('#kk-feedback');
+  if(el){el.textContent='';el.hidden=true;}
+  if(!message){window.showVasraToast('','info');return;}
+  // Login, registration and profile share the same floating right-side notice.
+  const type=kind==='error'||kind==='success'?kind:
+   /^(Uploading|Verifying|Creating|Saving)/i.test(message)?'loading':'info';
+  window.showVasraToast(message,type);
+ };
  const busy=(form,on)=>{const btn=form.querySelector('[type="submit"]');if(btn){btn.disabled=on;btn.setAttribute('aria-busy',String(on));}};
  // +63 is fixed; users enter exactly 10 digits, beginning with 9.
  // Pasted +639XXXXXXXXX, 09XXXXXXXXX, and 9XXXXXXXXX normalize to the same digits.
@@ -66,6 +74,7 @@
      // Go directly to the verified dashboard; incomplete/rejected users resume profiling.
      let next='./kk-profile';
      try{const active=await getApi('me');if(active?.profile?.status==='verified')next='./kk-dashboard';}catch{}
+     window.queueVasraToast?.('Successfully signed in to your KK account.','success');
      location.replace(next);
     }
    }catch(err){feedback(err.message,'error');}finally{busy(form,false);}
@@ -134,7 +143,10 @@
    busy(form,true);feedback('Creating your protected KK account…');
    try{
     const result=await send('register',data);
-    if(result?.ok)location.replace('./kk-profile');
+    if(result?.ok){
+     window.queueVasraToast?.('KK account created successfully. Complete your profile.','success');
+     location.replace('./kk-profile');
+    }
     else throw Error('Hindi makumpleto ang KK registration. Subukang mag-login.');
    }catch(err){
     const duplicate=/existing|registered|record o kailangang i-review|already/i.test(String(err.message||''));
@@ -143,7 +155,10 @@
      const link=document.createElement('a');
      link.href='./kk-login';link.textContent='Pumunta sa KK Login at ipagpatuloy ang profiling →';
      link.className='kk-existing-login-link';
-     $('#kk-feedback')?.append(link);
+     // Show this actionable link below the form, not inside the hidden toast placeholder.
+     document.getElementById('kk-existing-login-action')?.remove();
+     link.id='kk-existing-login-action';
+     form.insertAdjacentElement('afterend',link);
     }else feedback(err.message,'error');
    }finally{busy(form,false);}
   });
@@ -322,15 +337,31 @@
  const yesNoField=(name,label)=>'<fieldset class="kk-yn-field"><legend>'+esc(label)+' <span class="kk-required">*</span></legend>'+
   '<label><input type="radio" name="'+name+'" value="yes" required'+(data[name]==='yes'?' checked':'')+'> Yes</label>'+
   '<label><input type="radio" name="'+name+'" value="no" required'+(data[name]==='no'?' checked':'')+'> No</label></fieldset>';
+ const displayProfileValue=(key,value)=>{
+  if(value===null||value===undefined||value==='')return '—';
+  const raw=String(value);
+  const list={civil_status:options.civil,gender:options.gender,education:options.edu,
+   education_status:options.educationStatus,employment:options.employment,religion:options.religion}[key];
+  if(Array.isArray(list)){
+   const item=list.find(entry=>String(Array.isArray(entry)?entry[0]:entry)===raw);
+   if(item)return Array.isArray(item)?item[1]:item;
+  }
+  if(['sk_voter','national_voter','voted_last_election','kk_assembly','solo_parent'].includes(key))
+   return {yes:'Yes',no:'No',unsure:'Not sure',undisclosed:'Prefer not to say'}[raw.toLowerCase()]||raw;
+  if(['email','phone','emergency_phone','birthdate','street','school_name','course_program'].includes(key))return raw;
+  if(['civil_status','gender','education','education_status','employment','year_level','emergency_relation'].includes(key))
+   return raw.replace(/(^|[\\s/-])([a-z])/g,(_,sep,ch)=>sep+ch.toUpperCase());
+  return raw;
+ };
  const previewSection=(heading,items)=>'<section class="kk-preview-card"><h4>'+esc(heading)+'</h4><dl>'+
   items.map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(v||'—')+'</dd></div>').join('')+'</dl></section>';
  const renderPreview=()=>{
   const node=$('#kk-profile-preview');if(!node)return;
   node.innerHTML='<h3>Profile Preview</h3><p>Details are updated as you complete each step.</p>'+
-   previewSection('Personal Information',[['Name',[account.member.first_name,account.member.last_name].join(' ')],['Date of Birth',account.member.birthdate],['Gender',data.gender],['Civil Status',data.civil_status]])+
+   previewSection('Personal Information',[['Name',[account.member.first_name,account.member.last_name].join(' ')],['Date of Birth',account.member.birthdate],['Gender',displayProfileValue('gender',data.gender)],['Civil Status',displayProfileValue('civil_status',data.civil_status)]])+
    previewSection('Address',[['Sitio/Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name],['House No./Street',data.street],['Barangay',data.residence_barangay]])+
-   previewSection('Education',[['Attainment',data.education],['School',data.school_name],['Year Level',data.year_level]])+
-   previewSection('Additional Information',[['Registered SK Voter',data.sk_voter],['National Voter',data.national_voter],['Voted Last Election',data.voted_last_election],['KK Assembly',data.kk_assembly]])+
+   previewSection('Education',[['Attainment',displayProfileValue('education',data.education)],['School',data.school_name],['Year Level',displayProfileValue('year_level',data.year_level)]])+
+   previewSection('Additional Information',[['Registered SK Voter',displayProfileValue('sk_voter',data.sk_voter)],['National Voter',displayProfileValue('national_voter',data.national_voter)],['Voted Last Election',displayProfileValue('voted_last_election',data.voted_last_election)],['KK Assembly',displayProfileValue('kk_assembly',data.kk_assembly)]])+
    previewSection('Emergency Contact',[['Name',data.emergency_name],['Contact Number',data.emergency_phone]])+
    previewSection('Valid ID',[['Document',validID?.exists?'Uploaded · '+(validID.name||'Valid ID'):'Required']]);
  };
@@ -382,8 +413,8 @@
    field('emergency_relation','Relationship',{required:true})+'</div>'+
    '<p class="kk-helper">Ito ay gagamitin lamang sa naaangkop na emergency at hindi ilalathala.</p>';
   const items=[['Full Name',[account.member.first_name,account.member.middle_name,account.member.last_name].filter(Boolean).join(' ')],['Birthdate',account.member.birthdate],
-   ['Email',account.member.email],['Resident Address',[data.residence_region||'NCR',data.residence_province||'Metro Manila',data.residence_city||'Quezon City',data.residence_barangay||''].filter(Boolean).join(' · ')],['Sitio / Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name||'—'],['Street',data.street||'—'],['Educational Status',data.education_status||'—'],['Education',data.education||'—'],['Course / Program',data.course_program||'—'],['Year / Grade Level',data.year_level||'—'],
-   ['SK Voter',data.sk_voter||'—'],['National Voter',data.national_voter||'—'],['Voted Last Election',data.voted_last_election||'—'],['Attended KK Assembly',data.kk_assembly||'—'],['Valid ID',validID?.exists?'Uploaded':'Not uploaded'],['Emergency Contact',data.emergency_name||'—']];
+   ['Email',account.member.email],['Resident Address',[data.residence_region||'NCR',data.residence_province||'Metro Manila',data.residence_city||'Quezon City',data.residence_barangay||''].filter(Boolean).join(' · ')],['Sitio / Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name||'—'],['Street',data.street||'—'],['Educational Status',displayProfileValue('education_status',data.education_status)],['Education',displayProfileValue('education',data.education)],['Course / Program',data.course_program||'—'],['Year / Grade Level',displayProfileValue('year_level',data.year_level)],
+   ['SK Voter',displayProfileValue('sk_voter',data.sk_voter)],['National Voter',displayProfileValue('national_voter',data.national_voter)],['Voted Last Election',displayProfileValue('voted_last_election',data.voted_last_election)],['Attended KK Assembly',displayProfileValue('kk_assembly',data.kk_assembly)],['Valid ID',validID?.exists?'Uploaded':'Not uploaded'],['Emergency Contact',data.emergency_name||'—']];
   const age=(()=>{const now=new Date(),bd=new Date(account.member.birthdate+'T00:00:00Z');return now.getUTCFullYear()-bd.getUTCFullYear()-Number((now.getUTCMonth()*100+now.getUTCDate())<(bd.getUTCMonth()*100+bd.getUTCDate()));})();
   return '<div class="kk-review">'+items.map(([k,v])=>'<div><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join('')+'</div>'+
   '<label class="kk-checkbox"><input name="consent" type="checkbox"'+(data.consent?' checked':'')+' required><span>I certify that the details are accurate and consent to confidential SK KK profiling verification.</span></label>'+
@@ -394,9 +425,13 @@
   $('#kk-steps').innerHTML=titles.map((title,i)=>'<div class="kk-step '+(current===i+1?'active':current>i+1?'done':'')+'"><span>'+(i+1)+'</span><strong>'+esc(title)+'</strong><small>'+esc(subtitles[i])+'</small></div>').join('');
   $('#kk-step-fields').innerHTML=stepBody();
   $('#kk-back').disabled=current<=1;$('#kk-back').hidden=current<=1;
-  $('#kk-next').textContent=current===5?'Submit for SK Review →':'Save & Next →';
+  const nextText=current===5?'Submit for SK Review':'Save & Next';
+  const rightIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>';
+  const leftIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6"/></svg>';
+  $('#kk-back').innerHTML=leftIcon+'<span>Back</span>';
+  $('#kk-next').innerHTML='<span>'+nextText+'</span>'+rightIcon;
   renderPreview();
-  if(current===0){$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';$('#kk-next').textContent='Save & Continue →';}
+  if(current===0){$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';$('#kk-next').innerHTML='<span>Save & Continue</span>'+rightIcon;}
  };
  async function load(){
   let result;
@@ -432,6 +467,9 @@
  }
  $('#kk-logout').onclick=async()=>{try{await send('logout',{});}finally{location.replace('./kk-login');}};
  $('#kk-back').onclick=()=>{if(current>1){savedFields($('#kk-step-form'));current--;feedback('');renderStep();}};
+ $('#kk-step-form').addEventListener('dblclick',event=>{
+  if(event.target.closest('button[data-adjust]'))event.preventDefault();
+ });
  $('#kk-step-form').addEventListener('click',event=>{
   const adjustment=event.target.closest('button[data-adjust]');
   if(adjustment){
@@ -440,6 +478,7 @@
     const minimum=Number(numberInput.min||0),maximum=Number(numberInput.max||99);
     const next=Math.min(maximum,Math.max(minimum,Number(numberInput.value||minimum)+Number(adjustment.dataset.adjust)));
     numberInput.value=String(next);numberInput.dispatchEvent(new Event('input',{bubbles:true}));
+    data[numberInput.name]=String(next);renderPreview();
    }
    return;
   }
@@ -453,9 +492,8 @@
  $('#kk-step-form').addEventListener('change',async event=>{
   if(event.target.id!=='kk-valid-id-file')return;
   const file=event.target.files?.[0];if(!file)return;
-  const feedbackEl=$('#kk-feedback');
   if(file.size>2_500_000 || file.size<100 || !['image/jpeg','image/png','application/pdf'].includes(file.type)){
-    feedback('JPG, PNG o PDF lamang, minimum 100 bytes at maximum 2.5 MB.');event.target.value='';return;
+    feedback('JPG, PNG o PDF lamang, minimum 100 bytes at maximum 2.5 MB.','error');event.target.value='';return;
   }
   idBusy=true;feedback('Uploading Valid ID securely…');
   try{
@@ -465,9 +503,8 @@
     const reply=await send('id/upload',payload);
     validID=reply.document;
     feedback('Valid ID uploaded securely. SK Officers can view it during verification.','success');
-    if(feedbackEl)feedbackEl.hidden=false;
     renderStep();
-  }catch(err){feedback('Valid ID upload failed: '+err.message);}
+  }catch(err){feedback('Valid ID upload failed: '+err.message,'error');}
   finally{idBusy=false;}
 });
  $('#kk-step-form').addEventListener('input',event=>{
@@ -491,10 +528,13 @@
    else renderStep();
    return;
   }
-  if(current!==2||!['education','education_status'].includes(event.target.name))return;
-  savedFields($('#kk-step-form'));
-  if(event.target.name==='education')data.year_level='';
-  renderStep(); // Update Year Level, Course and School requirements for the selected status.
+  if(current===2&&['education','education_status'].includes(event.target.name)){
+   savedFields($('#kk-step-form'));
+   if(event.target.name==='education')data.year_level='';
+   renderStep(); // Update Year Level, Course and School requirements.
+   return;
+  }
+  if(event.target.matches('select,input[type="radio"]'))savedFields($('#kk-step-form'));
  });
  $('#kk-step-form').addEventListener('submit',async e=>{
   e.preventDefault();const form=e.currentTarget;

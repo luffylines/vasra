@@ -4,11 +4,17 @@
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const kindLabels={printing:'Free Printing',computer:'Computer Use',retabox:'RetaBox Donations'};
  const statusLabels={pending:'Pending',approved:'Approved',completed:'Completed',rejected:'Rejected'};
- let records=[],pointsRate=0,loading=false;
+ let records=[],historyRecords=[],historyTotal=0,pointsRate=0,loading=false,reviewingId=null,historyPage=1,historyTicket=0,historyTimer=null;
+ const historyPageSize=25;
+ const isOpen=r=>r.status==='pending'||r.status==='approved';
+ const isArchived=r=>r.status==='completed'||r.status==='rejected';
+ const processedAt=r=>r.status==='completed'?(r.completed_at||r.reviewed_at||r.requested_at):
+  (r.reviewed_at||r.requested_at);
  const apiCall=(url,body)=>api(url,body===undefined?{}:{method:'POST',body:JSON.stringify(body)});
- const info=(msg,isError=false)=>{
+ const info=(msg,isError=false,isSuccess=false)=>{
   const el=$('#kk-service-staff-message');
-  el.textContent=msg;el.dataset.kind=isError?'error':'info';
+  if(msg&&(isError||isSuccess)){el.textContent='';window.showVasraToast?.(msg,isError?'error':'success');return;}
+  el.textContent=msg;el.dataset.kind='info';
  };
  const phDate=value=>{
   const d=new Date(value);
@@ -62,33 +68,49 @@
     '<p class="kk-service-rate-note">Official rate: '+esc(pointsRate)+' pts/kg. Awarded once on approval after checking the actual donation.</p></div>';
  };
  const card=r=>{
+  const pending=r.status==='pending',selected=pending&&reviewingId===r.id;
+  const desc=describe({...r,effective_details:r.details||{}});
+  return '<article class="kk-service-admin-card'+(selected?' is-selected':'')+'" data-request-id="'+esc(r.id)+'">'+
+   '<header class="kk-service-admin-card-header">'+
+    '<span class="kk-service-request-label">'+esc(kindLabels[r.service_type]||r.service_type)+'</span>'+badge(r)+'</header>'+
+   '<div class="kk-service-card-identity">'+
+    '<h4>'+esc(r.name||'KK Member')+'</h4>'+
+    '<span class="kk-service-member-id">'+esc(r.kk_id||'KK ID pending')+'</span>'+
+    '<small class="kk-service-request-code">Request #'+esc(r.id.slice(0,8).toUpperCase())+'</small>'+
+    '<small class="kk-service-submitted">Submitted '+esc(pht(r.requested_at))+'</small>'+
+   '</div>'+
+   '<div class="kk-service-request-summary"><strong>Member request</strong><p>'+desc+'</p></div>'+
+   '<div class="kk-service-card-actions">'+
+    (pending?'<button type="button" class="kk-service-review-trigger" data-action="open-review" data-id="'+esc(r.id)+'" aria-expanded="'+String(selected)+'" aria-controls="kk-service-active-review">'+
+       (selected?'Close review':'Review request')+'</button>':
+     '<span class="kk-service-reviewed-meta">'+esc(r.reviewed_by||'Reviewed by SK')+'</span>'+
+      (r.status==='approved'?'<button type="button" class="kk-service-complete-button" data-action="complete" data-id="'+esc(r.id)+'">Mark Completed</button>':''))+
+   '</div></article>';
+ };
+ const reviewPanel=r=>{
   const d=r.details||{},effective=r.effective_details||d;
   const wasEdited=JSON.stringify(d)!==JSON.stringify(effective);
-  return '<article class="kk-service-admin-card" data-request-id="'+esc(r.id)+'">'+
-   '<header class="kk-service-admin-card-header"><div>'+
-    '<span class="kk-service-request-label">'+esc(kindLabels[r.service_type]||r.service_type)+'</span>'+
-    '<h4>'+esc(r.name||'KK Member')+'</h4>'+
-    '<small>'+esc(r.kk_id||'KK ID pending')+' · '+esc(r.id.slice(0,8).toUpperCase())+'</small>'+
-    '<small>Submitted: '+esc(pht(r.requested_at))+'</small></div>'+badge(r)+'</header>'+
+  return '<section id="kk-service-active-review" class="kk-service-review-detail" aria-label="Review '+esc(kindLabels[r.service_type]||r.service_type)+' request">'+
+   '<div class="kk-service-review-detail-heading"><div><span class="kk-service-request-label">'+esc(kindLabels[r.service_type]||r.service_type)+'</span>'+
+    '<h4>Review '+esc(r.name||'KK Member')+'’s request</h4>'+
+    '<p>'+esc(r.kk_id||'KK ID pending')+' · '+esc(pht(r.requested_at))+'</p></div>'+
+    '<button type="button" class="kk-service-review-dismiss" data-action="close-review" data-id="'+esc(r.id)+'" aria-label="Close review form">Close ×</button></div>'+
    '<div class="kk-service-request-summary"><strong>Member request</strong><p>'+describe({...r,effective_details:d})+'</p>'+
    (wasEdited?'<strong>Officer-approved details</strong><p>'+describe(r)+'</p>':'')+'</div>'+
-   (r.status==='pending'?'<form class="kk-service-review-form" data-service-form="'+esc(r.id)+'">'+
-    '<p class="kk-service-review-caption">Confirm or correct the member details before approving.</p>'+editable(r)+
-    '<label>Officer Note <input name="note" type="text" maxlength="500" placeholder="Optional approval note; required on rejection"></label>'+
-    '<div class="kk-service-review-actions"><button type="button" class="primary" data-action="approve" data-id="'+esc(r.id)+'">Approve Request</button>'+
-    '<button type="button" class="secondary" data-action="reject" data-id="'+esc(r.id)+'">Reject</button></div></form>':
-    '<div class="kk-service-request-footer"><small>Reviewed by: '+esc(r.reviewed_by||'—')+
-     ' · '+esc(pht(r.reviewed_at))+'</small>'+
-     (r.review_note?'<p>Note: '+esc(r.review_note)+'</p>':'')+
-     (r.completed_at?'<small>Completed by '+esc(r.completed_by||'SK Officer')+' · '+esc(pht(r.completed_at))+'</small>':'')+
-     (r.status==='approved'?'<button type="button" class="kk-service-complete-button" data-action="complete" data-id="'+esc(r.id)+'">Mark Completed</button>':'')+
-    '</div>')+'</article>';
+   '<form class="kk-service-review-form" data-service-form="'+esc(r.id)+'">'+
+    '<p class="kk-service-review-caption">Verify the information below before approving or rejecting this request.</p>'+
+    editable(r)+
+    '<label class="kk-service-officer-note">Officer Note <input name="note" type="text" maxlength="500" placeholder="Optional for approval · Required on rejection"></label>'+
+    '<div class="kk-service-review-actions">'+
+     '<button type="button" class="primary" data-action="approve" data-id="'+esc(r.id)+'">Approve Request</button>'+
+     '<button type="button" class="secondary" data-action="reject" data-id="'+esc(r.id)+'">Reject Request</button>'+
+    '</div></form></section>';
  };
  const updateStats=()=>{
   const now=today(),created=records.filter(r=>phDate(r.requested_at)===now);
   const counts={
    total:created.length,
-   pending:created.filter(r=>r.status==='pending').length,
+   pending:records.filter(r=>r.status==='pending').length,
    approved:records.filter(r=>phDate(r.reviewed_at)===now&&['approved','completed'].includes(r.status)).length,
    completed:records.filter(r=>phDate(r.completed_at)===now).length,
    rejected:records.filter(r=>phDate(r.reviewed_at)===now&&r.status==='rejected').length
@@ -97,24 +119,49 @@
    $('#kk-service-stat-'+key).textContent=String(value);
  };
  const renderHistory=()=>{
-  const q=$('#kk-service-history-search').value.trim().toLowerCase();
-  const now=today();
-  const data=records.filter(r=>[r.requested_at,r.reviewed_at,r.completed_at]
-    .some(d=>d&&phDate(d)===now)&&
-   (!q||[r.name,r.kk_id,r.id,r.service_type].some(x=>String(x||'').toLowerCase().includes(q))));
-  $('#kk-service-history-body').innerHTML=data.length?data.map(r=>
-   '<tr><td>'+esc(new Date(
-    (r.completed_at&&phDate(r.completed_at)===now?r.completed_at:null)||
-    (r.reviewed_at&&phDate(r.reviewed_at)===now?r.reviewed_at:null)||r.requested_at
-   ).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'}))+
-   '</td><td><strong>'+esc(r.name)+'</strong><small>'+esc(r.kk_id||r.id.slice(0,8))+
-   '</small></td><td>'+esc(kindLabels[r.service_type])+'</td><td>'+describe(r)+'</td><td>'+badge(r)+
+  const pages=Math.max(1,Math.ceil(historyTotal/historyPageSize));
+  $('#kk-service-history-count').textContent=historyTotal+' archived service(s) · Philippine Time';
+  $('#kk-service-history-page-label').textContent=historyTotal?
+    ((historyPage-1)*historyPageSize+1)+'–'+Math.min(historyPage*historyPageSize,historyTotal)+' of '+historyTotal:
+    'No matching history';
+  $('#kk-service-history-prev').disabled=historyPage<=1;
+  $('#kk-service-history-next').disabled=historyPage>=pages;
+  $('#kk-service-history-body').innerHTML=historyRecords.length?historyRecords.map(r=>
+   '<tr><td>'+esc(pht(r.requested_at))+'</td>'+
+   '<td><strong>'+esc(pht(processedAt(r)))+'</strong><small>'+
+   esc(r.status==='completed'?'Completed':'Rejected')+' (PHT)</small></td>'+
+   '<td><strong>'+esc(r.name)+'</strong><small>'+esc(r.kk_id||r.id.slice(0,8))+
+   '</small></td><td>'+esc(kindLabels[r.service_type]||r.service_type)+'</td>'+
+   '<td>'+describe(r)+'</td><td>'+badge(r)+
    '</td><td>'+esc(r.reviewed_by||'—')+'</td><td>'+esc(r.completed_by||'—')+'</td></tr>').join(''):
-   '<tr><td colspan="7" class="kk-service-no-history">Wala pang service requests ngayong araw.</td></tr>';
+   '<tr><td colspan="8" class="kk-service-no-history">Walang completed o rejected service para sa napiling search o petsa.</td></tr>';
+ };
+ const loadHistory=async()=>{
+  const ticket=++historyTicket;
+  const date=$('#kk-service-history-date').value||'';
+  const search=$('#kk-service-history-search').value.trim();
+  $('#kk-service-history-body').innerHTML='<tr><td colspan="8" class="kk-service-no-history">Loading service history…</td></tr>';
+  try{
+   const params=new URLSearchParams({page:String(historyPage),date,search});
+   const data=await apiCall('./api/kk/staff/services/history?'+params.toString());
+   if(ticket!==historyTicket)return;
+   if(data?.ok!==true||!Array.isArray(data.requests))throw Error('Unable to load archived service history.');
+   historyRecords=data.requests;historyTotal=Number(data.total)||0;
+   renderHistory();
+  }catch(e){
+   if(ticket!==historyTicket)return;
+   historyRecords=[];historyTotal=0;
+   $('#kk-service-history-body').innerHTML='<tr><td colspan="8" class="kk-service-no-history">Unable to load service history. Try again.</td></tr>';
+   $('#kk-service-history-count').textContent='History unavailable';
+   info('Hindi ma-load ang Service History: '+e.message,true);
+  }
  };
  const render=()=>{
-  const f=state(),visible=records.filter(r=>filter(r,f));
-  $('#kk-service-admin-queue').innerHTML=visible.length?visible.map(card).join(''):
+  const f=state(),visible=records.filter(r=>isOpen(r)&&filter(r,f));
+  const active=visible.find(r=>r.id===reviewingId&&r.status==='pending');
+  if(!active)reviewingId=null;
+  $('#kk-service-admin-queue').innerHTML=visible.length?
+   visible.map(card).join('')+(active?reviewPanel(active):''):
    '<div class="kk-service-empty">Walang requests para sa napiling filters.</div>';
   $('#kk-service-result-count').textContent=visible.length+' request(s)';
   $('#kk-service-custom-date-wrap').hidden=f.period!=='custom';
@@ -131,7 +178,7 @@
    if(data?.error)throw Error('Service not ready. Check database migration.');
    records=Array.isArray(data.requests)?data.requests:[];
    pointsRate=Number(data.retabox_points_per_kg||0);
-   render();info(records.length+' total service request(s) · '+today()+' PHT');
+   render();await loadHistory();info(records.length+' recent service request(s) · '+today()+' PHT');
   }catch(e){info('Hindi ma-load ang SK Services: '+e.message,true);}
   finally{loading=false;}
  };
@@ -139,18 +186,34 @@
  for(const id of ['kk-service-type-filter','kk-service-status-filter','kk-service-date-filter','kk-service-custom-date'])
   $('#'+id)?.addEventListener('change',render);
  $('#kk-service-search')?.addEventListener('input',render);
- $('#kk-service-history-search')?.addEventListener('input',renderHistory);
- $('#kk-service-staff-refresh')?.addEventListener('click',refresh);
+ $('#kk-service-history-search')?.addEventListener('input',()=>{
+  historyPage=1;
+  if(historyTimer)clearTimeout(historyTimer);
+  historyTimer=setTimeout(loadHistory,300);
+ });
+ $('#kk-service-history-date')?.addEventListener('change',()=>{historyPage=1;loadHistory();});
+ $('#kk-service-history-clear')?.addEventListener('click',()=>{
+  $('#kk-service-history-date').value='';$('#kk-service-history-search').value='';
+  historyPage=1;loadHistory();
+ });
+ $('#kk-service-history-prev')?.addEventListener('click',()=>{if(historyPage>1){historyPage--;loadHistory();}});
+ $('#kk-service-history-next')?.addEventListener('click',()=>{historyPage++;loadHistory();});
  $('#kk-service-export')?.addEventListener('click',()=>{
-  const f=state(),date=f.period==='today'?today():f.period==='custom'?(f.custom||'all'):'all';
-  const q=new URLSearchParams({search:f.search,service:f.type,status:f.status,date,
-   period:f.period==='week'?'week':'all'});
-  // Export downloads an actual XLSX from the authenticated backend, not a public link.
-  window.location.assign('./api/kk/staff/services/export?'+q.toString());
+  // Export *all* completed/rejected service history, including past dates and search-filtered-out rows.
+  window.location.assign('./api/kk/staff/services/export?scope=history');
  });
  $('#kk-service-admin-queue')?.addEventListener('click',async e=>{
   const button=e.target.closest('button[data-action]');
   if(!button||button.disabled)return;
+  if(button.dataset.action==='close-review'){
+   reviewingId=null;render();return;
+  }
+  if(button.dataset.action==='open-review'){
+   reviewingId=reviewingId===button.dataset.id?null:button.dataset.id;
+   render();
+   if(reviewingId)$('#kk-service-active-review')?.scrollIntoView?.({behavior:'smooth',block:'nearest'});
+   return;
+  }
   const item=records.find(r=>r.id===button.dataset.id);
   if(!item)return;
   const decision=button.dataset.action;
@@ -190,8 +253,9 @@
   try{
    const result=await apiCall(url,payload);
    if(result?.ok!==true)throw Error('Cannot update request. Refresh and retry.');
+   reviewingId=null;
    await refresh();
-   info('Request '+(decision==='complete'?'completed':decision==='approve'?'approved':'rejected')+' successfully.');
+   info('Request '+(decision==='complete'?'completed':decision==='approve'?'approved':'rejected')+' successfully.',false,true);
   }catch(error){info(error.message,true);button.disabled=false;}
  });
  $('#kk-retabox-rate-form')?.addEventListener('submit',async event=>{
@@ -204,7 +268,7 @@
   try{
    const outcome=await apiCall('./api/kk/staff/services/config',{points_per_kg:rate});
    if(!outcome?.ok)throw Error('Could not update rate.');
-   await refresh();info('RetaBox rate updated.');
+   await refresh();info('RetaBox rate updated.',false,true);
   }catch(e){info(e.message,true);}finally{button.disabled=false;}
  });
 })();

@@ -5,7 +5,7 @@ const dash=read('dist/kk-dashboard.html'),app=read('dist/kk-dashboard.js'),membe
  css=read('dist/kk-id-card.css'),theme=read('dist/theme.css'),themeJs=read('dist/theme.js');
 test('full KK member dashboard and unchanged other sections survive the ID layout change',()=>{
  assert.match(dash,/^<!doctype html>/i);assert.match(dash,/<\/html>\s*$/i);
- for(const key of ['overview','projects','activities','rewards','printing','computer','retabox','settings','kk-id'])
+ for(const key of ['overview','projects','rewards','printing','computer','retabox','settings','kk-id'])
   assert.match(dash,new RegExp('data-section="'+key+'"'));
  assert.match(dash,/kk-sidebar-nav/);assert.match(dash,/kk-dashboard-logout/);
  assert.equal((dash.match(/data-section="kk-id"/g)||[]).length,1);
@@ -45,7 +45,7 @@ test('unified theme fixes logged in KK pages and authentication/profile without 
  assert.match(themeJs,/theme\.css\?v=20261025-kk-upload-first-dark-v3/);
  for(const page of ['kk-dashboard','kk-login','kk-register','kk-profile'])
   assert.match(read('dist/'+page+'.html'),/theme\.js\?v=20261025-kk-upload-first-dark-v3/,page);
- assert.match(dash,/kk-id-card\.css\?v=20261025-kk-upload-first-dark-v3/);
+ assert.match(dash,/kk-id-card\.css\?v=20261026-kk-id-spacing-v7/);
 });
 test('member and theme scripts compile and PDF printing renderer remains available',()=>{
  for(const src of ['dist/kk-dashboard.js','dist/kk-id-member.js','dist/theme.js','dist/kk-id-render.js'])

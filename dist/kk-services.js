@@ -4,8 +4,8 @@
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;',"'":'&#39;'}[c]));
  const notice=(type,message,error=false)=>{
   const node=$('#kk-'+type+'-message');
-  if(!node)return;
-  node.hidden=false;node.textContent=message;node.dataset.kind=error?'error':'success';
+  if(node){node.textContent='';node.hidden=true;}
+  if(message)window.showVasraToast(message,error?'error':'success');
  };
  let loading=false;
  const formatDetails=record=>{
@@ -15,6 +15,18 @@
   if(record.service_type==='computer')return String(d.hours||0)+' hour(s) requested';
   return String(d.grams||0)+' grams estimated'+(record.verified_grams?' · '+record.verified_grams+' grams verified':'')+
    (record.points_awarded>0?' · '+record.points_awarded+' points':'');
+ };
+ const summary=(records=null)=>{
+  for(const type of ['printing','computer']){
+   const count=$('#kk-dash-'+type+'-count');
+   if(!count)continue;
+   // Do not misrepresent a failed service load as "zero requests".
+   if(!Array.isArray(records)){count.textContent='—';count.title='Service requests unavailable';continue;}
+   const own=records.filter(r=>r.service_type===type);
+   const pending=own.filter(r=>r.status==='pending').length;
+   count.textContent=String(own.length);
+   count.title=own.length+' submitted '+type+' requests, '+pending+' pending SK review';
+  }
  };
  const render=(records=[])=>{
   for(const type of ['printing','computer','retabox']){
@@ -36,8 +48,12 @@
   loading=true;
   try{
    const data=await api('./api/kk/services');
-   render(Array.isArray(data.requests)?data.requests:[]);
+   if(!Array.isArray(data?.requests))throw Error('Invalid SK services response.');
+   render(data.requests);
+   summary(data.requests);
   }catch(e){
+   summary(null);
+   window.showVasraToast('Hindi ma-load ang KK service requests: '+e.message,'error');
    for(const type of ['printing','computer','retabox']){
     const container=$('#kk-'+type+'-history');
     if(container)container.textContent='Hindi ma-load ang service requests: '+e.message;

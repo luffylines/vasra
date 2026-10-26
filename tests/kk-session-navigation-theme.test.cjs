@@ -24,13 +24,14 @@ test('KK login resumes session and verified account redirects to real member das
  assert.match(dashboard,/location\.replace\('\.\/kk-profile'\)/);
 });
 test('Member workspace keeps distinctive sidebar, icons, profile and project functionality',()=>{
- for(const part of ['overview','projects','activities','rewards','settings'])assert.ok(html.includes('data-tab="'+part+'"'));
+ for(const part of ['overview','projects','rewards','printing','computer','settings'])assert.ok(html.includes('data-tab="'+part+'"'));
  for(const id of ['kk-sidebar','kk-menu-toggle','kk-dashboard-settings','kk-dashboard-logout',
-  'kk-sidebar-logout','kk-dash-id','kk-upcoming-projects','kk-joined-list','kk-reward-list',
+  'kk-sidebar-logout','kk-dash-id','kk-upcoming-projects','kk-dash-printing-count','kk-dash-computer-count','kk-reward-list',
   'kk-dash-password','kk-dash-email'])assert.ok(html.includes('id="'+id+'"'),id);
- assert.match(dashboard,/renderProjects\(\);renderRewards\(\)/);
+ assert.match(dashboard,/applyProjectResponse\(dashboard\)/);
+ assert.match(dashboard,/renderProjects\(\)/);assert.match(dashboard,/renderRewards\(\)/);
  assert.match(dashboard,/data-join/);
- assert.match(dashboard,/request\('redeem'/);
+ assert.match(dashboard,/request\('rewards'/);
  assert.match(dashboard,/request\('settings\/password'/);
  assert.match(dashboard,/request\('settings\/email\/request'/);
  assert.match(dashboard,/aria-expanded/);

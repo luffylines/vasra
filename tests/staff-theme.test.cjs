@@ -16,11 +16,11 @@ test('all SK staff roles share one dark theme, defaulting to light',()=>{
 });
 
 test('all management panels and shared input forms have dark surfaces',()=>{
- for(const id of ['monthly-form','budget-form','roster-form','create-officer']){
+ for(const id of ['monthly-form','roster-form','create-officer']){
   assert.match(markup,new RegExp('id="'+id+'"'));
   assert(css.includes('#'+id),id+' missing dark surface rule');
  }
- for(const panel of ['panel-projects','panel-monthly','panel-budget','panel-roster','panel-users','panel-audit','panel-settings']){
+ for(const panel of ['panel-projects','panel-monthly','panel-roster','panel-users','panel-audit','panel-settings']){
   assert(markup.includes('id="'+panel+'"'),panel+' missing from markup');
   assert(css.includes('#'+panel),panel+' missing dark styling');
  }

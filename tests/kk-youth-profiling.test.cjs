@@ -21,7 +21,9 @@ test('KK registration mirrors form fields and redirects to step-by-step profile'
  'confirm_email','password','confirm_password','referral_code','confirm_email_correct','agree'])
   assert.match(s,new RegExp('name="'+key+'"'));
  assert.match(client,/await send\('register',data\)/);
- assert.match(client,/if\(result\?\.ok\)location\.replace\('\.\/kk-profile'\)/);
+ assert.match(client,/if\(result\?\.ok\)\{/);
+ assert.match(client,/window\.queueVasraToast\?\.\('KK account created successfully/);
+ assert.match(client,/location\.replace\('\.\/kk-profile'\)/);
  assert.match(client,/await getApi\('google\/status'\)/);
  assert.match(s,/KK Profiling Data Privacy Notice/);
 });

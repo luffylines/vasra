@@ -590,3 +590,229 @@ html[data-theme="dark"] body.kk-body :is(.kk-workspace,.kk-main){
  html[data-theme="dark"] body.kk-body .kk-dashboard-panel{box-shadow:none}
  html[data-theme="dark"] body.kk-body .kk-dashboard-head{color:#edf6ff}
 }
+
+
+/* October 25 — KK complete dark-surface hierarchy.
+   Dark shell != card surface: only bounded cards carry solid panels.
+   Shared by KK login, register, profile and all dashboard tabs. */
+html[data-theme="dark"] body.kk-body{
+ --kk-shell:#0c172a;--kk-panel:#182d49;--kk-inner:#243f60;
+ --kk-input:#11263f;--kk-outline:#47688f;--kk-title:#f1f7ff;
+ --kk-copy:#c8daef;--kk-link:#9fd0ff;
+ background:var(--kk-shell);color:var(--kk-title);color-scheme:dark
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-main,.kk-dashboard,.kk-workspace,.kk-workspace-content,
+ .kk-profile-workspace,.kk-dashboard-head,.kk-page-heading,
+ .kk-field-grid,.kk-form-fields,.kk-step-fields,
+ .kk-workspace-grid,.kk-overview-cards,.kk-dashboard-grid,
+ .kk-settings-grid,.kk-service-history,.kk-profile-sheet-head){
+ background:transparent;background-image:none
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-perks,
+ .kk-profile-preview,.kk-dashboard-panel,.kk-id-reference-card,
+ .kk-id-upload-card,.kk-settings-card,.kk-workspace-panel){
+ background:var(--kk-panel);background-image:none;
+ border-color:var(--kk-outline);color:var(--kk-title);
+ box-shadow:0 10px 30px #040d1e35
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-summary article,.kk-overview-card,.kk-activity-card,
+ .kk-dashboard-list,.kk-dash-empty,.kk-service-form,
+ .kk-service-history-row,.kk-privacy,.kk-preview-card,
+ .kk-review>div,.kk-yn-field,.kk-step,.kk-perk,
+ .kk-readiness,.kk-upload-zone,.kk-id-drop,.kk-id-selected-photo,
+ .kk-settings-id-link,.kk-school-list,.kk-address-list,
+ .kk-form-section-head,.kk-address-note){
+ background:var(--kk-inner);background-image:none;
+ border:1px solid #5578a3;color:var(--kk-title);
+ box-shadow:none
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard :is(
+ .kk-dashboard-panel,.kk-id-reference-card,.kk-id-upload-card){
+ background:var(--kk-panel);background-image:none;border-color:var(--kk-outline)
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard :is(
+ .kk-activity-card,.kk-settings-card,.kk-overview-card,
+ .kk-service-form,.kk-service-history-row,.kk-dash-empty,
+ .kk-dashboard-list,.kk-settings-id-link){
+ background:var(--kk-inner);background-image:none;border-color:#5578a3
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-summary article{
+ background:linear-gradient(135deg,#233f61,#1a304c);border-color:#53739b
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-card{
+ background:linear-gradient(135deg,#2a496d,#1f3959);border-color:#557ca9
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-icon,
+html[data-theme="dark"] body.kk-body :is(.kk-step span,.kk-form-section-icon){
+ background:#33577c;color:#e5f3ff
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-field-section,.kk-profile-sheet-head,.kk-step-one>.kk-section-heading){
+ border-color:var(--kk-outline)
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-field-section h2,.kk-profile-preview h3,.kk-preview-card h4,
+ .kk-yn-field legend,.kk-step-one>.kk-section-heading,
+ .kk-register-brand strong,.kk-section-heading h3,
+ .kk-dashboard-panel h2,.kk-dashboard-panel h3,
+ .kk-service-history-row strong,.kk-overview-card strong,
+ .kk-summary article strong,.kk-page-heading h1,
+ .kk-profile-sheet h2,.kk-auth-card h2,.kk-perk h3){
+ color:var(--kk-title)
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-preview-card dt,.kk-preview-card dd,.kk-profile-preview>p,
+ .kk-review span,.kk-review strong,.kk-dash-empty,.kk-field-section p,
+ .kk-dashboard-list span,.kk-overview-card small,.kk-activity-card small,
+ .kk-service-form label,.kk-yn-field label,.kk-form label,
+ .kk-checkbox,.kk-privacy p,.kk-privacy summary,.kk-readiness p,
+ .kk-step small,.kk-step strong,.kk-service-history-row small,
+ .kk-service-history-row strong,.kk-id-preview-note,
+ .kk-id-reference-title p,.kk-id-approved-details p){
+ color:var(--kk-copy)
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-form input:not([type=checkbox]):not([type=radio]),
+ .kk-form select,.kk-form textarea,.kk-service-form input,
+ .kk-service-form select,.kk-service-form textarea,
+ .kk-staff-filters input,.kk-ph-number input,
+ .kk-registration input:not([type=checkbox]):not([type=radio])){
+ background:var(--kk-input);border-color:#6484aa;
+ color:var(--kk-title);-webkit-text-fill-color:currentColor
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-form input,.kk-form select,.kk-form textarea,
+ .kk-service-form input,.kk-service-form select,.kk-service-form textarea):focus{
+ background:#1b3656;border-color:#87b9f3;
+ box-shadow:0 0 0 3px #71a6ed33
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-dashboard-panel)
+ :is(a:not(.kk-btn),.kk-text-link){color:var(--kk-link)}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-step.active,.kk-readiness[data-status="checking"]){
+ background:#294d78;border-color:#83b1ec;color:#fff
+}
+html[data-theme="dark"] body.kk-body .kk-step.active span{
+ background:#3e78c6;color:#fff
+}
+html[data-theme="dark"] body.kk-body .kk-step.done span{
+ background:#245f4f;color:#c2ffe0
+}
+html[data-theme="dark"] body.kk-body .kk-readiness[data-status="ready"]{
+ background:#1e483c;border-color:#418872;color:#d0f7e3
+}
+html[data-theme="dark"] body.kk-body .kk-load-error,
+html[data-theme="dark"] body.kk-body .kk-feedback[data-kind="error"]{
+ background:#4a2734;border-color:#b06376;color:#ffd0d8
+}
+html[data-theme="dark"] body.kk-body .kk-service-status-pending{
+ background:#654f2c;color:#ffe5a9
+}
+html[data-theme="dark"] body.kk-body .kk-service-status-approved{
+ background:#245c4d;color:#c2f8d9
+}
+html[data-theme="dark"] body.kk-body .kk-service-status-rejected{
+ background:#653443;color:#ffced7
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-upload-zone{
+ background:#2b4c71;border-color:#82a9d5
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-upload-zone:hover{
+ background:#355a84
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-upload-zone :is(strong,small){
+ color:#ebf5ff
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-selected-photo{
+ background:#243f60;border-color:#6489b5
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-approved-label{
+ color:#a4f3cf
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-approved-details>strong{
+ color:#f5f9ff
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-approved-details>p{
+ color:#cbdef5
+}
+html[data-theme="dark"] body.kk-body .kk-footer{
+ background:transparent;border-color:#38516f;color:#bcd0e8
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-footer{
+ background:#14263e;border-color:#425d80
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn-quiet,.kk-register-home,.kk-google,.kk-password-toggle):not(:disabled){
+ background:#294b70;border-color:#648bb7;color:#e9f4ff
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn,.kk-auth-submit):not(:disabled):focus-visible{
+ outline:3px solid #acd3ff;outline-offset:2px
+}
+@media(max-width:640px){
+ html[data-theme="dark"] body.kk-body :is(
+ .kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-dashboard-panel){
+  border-color:#456388
+ }
+}
+
+
+/* Login uses one two-column card; its parent must not stay white in dark mode. */
+html[data-theme="dark"] body.kk-auth-page .kk-auth-layout{
+ background:var(--kk-panel);border-color:var(--kk-outline);
+ box-shadow:0 15px 40px #040d1e55
+}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story{
+ background:radial-gradient(ellipse at 100% 0%,#476a9d45,transparent 64%),#122744;
+ color:#eff6ff
+}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story :is(h1,strong){color:#f1f7ff}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story :is(p,small){color:#c5d9f2}
+html[data-theme="dark"] body.kk-auth-page :is(
+ .kk-register-prompt,.kk-story-features>div,.kk-auth-footnote){
+ color:#cfddf0;border-color:#49688b
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a{
+ color:#d6e7fa
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a:hover{
+ background:#2a4770;color:#fff
+}
+
+/* Dark KK profile: all separator lines match surrounding dark surfaces. */
+html[data-theme="dark"] body.kk-body :is(
+ .kk-profile-toolbar,.kk-profile-sheet,.kk-profile-preview,.kk-preview-card,
+ .kk-review>div,.kk-step,.kk-yn-field,.kk-solo-field,
+ .kk-field-section,.kk-id-upload,.kk-profile-sheet-head,.kk-reg-toolbar){
+ border-color:#45648b!important
+}
+html[data-theme="dark"] body.kk-body .kk-field-section,
+html[data-theme="dark"] body.kk-body .kk-profile-sheet-head,
+html[data-theme="dark"] body.kk-body .kk-id-upload,
+html[data-theme="dark"] body.kk-body .kk-review>div{
+ border-color:#385677!important
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button{
+ color:#e0eeff;background:transparent
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:first-child{
+ border-right-color:#496c95
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:last-child{
+ border-left-color:#496c95
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:hover{
+ background:#315172
+}
+html[data-theme="dark"] body.kk-body .kk-profile-preview{
+ background:#1c314e;border-color:#4a698f
+}
+html[data-theme="dark"] body.kk-body .kk-preview-card{
+ background:#253e5c;border-color:#4b7199
+}
+html[data-theme="dark"] body.kk-body .kk-preview-card :is(dt,dd){color:#d6e8fb}
+html[data-theme="dark"] body.kk-body .kk-toolbar-logout svg{stroke:currentColor}
