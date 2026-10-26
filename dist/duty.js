@@ -53,7 +53,7 @@ function dutyContactRows(){
    try{
     const link=new URL(c.facebook_url);
     if(link.protocol==='https:'&&['facebook.com','www.facebook.com','m.facebook.com'].includes(link.hostname)&&!link.username&&!link.password)
-     parts.push(row(web,'<a href="'+esc(link.href)+'" target="_blank" rel="noopener noreferrer">Facebook profile / page ↗</a>'));
+     parts.push(row(web,'<a href="'+esc(link.href)+'" target="_blank" rel="noopener noreferrer">Facebook profile / page <svg class="duty-contact-link-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/></svg></a>'));
    }catch{/* hide malformed legacy URL */}
   }
   return '<article class="duty-contact-card"><h3>'+esc(c.name)+'</h3><small>'+esc(names[c.position]||'SK Officer')+'</small><div class="duty-contact-details">'+parts.join('')+'</div></article>';
