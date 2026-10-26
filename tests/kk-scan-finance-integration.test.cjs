@@ -6,12 +6,15 @@ const scan=read('dist/kk-qr-scan.js'),css=read('dist/kk-qr-scan.css'),sql=read('
 const api=read('lib/handler.cjs'),supabase=read('lib/supabase.cjs');
 
 test('Scan is available on all SK officer workspaces and opens the SK Services panel',()=>{
- assert.match(html,/data-scan-open class="staff-nav-scan"/);
+ assert.doesNotMatch(html,/data-scan-open class="staff-nav-scan"/);
+ assert.match(html,/id="staff-quick-scanner"/);
+ assert.match(html,/id="kk-quick-overlay"/);
  assert.match(html,/id="kk-service-open-scanner"/);
  assert.match(html,/id="kk-scan-panel"/);
- assert.match(account,/document\.querySelectorAll\('\[data-scan-open\]'\)/);
+ assert.match(account,/window\.enterKKScanService=async kkId=>/);
+ assert.match(account,/window\.openQuickKKScan\?\.\(\)/);
  assert.match(account,/await selectTab\('kk-services'\)/);
- assert.match(account,/window\.openKKScan\?\.\(\)/);
+ assert.match(account,/window\.openKKScan\?\.\(\{kkId\}\)/);
  assert.match(account,/window\.closeKKScan\?\.\(\)/);
  assert.match(scan,/window\.closeKKScan=close/);
  assert.match(css,/#kk-scan-video\[hidden\]/);
@@ -20,7 +23,8 @@ test('Camera scanning uses QR from existing KK card and has Safari/manual fallba
  const renderer=read('dist/kk-id-render.js');
  assert.match(renderer,/QR V1-L encodes only the printed KK ID/);
  assert.match(scan,/new window\.BarcodeDetector\(\{formats:\['qr_code'\]\}\)/);
- assert.match(scan,/jsqr@1\.4\.0\/dist\/jsQR\.min\.js/);
+ assert.match(scan,/vendor-jsqr\.js/);
+ assert.match(html,/vendor-jsqr\.js/);
  assert.match(scan,/navigator\.mediaDevices\.getUserMedia/);
  assert.match(scan,/kk-scan-manual-input/);
  assert.match(scan,/stopCamera\(\)/);
