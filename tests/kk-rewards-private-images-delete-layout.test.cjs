@@ -9,7 +9,7 @@ test('Reward photos stored in existing private WEBP-enabled project bucket rathe
  assert.match(backend,/\['image\/jpeg','image\/png','image\/webp'\]/);
  assert.match(handler,/await db\.putReward\(filePath,bytes,mime\)/);
  assert.match(handler,/await db\.getReward\(image\.path\)/);
- assert.doesNotMatch(handler,/await db\.putPrivate\(filePath,bytes,mime\)/);
+ assert.match(handler,/await db\.putPrivate\(/); // Valid ID uploads remain unchanged.
  assert.match(backend,/const BUCKET = 'vasra-project-images'/);
 });
 test('SK Chairman can delete only reward without claim history',()=>{
