@@ -10,9 +10,9 @@ test('Dedicated KK Rewards page is separate from KK Profiling and old Project Pa
  assert.match(h,/id="panel-kk-rewards"/);
  assert.match(h,/id="kk-reward-catalog"/);
  assert.match(h,/id="kk-rewards-claims"/);
- assert.match(h,/id="kk-attendance-list"/);
+ assert.match(h,/id="panel-kk-participants"/);
  assert.doesNotMatch(h,/id="kk-participant-list"|id="kk-participant-search"|id="kk-perk-form"/);
- assert.match(js,/'kk-profiling','kk-rewards','kk-ids'/);
+ assert.match(js,/'kk-profiling','kk-participants','kk-rewards','kk-ids'/);
  assert.match(js,/name==='kk-rewards'&&window\.loadKKRewardsStaff/);
  assert.match(css,/\.kk-rewards-catalog\{display:grid/);
  assert.match(css,/@media\(max-width:640px\)/);
@@ -45,16 +45,16 @@ test('Database reserves rewards and points once and records SK officers on appro
  assert.match(sql,/TO service_role/);
  assert.match(sql,/reward_photo_and_stock_required/);
 });
-test('Attendance awards require verified KK member and published started project, once per project',()=>{
- assert.match(sql,/CREATE TABLE IF NOT EXISTS vasra\.kk_project_attendance/);
- assert.match(sql,/PRIMARY KEY\(project_id,member_id\)/);
- assert.match(sql,/status IN \('Isinasagawa','Natapos'\)/);
- assert.match(sql,/prof\.status IS DISTINCT FROM 'verified'/);
- assert.match(sql,/ON CONFLICT DO NOTHING RETURNING member_id INTO new_id/);
- assert.match(sql,/already_awarded/);
- assert.match(staff,/data-att-member/);
- assert.match(staff,/Registered online/);
- assert.match(staff,/Confirm Checked Attendees & Award Points/);
+test('Attendance is a dedicated QR check-in and not a manual reward points field',()=>{
+ const eventSQL=read('supabase/migrations/20261026153500_kk_event_qr_checkin_automatic_ten_points.sql');
+ const camera=read('dist/kk-event-staff.js');
+ assert.match(h,/id="kk-event-video"/);
+ assert.match(h,/id="kk-event-manual-id"/);
+ assert.match(h,/id="kk-event-archive"/);
+ assert.doesNotMatch(h,/id="kk-attendance-points"|id="kk-attendance-award"/);
+ assert.match(eventSQL,/VALUES\(project_ref,member.id,10,officer.id,clock_timestamp\(\)\)/);
+ assert.match(eventSQL,/ON CONFLICT\(project_id,member_id\) DO NOTHING/);
+ assert.match(camera,/data-event-export/);
 });
 test('Upcoming Projects refreshes live and includes published in-progress projects',()=>{
  const source=read('dist/kk-dashboard.js');
