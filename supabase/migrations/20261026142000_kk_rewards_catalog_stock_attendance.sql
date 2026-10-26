@@ -5,8 +5,14 @@ ALTER TABLE vasra.kk_perks
  ADD COLUMN IF NOT EXISTS quantity integer NOT NULL DEFAULT 0,
  ADD COLUMN IF NOT EXISTS image_path text,
  ADD COLUMN IF NOT EXISTS image_mime text;
-ALTER TABLE vasra.kk_perks DROP CONSTRAINT IF EXISTS kk_perks_quantity_valid;
-ALTER TABLE vasra.kk_perks ADD CONSTRAINT kk_perks_quantity_valid CHECK(quantity BETWEEN 0 AND 100000);
+DO $reward_constraint$
+BEGIN
+ IF NOT EXISTS(SELECT 1 FROM pg_constraint WHERE conname='kk_perks_quantity_valid'
+   AND conrelid='vasra.kk_perks'::regclass) THEN
+  ALTER TABLE vasra.kk_perks ADD CONSTRAINT kk_perks_quantity_valid CHECK(quantity BETWEEN 0 AND 100000);
+ END IF;
+END;
+$reward_constraint$;
 
 CREATE TABLE IF NOT EXISTS vasra.kk_project_attendance (
  project_id uuid NOT NULL REFERENCES vasra.projects(id) ON DELETE CASCADE,
