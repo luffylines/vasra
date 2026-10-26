@@ -36,27 +36,6 @@
     '<span class="kk-reward-state">'+esc(c.status)+'</span>')+'</article>').join(''):
    '<p class="kk-reward-empty">Wala pang redemption requests.</p>';
  };
- const attendanceRegistered=(projectId,memberId)=>state.registrations.some(x=>x.project_id===projectId&&x.member_id===memberId);
- const attendanceRecorded=(projectId,memberId)=>state.attendance.find(x=>x.project_id===projectId&&x.member_id===memberId);
- const renderAttendance=()=>{
-  const id=$('#kk-attendance-project').value,list=$('#kk-attendance-list');
-  if(!id){list.innerHTML='<p class="kk-reward-empty">Select a published project or seminar to confirm who attended.</p>';return;}
-  const project=state.projects.find(p=>p.id===id);
-  const search=$('#kk-attendance-search').value.trim().toLowerCase();
-  const candidates=state.members.filter(m=>(m.name+' '+m.kk_id).toLowerCase().includes(search));
-  const canAward=project&&['Isinasagawa','Natapos'].includes(project.status);
-  list.innerHTML='<div class="kk-attendance-summary"><strong>'+esc(project?.title||'Project')+'</strong><span>'+esc(project?.status||'')+'</span></div>'+
-   (!canAward?'<p class="kk-reward-empty">Attendance points may be awarded when the project is Isinasagawa or Natapos.</p>':'')+
-   (candidates.length?'<div class="kk-attendance-members">'+candidates.map(m=>{
-    const awarded=attendanceRecorded(id,m.id),registered=attendanceRegistered(id,m.id);
-    return '<label class="kk-attendance-member"><input type="checkbox" data-att-member="'+esc(m.id)+'" '+
-     (awarded||!canAward?'disabled':'')+'>'+
-     '<span><strong>'+esc(m.name)+'</strong><small>'+esc(m.kk_id||'No KK ID')+
-     ' · '+(registered?'Registered online':'Walk-in / not registered online')+'</small></span>'+
-     '<span class="kk-attendance-badge '+(awarded?'awarded':'')+'">'+(awarded?'Awarded '+awarded.points+' pts':'Not yet verified')+'</span></label>';
-   }).join('')+'</div>':'<p class="kk-reward-empty">No matching verified KK members.</p>')+
-   (canAward?'<button class="primary" type="button" id="kk-attendance-award">Confirm Checked Attendees & Award Points</button>':'');
- };
  const render=()=>{
   $('#kk-rewards-active-count').textContent=String(state.rewards.filter(p=>p.active).length);
   $('#kk-rewards-pending-count').textContent=String(state.claims.filter(c=>c.status==='pending').length);
@@ -66,11 +45,6 @@
   $('#kk-reward-catalog').innerHTML=state.rewards.length?state.rewards.map(rewardCard).join(''):
    '<p class="kk-reward-empty">Wala pang SK-approved rewards. Chairman can create a draft reward with photo and available stock.</p>';
   renderClaims();
-  const chooser=$('#kk-attendance-project'),selected=chooser.value;
-  chooser.innerHTML='<option value="">Select published project</option>'+
-   state.projects.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.title)+' · '+esc(p.status)+'</option>').join('');
-  if(state.projects.some(p=>p.id===selected))chooser.value=selected;
-  renderAttendance();
  };
  const refresh=async()=>{
   if(loading)return;
@@ -158,27 +132,7 @@
     flash('Redemption reviewed. Member balance and inventory have been refreshed.');
    });return;
   }
-  const award=e.target.closest('#kk-attendance-award');
-  if(award){
-   const projectId=$('#kk-attendance-project').value;
-   const selected=[...document.querySelectorAll('#kk-attendance-list input[data-att-member]:checked')];
-   const points=Number($('#kk-attendance-points').value);
-   if(!selected.length){flash('Select attendees who actually joined.',true);return;}
-   if(!Number.isInteger(points)||points<1||points>500){flash('Points must be between 1 and 500.',true);return;}
-   if(!confirm('Confirm '+selected.length+' actual participant(s) attended and award '+points+' point(s) each? This can only be done once per member per project.'))return;
-   busy(award,async()=>{
-    let done=0,failed=0;
-    for(const x of selected){
-     try{await service({action:'attendance_award',project_id:projectId,
-       member_id:x.dataset.attMember,points});done++;}
-     catch{failed++;}
-    }
-    flash(done+' attendance award(s) saved.'+(failed?' '+failed+' were skipped or already awarded.':''),
-      done===0);
-   });
-  }
+
  });
  $('#kk-rewards-refresh').addEventListener('click',refresh);
- $('#kk-attendance-project').addEventListener('change',renderAttendance);
- $('#kk-attendance-search').addEventListener('input',renderAttendance);
 })();
