@@ -157,10 +157,16 @@
   renderRewards();
  };
  window.addEventListener('focus',()=>{
-  if(member&&location.hash==='#projects')refreshProjects();
+  if(!member)return;
+  if(location.hash==='#projects')refreshProjects();
+  refreshParticipation();
+  refreshRewards();
  });
  document.addEventListener('visibilitychange',()=>{
-  if(!document.hidden&&member&&location.hash==='#projects')refreshProjects();
+  if(document.hidden||!member)return;
+  if(location.hash==='#projects')refreshProjects();
+  refreshParticipation();
+  refreshRewards();
  });
  async function reload(){
   const data=await request('me');
