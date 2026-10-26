@@ -22,7 +22,7 @@ test('Camera scanning uses QR from existing KK card and has Safari/manual fallba
  assert.match(scan,/new window\.BarcodeDetector\(\{formats:\['qr_code'\]\}\)/);
  assert.match(scan,/jsqr@1\.4\.0\/dist\/jsQR\.min\.js/);
  assert.match(scan,/navigator\.mediaDevices\.getUserMedia/);
- assert.match(scan,/$('#kk-scan-manual-input')/);
+ assert.match(scan,/kk-scan-manual-input/);
  assert.match(scan,/stopCamera\(\)/);
 });
 test('Scanner is staff-authenticated, validates real member and restricts read/write RPC',()=>{
