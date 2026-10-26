@@ -297,19 +297,19 @@ async function verifyEmailFromLink(token){
   user=null;await showDashboard();success('Verified na ang bagong email. Mag-login muli gamit ang bagong address.');
  }catch(e){user=null;await showDashboard();message('Hindi ma-verify ang email. '+e.message,true);}
 }
-async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Budget oversight, project expenses at verified financial reports.':user.position==='secretary'?'Meeting documentation, attendance, resolutions at SK project records.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;$('#secretary-overview').hidden=true;$('#treasurer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: Annual Finance at monthly expense reports ay available. I-base lang sa mga official financial document.':user.position==='secretary'?'Secretary workspace: i-review ang project records at monthly reports. Ang hiwalay na minutes/attendance registry ay hindi pa enabled.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
+async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange;$('#recovery-section').hidden=!recoveryMode||!!user;$('#auth').hidden=!!user||!!recoveryMode;$('#logout').hidden=!user;$('#dashboard').hidden=!user||forced;$('#staff-nav').hidden=!user||forced;$('#password-section').hidden=!forced;if(!user)return;$('#current-email-label').textContent=user.email||'—';if(forced){$('#password-note').textContent='Palitan muna ang pansamantalang password bago gamitin ang dashboard.';return;}const positionLabels={kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'};const designation=user.role==='chairman'?'SK CHAIRMAN':positionLabels[user.position]||'SK OFFICER';$('#role-label').textContent=designation+' DASHBOARD';$('#welcome').textContent='Kumusta, '+user.name+'.';$('#dashboard-description').textContent=user.role==='chairman'?'Pamamahala ng mga proyekto, SK officials, at mga ulat sa isang workspace.':user.position==='treasurer'?'Budget oversight, project expenses at verified financial reports.':user.position==='secretary'?'Meeting documentation, attendance, resolutions at SK project records.':'Manage assigned SK projects and community updates.';$('#chairman-overview').hidden=true;$('#officer-overview').hidden=true;$('#secretary-overview').hidden=true;$('#treasurer-overview').hidden=true;document.querySelectorAll('.chair-only').forEach(x=>x.hidden=user.role!=='chairman');document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: Monthly Project Updates ang official financial-entry workspace. I-base lang sa mga official financial document.':user.position==='secretary'?'Secretary workspace: i-review ang project records at monthly reports. Ang hiwalay na minutes/attendance registry ay hindi pa enabled.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
 let activeStaffTab='overview';
-async function selectTab(name){const tabs=['overview','projects','awards','monthly','budget','disclosure','sk-resolutions','roster','duty-manage','users','audit','settings','kk-profiling','kk-ids','kk-services'];if(!tabs.includes(name))return;if(['roster','duty-manage','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget'&&!(user?.role==='chairman'||user?.position==='treasurer'))return;activeStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');const secretaryDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='secretary';
+async function selectTab(name){const tabs=['overview','projects','awards','monthly','disclosure','sk-resolutions','roster','duty-manage','users','audit','settings','kk-profiling','kk-ids','kk-services'];if(!tabs.includes(name))return;if(['roster','duty-manage','users','audit'].includes(name)&&user?.role!=='chairman')return;if(name==='budget')name='monthly'; // legacy finance bookmarksactiveStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');const secretaryDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='secretary';
  const treasurerDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='treasurer';
  $('#secretary-overview').hidden=!secretaryDashboard;
  $('#treasurer-overview').hidden=!treasurerDashboard;
  $('#officer-overview').hidden=!(name==='overview'&&user?.role==='sk'&&!secretaryDashboard&&!treasurerDashboard);
  $('#dashboard-welcome').hidden=name!=='overview';
- const tabLabels={overview:'Dashboard',projects:'Manage Projects',awards:'Achievements & Awards',monthly:'Monthly Updates',budget:'Annual Finance',disclosure:'Full Disclosure Board','sk-resolutions':'SK Resolution',roster:'SK Officials','duty-manage':'SK Duty Management',users:'SK Accounts',audit:'Activity Log',settings:'Account Settings','kk-profiling':'KK Profiling','kk-ids':'KK IDs','kk-services':'SK Services'};
+ const tabLabels={overview:'Dashboard',projects:'Manage Projects',awards:'Achievements & Awards',monthly:'Monthly Project Updates',disclosure:'Full Disclosure Board','sk-resolutions':'SK Resolution',roster:'SK Officials','duty-manage':'SK Duty Management',users:'SK Accounts',audit:'Activity Log',settings:'Account Settings','kk-profiling':'KK Profiling','kk-ids':'KK IDs','kk-services':'SK Services'};
  $('#account-breadcrumb').textContent=tabLabels[name];
  $('#header-settings').classList.toggle('active',name==='settings');
  $('#header-settings').setAttribute('aria-current',name==='settings'?'page':'false');
- document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','budget','roster'].includes(name))await loadTransparencyEditor(name);if(name==='disclosure'&&window.loadDisclosureAdmin)await window.loadDisclosureAdmin();if(name==='sk-resolutions'&&window.loadSKResolutionsAdmin)await window.loadSKResolutionsAdmin();if(name==='duty-manage')await loadDutyManagement();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts();if(name==='kk-profiling'&&window.loadKKStaff){window.kkStaffRole=user?.role||null;await window.loadKKStaff()};if(name==='kk-ids'&&window.loadKKIDStaff)await window.loadKKIDStaff();if(name==='kk-services'&&window.loadKKServiceStaff)await window.loadKKServiceStaff()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
+ document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','roster'].includes(name))await loadTransparencyEditor(name);if(name==='disclosure'&&window.loadDisclosureAdmin)await window.loadDisclosureAdmin();if(name==='sk-resolutions'&&window.loadSKResolutionsAdmin)await window.loadSKResolutionsAdmin();if(name==='duty-manage')await loadDutyManagement();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts();if(name==='kk-profiling'&&window.loadKKStaff){window.kkStaffRole=user?.role||null;await window.loadKKStaff()};if(name==='kk-ids'&&window.loadKKIDStaff)await window.loadKKIDStaff();if(name==='kk-services'&&window.loadKKServiceStaff)await window.loadKKServiceStaff()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 // The gallery's first image is authoritative when an older record has no image_id.
@@ -381,8 +381,8 @@ async function loadRoleOverview(){
   $('#secretary-draft-count').textContent=String(managed.filter(p=>!p.published).length);
   $('#secretary-done-count').textContent=String(managed.filter(p=>p.status==='Natapos').length);
  }else{
-  const amount=data?.budget?.amount;
-  $('#treasurer-budget-amount').textContent=amount===undefined||amount===null?'Not recorded':transMoney(amount);
+  // Published monthly expenses shown, not an unverified annual budget.
+  $('#treasurer-budget-amount').textContent=transMoney(reports.filter(x=>x.published&&x.expense!=null).reduce((sum,x)=>sum+Number(x.expense||0),0));
   const recorded=reports.filter(x=>x.expense!==null&&x.expense!==undefined&&Number.isFinite(Number(x.expense)));
   $('#treasurer-reported-total').textContent=transMoney(recorded.reduce((sum,x)=>sum+Number(x.expense),0));
   $('#treasurer-missing-count').textContent=String(reports.filter(x=>x.expense===null||x.expense===undefined).length);
@@ -1413,7 +1413,34 @@ setInterval(()=>{if(!document.hidden&&user&&!user.mustChange&&activeStaffTab==='
 
 /* Annual finance, monthly accomplishments and official-directory editors */
 let transparencyCache=null;
-const transMoney=v=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(Number(v));
+const transMoney=v=>{
+ const number=Number(v);
+ return Number.isFinite(number)?'₱'+new Intl.NumberFormat('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}).format(number):'—';
+};
+const transExpenseParse=value=>{
+ const valueText=String(value??'').trim();
+ if(valueText==='')return null;
+ if(!/^(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d{1,2})?$/.test(valueText))
+  throw Error('Amount spent must be a valid PHP amount (e.g., ₱100,000.00).');
+ const amount=Number(valueText.replace(/,/g,''));
+ if(!Number.isFinite(amount)||amount<0||amount>999999999999)
+  throw Error('Amount spent must be between ₱0.00 and ₱999,999,999,999.00.');
+ return amount.toFixed(2);
+};
+const renderExpensePreview=()=>{
+ const input=$('#monthly-form')?.elements?.expense;
+ const display=$('#trans-expense-preview');
+ if(!input||!display)return;
+ try{
+  const value=transExpenseParse(input.value);
+  display.textContent=value===null?'Not reported until an amount is entered.':'Amount to save: '+transMoney(value);
+  input.setCustomValidity('');
+ }catch(e){
+  display.textContent=e.message;
+  input.setCustomValidity(e.message);
+ }
+};
+
 const transYearNow=()=>Number(new Intl.DateTimeFormat('en-US',{year:'numeric',timeZone:'Asia/Manila'}).format(new Date()));
 const transMonthNow=()=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{year:'numeric',month:'2-digit',timeZone:'Asia/Manila'}).formatToParts(new Date()).map(p=>[p.type,p.value]));return p.year+'-'+p.month};
 const canEditFinance=()=>user&&(user.role==='chairman'||user.position==='treasurer');
@@ -1484,20 +1511,13 @@ async function refreshRosterProfiles(){
  }
 }
 async function loadTransparencyEditor(tab){
- const budget=$('#budget-form'),monthly=$('#monthly-form');
- if(!budget.elements.year.value)budget.elements.year.value=String(transYearNow());
+ const monthly=$('#monthly-form');
  if(!monthly.elements.month.value)monthly.elements.month.value=transMonthNow();
  if(tab==='monthly'&&!managed.length)await loadProjects();
  fillMonthlyProjects();
- const year=tab==='budget'?Number(budget.elements.year.value):tab==='monthly'?Number(monthly.elements.month.value.slice(0,4)):transYearNow();
+ const year=tab==='monthly'?Number(monthly.elements.month.value.slice(0,4)):transYearNow();
  const d=await api('./api/transparency/manage?year='+year);
  transparencyCache=d;
- if(tab==='budget'){
-  budget.elements.amount.value=d.budget?.amount??'';
-  budget.elements.reference.value=d.budget?.reference??'';
-  budget.elements.published.checked=!!d.budget?.published;
-  $('#budget-summary').textContent=d.budget?'Saved '+year+' annual budget: '+transMoney(d.budget.amount)+(d.budget.published?' · Published':' · Draft'):'No approved annual budget has been entered for '+year+'.';
- }
  if(tab==='monthly'){
   $('#monthly-manage-list').innerHTML=d.updates.length?d.updates.map(m=>'<article class="trans-report trans-spending"><div><strong>'+esc(m.title)+'</strong><small>'+esc(m.month)+' · '+(m.published?'Published':'Draft')+' · '+esc(m.summary)+'</small></div><div><strong>'+(m.expense===null?'Expense not reported':transMoney(m.expense))+'</strong><button type="button" class="secondary" data-month-id="'+esc(m.id)+'">Edit</button></div></article>').join(''):'<div class="trans-empty">No monthly updates saved for '+year+' yet.</div>';
  }
@@ -1508,24 +1528,24 @@ async function loadTransparencyEditor(tab){
   renderDutySuggestions();
  }
 }
-$('#budget-form').elements.year.onchange=()=>{if(!$('#panel-budget').hidden)loadTransparencyEditor('budget').catch(e=>message(e.message,true))};
+
 $('#monthly-form').elements.month.onchange=()=>{if(!$('#panel-monthly').hidden)loadTransparencyEditor('monthly').catch(e=>message(e.message,true))};
-$('#budget-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
- if(!canEditFinance())throw Error('Only the SK Chairman or Treasurer can manage finances.');
- const f=e.target.elements;
- await api('./api/transparency/budget',{method:'POST',body:JSON.stringify({year:Number(f.year.value),amount:f.amount.value,reference:f.reference.value,published:f.published.checked})});
- success('Matagumpay na na-save ang annual SK budget.');await loadTransparencyEditor('budget');
-})};
 $('#monthly-form').onsubmit=e=>{e.preventDefault();busy(e.target,async()=>{
  const f=e.target.elements;
  if(!f.project_id.value)throw Error('Create a project before adding monthly updates.');
- await api('./api/transparency/month',{method:'POST',body:JSON.stringify({project_id:f.project_id.value,month:f.month.value+'-01',summary:f.summary.value,expense:canEditFinance()?(f.expense.value||null):null,published:canEditFinance()&&f.published.checked})});
+ await api('./api/transparency/month',{method:'POST',body:JSON.stringify({project_id:f.project_id.value,month:f.month.value+'-01',summary:f.summary.value,expense:canEditFinance()?transExpenseParse(f.expense.value):null,published:canEditFinance()&&f.published.checked})});
  success('Matagumpay na na-save ang monthly accomplishment report.');await loadTransparencyEditor('monthly');
 })};
+$('#monthly-form').elements.expense.addEventListener('input',renderExpensePreview);
+$('#monthly-form').elements.expense.addEventListener('blur',()=>{
+ const input=$('#monthly-form').elements.expense;
+ try{const v=transExpenseParse(input.value);if(v!==null)input.value=new Intl.NumberFormat('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(v));}catch{}
+ renderExpensePreview();
+});
 $('#monthly-manage-list').onclick=e=>{
  const btn=e.target.closest('[data-month-id]');if(!btn||!transparencyCache)return;
  const item=transparencyCache.updates.find(m=>m.id===btn.dataset.monthId);if(!item)return;
- const f=$('#monthly-form').elements;f.project_id.value=item.project_id;f.month.value=String(item.month).slice(0,7);f.summary.value=item.summary;f.expense.value=item.expense??'';f.published.checked=!!item.published;
+ const f=$('#monthly-form').elements;f.project_id.value=item.project_id;f.month.value=String(item.month).slice(0,7);f.summary.value=item.summary;f.expense.value=item.expense==null?'':new Intl.NumberFormat('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(item.expense));renderExpensePreview();f.published.checked=!!item.published;
  $('#monthly-form').scrollIntoView({behavior:'smooth',block:'center'});
 };
 function renderDutySuggestions(){
