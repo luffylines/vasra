@@ -121,8 +121,8 @@
    const p=state.rewards.find(x=>x.id===publish.dataset.rewardPublish);
    if(!p||p.active||!state.officer.chairman||!confirm('Publish '+p.title+'?'))return;
    busy(publish,async()=>{
-    await service({action:'toggle',id:p.id,active:!p.active});
-    flash(p.active?'Reward disabled.':'Reward published.');
+    await service({action:'toggle',id:p.id,active:true});
+    flash('Reward published.');
    });return;
   }
   const remove=e.target.closest('[data-reward-delete]');

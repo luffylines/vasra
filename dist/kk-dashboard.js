@@ -198,7 +198,7 @@
   if(!Array.isArray(rewards?.rewards))throw Error('Invalid KK rewards response.');
   member.perks=rewards.rewards;member.redemptions=rewards.claims||[];
   member.points=rewards.balance;member.available_points=rewards.available_points;
-  $('#kk-dash-points').textContent=String(rewards.balance||0);
+  $('#kk-dash-points').textContent=String(Math.max(0,Number(rewards.available_points??rewards.balance??0)));
   $('#kk-dash-rewards-count').textContent=String(rewards.rewards.length);
   renderRewards();
   renderRewardSpotlight();
