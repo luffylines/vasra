@@ -4,7 +4,9 @@
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const form=$('#skres-admin-form');
  if(!form)return;
- let saved=[],busy=false,page=1,preview=[],importRunning=false;
+ const utils=window.SKResolutionUtils;
+ if(!utils)throw Error('Missing SK Resolution year/search utilities.');
+ let saved=[],busy=false,page=1,preview=[],importRunning=false,selectedYear='all';
  const pageSize=12;
  const msg=(text,error=false)=>{
   $('#skres-admin-message').textContent='';
@@ -22,19 +24,43 @@
   }catch{return false;}
  };
  const filterRecords=()=>{
-  const term=$('#skres-admin-search').value.trim().toLocaleLowerCase(),
-    year=$('#skres-admin-year').value,status=$('#skres-admin-status').value;
-  return saved.filter(r=>(year==='all'||String(r.year)===year)&&
-   (status==='all'||(status==='published'===!!r.published))&&
-   (!term||[r.number,r.title,r.description,r.author,r.year,r.approved_on].some(x=>
-     String(x??'').toLocaleLowerCase().includes(term))));
+  const term=$('#skres-admin-search').value.trim(),
+   status=$('#skres-admin-status').value;
+  return saved.filter(r=>(selectedYear==='all'||String(r.year)===selectedYear)&&
+   (status==='all'||(status==='published'===!!r.published))&&utils.matches(r,term));
  };
+ const tabs=$('#skres-admin-year-tabs');
+ const renderYearTabs=()=>{
+  const counts=utils.yearCounts(saved);
+  tabs.querySelectorAll('[data-skres-year]').forEach(btn=>{
+   const y=btn.dataset.skresYear;
+   btn.setAttribute('aria-pressed',String(y===selectedYear));
+   const count=btn.querySelector('[data-year-count]');
+   if(count)count.textContent=String(counts[y]||0);
+  });
+ };
+ const setYear=(value)=>{
+  if(!['all',...utils.years.map(String)].includes(String(value)))return;
+  selectedYear=String(value);
+  if(!form.elements.id.value&&selectedYear!=='all')form.elements.year.value=selectedYear;
+  page=1;renderYearTabs();list();
+ };
+ tabs.addEventListener('click',event=>{
+  const btn=event.target.closest('button[data-skres-year]');
+  if(btn&&tabs.contains(btn))setYear(btn.dataset.skresYear);
+ });
  const dateDisplay=iso=>{
   if(!iso)return 'Date not set';
   const s=String(iso).slice(0,10);
   const d=new Date(s+'T12:00:00Z');
   return Number.isNaN(d.getTime())?s:d.toLocaleDateString('en-PH',{timeZone:'UTC',
    day:'2-digit',month:'short',year:'numeric'});
+ };
+ const formatUpload=value=>{
+  const d=new Date(value);
+  if(!Number.isFinite(d.getTime()))return 'Not recorded';
+  return d.toLocaleString('en-PH',{timeZone:'Asia/Manila',year:'numeric',month:'short',
+   day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
  };
  const list=()=>{
   const matching=filterRecords(),pages=Math.max(1,Math.ceil(matching.length/pageSize));
@@ -53,7 +79,8 @@
      '<span class="skres-pub-badge'+(r.published?' active':'')+'">'+(r.published?'Published':'Draft')+'</span></div>'+
     '<h4>'+esc(r.title)+'</h4>'+
     (r.author?'<p class="skres-row-author">'+esc(r.author)+'</p>':'')+
-    '<div class="skres-admin-row-footer"><small>'+esc(dateDisplay(r.approved_on))+'</small>'+
+    '<div class="skres-admin-row-footer"><small>Approved: '+esc(dateDisplay(r.approved_on))+
+     ' · Uploaded: '+esc(formatUpload(r.created_at))+'</small>'+
      '<div><button type="button" data-skres-edit="'+esc(r.id)+'">Edit</button>'+
      (r.published?'<button type="button" data-skres-unpublish="'+esc(r.id)+'">Unpublish</button>':'')+
      '<a href="'+esc(r.url)+'" target="_blank" rel="noopener noreferrer">View Drive <span aria-hidden="true">↗</span></a></div></div></article>'
@@ -62,7 +89,7 @@
  const defaultYear=()=>String(Math.min(2027,Math.max(2023,Number(new Intl.DateTimeFormat('en-US',
   {year:'numeric',timeZone:'Asia/Manila'}).format(new Date())))));
  const reset=()=>{
-  form.reset();form.elements.id.value='';form.elements.year.value=defaultYear();
+  form.reset();form.elements.id.value='';form.elements.year.value=selectedYear==='all'?defaultYear():selectedYear;
   $('#skres-editor-heading').textContent='Add SK Resolution';
   $('#skres-admin-save').textContent='Save Resolution';
  };
@@ -70,8 +97,8 @@
   try{
    const data=await api('./api/sk-resolutions/manage');
    if(data?.ok!==true||!Array.isArray(data.resolutions))throw Error('Invalid service response');
-   saved=data.resolutions;
-   list();
+   saved=[...data.resolutions].sort(utils.byNewest);
+   renderYearTabs();list();
   }catch(e){msg('Hindi ma-load ang SK Resolutions: '+e.message,true);}
  };
  const save=async row=>{
@@ -96,13 +123,15 @@
   if(params.published&&!confirm('Publish this official SK Resolution publicly? Confirm that the Google Drive file is safe for public viewing.'))return;
   locked(true);
   try{
-   await save(params);reset();page=1;await load();
+   await save(params);
+   $('#skres-admin-search').value='';$('#skres-admin-status').value='all';
+   setYear(String(params.year));reset();await load();
    msg(params.published?'SK Resolution saved and published.':'SK Resolution saved as draft.');
   }catch(error){msg('Hindi na-save: '+error.message,true);}
   finally{locked(false);}
  });
  $('#skres-admin-reset').addEventListener('click',e=>{e.preventDefault();reset();});
- const filters=['skres-admin-search','skres-admin-year','skres-admin-status'];
+ const filters=['skres-admin-search','skres-admin-status'];
  for(const id of filters)$('#'+id).addEventListener(id==='skres-admin-search'?'input':'change',()=>{page=1;list();});
  $('#skres-prev-page').addEventListener('click',()=>{if(page>1){page--;list();}});
  $('#skres-next-page').addEventListener('click',()=>{page++;list();});
@@ -228,12 +257,14 @@
     failed+=Number(response.failed||0);
     for(const err of (response.errors||[]))errors.push('Row '+(i+Number(err.row))+': '+(err.reason||'invalid'));
    }
-   preview=[];textarea.value='';await load();page=1;list();
+   preview=[];textarea.value='';
+   $('#skres-admin-search').value='';$('#skres-admin-status').value='all';
+   setYear(year.value);reset();await load();
    result.textContent=total+' imported as drafts · '+duplicates+' exact duplicates skipped · '+failed+' failed.'+
     (errors.length?' Check: '+errors.slice(0,10).join('; '):'');
    msg(total+' SK Resolutions imported as drafts. '+duplicates+' duplicates skipped.');
   }catch(e){result.textContent='Import stopped: '+e.message+' · '+total+' saved before the error. Re-preview remaining rows before retrying.';msg(e.message,true);}
   finally{importRunning=false;submit.disabled=true;}
  });
- reset();window.loadSKResolutionsAdmin=load;
+ reset();renderYearTabs();window.loadSKResolutionsAdmin=load;
 })();
