@@ -13,7 +13,7 @@
  const apiCall=(url,body)=>api(url,body===undefined?{}:{method:'POST',body:JSON.stringify(body)});
  const info=(msg,isError=false,isSuccess=false)=>{
   const el=$('#kk-service-staff-message');
-  if(msg&&(isError||isSuccess)){el.textContent='';window.showVasraToast(msg,isError?'error':'success');return;}
+  if(msg&&(isError||isSuccess)){el.textContent='';window.showVasraToast?.(msg,isError?'error':'success');return;}
   el.textContent=msg;el.dataset.kind='info';
  };
  const phDate=value=>{
