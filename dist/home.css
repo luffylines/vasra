@@ -80,3 +80,73 @@
 @media(max-width:780px){.home-awards-list{grid-template-columns:1fr}.home-award{padding:13px}}
 
 @media(max-width:600px){.home-shortcuts .home-shortcut-symbol{width:32px;height:32px;padding:7px}.home-shortcuts .home-shortcut-top{gap:6px}}
+
+
+/* QMC welcome banner: responsive on phones, tablets, laptops and wide displays.
+   Photo: A.C.T. Alejandre, CC BY-SA 4.0, Wikimedia Commons.
+   The blue layer deliberately keeps the hero text readable. */
+.portal-refresh .project-hero.home-hero{
+  isolation:isolate;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:clamp(22px,4vw,48px);
+  min-height:clamp(380px,41vw,530px);
+  padding:clamp(28px,4.1vw,54px);
+  border:1px solid #ffffff38;
+  border-radius:22px;
+  background-color:#132e52;
+  background-image:
+    linear-gradient(90deg,rgba(8,25,53,.94) 0%,rgba(8,29,59,.86) 35%,rgba(9,38,71,.33) 73%,rgba(6,24,49,.3) 100%),
+    linear-gradient(0deg,rgba(8,25,53,.56),transparent 55%),
+    url("https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Quezon_Memorial_Shrine%2C_Apr_2026.jpg/1280px-Quezon_Memorial_Shrine%2C_Apr_2026.jpg");
+  background-position:center,center,62% center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  box-shadow:0 18px 40px #102b4d26;
+}
+.portal-refresh .home-hero>div:first-child{z-index:1;position:relative;max-width:min(590px,66%);width:100%}
+.portal-refresh .home-hero h1{font-size:clamp(34px,3.5vw,53px);line-height:1.15;max-width:680px;text-wrap:balance;color:#fff}
+.portal-refresh .home-hero h1 em{color:#bcd7ff}
+.portal-refresh .home-hero p{max-width:500px;font-size:clamp(13px,1.15vw,16px);line-height:1.75;color:#edf4ff}
+.portal-refresh .home-hero .hero-label{font-size:clamp(9px,.8vw,12px);line-height:1.6;letter-spacing:.14em;color:#e0edff}
+.portal-refresh .home-hero .home-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:30px}
+.portal-refresh .home-hero .home-actions a{min-height:45px;align-items:center;justify-content:center;padding:12px 18px;font-size:12px;font-weight:700;border-radius:12px}
+.portal-refresh .home-hero .home-actions .primary{background:#2864c9;color:#fff}
+.portal-refresh .home-hero .home-actions .hero-link{background:#0b244979;border:1px solid #ffffff80;color:white}
+.portal-refresh .home-hero .home-actions a:hover{filter:brightness(1.13)}
+.portal-refresh .home-hero .home-seal{z-index:1;align-self:flex-end;flex-basis:130px}
+.portal-refresh .home-hero .home-seal img{width:85px;height:85px;padding:8px;border-radius:22px}
+.portal-refresh .home-hero .home-seal span{font-size:8px;letter-spacing:1px;margin-top:10px}
+.portal-refresh .home-hero-credit{position:absolute;right:18px;bottom:10px;z-index:2;color:#f3f8ffbb;font-size:9px;text-decoration:underline;text-underline-offset:3px}
+.portal-refresh .home-hero-credit:hover{color:white}
+@media(max-width:850px){
+ .portal-refresh .project-hero.home-hero{
+   min-height:540px;padding:32px 30px 42px;
+   flex-direction:column;
+   background-image:
+     linear-gradient(180deg,rgba(8,27,57,.87) 0%,rgba(10,33,64,.42) 42%,rgba(7,29,59,.86) 100%),
+     url("https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Quezon_Memorial_Shrine%2C_Apr_2026.jpg/1280px-Quezon_Memorial_Shrine%2C_Apr_2026.jpg");
+   background-position:center,50% center;
+ }
+ .portal-refresh .home-hero>div:first-child{display:flex;flex-direction:column;flex:1;max-width:none;width:100%}
+ .portal-refresh .home-hero h1{font-size:clamp(33px,5.2vw,46px);max-width:650px;margin:24px 0 15px}
+ .portal-refresh .home-hero p{margin-top:auto;max-width:540px}
+ .portal-refresh .home-hero .home-actions{margin-top:22px}
+ .portal-refresh .home-hero .home-seal{display:none}
+}
+@media(max-width:600px){
+ .portal-refresh .project-hero.home-hero{min-height:clamp(520px,134vw,680px);padding:26px 22px 34px;border-radius:19px;background-position:center,52% center}
+ .portal-refresh .home-hero h1{font-size:clamp(31px,7.3vw,42px);letter-spacing:-1.4px;line-height:1.13;margin:22px 0 18px;overflow-wrap:break-word}
+ .portal-refresh .home-hero h1 br{display:none}
+ .portal-refresh .home-hero p{font-size:clamp(13px,3.4vw,15px);line-height:1.65;margin-top:auto}
+ .portal-refresh .home-hero .home-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:19px 0 14px}
+ .portal-refresh .home-hero .home-actions a{width:100%;min-height:44px;margin:0;padding:10px 12px;font-size:12px}
+ .portal-refresh .home-hero .hero-label{font-size:9px;letter-spacing:.11em}
+ .portal-refresh .home-hero-credit{bottom:9px;right:14px;font-size:8px}
+}
+@media(max-width:370px){
+ .portal-refresh .project-hero.home-hero{min-height:565px;padding:24px 17px 32px}
+ .portal-refresh .home-hero h1{font-size:30px}
+}
+@media(prefers-reduced-motion:reduce){.portal-refresh .home-hero .home-actions a{transition:none}}
