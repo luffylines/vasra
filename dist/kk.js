@@ -337,15 +337,31 @@
  const yesNoField=(name,label)=>'<fieldset class="kk-yn-field"><legend>'+esc(label)+' <span class="kk-required">*</span></legend>'+
   '<label><input type="radio" name="'+name+'" value="yes" required'+(data[name]==='yes'?' checked':'')+'> Yes</label>'+
   '<label><input type="radio" name="'+name+'" value="no" required'+(data[name]==='no'?' checked':'')+'> No</label></fieldset>';
+ const displayProfileValue=(key,value)=>{
+  if(value===null||value===undefined||value==='')return '—';
+  const raw=String(value);
+  const list={civil_status:options.civil,gender:options.gender,education:options.edu,
+   education_status:options.educationStatus,employment:options.employment,religion:options.religion}[key];
+  if(Array.isArray(list)){
+   const item=list.find(entry=>String(Array.isArray(entry)?entry[0]:entry)===raw);
+   if(item)return Array.isArray(item)?item[1]:item;
+  }
+  if(['sk_voter','national_voter','voted_last_election','kk_assembly','solo_parent'].includes(key))
+   return {yes:'Yes',no:'No',unsure:'Not sure',undisclosed:'Prefer not to say'}[raw.toLowerCase()]||raw;
+  if(['email','phone','emergency_phone','birthdate','street','school_name','course_program'].includes(key))return raw;
+  if(['civil_status','gender','education','education_status','employment','year_level','emergency_relation'].includes(key))
+   return raw.replace(/(^|[\\s/-])([a-z])/g,(_,sep,ch)=>sep+ch.toUpperCase());
+  return raw;
+ };
  const previewSection=(heading,items)=>'<section class="kk-preview-card"><h4>'+esc(heading)+'</h4><dl>'+
   items.map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(v||'—')+'</dd></div>').join('')+'</dl></section>';
  const renderPreview=()=>{
   const node=$('#kk-profile-preview');if(!node)return;
   node.innerHTML='<h3>Profile Preview</h3><p>Details are updated as you complete each step.</p>'+
-   previewSection('Personal Information',[['Name',[account.member.first_name,account.member.last_name].join(' ')],['Date of Birth',account.member.birthdate],['Gender',data.gender],['Civil Status',data.civil_status]])+
+   previewSection('Personal Information',[['Name',[account.member.first_name,account.member.last_name].join(' ')],['Date of Birth',account.member.birthdate],['Gender',displayProfileValue('gender',data.gender)],['Civil Status',displayProfileValue('civil_status',data.civil_status)]])+
    previewSection('Address',[['Sitio/Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name],['House No./Street',data.street],['Barangay',data.residence_barangay]])+
-   previewSection('Education',[['Attainment',data.education],['School',data.school_name],['Year Level',data.year_level]])+
-   previewSection('Additional Information',[['Registered SK Voter',data.sk_voter],['National Voter',data.national_voter],['Voted Last Election',data.voted_last_election],['KK Assembly',data.kk_assembly]])+
+   previewSection('Education',[['Attainment',displayProfileValue('education',data.education)],['School',data.school_name],['Year Level',displayProfileValue('year_level',data.year_level)]])+
+   previewSection('Additional Information',[['Registered SK Voter',displayProfileValue('sk_voter',data.sk_voter)],['National Voter',displayProfileValue('national_voter',data.national_voter)],['Voted Last Election',displayProfileValue('voted_last_election',data.voted_last_election)],['KK Assembly',displayProfileValue('kk_assembly',data.kk_assembly)]])+
    previewSection('Emergency Contact',[['Name',data.emergency_name],['Contact Number',data.emergency_phone]])+
    previewSection('Valid ID',[['Document',validID?.exists?'Uploaded · '+(validID.name||'Valid ID'):'Required']]);
  };
@@ -397,8 +413,8 @@
    field('emergency_relation','Relationship',{required:true})+'</div>'+
    '<p class="kk-helper">Ito ay gagamitin lamang sa naaangkop na emergency at hindi ilalathala.</p>';
   const items=[['Full Name',[account.member.first_name,account.member.middle_name,account.member.last_name].filter(Boolean).join(' ')],['Birthdate',account.member.birthdate],
-   ['Email',account.member.email],['Resident Address',[data.residence_region||'NCR',data.residence_province||'Metro Manila',data.residence_city||'Quezon City',data.residence_barangay||''].filter(Boolean).join(' · ')],['Sitio / Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name||'—'],['Street',data.street||'—'],['Educational Status',data.education_status||'—'],['Education',data.education||'—'],['Course / Program',data.course_program||'—'],['Year / Grade Level',data.year_level||'—'],
-   ['SK Voter',data.sk_voter||'—'],['National Voter',data.national_voter||'—'],['Voted Last Election',data.voted_last_election||'—'],['Attended KK Assembly',data.kk_assembly||'—'],['Valid ID',validID?.exists?'Uploaded':'Not uploaded'],['Emergency Contact',data.emergency_name||'—']];
+   ['Email',account.member.email],['Resident Address',[data.residence_region||'NCR',data.residence_province||'Metro Manila',data.residence_city||'Quezon City',data.residence_barangay||''].filter(Boolean).join(' · ')],['Sitio / Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name||'—'],['Street',data.street||'—'],['Educational Status',displayProfileValue('education_status',data.education_status)],['Education',displayProfileValue('education',data.education)],['Course / Program',data.course_program||'—'],['Year / Grade Level',displayProfileValue('year_level',data.year_level)],
+   ['SK Voter',displayProfileValue('sk_voter',data.sk_voter)],['National Voter',displayProfileValue('national_voter',data.national_voter)],['Voted Last Election',displayProfileValue('voted_last_election',data.voted_last_election)],['Attended KK Assembly',displayProfileValue('kk_assembly',data.kk_assembly)],['Valid ID',validID?.exists?'Uploaded':'Not uploaded'],['Emergency Contact',data.emergency_name||'—']];
   const age=(()=>{const now=new Date(),bd=new Date(account.member.birthdate+'T00:00:00Z');return now.getUTCFullYear()-bd.getUTCFullYear()-Number((now.getUTCMonth()*100+now.getUTCDate())<(bd.getUTCMonth()*100+bd.getUTCDate()));})();
   return '<div class="kk-review">'+items.map(([k,v])=>'<div><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join('')+'</div>'+
   '<label class="kk-checkbox"><input name="consent" type="checkbox"'+(data.consent?' checked':'')+' required><span>I certify that the details are accurate and consent to confidential SK KK profiling verification.</span></label>'+
@@ -447,6 +463,9 @@
  }
  $('#kk-logout').onclick=async()=>{try{await send('logout',{});}finally{location.replace('./kk-login');}};
  $('#kk-back').onclick=()=>{if(current>1){savedFields($('#kk-step-form'));current--;feedback('');renderStep();}};
+ $('#kk-step-form').addEventListener('dblclick',event=>{
+  if(event.target.closest('button[data-adjust]'))event.preventDefault();
+ });
  $('#kk-step-form').addEventListener('click',event=>{
   const adjustment=event.target.closest('button[data-adjust]');
   if(adjustment){
