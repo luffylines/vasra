@@ -193,11 +193,20 @@
    }catch(e){invalid.push({row:i+1,message:e.message});}
   }
   submit.disabled=!preview.length;
+  const reusedLinks=new Map();
+  for(const item of preview){
+   const key=item.url.split('?')[0].toLocaleLowerCase();
+   const list=reusedLinks.get(key)||new Set();
+   list.add(item.title.toLocaleLowerCase());reusedLinks.set(key,list);
+  }
+  const sharedDocs=[...reusedLinks.values()].filter(titles=>titles.size>1).length;
   const short=preview.slice(0,5).map(x=>'<li>'+esc(x.number)+' · '+esc(x.title)+'</li>').join('');
   result.innerHTML='<p><strong>'+preview.length+' valid</strong> · '+invalid.length+' need correction · '+
    rows.length+' pasted row(s). All imported as drafts.</p>'+
    (short?'<ul>'+short+'</ul>':'')+
-   (invalid.length?'<p class="skres-import-errors">'+invalid.slice(0,12).map(e=>'Row '+e.row+': '+esc(e.message)).join('; ')+'</p>':'');
+   (invalid.length?'<p class="skres-import-errors">'+invalid.slice(0,12).map(e=>'Row '+e.row+': '+esc(e.message)).join('; ')+'</p>':'')+
+   (sharedDocs?'<p class="skres-import-errors"><strong>Drive link warning:</strong> '+sharedDocs+
+    ' link(s) are reused across different titles. Check each document before publishing.</p>':'');
   return preview;
  };
  $('#skres-import-preview').addEventListener('click',()=>{
