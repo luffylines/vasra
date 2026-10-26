@@ -60,7 +60,7 @@
    history.replaceState(null,'',location.pathname+location.search+'#'+which);
   setMenu(false);
   if(['printing','computer','retabox'].includes(which))window.loadKKServices?.();
-  if(which==='projects')refreshProjects();
+  if(which==='projects'){refreshProjects();refreshParticipation();}
   if(which==='rewards'&&member)refreshRewards();
   if(which==='overview'&&member)refreshParticipation();
   if(which==='kk-id')window.loadKKIDCard?.();
@@ -89,13 +89,20 @@
  $('#kk-sidebar-logout').addEventListener('click',signOut);
  const renderProjects=()=>{
   const el=$('#kk-upcoming-projects');
-  el.innerHTML=projects.length?projects.map(p=>
-   '<article class="kk-activity-card"><small>'+safe(p.category||'SK PROGRAM')+' · '+safe(p.status)+'</small>'+
-   '<h3>'+safe(p.title)+'</h3><p>'+safe(p.description||'Makilahok sa programang ito ng SK Vasra.')+'</p>'+
-   '<button class="kk-btn" type="button" data-join="'+safe(p.id)+'"'+(p.joined?' disabled':'')+'>'+
-   (p.joined?'✓ Registered':'Register to Join')+'</button></article>').join(''):
+  el.innerHTML=projects.length?projects.map(p=>{
+   const attended=p.attended===true,registered=p.joined===true;
+   // Online signup is not attendance. Only the officer's verified QR/manual check-in awards points.
+   const action=attended?'<span class="kk-project-attended" role="status">'+
+      '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>'+
+      'Attended · +'+Number(p.attendance_points||10)+' Points</span>':
+      registered?'<span class="kk-project-registered" role="status">Registered · Awaiting SK Attendance Check-in</span>':
+      '<button class="kk-btn kk-project-join" type="button" data-join="'+safe(p.id)+'">Request to Join</button>';
+   return '<article class="kk-activity-card kk-upcoming-event"><small>'+safe(p.category||'SK PROGRAM')+' · '+safe(p.status)+'</small>'+
+    '<h3>'+safe(p.title)+'</h3><p>'+safe(p.description||'Makilahok sa programang ito ng SK Vasra.')+'</p>'+
+    '<div class="kk-event-registration-action">'+action+'</div></article>';
+  }).join(''):
    '<div class="kk-dash-empty">Wala pang upcoming projects na bukas para sa KK registration. Ang completed projects ay hindi puwedeng salihan. Magkakaroon ng bagong choices kapag may published Pinaplano o Isinasagawa na project ang SK.</div>';
-  };
+ };
  const applyProjectResponse=response=>{
   if(!Array.isArray(response?.projects))throw Error('Invalid SK projects response.');
   // A second client-side guard against displaying completed projects in Upcoming.
@@ -115,6 +122,17 @@
   try{
    const data=await request('event-history');
    const list=Array.isArray(data.history)?data.history:[];
+   // Attendance may have been recorded on a different device while the member dashboard stayed open.
+   // Keep the upcoming-event status in sync without requiring the user to sign out and in again.
+   const ids=new Set(list.map(a=>String(a.project_id||'')));
+   let changed=false;
+   projects=projects.map(p=>{
+    if(!ids.has(String(p.id))||p.attended)return p;
+    changed=true;
+    const entry=list.find(a=>String(a.project_id)===String(p.id));
+    return {...p,attended:true,attendance_points:Number(entry?.points||10)};
+   });
+   if(changed)renderProjects();
    $('#kk-participation-count').textContent=list.length+' attended';
    target.innerHTML=list.length?list.map(a=>'<article class="kk-attended-event">'+
     '<div><strong>'+safe(a.title)+'</strong><small>'+
