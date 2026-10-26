@@ -63,7 +63,7 @@ test('Modern SK Services card grid uses five columns on wide screens and mobile 
  assert.match(css,/kk-service-review-detail \.kk-service-review-actions/);
  assert.match(html, /<span>Pending Requests<\/span>/);
  assert.match(html, /All dates · awaiting review/);
- assert.match(html,/kk-services\.css\?v=20261026-service-uniform-v2/);
+ assert.match(html,/kk-services\.css\?v=20261026-archive-history-v3/);
  assert.match(html,/kk-service-staff\.js\?v=20261026-service-compact-v1/);
  assert.doesNotThrow(()=>new vm.Script(script));
 });
