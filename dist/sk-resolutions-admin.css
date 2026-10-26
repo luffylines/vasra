@@ -180,3 +180,22 @@ body.account-workspace[data-theme=dark] #panel-sk-resolutions .skres-year-switch
 body.account-workspace[data-theme=dark] #panel-sk-resolutions .skres-year-switcher button[aria-pressed=true]{background:#3672c4;color:white;border-color:#75a9ef}
 body.account-workspace[data-theme=dark] #panel-sk-resolutions .skres-year-switcher button [data-year-count]{background:#3c5677;color:#eaf5ff}
 @media(max-width:610px){#panel-sk-resolutions .skres-index-filters{grid-template-columns:1fr}}
+
+
+/* Final compact and symmetrical resolution form buttons on all viewports. */
+#panel-sk-resolutions .skres-form-bottom .skres-admin-actions{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,132px))!important;
+ align-items:stretch!important;gap:9px!important;width:auto!important;max-width:100%;margin:0
+}
+#panel-sk-resolutions .skres-form-bottom .skres-admin-actions button{
+ box-sizing:border-box!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;
+ height:40px!important;min-height:40px!important;width:100%!important;
+ min-width:0!important;padding:8px 11px!important;margin:0!important;
+ font:750 12px 'DM Sans',sans-serif!important;border-radius:9px!important
+}
+@media(max-width:500px){
+ #panel-sk-resolutions .skres-form-bottom .skres-admin-actions{
+  width:100%!important;grid-template-columns:repeat(2,minmax(0,1fr))!important
+ }
+}
