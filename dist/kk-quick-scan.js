@@ -79,7 +79,17 @@
     try{barcode=new window.BarcodeDetector({formats:['qr_code']});}catch{barcode=null;}
    }
    if(!barcode&&typeof window.jsQR!=='function')throw Error('QR decoder did not load. Reload the page or use manual KK ID.');
-   const media=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false});
+   // Some Windows laptops and phones do not have a rear-facing camera.
+   // Retry with the browser default camera before reporting "device not found".
+   let media;
+   try{
+    media=await navigator.mediaDevices.getUserMedia({
+     video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false
+    });
+   }catch(firstError){
+    if(!['NotFoundError','OverconstrainedError','DevicesNotFoundError'].includes(firstError.name))throw firstError;
+    media=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
+   }
    if(overlay.hidden){media.getTracks().forEach(track=>track.stop());return;}
    stream=media;video.srcObject=media;video.hidden=false;
    await video.play();active=true;
@@ -89,9 +99,12 @@
    timer=setInterval(scan,230);
   }catch(error){
    stop();
-   message(error.name==='NotAllowedError'
-    ?'Camera permission denied. Allow camera for this site or enter the KK ID manually.'
-    :'Camera unavailable: '+error.message,true);
+   const code=error?.name||'';
+   message(code==='NotAllowedError'||code==='PermissionDeniedError'
+    ?'Camera blocked. Allow camera access in your browser settings, or enter the KK ID manually.'
+    :code==='NotFoundError'||code==='DevicesNotFoundError'
+     ?'No camera detected on this device. Connect or enable a camera, or use manual KK ID.'
+     :'Camera unavailable: '+String(error.message||'Try manual KK ID.'),true);
   }
  };
  window.openQuickKKScan=()=>{
