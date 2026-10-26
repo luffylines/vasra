@@ -393,7 +393,7 @@ async function loadRoleOverview(){
   $('#secretary-done-count').textContent=String(managed.filter(p=>p.status==='Natapos').length);
  }else{
   // Published monthly expenses shown, not an unverified annual budget.
-  $('#treasurer-budget-amount').textContent=transMoney(reports.filter(x=>x.published&&x.expense!=null).reduce((sum,x)=>sum+Number(x.expense||0),0));
+  $('#treasurer-published-count').textContent=String(reports.filter(x=>x.published).length);
   const recorded=reports.filter(x=>x.expense!==null&&x.expense!==undefined&&Number.isFinite(Number(x.expense)));
   $('#treasurer-reported-total').textContent=transMoney(recorded.reduce((sum,x)=>sum+Number(x.expense),0));
   $('#treasurer-missing-count').textContent=String(reports.filter(x=>x.expense===null||x.expense===undefined).length);
