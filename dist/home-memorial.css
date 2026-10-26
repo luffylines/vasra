@@ -136,4 +136,76 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
  color:inherit
 }
 
-/* Improve contrast and positioning of the existing scene until full-resolution media can be uploaded. */
+/* Final sharp scenic hero backgrounds for device-specific aspect ratios. */
+
+/* Quezon Memorial Circle high-resolution backgrounds. Keep homepage photo separate
+   from typography and clickable controls for genuine responsive rendering. */
+.home-memorial-hero{
+ background-color:#102f59;
+ min-height:clamp(430px,40vw,540px);
+ align-items:center;
+}
+.home-memorial-hero::before{
+ background-image:url("./home-memorial-circle.webp");
+ background-size:cover;
+ background-position:center 35%;
+ background-repeat:no-repeat;
+}
+.home-memorial-hero::after{
+ background:linear-gradient(90deg,rgba(8,29,57,.92) 0%,rgba(12,37,73,.80) 30%,rgba(12,35,68,.44) 54%,rgba(12,35,68,.08) 85%),
+ linear-gradient(0deg,rgba(9,32,64,.45),transparent 55%);
+}
+.home-memorial-hero .home-memorial-content{max-width:600px;}
+.home-memorial-hero .home-memorial-kicker,
+.home-memorial-hero h1,
+.home-memorial-hero p,
+.home-memorial-hero .home-memorial-actions{position:relative;z-index:1;}
+@media(min-width:1201px){
+ .home-memorial-hero{min-height:480px;}
+ .home-memorial-hero::before{background-position:center 30%;}
+}
+@media(min-width:601px) and (max-width:960px){
+ .home-memorial-hero{min-height:470px;}
+ .home-memorial-hero::before{background-position:60% 36%;background-size:cover;}
+ .home-memorial-hero::after{background:linear-gradient(90deg,rgba(9,29,58,.90),rgba(9,31,60,.60) 59%,rgba(8,29,57,.15));}
+}
+@media(max-width:600px){
+ .home-memorial-hero{
+   display:block;
+   min-height:0;
+   padding:27px 22px 23px;
+   background-color:#0c2e5b;
+   border-radius:18px;
+ }
+ .home-memorial-hero::before{
+   background-image:url("./home-memorial-circle-mobile.webp");
+   background-position:center top;
+   background-size:cover;
+   background-repeat:no-repeat;
+ }
+ .home-memorial-hero::after{
+   background:linear-gradient(90deg,rgba(7,29,57,.58),rgba(7,29,57,.24) 70%,rgba(7,29,57,.04)),
+   linear-gradient(180deg,rgba(5,24,48,.28) 0%,transparent 26%,transparent 45%,rgba(10,39,76,.45) 59%,rgba(9,35,72,.92) 76%,#0c2e5b 100%);
+ }
+ .home-memorial-hero h1{
+   margin:27px 0 clamp(193px,53vw,245px);
+   font-size:clamp(29px,8.1vw,41px);
+   line-height:1.18;
+   text-shadow:0 2px 12px #0929506b;
+ }
+ .home-memorial-hero p{
+   max-width:100%;
+   line-height:1.65;
+   font-size:clamp(13px,3.7vw,15px);
+   text-shadow:0 1px 8px #071f47bb;
+ }
+ .home-memorial-hero .home-memorial-actions{margin-top:17px;}
+ .home-memorial-hero .home-memorial-kicker{font-size:9px;line-height:1.5;}
+}
+@media(max-width:375px){
+ .home-memorial-hero{padding:23px 18px 19px;}
+ .home-memorial-hero h1{font-size:clamp(27px,8.5vw,31px);margin-bottom:clamp(170px,50vw,193px);}
+}
+@media(prefers-reduced-motion:reduce){
+ .home-memorial-hero .home-memorial-actions a{transition:none;}
+}
