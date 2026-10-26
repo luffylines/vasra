@@ -75,7 +75,9 @@ function selectDay(index){
   const d=managedDutyDays?managedDutyDays[index]:days[index];
   document.querySelectorAll('[data-day]').forEach((b,i)=>{b.classList.toggle('selected',i===index);b.setAttribute('aria-pressed',String(i===index))});
   $('#day-kicker').textContent=d.day.toUpperCase()+' / OFFICER'+(d.names.length>1?'S':'')+' OF THE DAY';
-  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(name)}<small>${esc(d.roles[i])}</small></span>`).join('')||'Walang naka-assign';
+  const displayOfficerName=name=>String(name||'').normalize('NFKC').trim().replace(/\s+/g,' ')
+   .toLocaleLowerCase('en-PH').replace(/(^|[\s'-])([a-z])/g,(_,prefix,letter)=>prefix+letter.toUpperCase());
+  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(displayOfficerName(name))}<small>${esc(d.roles[i])}</small></span>`).join('')||'Walang naka-assign';
   const times=publishedDutyHours?.find(h=>h.weekday===index+1);
   const fmt=clock=>{const [h,m]=String(clock).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
   $('#officer-role').textContent='Office hours · '+fmt(times?.open_time||'09:00')+'–'+fmt(times?.close_time||'18:00')+' (PHT)';
