@@ -459,3 +459,63 @@ body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history
  #panel-kk-services .kk-service-history-tools button{width:100%}
  #panel-kk-services .kk-service-history-panel{padding:11px}
 }
+
+
+/* 2026-10-26: Content-sized active request cards; eliminate tall empty space.
+   Desktop retains the five-card grid; card rows no longer stretch to a 215px min-height. */
+#panel-kk-services .kk-service-admin-queue{
+ align-items:start!important;align-content:start;grid-auto-rows:min-content;gap:10px
+}
+#panel-kk-services .kk-service-admin-queue>.kk-service-admin-card{
+ height:auto!important;min-height:0!important;align-self:start!important;
+ padding:11px!important;gap:7px!important;justify-content:flex-start!important
+}
+#panel-kk-services .kk-service-admin-card-header,
+#panel-kk-services .kk-service-card-identity,
+#panel-kk-services .kk-service-request-summary,
+#panel-kk-services .kk-service-card-actions{position:static;margin:0!important;flex:none!important}
+#panel-kk-services .kk-service-card-actions{padding-top:3px!important}
+#panel-kk-services .kk-service-admin-card .kk-service-request-summary{padding:8px 9px!important}
+#panel-kk-services .kk-service-admin-card .kk-service-request-summary p{margin:3px 0 0!important}
+#panel-kk-services .kk-service-card-identity{gap:2px}
+#panel-kk-services .kk-service-card-identity h4{font-size:12px;line-height:1.25}
+#panel-kk-services .kk-service-card-identity small{line-height:1.4}
+#panel-kk-services .kk-service-card-actions button{min-height:34px!important;height:auto!important;padding:8px 10px!important}
+#panel-kk-services .kk-service-requests-header{margin-bottom:8px}
+#panel-kk-services .kk-service-history-panel{margin-top:14px}
+/* Phones and tablets: no clipped controls or sideways page overflow. */
+@media(max-width:1024px){
+ #panel-kk-services{min-width:0;max-width:100%;box-sizing:border-box}
+ #panel-kk-services .kk-service-admin-heading{align-items:flex-start;flex-wrap:wrap}
+ #panel-kk-services .kk-service-admin-queue{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #panel-kk-services .kk-service-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+ #panel-kk-services .kk-service-admin-queue{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #panel-kk-services .kk-service-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #panel-kk-services .kk-service-admin-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #panel-kk-services .kk-service-admin-filters label{min-width:0}
+ #panel-kk-services .kk-service-history-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+ #panel-kk-services .kk-history-search-label{grid-column:1/-1;min-width:0}
+ #panel-kk-services .kk-history-date-label{grid-column:1/-1;max-width:none}
+ #panel-kk-services #kk-service-export{grid-column:1/-1}
+ #panel-kk-services .kk-service-history-scroll{overflow-x:auto;max-width:100%;overscroll-behavior-inline:contain}
+}
+@media(max-width:480px){
+ #panel-kk-services .kk-service-admin-queue{grid-template-columns:minmax(0,1fr)}
+ #panel-kk-services .kk-service-admin-filters{grid-template-columns:minmax(0,1fr)}
+ #panel-kk-services .kk-service-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #panel-kk-services .kk-service-admin-heading h2{font-size:21px}
+ #panel-kk-services .kk-service-heading-actions{width:100%}
+ #panel-kk-services .kk-service-heading-actions button{width:100%;min-width:0}
+ #panel-kk-services :is(input,select,textarea){font-size:16px!important;max-width:100%}
+ #panel-kk-services .kk-service-history-header{min-width:0}
+ #panel-kk-services .kk-service-history-tools{grid-template-columns:minmax(0,1fr)}
+ #panel-kk-services #kk-service-export{width:100%}
+ #panel-kk-services .kk-service-review-detail .kk-service-edit-grid,
+ #panel-kk-services .kk-service-review-detail .kk-service-review-actions{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:360px){
+ #panel-kk-services .kk-service-stats article{padding:9px}
+ #panel-kk-services .kk-service-admin-card{padding:9px!important}
+}
