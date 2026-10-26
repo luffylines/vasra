@@ -5,7 +5,7 @@
  const types={printing:'Free Printing',computer:'Free Computer Use',retabox:'RetaBox Donations'};
  const video=$('#kk-scan-video'),canvas=$('#kk-scan-canvas');
  if(!video||!canvas)return;
- let stream=null,active=false,processing=false,detector=null,timer=null,revision=0,member=null,pending=[],entryKey=null,jsQRLoading=null;
+ let stream=null,active=false,processing=false,decoding=false,detector=null,timer=null,revision=0,member=null,pending=[],entryKey=null,jsQRLoading=null;
  const status=(msg,error=false)=>{const el=$('#kk-scan-status');el.textContent=msg;el.dataset.kind=error?'error':'info';};
  const detailFields=(type,d={})=>{
   if(type==='printing')return '<div class="kk-scan-fields"><label>Paper size<select name="paper_size"><option value="short"'+(d.paper_size==='short'?' selected':'')+'>Short</option><option value="long"'+(d.paper_size==='long'?' selected':'')+'>Long</option></select></label>'+
@@ -29,25 +29,25 @@
   $('#kk-scan-member').hidden=false;
   $('#kk-scan-member').innerHTML='<div class="kk-scan-member-profile"><span class="kk-scan-id-badge">VERIFIED KK MEMBER</span>'+
     '<h4>'+esc(member.name)+'</h4><p>'+esc(member.kk_id)+'</p>'+
-    '<small>Scanned by: <strong>'+esc(officer)+'</strong> · recorded from your authenticated SK session</small></div>';
+    '<small>SK Officer: <strong>'+esc(officer)+'</strong> · authenticated session</small></div>';
   const existing=$('#kk-scan-pending');
   existing.hidden=!pending.length;
-  existing.innerHTML=pending.length?'<h4>Existing pending requests ('+pending.length+')</h4>'+
-  '<p>Confirm the original online request; details may be corrected by the SK Officer.</p>'+
+  existing.innerHTML=pending.length?'<h4>Pending requests ('+pending.length+')</h4>'+
+  '<p>Review the original member request, correct details if needed, then confirm.</p>'+
   pending.map(r=>'<form class="kk-scan-service-form" data-scan-pending="'+esc(r.id)+'" data-type="'+esc(r.service_type)+'">'+
    '<header><strong>'+esc(types[r.service_type])+'</strong><small>Requested '+esc(new Date(r.requested_at).toLocaleString('en-PH',{timeZone:'Asia/Manila'}))+'</small></header>'+
    detailFields(r.service_type,r.details)+
    '<label>Officer note (optional)<input name="note" maxlength="500" placeholder="Verified during service"></label>'+
    '<button type="submit" class="primary">Confirm & Record Completed</button></form>').join(''):'';
   const walkin=$('#kk-scan-walkin');walkin.hidden=false;
-  walkin.innerHTML=(pending.length?'<p class="kk-scan-walkin-separator">Need a different service?</p>':'<h4>No pending requests</h4><p>Select the service being provided and confirm the actual details.</p>')+
+  walkin.innerHTML=(pending.length?'<details class="kk-scan-walkin-details"><summary>Need a different service? Add walk-in service</summary>':'<div class="kk-scan-walkin-intro"><h4>No pending requests</h4><p>Select the service being provided.</p></div>')+
    '<form id="kk-scan-walkin-form" class="kk-scan-service-form">'+
    '<label>Service<select name="service_type" id="kk-scan-service-type"><option value="printing">Free Printing</option><option value="computer">Free Computer Use</option><option value="retabox">RetaBox Donations</option></select></label>'+
    '<div id="kk-scan-service-fields">'+detailFields('printing')+'</div>'+
    '<label>Officer note (optional)<input name="note" maxlength="500" placeholder="Record the actual service"></label>'+
-   '<button type="submit" class="primary">Confirm & Record Completed</button></form>';
+   '<button type="submit" class="primary">Confirm & Record Completed</button></form>'+(pending.length?'</details>':'');
   entryKey=globalThis.crypto?.randomUUID?.()||null;
-  status('KK member verified. Choose an existing request or enter the actual walk-in service.');
+  status('Verified KK member · Review a pending request or record a walk-in service.');
  };
  const fetchScan=async body=>{
   const result=await api('./api/kk/staff/services/scan',{method:'POST',body:JSON.stringify(body)});
@@ -85,25 +85,28 @@
   $('#kk-scan-placeholder').hidden=false;
  };
  const decodeFrame=async()=>{
-  if(!active||processing||!stream)return;
+  if(!active||processing||decoding||!stream)return;
   if(video.readyState<2)return;
+  decoding=true;
   try{
    let value=null;
-   if(detector){const codes=await detector.detect(video);value=codes[0]?.rawValue||null;}
+   if(detector){try{const codes=await detector.detect(video);value=codes.find(c=>c.rawValue)?.rawValue||null;}
+    catch(error){detector=null; if(typeof window.jsQR!=='function')throw error;}}
    else if(window.jsQR){
     const w=Math.min(720,video.videoWidth),h=Math.round(w*video.videoHeight/video.videoWidth);
     if(w>0&&h>0){canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});
-     ctx.drawImage(video,0,0,w,h);const pixels=ctx.getImageData(0,0,w,h);value=window.jsQR(pixels.data,w,h)?.data||null;}
+     ctx.drawImage(video,0,0,w,h);const pixels=ctx.getImageData(0,0,w,h);value=window.jsQR(pixels.data,w,h,{inversionAttempts:'attemptBoth'})?.data||null;}
    }
    if(value){await lookup(value);return;}
-  }catch{}
+  }catch(error){status('Camera QR reader error: '+error.message,true);}
+  finally{decoding=false;}
  };
  const fallback=()=>new Promise((resolve,reject)=>{
   if(typeof window.jsQR==='function'){resolve();return;}
   if(jsQRLoading){jsQRLoading.then(resolve,reject);return;}
   jsQRLoading=new Promise((ok,fail)=>{
    const script=document.createElement('script');
-   script.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
+   script.src='./vendor-jsqr.js?v=20261026-local-qr-v1';
    script.async=true;script.crossOrigin='anonymous';
    script.onload=()=>typeof window.jsQR==='function'?ok():fail(Error('QR decoder unavailable'));
    script.onerror=()=>fail(Error('Unable to load QR decoder; enter KK ID manually.'));
@@ -129,10 +132,12 @@
    timer=setInterval(decodeFrame,230);
   }catch(e){stopCamera();status('Cannot start camera: '+(e.name==='NotAllowedError'?'Please allow camera access in browser settings.':e.message),true);}
  };
- window.openKKScan=()=>{
+ window.openKKScan=async({kkId=null,autoStart=false}={})=>{
   const panel=$('#kk-scan-panel');panel.hidden=false;
   panel.scrollIntoView?.({behavior:'smooth',block:'start'});
-  status('Ready to scan. Start Camera or enter KK ID.');
+  if(kkId){await lookup(kkId);return;}
+  status('Ready to scan. Hold a QR in front of the camera or enter a KK ID.');
+  if(autoStart)startCamera();
  };
  const close=()=>{revision++;stopCamera();$('#kk-scan-panel').hidden=true;member=null;pending=[];entryKey=null;};
  window.closeKKScan=close;
