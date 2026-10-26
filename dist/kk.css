@@ -437,3 +437,33 @@ html[data-theme="dark"] .kk-auth-page .kk-reset-back{background:#1d3653;border-c
 html[data-theme="dark"] .kk-auth-page .kk-reset-note{color:#bad0eb}
 html[data-theme="dark"] .kk-auth-page #kk-reset-feedback:not([hidden]){background:#1c405c;color:#d9f0ff}
 @media(max-width:520px){.kk-auth-page .kk-forgot-link{min-height:42px;font-size:12px}}
+
+
+/* KK login: security notice and Forgot Password share one baseline without wasted whitespace. */
+.kk-auth-page[data-view="login"] #kk-login-form{gap:12px}
+.kk-auth-page[data-view="login"] #kk-login-form .kk-login-options{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:4px 14px;margin:-2px 0 0;padding:0;min-width:0;
+}
+.kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-session-hint{
+ display:inline-flex;align-items:center;gap:6px;min-width:0;
+ margin:0;padding:0;line-height:1.45;color:#6d83a1;font-size:10px;
+}
+.kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-session-hint svg{width:14px;height:14px;flex:none}
+.kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-forgot-row{
+ display:flex;justify-content:flex-end;align-items:center;margin:0;padding:0;
+}
+.kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-forgot-link{
+ display:inline-flex;align-items:center;min-height:28px;margin:0;padding:0;
+ line-height:1.4;font-size:11px;white-space:nowrap;
+}
+html[data-theme="dark"] .kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-session-hint{
+ color:#c2d6ee;
+}
+@media(max-width:380px){
+ .kk-auth-page[data-view="login"] #kk-login-form .kk-login-options{
+  gap:2px 8px;
+ }
+ .kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-session-hint{font-size:9px}
+ .kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-forgot-link{font-size:10px}
+}
