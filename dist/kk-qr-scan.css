@@ -251,3 +251,46 @@ body.account-workspace[data-theme="dark"] #kk-quick-overlay[data-camera="unavail
  #kk-quick-overlay .kk-quick-camera-frame{max-height:24dvh}
  #kk-quick-overlay[data-camera="unavailable"] .kk-quick-camera-frame{height:64px!important;min-height:64px!important}
 }
+
+
+/* Exact alignment of KK ID manual lookup: phone and desktop. Keep equal-size controls. */
+#kk-quick-overlay #kk-quick-manual-form>div{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) 112px!important;
+ align-items:stretch!important;
+ column-gap:8px!important;row-gap:8px!important;
+ width:100%!important;min-width:0!important;
+}
+#kk-quick-overlay #kk-quick-manual-id,
+#kk-quick-overlay #kk-quick-manual-form button[type="submit"]{
+ box-sizing:border-box!important;
+ width:100%!important;
+ height:42px!important;
+ min-height:42px!important;
+ max-height:42px!important;
+ margin:0!important;
+ border-radius:9px!important;
+ align-self:stretch!important;
+ vertical-align:middle!important;
+ line-height:20px!important;
+}
+#kk-quick-overlay #kk-quick-manual-id{padding:10px 12px!important;font-size:16px!important;}
+#kk-quick-overlay #kk-quick-manual-form button[type="submit"]{
+ display:flex!important;
+ align-items:center!important;justify-content:center!important;
+ text-align:center!important;
+ padding:10px 8px!important;
+ min-width:0!important;
+ font-size:12px!important;
+ font-weight:750!important;
+ white-space:nowrap!important;
+}
+@media(max-width:480px){
+ #kk-quick-overlay #kk-quick-manual-form>div{
+  grid-template-columns:minmax(0,1fr) 108px!important;gap:7px!important;
+ }
+}
+@media(max-width:340px){
+ #kk-quick-overlay #kk-quick-manual-form>div{grid-template-columns:minmax(0,1fr)!important;}
+ #kk-quick-overlay #kk-quick-manual-form button[type="submit"]{width:100%!important;}
+}
