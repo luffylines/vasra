@@ -2585,3 +2585,17 @@ body.account-workspace[data-theme="dark"] .staff-account-edit-form{background:#1
 #monthly-form .trans-peso-wrap input:invalid{border-color:#ce5469}
 body.account-workspace[data-theme="dark"] #monthly-form .trans-peso-symbol{color:#a1d5ff}
 body.account-workspace[data-theme="dark"] #monthly-form #trans-expense-preview{color:#c5d8f2}
+
+
+/* A closed native dialog must not leak its old plain-text gallery chevrons
+   onto every staff page. The viewer is only displayed while actually open. */
+body.account-workspace #staff-project-gallery:not([open]),
+body.account-workspace dialog:not([open]){
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+body.account-workspace #staff-project-gallery[open] .staff-gallery-arrow{
+ display:inline-flex;align-items:center;justify-content:center;
+}
+body.account-workspace #staff-project-gallery[open] .staff-gallery-arrow svg{
+ width:18px;height:18px;flex:none;stroke:currentColor;
+}
