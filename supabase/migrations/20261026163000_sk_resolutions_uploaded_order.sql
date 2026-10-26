@@ -1,5 +1,7 @@
 -- Expose immutable upload timestamp and sort latest uploaded records first.
 -- Approval dates remain untouched; no existing rows are modified.
+-- Capture real insertion time for sequential rows in a single bulk-import transaction.
+ALTER TABLE vasra.sk_resolutions ALTER COLUMN created_at SET DEFAULT clock_timestamp();
 CREATE OR REPLACE FUNCTION public.vasra_sk_resolutions(action text, payload jsonb DEFAULT '{}'::jsonb, session_hash text DEFAULT NULL::text)
  RETURNS jsonb
  LANGUAGE plpgsql
