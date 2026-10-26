@@ -9,8 +9,8 @@ ALTER TABLE vasra.kk_perks DROP CONSTRAINT IF EXISTS kk_perks_quantity_valid;
 ALTER TABLE vasra.kk_perks ADD CONSTRAINT kk_perks_quantity_valid CHECK(quantity BETWEEN 0 AND 100000);
 
 CREATE TABLE IF NOT EXISTS vasra.kk_project_attendance (
- project_id uuid NOT NULL REFERENCES vasra.projects(id),
- member_id uuid NOT NULL REFERENCES vasra.kk_members(id),
+ project_id uuid NOT NULL REFERENCES vasra.projects(id) ON DELETE CASCADE,
+ member_id uuid NOT NULL REFERENCES vasra.kk_members(id) ON DELETE CASCADE,
  points integer NOT NULL CHECK(points BETWEEN 1 AND 500),
  officer_id uuid NOT NULL REFERENCES vasra.users(id),
  confirmed_at timestamptz NOT NULL DEFAULT clock_timestamp(),
@@ -110,7 +110,7 @@ BEGIN
     'claimed',(SELECT count(*) FROM vasra.kk_redemptions d WHERE d.perk_id=p.id AND d.status='approved'),
     'available',greatest(0,p.quantity-(SELECT count(*) FROM vasra.kk_redemptions d
        WHERE d.perk_id=p.id AND d.status IN ('pending','approved')))
-    ) ORDER BY p.created_at DESC) FROM vasra.kk_perks p WHERE p.active),'[]'::jsonb),
+    ) ORDER BY p.created_at DESC) FROM vasra.kk_perks p WHERE p.active AND p.image_path IS NOT NULL),'[]'::jsonb),
    'claims',coalesce((SELECT jsonb_agg(jsonb_build_object('id',d.id,'title',p.title,
      'cost',d.cost,'status',d.status,'created_at',d.created_at,'note',d.note)
      ORDER BY d.created_at DESC)
@@ -125,7 +125,11 @@ BEGIN
    THEN RETURN jsonb_build_object('error',400); END IF;
   SELECT * INTO perk FROM vasra.kk_perks WHERE id=(payload->>'id')::uuid;
   IF NOT FOUND OR perk.image_path IS NULL THEN RETURN jsonb_build_object('error',404); END IF;
-  IF officer.id IS NULL AND NOT perk.active THEN RETURN jsonb_build_object('error',403); END IF;
+  IF officer.id IS NULL THEN
+   SELECT * INTO prof FROM vasra.kk_profiles WHERE member_id=kk.id;
+   IF prof.status IS DISTINCT FROM 'verified' OR NOT perk.active
+   THEN RETURN jsonb_build_object('error',403); END IF;
+  END IF;
   RETURN jsonb_build_object('ok',true,'path',perk.image_path,'mime',perk.image_mime);
  END IF;
 
