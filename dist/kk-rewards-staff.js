@@ -21,7 +21,10 @@
    '<small>'+claimed+' claimed · '+reserved+' pending claim(s)</small>'+
    (state.officer.chairman?
     '<div class="kk-reward-actions"><button type="button" class="secondary" data-reward-edit="'+esc(p.id)+'">Edit</button>'+
-    '<button type="button" class="secondary" data-reward-publish="'+esc(p.id)+'">'+(p.active?'Disable':'Publish')+'</button></div>':'')+
+    '<button type="button" class="secondary" data-reward-publish="'+esc(p.id)+'">'+(p.active?'Disable':'Publish')+'</button>'+
+    '<button type="button" class="kk-reward-danger" data-reward-delete="'+esc(p.id)+'"'+
+      (claimed+reserved>0?' disabled title="Rewards with claims cannot be deleted; disable instead."':'')+
+      '>Delete</button></div>':'')+
    '</div></article>';
  };
  const renderClaims=()=>{
@@ -86,13 +89,17 @@
   busy(button,async()=>{
    const result=await service({action:'save',id:data.get('id')||null,title:data.get('title'),
      description:data.get('description'),cost:Number(data.get('cost')),quantity:Number(data.get('quantity'))});
-   // If photo upload fails, retry edits on this draft rather than creating a duplicate.
+   // Keep the saved draft ID if the photo cannot be uploaded, so retry is safe.
    form.elements.id.value=result.id;
    if(photo){
     const bytes=await readPhoto(photo);
-    await api('./api/kk/staff/rewards/image',{method:'POST',body:JSON.stringify({
+    try {
+     await api('./api/kk/staff/rewards/image',{method:'POST',body:JSON.stringify({
       id:result.id,mime:photo.type,data:bytes
-    })});
+     })});
+    } catch (error) {
+     throw Error('Reward draft saved, but photo upload failed. Retry Save Reward to attach the photo. '+error.message);
+    }
    }
    form.reset();
    flash('Reward saved as draft or updated. Publish when photo and stock are ready.');
@@ -116,6 +123,21 @@
    busy(publish,async()=>{
     await service({action:'toggle',id:p.id,active:!p.active});
     flash(p.active?'Reward disabled.':'Reward published.');
+   });return;
+  }
+  const remove=e.target.closest('[data-reward-delete]');
+  if(remove){
+   const p=state.rewards.find(x=>x.id===remove.dataset.rewardDelete);
+   if(!p||!state.officer.chairman)return;
+   if(Number(p.claimed||0)+Number(p.pending||0)>0){
+    flash('This reward has redemption requests. Disable it to preserve transaction history.',true);
+    return;
+   }
+   if(!confirm('Delete reward "'+p.title+'"? This cannot be undone.'))return;
+   busy(remove,async()=>{
+    await service({action:'delete',id:p.id});
+    if(form.elements.id.value===p.id)form.reset();
+    flash('Reward deleted successfully.');
    });return;
   }
   const claim=e.target.closest('[data-claim-decision]');
