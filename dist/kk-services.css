@@ -413,3 +413,49 @@ body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-review-
  #panel-kk-services .kk-service-review-actions button{min-height:39px;height:auto}
  #panel-kk-services .kk-service-admin-card{padding:11px}
 }
+
+
+/* Complete/rejected service archive with all-date search and export controls. */
+#panel-kk-services .kk-service-history-header{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:11px}
+#panel-kk-services .kk-service-history-header h3{font:800 18px/1.4 Manrope,sans-serif;color:#173e70;margin:0 0 4px}
+#panel-kk-services .kk-service-history-header p{font:500 11px/1.5 'DM Sans',sans-serif;color:#6685a5;margin:0;max-width:470px}
+#panel-kk-services .kk-service-history-tools{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;flex:1 1 525px}
+#panel-kk-services .kk-service-history-tools :is(label,input){box-sizing:border-box;min-width:0}
+#panel-kk-services .kk-history-search-label{flex:2 1 215px}
+#panel-kk-services .kk-history-date-label{flex:1 1 143px;max-width:170px}
+#panel-kk-services .kk-service-history-tools :is(input[type=search],input[type=date]){
+ box-sizing:border-box;display:block;width:100%;height:38px;min-height:38px;border-radius:9px;
+ border:1px solid #c7d9ed;padding:8px 11px;background:#f9fbff;color:#244875;
+ font:600 14px/1.4 'DM Sans',sans-serif}
+#panel-kk-services #kk-service-history-search{width:100%;min-height:38px}
+#panel-kk-services .kk-service-history-tools button{
+ box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+ height:38px;min-height:38px;width:auto;margin:0;padding:8px 12px;border-radius:9px;
+ font:750 11px/1.4 'DM Sans',sans-serif;white-space:nowrap}
+#panel-kk-services .kk-service-history-tools button svg{width:16px;height:16px;flex:none}
+#panel-kk-services .kk-service-history-count{font-size:11px;color:#5c7fa0;margin:0 0 9px}
+#panel-kk-services .kk-service-history-pagination{display:flex;justify-content:space-between;align-items:center;
+ gap:10px;flex-wrap:wrap;margin-top:11px}
+#panel-kk-services .kk-service-history-pagination>span{color:#6785a4;font:650 11px 'DM Sans',sans-serif}
+#panel-kk-services .kk-service-history-pagination>div{display:flex;gap:8px}
+#panel-kk-services .kk-service-history-pagination button{min-height:35px;border-radius:8px;padding:8px 12px;font-size:11px}
+#panel-kk-services .kk-service-history-pagination button:disabled{opacity:.45;cursor:not-allowed}
+#panel-kk-services .kk-service-history-table{min-width:1060px}
+#panel-kk-services .kk-service-history-table th,
+#panel-kk-services .kk-service-history-table td{padding:11px 12px;font-size:11px}
+#panel-kk-services .kk-service-history-table td:nth-child(-n+2){white-space:nowrap;font-variant-numeric:tabular-nums}
+body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-header h3{color:#f0f7ff}
+body.account-workspace[data-theme="dark"] #panel-kk-services :is(.kk-service-history-header p,.kk-service-history-count,.kk-service-history-pagination>span){color:#c2d8ef}
+body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-tools :is(input[type=search],input[type=date]){
+ background:#142b46;color:#f0f8ff;border-color:#4d6d92;color-scheme:dark}
+body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history-pagination button{background:#254566;color:#e8f4ff;border:1px solid #52749b}
+@media(max-width:920px){#panel-kk-services .kk-service-history-tools{justify-content:flex-start;flex-basis:100%}
+ #panel-kk-services .kk-history-date-label{max-width:none}}
+@media(max-width:520px){
+ #panel-kk-services .kk-service-history-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ #panel-kk-services .kk-history-search-label{grid-column:1/-1}
+ #panel-kk-services .kk-history-date-label{grid-column:1/-1}
+ #panel-kk-services #kk-service-export{grid-column:1/-1}
+ #panel-kk-services .kk-service-history-tools button{width:100%}
+ #panel-kk-services .kk-service-history-panel{padding:11px}
+}
