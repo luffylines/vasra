@@ -52,11 +52,11 @@ test('Dark profile separators harmonize and refreshed assets load on KK and publ
  assert.match(theme,/\.kk-profile-sheet-head/);
  for(const file of ['kk-login.html','kk-register.html','kk-profile.html','kk-dashboard.html']){
   const markup=read(file);
-  assert.match(markup,/\.\/theme\.css\?v=20261026-kk-mobile-profile-v8/);
-  assert.match(markup,/\.\/kk\.css\?v=20261026-kk-mobile-profile-v8/);
+  assert.match(markup,/\.\/theme\.css\?v=20261026-kk-password-reset-v1/);
+  assert.match(markup,/\.\/kk\.css\?v=20261026-kk-password-reset-v1/);
  }
  for(const file of ['duty.html','index.html','contacts.html'])
-  assert.match(read(file),/\.\/shell\.js\?v=20261026-kk-mobile-profile-v8/);
+  assert.match(read(file),/\.\/shell\.js\?v=20261026-kk-password-reset-v1/);
  for(const file of ['kk.js','shell.js','duty.js'])
   assert.doesNotThrow(()=>new vm.Script(read(file),{filename:file}));
 });
