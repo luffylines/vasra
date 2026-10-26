@@ -46,6 +46,10 @@
     {
       "source": "/sk-resolutions",
       "destination": "/sk-resolutions.html"
+    },
+    {
+      "source": "/kk-reset",
+      "destination": "/kk-reset.html"
     }
   ],
   "redirects": [
@@ -97,6 +101,11 @@
     {
       "source": "/sk-resolutions.html",
       "destination": "/sk-resolutions",
+      "permanent": true
+    },
+    {
+      "source": "/kk-reset.html",
+      "destination": "/kk-reset",
       "permanent": true
     }
   ],
