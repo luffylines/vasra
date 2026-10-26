@@ -198,3 +198,47 @@ body.kk-member-dashboard[data-theme="dark"] .kk-attended-event{background:#243e5
 body.kk-member-dashboard[data-theme="dark"] .kk-attended-event strong,body.kk-member-dashboard[data-theme="dark"] .kk-participation-heading h3{color:#f0f7ff}
 body.kk-member-dashboard[data-theme="dark"] :is(.kk-attended-event small,.kk-participation-heading p){color:#b8d0eb}
 @media(max-width:480px){.kk-participation-history{padding:12px}.kk-attended-event{padding:10px}}
+
+
+/* Clear differences between registered-only and actual attendance (+10). */
+.kk-event-registration-action{display:flex;align-items:stretch;margin-top:auto;padding-top:5px;min-width:0}
+.kk-upcoming-event{display:flex;flex-direction:column;gap:5px;min-width:0}
+.kk-upcoming-event h3,.kk-upcoming-event p{overflow-wrap:anywhere}
+.kk-upcoming-event p{margin-bottom:9px}
+.kk-project-registered,.kk-project-attended{display:inline-flex;align-items:center;gap:7px;
+ padding:10px 12px;border-radius:9px;font:800 11px/1.4 'DM Sans',sans-serif;min-width:0;
+ max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+.kk-project-registered{background:#eaf2fc;border:1px solid #bed4ee;color:#345d8c}
+.kk-project-attended{background:#e1f8ee;border:1px solid #a9dfc2;color:#176b48}
+.kk-project-attended svg{width:16px;height:16px;flex:none}
+.kk-upcoming-event .kk-project-join{min-height:38px;padding:8px 12px;font-size:12px}
+body.kk-member-dashboard[data-theme="dark"] .kk-project-registered{background:#294867;color:#e6f3ff;border-color:#5681af}
+body.kk-member-dashboard[data-theme="dark"] .kk-project-attended{background:#224e3c;color:#dcfce9;border-color:#4c9374}
+body.kk-member-dashboard[data-theme="dark"] .kk-upcoming-event{background:#223a57;border-color:#47678d}
+@media(max-width:1024px){
+ .kk-member-dashboard .kk-main,.kk-member-dashboard .kk-dashboard-panel{min-width:0;max-width:100%;box-sizing:border-box}
+ .kk-member-dashboard .kk-dashboard-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+}
+@media(max-width:720px){
+ .kk-member-dashboard .kk-dashboard-panel{padding:15px;border-radius:12px}
+ .kk-member-dashboard .kk-dashboard-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
+ .kk-member-dashboard .kk-activity-card{padding:13px}
+ .kk-member-dashboard .kk-attended-event{align-items:flex-start;gap:9px}
+ .kk-member-dashboard .kk-settings-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:480px){
+ .kk-member-dashboard .kk-dashboard-grid{grid-template-columns:minmax(0,1fr)}
+ .kk-member-dashboard .kk-main{padding-inline:clamp(10px,3vw,16px)}
+ .kk-member-dashboard .kk-dashboard-panel{padding:12px}
+ .kk-member-dashboard .kk-activity-card{padding:12px}
+ .kk-member-dashboard .kk-activity-card button,.kk-member-dashboard .kk-event-registration-action>*{width:100%}
+ .kk-member-dashboard .kk-dashboard-panel :is(input,select,textarea){font-size:16px;max-width:100%;box-sizing:border-box}
+ .kk-member-dashboard .kk-participation-history{padding:11px}
+ .kk-member-dashboard .kk-attended-event{padding:10px;flex-direction:column;align-items:stretch}
+ .kk-member-dashboard .kk-attended-event>span{align-self:flex-start}
+}
+@media(max-width:350px){
+ .kk-member-dashboard .kk-dashboard-panel{padding:10px}
+ .kk-member-dashboard .kk-dashboard-panel h2{font-size:19px}
+ .kk-member-dashboard .kk-activity-card h3{font-size:15px}
+}
