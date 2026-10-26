@@ -49,3 +49,95 @@ body.account-workspace[data-theme="dark"] #kk-scan-status{color:#d5e8fc}
 @media(max-width:850px){.kk-scan-layout{grid-template-columns:1fr}.kk-scan-header{flex-wrap:wrap}}
 @media(max-width:480px){#kk-scan-panel{padding:12px}.kk-scan-fields{grid-template-columns:1fr}.kk-scan-camera-actions{flex-wrap:wrap}
  .kk-scan-service-form>button{width:100%}}
+
+
+/* Toolbar scanner: one compact child dialog; live camera is opened from a user click. */
+#staff-quick-scanner[hidden],#kk-quick-overlay[hidden],
+#kk-quick-video[hidden],#kk-quick-start[hidden],#kk-quick-stop[hidden],
+#kk-quick-camera-hint[hidden]{display:none!important}
+#staff-quick-scanner{display:inline-flex;justify-content:center;align-items:center}
+body.kk-quick-open{overflow:hidden}
+.kk-quick-overlay{position:fixed;inset:0;z-index:4500;display:flex;align-items:center;justify-content:center;
+ padding:18px;background:rgba(7,22,43,.67);backdrop-filter:blur(5px);overflow-y:auto}
+.kk-quick-dialog{box-sizing:border-box;max-width:440px;width:100%;background:#fff;color:#163761;
+ border:1px solid #cfdef0;border-radius:17px;padding:18px;box-shadow:0 18px 54px rgba(7,26,52,.32)}
+.kk-quick-header{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:14px}
+.kk-quick-header small{display:block;font-size:10px;font-weight:800;letter-spacing:.11em;color:#4e77a4}
+.kk-quick-header h2{font:800 20px/1.3 Manrope,sans-serif;color:#183f73;margin:3px 0 5px}
+.kk-quick-header p{font-size:11px;line-height:1.5;color:#6682a1;margin:0}
+.kk-quick-close{display:inline-flex;justify-content:center;align-items:center;flex:none;width:34px;height:34px;
+ border:1px solid #c5d9ef;background:#f2f7ff;color:#37689f;border-radius:9px;cursor:pointer}
+.kk-quick-camera-frame{min-height:180px;max-height:340px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+ position:relative;background:#101f34;border:2px solid #b2cbec;border-radius:12px;overflow:hidden}
+#kk-quick-video{display:block;width:100%;height:100%;object-fit:cover}
+#kk-quick-camera-hint{color:#e1edff;font-size:12px;line-height:1.6;text-align:center;padding:18px}
+#kk-quick-status{font-size:11px;line-height:1.55;font-weight:650;color:#36668d;min-height:18px;margin:11px 0}
+#kk-quick-status[data-kind=error]{color:#ae2d3b}
+.kk-quick-controls{display:flex;gap:8px;margin-bottom:12px}
+.kk-quick-controls button,#kk-quick-manual-form button{min-height:36px;min-width:112px;width:auto;
+ border-radius:9px;padding:8px 13px;font:750 11px/1.4 'DM Sans',sans-serif}
+#kk-quick-manual-form{display:grid;gap:7px}
+#kk-quick-manual-form label{font:750 11px 'DM Sans',sans-serif;color:#42678e}
+#kk-quick-manual-form>div{display:flex;gap:8px;align-items:stretch}
+#kk-quick-manual-id{box-sizing:border-box;flex:1;min-width:0;height:38px;padding:8px 10px;font:650 16px 'DM Sans',sans-serif;
+ border:1px solid #c4d9ee;border-radius:9px;background:#f9fcff;color:#173e6f}
+body.account-workspace[data-theme="dark"] .kk-quick-dialog{background:#1c304a;border-color:#486a90;color:#e8f3ff}
+body.account-workspace[data-theme="dark"] .kk-quick-header h2{color:#edf7ff}
+body.account-workspace[data-theme="dark"] :is(.kk-quick-header p,.kk-quick-header small,.kk-quick-manual-form label){color:#c1d5ec}
+body.account-workspace[data-theme="dark"] #kk-quick-manual-id{background:#152b44;color:#f3f8ff;border-color:#56789c}
+body.account-workspace[data-theme="dark"] .kk-quick-close{background:#2b4969;color:#f0f6ff;border-color:#56799e}
+body.account-workspace[data-theme="dark"] #kk-quick-status{color:#bedbf6}
+body.account-workspace[data-theme="dark"] #kk-quick-status[data-kind=error]{color:#ffb7c1}
+/* Reduce large empty scanner panes and preserve an aligned action rhythm. */
+#kk-scan-panel{padding:12px 14px;margin:0 0 14px;border-radius:12px}
+#kk-scan-panel .kk-scan-header{margin:0 0 11px;align-items:center;gap:12px}
+#kk-scan-panel .kk-scan-header h3{font-size:17px;margin:2px 0 3px}
+#kk-scan-panel .kk-scan-header p{font-size:11px;line-height:1.5}
+#kk-scan-panel .kk-scan-layout{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);align-items:start;gap:12px}
+#kk-scan-panel :is(.kk-scan-camera-wrap,.kk-scan-result){padding:12px;border-radius:10px}
+#kk-scan-panel .kk-scan-camera-placeholder{min-height:98px;padding:12px;font-size:11px}
+#kk-scan-panel #kk-scan-video{max-height:250px;aspect-ratio:4/3}
+#kk-scan-panel .kk-scan-camera-actions{gap:8px;margin:9px 0}
+#kk-scan-panel :is(.kk-scan-header button,.kk-scan-camera-actions button,#kk-scan-manual-submit,
+ .kk-scan-service-form>button,.kk-scan-service-form button[type=submit]){box-sizing:border-box;
+ display:inline-flex;justify-content:center;align-items:center;min-height:36px;min-width:108px;width:auto;
+ padding:8px 12px;border-radius:9px;font:750 11px/1.4 'DM Sans',sans-serif;margin:0}
+#kk-scan-panel #kk-scan-manual-submit{margin-top:8px}
+#kk-scan-panel .kk-scan-manual{font-size:11px;gap:5px}
+#kk-scan-panel :is(.kk-scan-manual input,.kk-scan-service-form input,.kk-scan-service-form select){
+ box-sizing:border-box;width:100%;min-width:0;min-height:38px;padding:8px 10px;font-size:16px;border-radius:8px}
+#kk-scan-panel #kk-scan-status{font-size:11px;margin:0 0 9px;line-height:1.5}
+#kk-scan-panel .kk-scan-member-profile{padding:10px 12px;margin:0 0 10px;border-radius:9px}
+#kk-scan-panel .kk-scan-member-profile h4{font-size:15px;margin:2px 0}
+#kk-scan-panel .kk-scan-member-profile p{margin:0 0 3px;font-size:11px}
+#kk-scan-panel .kk-scan-member-profile small{font-size:10px;line-height:1.5}
+#kk-scan-panel .kk-scan-result h4{font-size:12px;margin:5px 0}
+#kk-scan-panel .kk-scan-result p{font-size:11px;margin:4px 0 9px;line-height:1.45}
+#kk-scan-panel .kk-scan-service-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;margin:8px 0;padding:11px;border-radius:10px}
+#kk-scan-panel .kk-scan-service-form header,
+#kk-scan-panel .kk-scan-service-form>.kk-scan-fields,
+#kk-scan-panel .kk-scan-service-form>#kk-scan-service-fields{grid-column:1/-1}
+#kk-scan-panel .kk-scan-service-form header{display:flex;align-items:center;justify-content:space-between;gap:5px}
+#kk-scan-panel .kk-scan-service-form header strong{font-size:12px}
+#kk-scan-panel .kk-scan-service-form header small{font-size:10px}
+#kk-scan-panel .kk-scan-service-form label{font-size:11px;gap:4px;min-width:0}
+#kk-scan-panel .kk-scan-service-form label:has(input[name=note]){grid-column:1/-1}
+#kk-scan-panel .kk-scan-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#kk-scan-panel .kk-scan-service-form>button[type=submit]{grid-column:1/-1;justify-self:start}
+#kk-scan-panel #kk-scan-walkin>.kk-scan-walkin-details{margin-top:9px;border-top:1px solid #d3e1f1;padding-top:9px}
+#kk-scan-panel .kk-scan-walkin-details summary{font-size:11px;font-weight:800;color:#295f9f;cursor:pointer;padding:8px 0}
+#kk-scan-panel .kk-scan-walkin-details #kk-scan-walkin-form{margin-top:9px}
+#kk-scan-panel .kk-scan-walkin-intro{padding-top:6px}
+body.account-workspace[data-theme="dark"] #kk-scan-panel .kk-scan-walkin-details{border-color:#4a698d}
+body.account-workspace[data-theme="dark"] #kk-scan-panel .kk-scan-walkin-details summary{color:#b9d9fa}
+body.account-workspace[data-theme="dark"] #kk-scan-panel :is(.kk-scan-manual input,.kk-scan-service-form input,.kk-scan-service-form select){
+ background:#132b46;border-color:#56779f;color:#ebf4ff}
+@media(max-width:1050px){#kk-scan-panel .kk-scan-layout{grid-template-columns:1fr}
+ #kk-scan-panel .kk-scan-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.kk-quick-overlay{padding:8px}.kk-quick-dialog{padding:13px}
+ .kk-quick-camera-frame{min-height:150px;max-height:55vh}
+ #kk-quick-manual-form>div{flex-direction:column}#kk-quick-manual-form button{width:100%}
+ #kk-scan-panel .kk-scan-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #kk-scan-panel .kk-scan-service-form{grid-template-columns:1fr}
+ #kk-scan-panel .kk-scan-service-form>button[type=submit]{width:100%;justify-self:stretch}}
