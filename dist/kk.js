@@ -425,9 +425,13 @@
   $('#kk-steps').innerHTML=titles.map((title,i)=>'<div class="kk-step '+(current===i+1?'active':current>i+1?'done':'')+'"><span>'+(i+1)+'</span><strong>'+esc(title)+'</strong><small>'+esc(subtitles[i])+'</small></div>').join('');
   $('#kk-step-fields').innerHTML=stepBody();
   $('#kk-back').disabled=current<=1;$('#kk-back').hidden=current<=1;
-  $('#kk-next').textContent=current===5?'Submit for SK Review →':'Save & Next →';
+  const nextText=current===5?'Submit for SK Review':'Save & Next';
+  const rightIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>';
+  const leftIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6 6-6-6 6-6"/></svg>';
+  $('#kk-back').innerHTML=leftIcon+'<span>Back</span>';
+  $('#kk-next').innerHTML='<span>'+nextText+'</span>'+rightIcon;
   renderPreview();
-  if(current===0){$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';$('#kk-next').textContent='Save & Continue →';}
+  if(current===0){$('#kk-step-label').textContent='GOOGLE ACCOUNT SETUP';$('#kk-step-title').textContent='Complete your registration';$('#kk-next').innerHTML='<span>Save & Continue</span>'+rightIcon;}
  };
  async function load(){
   let result;
