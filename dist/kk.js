@@ -474,6 +474,7 @@
     const minimum=Number(numberInput.min||0),maximum=Number(numberInput.max||99);
     const next=Math.min(maximum,Math.max(minimum,Number(numberInput.value||minimum)+Number(adjustment.dataset.adjust)));
     numberInput.value=String(next);numberInput.dispatchEvent(new Event('input',{bubbles:true}));
+    data[numberInput.name]=String(next);renderPreview();
    }
    return;
   }
@@ -523,10 +524,13 @@
    else renderStep();
    return;
   }
-  if(current!==2||!['education','education_status'].includes(event.target.name))return;
-  savedFields($('#kk-step-form'));
-  if(event.target.name==='education')data.year_level='';
-  renderStep(); // Update Year Level, Course and School requirements for the selected status.
+  if(current===2&&['education','education_status'].includes(event.target.name)){
+   savedFields($('#kk-step-form'));
+   if(event.target.name==='education')data.year_level='';
+   renderStep(); // Update Year Level, Course and School requirements.
+   return;
+  }
+  if(event.target.matches('select,input[type="radio"]'))savedFields($('#kk-step-form'));
  });
  $('#kk-step-form').addEventListener('submit',async e=>{
   e.preventDefault();const form=e.currentTarget;
