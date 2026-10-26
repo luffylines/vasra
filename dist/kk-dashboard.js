@@ -61,6 +61,7 @@
   setMenu(false);
   if(['printing','computer','retabox'].includes(which))window.loadKKServices?.();
   if(which==='projects')refreshProjects();
+  if(which==='rewards'&&member)refreshRewards();
   if(which==='kk-id')window.loadKKIDCard?.();
  };
  document.querySelectorAll('button[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
@@ -108,16 +109,36 @@
  };
  const renderRewards=()=>{
   const list=Array.isArray(member.perks)?member.perks:[];
-  $('#kk-reward-list').innerHTML=list.length?list.map(perk=>
-   '<article class="kk-activity-card"><small>SK-APPROVED REWARD</small><h3>'+safe(perk.title)+'</h3>'+
-   '<p>'+safe(perk.description||'')+'</p><p><strong>'+safe(perk.cost)+' points</strong></p>'+
-   '<button class="kk-btn" type="button" data-redeem="'+safe(perk.id)+'"'+(Number(member.points||0)<Number(perk.cost)?' disabled':'')+'>'+
-   (Number(member.points||0)<Number(perk.cost)?'Insufficient points':'Request Redemption')+'</button></article>').join(''):
-   '<div class="kk-dash-empty">Wala pang reward na inilathala ng SK Chairman. Magpapakita lang dito ng tunay na SK-approved rewards.</div>';
+  const available=Number(member.available_points??member.points??0);
+  $('#kk-reward-list').innerHTML=list.length?list.map(perk=>{
+   const stocked=Number(perk.available||0)>0,can=stocked&&available>=Number(perk.cost);
+   const pending=(member.redemptions||[]).some(r=>r.status==='pending'&&r.title===perk.title);
+   return '<article class="kk-activity-card kk-member-reward">'+
+    '<div class="kk-member-reward-art">'+(perk.image?
+     '<img src="./api/kk/rewards/image/'+encodeURIComponent(perk.id)+'" alt="Reward photo: '+safe(perk.title)+'" loading="lazy">':
+     '<div class="kk-member-reward-no-photo">Reward photo</div>')+'</div>'+
+    '<div class="kk-member-reward-details"><small>SK-APPROVED REWARD</small><h3>'+safe(perk.title)+'</h3>'+
+    '<p>'+safe(perk.description||'')+'</p>'+
+    '<div class="kk-member-reward-summary"><strong>'+safe(perk.cost)+' points</strong>'+
+    '<span>'+safe(perk.available)+' available · '+safe(perk.claimed)+' claimed</span></div>'+
+    '<button class="kk-btn" type="button" data-redeem="'+safe(perk.id)+'" '+(!can||pending?'disabled':'')+'>'+
+    (!stocked?'Out of Stock':pending?'Redemption Pending':!can?'Insufficient Points':'Request Redemption')+'</button></div></article>';
+  }).join(''):
+   '<div class="kk-dash-empty">Wala pang available SK rewards. Lalabas dito ang published rewards kasama ang larawan at stock.</div>';
   const redemptions=Array.isArray(member.redemptions)?member.redemptions:[];
   $('#kk-redemption-list').innerHTML=redemptions.length?redemptions.map(r=>
-   '<div class="kk-dashboard-list"><strong>'+safe(r.perk)+'</strong><span>'+safe(r.cost)+' pts · '+safe(r.status)+'</span></div>').join(''):
+   '<div class="kk-dashboard-list"><strong>'+safe(r.title||r.perk)+'</strong><span>'+safe(r.cost)+' pts · '+safe(r.status)+
+   (r.note?' · '+safe(r.note):'')+'</span></div>').join(''):
    '<div class="kk-dash-empty">Wala pang redemption requests.</div>';
+ };
+ const refreshRewards=async()=>{
+  const rewards=await request('rewards');
+  if(!Array.isArray(rewards?.rewards))throw Error('Invalid KK rewards response.');
+  member.perks=rewards.rewards;member.redemptions=rewards.claims||[];
+  member.points=rewards.balance;member.available_points=rewards.available_points;
+  $('#kk-dash-points').textContent=String(rewards.balance||0);
+  $('#kk-dash-rewards-count').textContent=String(rewards.rewards.length);
+  renderRewards();
  };
  async function reload(){
   const data=await request('me');
@@ -134,8 +155,7 @@
   $('#kk-dash-points').textContent=String(data.points||0);
   $('#kk-current-email').textContent=data.member.email||'—';
   $('#kk-sidebar-name').textContent=[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')||'Verified KK Member';
-  $('#kk-dash-rewards-count').textContent=String(Array.isArray(data.perks)?data.perks.length:0);
-  renderRewards();
+  await refreshRewards();
   window.loadKKServices?.(); // Also populate the overview counts immediately, not only inside service tabs.
   loading.hidden=true;content.hidden=false;return true;
  }
@@ -143,7 +163,7 @@
   const join=event.target.closest('button[data-join]');
   const redeem=event.target.closest('button[data-redeem]');
   if(!join&&!redeem)return;
-  const action=join?'join':'redeem',button=join||redeem;
+  const action=join?'join':'rewards',button=join||redeem;
   const project=join?projects.find(p=>p.id===button.dataset.join):null;
   if(join&&!project)return;
   if(!confirm(join?'Register for '+project.title+'?':'Send this SK reward redemption request for staff review?'))return;
