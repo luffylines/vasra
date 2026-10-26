@@ -327,7 +327,7 @@ window.enterKKScanService=async kkId=>{
 };
 $('#kk-service-open-scanner').onclick=()=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
- window.openKKScan?.();
+ window.openKKScan?.({autoStart:true});
 };
 document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectTab(b.dataset.adminOpen);$('#staff-content').scrollIntoView({block:'start',behavior:'smooth'});});
 // The gallery's first image is authoritative when an older record has no image_id.
