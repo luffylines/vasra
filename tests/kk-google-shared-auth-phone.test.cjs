@@ -67,7 +67,7 @@ test('Auth icons cannot expand to giant size when browser has cached old CSS',()
    (html===login?'20261026-login-options-aligned-v2':'20261026-kk-mobile-profile-v8')+'"'));
   assert.match(html,/src="\.\/theme\.js\?v=[a-zA-Z0-9-]+"/);
   assert.match(html,new RegExp('src="\\.\\/kk\\.js\\?v='+
-   (html===login?'20261026-login-options-aligned-v2':'20261026-kk-mobile-profile-v8')+'"'));
+   (html===login?'20261026-kk-password-reset-v1':'20261026-kk-mobile-profile-v8')+'"'));
   assert.match(html,/\.kk-auth-card>\.kk-auth-top-actions\{position:absolute/);
  }
 });
