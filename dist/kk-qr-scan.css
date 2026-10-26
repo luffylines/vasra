@@ -199,3 +199,55 @@ body.account-workspace[data-theme="dark"] #kk-quick-overlay .kk-quick-camera-fra
  #kk-scan-panel .kk-scan-camera-actions button{width:100%}
  #kk-scan-panel .kk-scan-service-form{padding:9px}
 }
+
+
+/* Camera modal v3 — enforce correct close icon positioning and responsive height. */
+#kk-quick-overlay.kk-quick-overlay{box-sizing:border-box;padding:clamp(10px,2vw,24px)!important;align-items:center!important;justify-content:center!important;overflow-y:auto}
+#kk-quick-overlay .kk-quick-dialog{width:min(100%,445px)!important;max-width:445px!important;max-height:min(94dvh,780px)!important;
+ display:flex!important;flex-direction:column;gap:0;overflow-y:auto;overscroll-behavior:contain;padding:clamp(13px,2.7vw,20px)!important;
+ border-radius:16px;box-sizing:border-box}
+#kk-quick-overlay .kk-quick-header{display:grid!important;grid-template-columns:minmax(0,1fr) 36px!important;
+ column-gap:10px;row-gap:0;align-items:start!important;justify-items:stretch!important;
+ margin:0 0 13px!important;width:100%;min-width:0}
+#kk-quick-overlay .kk-quick-header>div{grid-column:1;grid-row:1;min-width:0}
+#kk-quick-overlay .kk-quick-close{grid-column:2!important;grid-row:1!important;justify-self:end!important;
+ align-self:start!important;display:inline-flex!important;width:36px!important;height:36px!important;
+ min-width:36px!important;max-width:36px!important;flex:none;margin:0!important;padding:0!important}
+#kk-quick-overlay .kk-quick-header h2{font-size:19px;margin:4px 0}
+#kk-quick-overlay .kk-quick-camera-frame{width:100%;height:auto;max-height:none;min-height:0;
+ aspect-ratio:5/3;flex:none;transition:background .15s, min-height .15s;
+ box-sizing:border-box;border-radius:12px;position:relative}
+#kk-quick-overlay .kk-quick-camera-frame:has(#kk-quick-video:not([hidden])){aspect-ratio:4/3}
+#kk-quick-overlay[data-camera="unavailable"] .kk-quick-camera-frame{
+ height:85px!important;min-height:85px!important;max-height:85px!important;aspect-ratio:auto!important;
+ background:#edf4fd;border:1px dashed #b9d2ee}
+#kk-quick-overlay[data-camera="unavailable"] #kk-quick-camera-hint{color:#365f91;font-weight:700}
+#kk-quick-overlay #kk-quick-status{margin:9px 0!important;line-height:1.4;min-height:0;flex:none}
+#kk-quick-overlay #kk-quick-manual-form{min-width:0;width:100%;margin:0}
+#kk-quick-overlay #kk-quick-manual-form>div{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:8px;align-items:stretch}
+#kk-quick-overlay #kk-quick-manual-id{font-size:16px!important;min-height:40px;height:40px!important;padding:8px 11px!important}
+#kk-quick-overlay #kk-quick-manual-form button{min-width:106px;height:40px;min-height:40px;font-size:12px!important}
+#kk-quick-overlay .kk-quick-controls{margin:0 0 12px!important;gap:8px}
+#kk-quick-overlay .kk-quick-controls button{min-height:38px;height:38px}
+body.account-workspace[data-theme="dark"] #kk-quick-overlay[data-camera="unavailable"] .kk-quick-camera-frame{background:#233d59;border-color:#6286aa}
+body.account-workspace[data-theme="dark"] #kk-quick-overlay[data-camera="unavailable"] #kk-quick-camera-hint{color:#e0f0ff}
+@media(max-width:480px){
+ #kk-quick-overlay.kk-quick-overlay{padding:8px!important;align-items:center!important}
+ #kk-quick-overlay .kk-quick-dialog{max-height:calc(100dvh - 16px)!important;padding:12px!important;border-radius:14px}
+ #kk-quick-overlay .kk-quick-header{grid-template-columns:minmax(0,1fr) 34px!important;margin-bottom:11px!important}
+ #kk-quick-overlay .kk-quick-camera-frame{aspect-ratio:16/10;max-height:29dvh}
+ #kk-quick-overlay .kk-quick-camera-frame:has(#kk-quick-video:not([hidden])){aspect-ratio:4/3;max-height:40dvh}
+ #kk-quick-overlay #kk-quick-manual-form>div{grid-template-columns:minmax(0,1fr) auto!important;gap:6px}
+ #kk-quick-overlay #kk-quick-manual-form button{min-width:92px;padding:8px!important}
+ #kk-quick-overlay .kk-quick-header h2{font-size:18px}
+}
+@media(max-width:340px){
+ #kk-quick-overlay #kk-quick-manual-form>div{grid-template-columns:minmax(0,1fr)!important}
+ #kk-quick-overlay #kk-quick-manual-form button{width:100%;min-width:0}
+}
+@media(max-height:580px){
+ #kk-quick-overlay.kk-quick-overlay{align-items:flex-start!important}
+ #kk-quick-overlay .kk-quick-dialog{margin:auto 0}
+ #kk-quick-overlay .kk-quick-camera-frame{max-height:24dvh}
+ #kk-quick-overlay[data-camera="unavailable"] .kk-quick-camera-frame{height:64px!important;min-height:64px!important}
+}
