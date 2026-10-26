@@ -14,12 +14,15 @@ test('Published upcoming project participation is verified-only and unique',()=>
  assert.ok(dashboard.includes("data-join"));
  assert.ok(handler.includes("'/api/kk/join'"));
 });
-test('Chairman controls rewards and redemption must be approved before deducting points',()=>{
+test('KK rewards use separate stock-backed catalog and deduct points only on approval',()=>{
  assert.ok(page.includes('id="kk-reward-list"'));
- assert.ok(read('dist/account.html').includes('id="kk-perk-form"'));
- assert.ok(read('dist/kk-staff.js').includes('data-redemption'));
- assert.ok(dashboard.includes("request('redeem'"));
- assert.ok(!handler.slice(handler.indexOf("if(path==='/api/kk/redeem'"),handler.indexOf("if(path==='/api/kk/staff'")).includes("temporarily unavailable"));
+ assert.ok(read('dist/account.html').includes('id="panel-kk-rewards"'));
+ assert.ok(read('dist/account.html').includes('id="kk-reward-photo"'));
+ assert.ok(read('dist/kk-rewards-staff.js').includes('data-claim-decision'));
+ assert.ok(dashboard.includes("request('rewards'"));
+ const catalog=read('supabase/migrations/20261026142000_kk_rewards_catalog_stock_attendance.sql');
+ assert.ok(catalog.includes("IF action='review' THEN"));
+ assert.ok(catalog.includes("VALUES(claim.member_id,-claim.cost"));
 });
 test('KK password and email changes require authentication and new email verification',()=>{
  for(const key of ["/api/kk/settings/password","/api/kk/settings/email/request","/api/kk/settings/email/confirm","S.passwordMatch","S.passwordHash","token_hash:S.hash(tokenValue)"])assert.ok(handler.includes(key),key);
@@ -27,15 +30,14 @@ test('KK password and email changes require authentication and new email verific
  assert.ok(page.includes('id="kk-dash-password"'));
  assert.ok(page.includes('id="kk-dash-email"'));
 });
-test('SK staff sees participation roster, but public dashboard cannot read other members',()=>{
- const staff=read('dist/kk-staff.js');
- assert.ok(staff.includes('displayParticipants'));
- assert.ok(staff.includes('result?.participation'));
- assert.ok(read('dist/account.html').includes('id="kk-participant-list"'));
- const roster=read('supabase/migrations/20261025044000_kk_participation_staff_roster.sql');
- assert.ok(roster.includes("'participation',coalesce"));
- assert.ok(roster.includes('from vasra.kk_project_participation r'));
- assert.ok(roster.includes("if staff.id is null then"));
+test('Attendance roster moved to dedicated SK rewards page with staff-only access',()=>{
+ const html=read('dist/account.html');
+ assert.ok(html.includes('id="kk-attendance-list"'));
+ assert.ok(!html.includes('id="kk-participant-list"'));
+ assert.ok(read('dist/kk-rewards-staff.js').includes('Registered online'));
+ const data=read('supabase/migrations/20261026142000_kk_rewards_catalog_stock_attendance.sql');
+ assert.ok(data.includes("IF action='staff_list' THEN"));
+ assert.ok(data.includes("IF officer.id IS NULL"));
 });
 test('New dashboard has valid source and preview route',()=>{
  assert.ok(read('vercel.json').includes('"source": "/kk-dashboard"'));
