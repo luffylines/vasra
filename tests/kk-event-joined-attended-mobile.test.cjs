@@ -9,7 +9,8 @@ test('Join is registration only; dashboard separately returns confirmed officer 
  assert.match(sql,/'attendance_points',coalesce/);
  assert.match(sql,/where att\.project_id=pj\.id and att\.member_id=m\.id/);
  assert.match(sql,/reason','already_attended'/);
- assert.doesNotMatch(sql,/insert into vasra\.kk_points\(member_id,delta/);
+ const joinBlock=sql.slice(sql.indexOf("if action='project_join' then"),sql.indexOf("if action='password_change' then"));
+ assert.doesNotMatch(joinBlock,/insert into vasra\.kk_points\(member_id,delta/);
 });
 test('Upcoming event never offers Request to Join to registered or attended members',()=>{
  assert.match(js,/const attended=p\.attended===true,registered=p\.joined===true/);
