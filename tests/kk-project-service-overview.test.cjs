@@ -18,7 +18,7 @@ test('Published upcoming projects are sourced from live database and refreshed o
  assert.match(backend,/pj\.publish_at is null or pj\.publish_at<=clock_timestamp\(\)/);
  assert.match(backend,/pj\.status in \('Pinaplano','Isinasagawa'\)/);
  assert.match(dashboard,/const refreshProjects=async\(\)=>/);
- assert.match(dashboard,/if\(which==='projects'\)refreshProjects\(\)/);
+ assert.match(dashboard,/if\(which==='projects'\)\{refreshProjects\(\);refreshParticipation\(\);\}/);
  assert.match(dashboard,/projects=response\.projects\.filter/);
  assert.doesNotMatch(html,/id="kk-joined-list"/);
 });
