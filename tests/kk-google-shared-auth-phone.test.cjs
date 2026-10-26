@@ -63,9 +63,11 @@ test('Auth icons cannot expand to giant size when browser has cached old CSS',()
   assert.match(html,/<style id="kk-auth-actions-critical">/);
   assert.match(html,/\.kk-auth-top-actions \.kk-auth-nav-link svg\{display:block!important;width:18px!important;height:18px!important/);
   assert.match(html,/<svg width="18" height="18" style="width:18px;height:18px;display:block;flex:none"/);
-  assert.match(html,/href="\.\/kk\.css\?v=20261026-kk-password-reset-v1"/);
+  assert.match(html,new RegExp('href="\\.\\/kk\\.css\\?v='+
+   (html===login?'20261026-kk-password-reset-v1':'20261026-kk-mobile-profile-v8')+'"'));
   assert.match(html,/src="\.\/theme\.js\?v=[a-zA-Z0-9-]+"/);
-  assert.match(html,/src="\.\/kk\.js\?v=20261026-kk-password-reset-v1"/);
+  assert.match(html,new RegExp('src="\\.\\/kk\\.js\\?v='+
+   (html===login?'20261026-kk-password-reset-v1':'20261026-kk-mobile-profile-v8')+'"'));
   assert.match(html,/\.kk-auth-card>\.kk-auth-top-actions\{position:absolute/);
  }
 });
