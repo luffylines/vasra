@@ -58,7 +58,7 @@ test('Attendance is a dedicated QR check-in and not a manual reward points field
 });
 test('Upcoming Projects refreshes live and includes published in-progress projects',()=>{
  const source=read('dist/kk-dashboard.js');
- assert.match(source,/if\(which==='projects'\)refreshProjects\(\)/);
+ assert.match(source,/if\(which==='projects'\)\{refreshProjects\(\);refreshParticipation\(\);\}/);
  assert.match(source,/projects=response\.projects\.filter\(p=>\['Pinaplano','Isinasagawa'\]\.includes\(p\.status\)\)/);
  assert.match(sql,/vasra\.projects/);
 });
