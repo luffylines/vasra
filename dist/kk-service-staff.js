@@ -4,7 +4,12 @@
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const kindLabels={printing:'Free Printing',computer:'Computer Use',retabox:'RetaBox Donations'};
  const statusLabels={pending:'Pending',approved:'Approved',completed:'Completed',rejected:'Rejected'};
- let records=[],pointsRate=0,loading=false,reviewingId=null;
+ let records=[],pointsRate=0,loading=false,reviewingId=null,historyPage=1;
+ const historyPageSize=25;
+ const isOpen=r=>r.status==='pending'||r.status==='approved';
+ const isArchived=r=>r.status==='completed'||r.status==='rejected';
+ const processedAt=r=>r.status==='completed'?(r.completed_at||r.reviewed_at||r.requested_at):
+  (r.reviewed_at||r.requested_at);
  const apiCall=(url,body)=>api(url,body===undefined?{}:{method:'POST',body:JSON.stringify(body)});
  const info=(msg,isError=false,isSuccess=false)=>{
   const el=$('#kk-service-staff-message');
@@ -113,24 +118,55 @@
   for(const [key,value] of Object.entries(counts))
    $('#kk-service-stat-'+key).textContent=String(value);
  };
+ const searchableDate=value=>{
+  if(!value)return '';
+  const time=new Date(value);
+  if(!Number.isFinite(time.getTime()))return '';
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Manila',
+   month:'2-digit',day:'2-digit',year:'numeric'}).formatToParts(time);
+  const get=part=>parts.find(x=>x.type===part)?.value||'';
+  const iso=get('year')+'-'+get('month')+'-'+get('day');
+  const short=time.toLocaleDateString('en-US',{timeZone:'Asia/Manila',month:'short',day:'numeric',year:'numeric'});
+  const long=time.toLocaleDateString('en-US',{timeZone:'Asia/Manila',month:'long',day:'numeric',year:'numeric'});
+  const monthDay=Number(get('month'))+'/'+Number(get('day'))+'/'+get('year');
+  return [iso,get('month')+'/'+get('day')+'/'+get('year'),monthDay,short,long].join(' ').toLowerCase();
+ };
+ const historyMatches=(r,query,date)=>{
+  if(date&&phDate(processedAt(r))!==date)return false;
+  if(!query)return true;
+  const haystack=[r.name,r.kk_id,r.id,kindLabels[r.service_type],r.service_type,
+   statusLabels[r.status],r.reviewed_by,r.completed_by,pht(r.requested_at),
+   pht(r.reviewed_at),pht(r.completed_at),searchableDate(r.requested_at),
+   searchableDate(r.reviewed_at),searchableDate(r.completed_at),
+   searchableDate(processedAt(r))].join(' ').toLowerCase();
+  return query.split(/\s+/).filter(Boolean).every(word=>haystack.includes(word));
+ };
  const renderHistory=()=>{
-  const q=$('#kk-service-history-search').value.trim().toLowerCase();
-  const now=today();
-  const data=records.filter(r=>[r.requested_at,r.reviewed_at,r.completed_at]
-    .some(d=>d&&phDate(d)===now)&&
-   (!q||[r.name,r.kk_id,r.id,r.service_type].some(x=>String(x||'').toLowerCase().includes(q))));
-  $('#kk-service-history-body').innerHTML=data.length?data.map(r=>
-   '<tr><td>'+esc(new Date(
-    (r.completed_at&&phDate(r.completed_at)===now?r.completed_at:null)||
-    (r.reviewed_at&&phDate(r.reviewed_at)===now?r.reviewed_at:null)||r.requested_at
-   ).toLocaleTimeString('en-PH',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'}))+
-   '</td><td><strong>'+esc(r.name)+'</strong><small>'+esc(r.kk_id||r.id.slice(0,8))+
-   '</small></td><td>'+esc(kindLabels[r.service_type])+'</td><td>'+describe(r)+'</td><td>'+badge(r)+
+  const q=$('#kk-service-history-search').value.trim().toLowerCase(),
+    date=$('#kk-service-history-date').value;
+  const all=records.filter(isArchived).sort((a,b)=>new Date(processedAt(b))-new Date(processedAt(a)));
+  const matches=all.filter(r=>historyMatches(r,q,date));
+  const pages=Math.max(1,Math.ceil(matches.length/historyPageSize));
+  historyPage=Math.min(Math.max(1,historyPage),pages);
+  const visible=matches.slice((historyPage-1)*historyPageSize,historyPage*historyPageSize);
+  $('#kk-service-history-count').textContent=matches.length+' matching · '+all.length+' archived service(s) · PHT';
+  $('#kk-service-history-page-label').textContent=matches.length?
+   ((historyPage-1)*historyPageSize+1)+'–'+Math.min(historyPage*historyPageSize,matches.length)+' of '+matches.length:
+   'No matching records';
+  $('#kk-service-history-prev').disabled=historyPage<=1;
+  $('#kk-service-history-next').disabled=historyPage>=pages;
+  $('#kk-service-history-body').innerHTML=visible.length?visible.map(r=>
+   '<tr><td>'+esc(pht(r.requested_at))+'</td>'+
+   '<td><strong>'+esc(pht(processedAt(r)))+'</strong><small>'+
+   esc(r.status==='completed'?'Completed':'Rejected')+' (PHT)</small></td>'+
+   '<td><strong>'+esc(r.name)+'</strong><small>'+esc(r.kk_id||r.id.slice(0,8))+
+   '</small></td><td>'+esc(kindLabels[r.service_type]||r.service_type)+'</td>'+
+   '<td>'+describe(r)+'</td><td>'+badge(r)+
    '</td><td>'+esc(r.reviewed_by||'—')+'</td><td>'+esc(r.completed_by||'—')+'</td></tr>').join(''):
-   '<tr><td colspan="7" class="kk-service-no-history">Wala pang service requests ngayong araw.</td></tr>';
+   '<tr><td colspan="8" class="kk-service-no-history">Walang completed o rejected service para sa napiling search o petsa.</td></tr>';
  };
  const render=()=>{
-  const f=state(),visible=records.filter(r=>filter(r,f));
+  const f=state(),visible=records.filter(r=>isOpen(r)&&filter(r,f));
   const active=visible.find(r=>r.id===reviewingId&&r.status==='pending');
   if(!active)reviewingId=null;
   $('#kk-service-admin-queue').innerHTML=visible.length?
@@ -159,14 +195,17 @@
  for(const id of ['kk-service-type-filter','kk-service-status-filter','kk-service-date-filter','kk-service-custom-date'])
   $('#'+id)?.addEventListener('change',render);
  $('#kk-service-search')?.addEventListener('input',render);
- $('#kk-service-history-search')?.addEventListener('input',renderHistory);
- $('#kk-service-staff-refresh')?.addEventListener('click',refresh);
+ $('#kk-service-history-search')?.addEventListener('input',()=>{historyPage=1;renderHistory();});
+ $('#kk-service-history-date')?.addEventListener('change',()=>{historyPage=1;renderHistory();});
+ $('#kk-service-history-clear')?.addEventListener('click',()=>{
+  $('#kk-service-history-date').value='';$('#kk-service-history-search').value='';
+  historyPage=1;renderHistory();
+ });
+ $('#kk-service-history-prev')?.addEventListener('click',()=>{if(historyPage>1){historyPage--;renderHistory();}});
+ $('#kk-service-history-next')?.addEventListener('click',()=>{historyPage++;renderHistory();});
  $('#kk-service-export')?.addEventListener('click',()=>{
-  const f=state(),date=f.period==='today'?today():f.period==='custom'?(f.custom||'all'):'all';
-  const q=new URLSearchParams({search:f.search,service:f.type,status:f.status,date,
-   period:f.period==='week'?'week':'all'});
-  // Export downloads an actual XLSX from the authenticated backend, not a public link.
-  window.location.assign('./api/kk/staff/services/export?'+q.toString());
+  // Export *all* completed/rejected service history, including past dates and search-filtered-out rows.
+  window.location.assign('./api/kk/staff/services/export?scope=history');
  });
  $('#kk-service-admin-queue')?.addEventListener('click',async e=>{
   const button=e.target.closest('button[data-action]');
