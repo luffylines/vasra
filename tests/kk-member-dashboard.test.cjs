@@ -30,14 +30,16 @@ test('KK password and email changes require authentication and new email verific
  assert.ok(page.includes('id="kk-dash-password"'));
  assert.ok(page.includes('id="kk-dash-email"'));
 });
-test('Attendance roster moved to dedicated SK rewards page with staff-only access',()=>{
+test('Event roster belongs to SK Participants; private KK history renders only own attendance',()=>{
  const html=read('dist/account.html');
- assert.ok(html.includes('id="kk-attendance-list"'));
+ assert.ok(html.includes('id="panel-kk-participants"'));
+ assert.ok(html.includes('id="kk-event-roster"'));
  assert.ok(!html.includes('id="kk-participant-list"'));
- assert.ok(read('dist/kk-rewards-staff.js').includes('Registered online'));
- const data=read('supabase/migrations/20261026142000_kk_rewards_catalog_stock_attendance.sql');
- assert.ok(data.includes("IF action='staff_list' THEN"));
- assert.ok(data.includes("IF officer.id IS NULL"));
+ const event=read('supabase/migrations/20261026153500_kk_event_qr_checkin_automatic_ten_points.sql');
+ assert.ok(event.includes("IF action='history' THEN"));
+ assert.ok(event.includes("WHERE a.member_id=member.id"));
+ assert.ok(page.includes('id="kk-my-participation-history"'));
+ assert.ok(dashboard.includes("request('event-history')"));
 });
 test('New dashboard has valid source and preview route',()=>{
  assert.ok(read('vercel.json').includes('"source": "/kk-dashboard"'));
