@@ -17,8 +17,8 @@ test('All officer workspaces expose KK Profiling, SK Services and Full Disclosur
  assert.match(server,/if\(path==='\/api\/kk\/staff\/services'&&method==='GET'\)\{\s*await user\(\['sk','chairman'\]\)/);
  assert.match(server,/if\(path==='\/api\/kk\/staff\/services\/config'&&method==='POST'\)\{\s*await user\(\['chairman'\]\)/);
 });
-test('SK Services management includes stats, search, date, approvals and daily history',()=>{
- for(const id of ['kk-service-staff-refresh','kk-service-export','kk-service-search','kk-service-date-filter',
+test('SK Services management includes stats, search, date, approvals and all-date historical archive',()=>{
+ for(const id of ['kk-service-history-date','kk-service-export','kk-service-search','kk-service-date-filter',
    'kk-service-stat-total','kk-service-stat-pending','kk-service-stat-approved','kk-service-stat-completed',
    'kk-service-stat-rejected','kk-service-admin-queue','kk-service-history-search','kk-service-history-body']){
   assert.ok(html.includes('id="'+id+'"'),id);
@@ -53,11 +53,12 @@ test('Server checks and normalizes request edits before transactional approval',
 });
 test('Excel download uses protected XLSX handler, never exposes private service rows publicly',()=>{
  assert.match(server,/if\(path==='\/api\/kk\/staff\/services\/export'&&method==='GET'\)\{\s*await user\(\['sk','chairman'\]\)/);
- assert.match(server,/KKExport\.workbook\(rows\)/);
+ assert.match(server,/KKExport\.workbook\(rows,\{sheetName:'Service History'\}\)/);
  assert.match(server,/application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet/);
- assert.match(server,/filename="SK-Vasra-Service-Requests\.xlsx"/);
+ assert.match(server,/filename="SK-Vasra-Service-History-All\.xlsx"/);
  assert.match(server,/Cache-Control':'private, no-store'/);
- assert.match(server,/period!=='week'/);
+ assert.match(server,/kkRpc\('service_archive_list'/);
+ assert.match(server,/for\(let offset=0;offset<maxRows;offset\+=pageSize\)/);
  assert.match(staff,/kk\/staff\/services\/export/);
 });
 test('KK member request history shows officer-approved details',()=>{
