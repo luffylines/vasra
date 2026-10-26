@@ -22,7 +22,7 @@ const projects=[
 const fmt=value=>'₱'+Number(value).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 function renderFor(role,data=trans){
  const n=['secretary-monthly-count','secretary-draft-count','secretary-done-count',
- 'treasurer-budget-amount','treasurer-reported-total','treasurer-missing-count',
+ 'treasurer-published-count','treasurer-reported-total','treasurer-missing-count',
  'secretary-overview-records','treasurer-overview-records'];
  const elements=Object.fromEntries(n.map(x=>[x,{textContent:'—',innerHTML:''}]));
  const called=[];
@@ -58,21 +58,21 @@ test('SK Secretary receives documentation dashboard metrics from real records',a
  assert.equal(elements['secretary-done-count'].textContent,'1');
  assert.match(elements['secretary-overview-records'].innerHTML,/Project A/);
  assert.match(elements['secretary-overview-records'].innerHTML,/Published/);
- assert.equal(elements['treasurer-budget-amount'].textContent,'—');
+ assert.equal(elements['treasurer-published-count'].textContent,'—');
 });
-test('SK Treasurer receives budget, actual recorded expenses and missing reports',async()=>{
+test('SK Treasurer sees published monthly reports, recorded spending and missing reports',async()=>{
  const {load,elements}=renderFor('treasurer');
  await load();
- assert.equal(elements['treasurer-budget-amount'].textContent,'₱125,000.00');
+ assert.equal(elements['treasurer-published-count'].textContent,'2');
  assert.equal(elements['treasurer-reported-total'].textContent,'₱20,000.00');
  assert.equal(elements['treasurer-missing-count'].textContent,'1');
  assert.match(elements['treasurer-overview-records'].innerHTML,/Expense not reported/);
  assert.equal(elements['secretary-monthly-count'].textContent,'—');
 });
-test('Treasurer does not fabricate a budget if no approved record exists',async()=>{
+test('Treasurer does not fabricate published reports when none exist',async()=>{
  const {load,elements}=renderFor('treasurer',{year:2026,budget:null,updates:[]});
  await load();
- assert.equal(elements['treasurer-budget-amount'].textContent,'Not recorded');
+ assert.equal(elements['treasurer-published-count'].textContent,'0');
  assert.equal(elements['treasurer-missing-count'].textContent,'0');
  assert.match(elements['treasurer-overview-records'].innerHTML,/Wala pang na-save/);
 });
@@ -86,10 +86,10 @@ test('staff roles cannot gain Chairman-only account management from the dashboar
  assert.match(source,/if\(\['roster','duty-manage','users','audit'\]\.includes\(name\)&&user\?\.role!=='chairman'\)return/);
  assert.match(source,/if\(name==='budget'&&!\(user\?\.role==='chairman'\|\|user\?\.position==='treasurer'\)\)return/);
  assert.match(markup,/id="panel-users"/);
- assert.match(markup,/id="panel-budget"/);
+ assert.doesNotMatch(markup,/id="panel-budget"/);
 });
 test('dashboard buttons navigate only to existing authorized panels',()=>{
- for(const button of ['monthly','projects','budget']){
+ for(const button of ['monthly','projects']){
   assert(markup.includes('data-admin-open="'+button+'"'));
  }
  assert.match(source,/document\.querySelectorAll\('\[data-admin-open\]'\)/);
