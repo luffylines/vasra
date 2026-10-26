@@ -19,19 +19,21 @@ test('Bulk import requires authenticated SK staff and limits batches without aut
  assert.match(router,/\/rest\/v1\/rpc\/vasra_sk_resolutions_import/);
 });
 test('Compact staff list has year/status/search and pagination for large 2023-2027 archives',()=>{
- for(let yr=2023;yr<=2027;yr++)assert.match(markup,new RegExp('<option value="'+yr+'">'+yr+'</option>'));
- for(const id of ['skres-admin-year','skres-admin-status','skres-admin-search','skres-prev-page','skres-next-page','skres-list-count','skres-import-paste','skres-import-year','skres-import-preview','skres-import-submit'])
+ for(let yr=2023;yr<=2027;yr++)assert.match(markup,new RegExp('data-skres-year="'+yr+'"'));
+ for(const id of ['skres-admin-year-tabs','skres-admin-status','skres-admin-search','skres-prev-page','skres-next-page','skres-list-count','skres-import-paste','skres-import-year','skres-import-preview','skres-import-submit'])
   assert.match(markup,new RegExp('id="'+id+'"'));
  assert.match(staff,/const pageSize=12/);
- assert.match(staff,/r\.author,r\.year,r\.approved_on/);
+ assert.match(staff,/utils\.matches\(r,term\)/);
  assert.match(staff,/const parseTSV=text=>/);
  assert.match(staff,/const isoDate=\(text,year\)=>/);
  assert.match(markup,/Import Valid Rows as Drafts/);
  assert.match(style,/skres-admin-grid\{grid-template-columns:minmax\(0,1fr\)/);
  assert.match(style,/appearance:none;-webkit-appearance:none/);
+ assert.match(staff,/utils\.byNewest/);
 });
 test('Public page supports the same 2023-2027 year filtering, authors and pages',()=>{
- for(let yr=2023;yr<=2027;yr++)assert.match(publicHtml,new RegExp('<option value="'+yr+'">'+yr+'</option>'));
+ for(let yr=2023;yr<=2027;yr++)assert.match(publicHtml,new RegExp('data-skres-year="'+yr+'"'));
+ assert.match(publicHtml,/id="skres-public-year-tabs"/);
  assert.match(publicHtml,/id="skres-public-page-count"/);
  assert.match(publicJs,/const pageSize=12/);
  assert.match(publicJs,/const visible=data.slice/);
