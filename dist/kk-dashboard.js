@@ -62,6 +62,7 @@
   if(['printing','computer','retabox'].includes(which))window.loadKKServices?.();
   if(which==='projects')refreshProjects();
   if(which==='rewards'&&member)refreshRewards();
+  if(which==='overview'&&member)refreshParticipation();
   if(which==='kk-id')window.loadKKIDCard?.();
  };
  document.querySelectorAll('button[data-tab]').forEach(button=>button.addEventListener('click',()=>tab(button.dataset.tab)));
@@ -106,6 +107,21 @@
  const refreshProjects=async()=>{
   try{applyProjectResponse(await request('dashboard?updated='+Date.now()));}
   catch(error){window.showVasraToast('Hindi ma-refresh ang upcoming projects: '+error.message,'error');}
+ };
+ const phtAttendance=new Intl.DateTimeFormat('en-PH',{timeZone:'Asia/Manila',
+  year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+ const refreshParticipation=async()=>{
+  const target=$('#kk-my-participation-history');if(!target)return;
+  try{
+   const data=await request('event-history');
+   const list=Array.isArray(data.history)?data.history:[];
+   $('#kk-participation-count').textContent=list.length+' attended';
+   target.innerHTML=list.length?list.map(a=>'<article class="kk-attended-event">'+
+    '<div><strong>'+safe(a.title)+'</strong><small>'+
+    safe(phtAttendance.format(new Date(a.checked_in_at)))+' · Philippine Time</small></div>'+
+    '<span>+'+Number(a.points||0)+' points</span></article>').join(''):
+    '<p class="kk-dash-empty">Wala pang recorded event attendance. Kapag na-scan na ng SK Officer ang iyong KK ID sa event, dito makikita ang activity at points na nakuha mo.</p>';
+  }catch(error){target.innerHTML='<p class="kk-dash-empty">Unable to load event attendance right now. Please refresh your Dashboard.</p>';}
  };
  const renderRewards=()=>{
   const list=Array.isArray(member.perks)?member.perks:[];
@@ -162,6 +178,7 @@
   $('#kk-current-email').textContent=data.member.email||'—';
   $('#kk-sidebar-name').textContent=[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')||'Verified KK Member';
   await refreshRewards();
+  await refreshParticipation();
   window.loadKKServices?.(); // Also populate the overview counts immediately, not only inside service tabs.
   loading.hidden=true;content.hidden=false;return true;
  }
