@@ -124,6 +124,8 @@ BEGIN
  IF action='complete_pending' THEN
     new_id=scanned_request.id;
  ELSE
+ -- A member with an existing pending request should use that request, not a duplicate walk-in.
+ -- Idempotent retries are checked first, and an existing pending request of the same type blocks a new entry.
  -- Repeated submissions with the same key return the prior result, not another record.
  SELECT r.id INTO existing_id
  FROM vasra.kk_service_requests r WHERE r.staff_entry_key=entry_key;
@@ -133,6 +135,9 @@ BEGIN
    THEN RETURN jsonb_build_object('error',409); END IF;
    RETURN jsonb_build_object('ok',true,'id',existing_id,'duplicate',true);
  END IF;
+ IF EXISTS(SELECT 1 FROM vasra.kk_service_requests r WHERE r.member_id=member_row.member_id
+   AND r.service_type=request_kind AND r.status='pending')
+ THEN RETURN jsonb_build_object('error',409,'reason','matching_pending_request'); END IF;
  INSERT INTO vasra.kk_service_requests(member_id,service_type,details,status,staff_entry_key)
  VALUES(member_row.member_id,request_kind,request_details,'pending',entry_key)
  ON CONFLICT DO NOTHING RETURNING id INTO new_id;
