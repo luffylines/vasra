@@ -135,11 +135,17 @@
  window.openKKScan=async({kkId=null,autoStart=false}={})=>{
   const panel=$('#kk-scan-panel');panel.hidden=false;
   panel.scrollIntoView?.({behavior:'smooth',block:'start'});
+  member=null;pending=[];entryKey=null;
+  hide('#kk-scan-member');hide('#kk-scan-pending');hide('#kk-scan-walkin');
   if(kkId){await lookup(kkId);return;}
   status('Ready to scan. Hold a QR in front of the camera or enter a KK ID.');
   if(autoStart)startCamera();
  };
- const close=()=>{revision++;stopCamera();$('#kk-scan-panel').hidden=true;member=null;pending=[];entryKey=null;};
+ const close=()=>{
+  revision++;stopCamera();$('#kk-scan-panel').hidden=true;
+  member=null;pending=[];entryKey=null;
+  hide('#kk-scan-member');hide('#kk-scan-pending');hide('#kk-scan-walkin');
+ };
  window.closeKKScan=close;
  $('#kk-scan-start').addEventListener('click',startCamera);
  $('#kk-scan-stop').addEventListener('click',stopCamera);
