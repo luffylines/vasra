@@ -180,3 +180,21 @@ body.kk-member-dashboard[data-theme="dark"] .kk-member-reward-art{background:#28
 body.kk-member-dashboard[data-theme="dark"] .kk-member-reward-summary span{color:#bcd3ec}
 @media(max-width:1024px){#kk-reward-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){#kk-reward-list{grid-template-columns:minmax(0,1fr)}}
+
+
+/* Member-private confirmed SK event attendance history */
+.kk-participation-history{margin-top:18px;padding:16px;border:1px solid #d3e2f2;border-radius:13px;background:#f8fbff}
+.kk-participation-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:13px}
+.kk-participation-heading h3{font:800 17px/1.4 Manrope,sans-serif;color:#194878;margin:0 0 5px}
+.kk-participation-heading p{font-size:12px;line-height:1.55;color:#6482a4;margin:0}
+.kk-participation-count{border-radius:24px;padding:6px 11px;background:#e4effe;color:#205896;font-size:11px;font-weight:800;white-space:nowrap}
+.kk-attended-event{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid #d6e5f4;border-radius:10px;padding:12px;margin:8px 0}
+.kk-attended-event>div{display:grid;gap:6px;min-width:0;flex:1}
+.kk-attended-event strong{font-size:13px;font-weight:800;color:#1d4b7b;overflow-wrap:anywhere}
+.kk-attended-event small{font-size:11px;color:#6986a4}
+.kk-attended-event>span{font-size:12px;font-weight:850;color:#147e4f;background:#dff9eb;border-radius:20px;padding:6px 10px}
+body.kk-member-dashboard[data-theme="dark"] .kk-participation-history{background:#1b304a;border-color:#496991}
+body.kk-member-dashboard[data-theme="dark"] .kk-attended-event{background:#243e5d;border-color:#496991}
+body.kk-member-dashboard[data-theme="dark"] .kk-attended-event strong,body.kk-member-dashboard[data-theme="dark"] .kk-participation-heading h3{color:#f0f7ff}
+body.kk-member-dashboard[data-theme="dark"] :is(.kk-attended-event small,.kk-participation-heading p){color:#b8d0eb}
+@media(max-width:480px){.kk-participation-history{padding:12px}.kk-attended-event{padding:10px}}
