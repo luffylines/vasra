@@ -56,6 +56,9 @@ function syncWorkspaceMode(){
  $('#staff-sidebar-role').textContent=signedIn?(user.role==='chairman'?'SK CHAIRMAN':({kagawad:'SK KAGAWAD',treasurer:'SK TREASURER',secretary:'SK SECRETARY'})[user.position]||'SK OFFICER'):'';
  $('#account-breadcrumb').textContent=signedIn?'Dashboard':'Aking account';
  $('#theme-toggle').hidden=!signedIn;
+ const quickButton=$('#staff-quick-scanner');
+ if(quickButton)quickButton.hidden=!signedIn||!['sk','chairman'].includes(user?.role);
+ if(!signedIn)window.closeQuickKKScan?.();
  $('#header-settings').hidden=!signedIn;
  const href=signedIn?'./account':'./';
  $('.site-header .brand').setAttribute('href',href);
@@ -312,13 +315,16 @@ async function selectTab(name){if(name==='budget')name='monthly';const tabs=['ov
  document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','roster'].includes(name))await loadTransparencyEditor(name);if(name==='disclosure'&&window.loadDisclosureAdmin)await window.loadDisclosureAdmin();if(name==='sk-resolutions'&&window.loadSKResolutionsAdmin)await window.loadSKResolutionsAdmin();if(name==='duty-manage')await loadDutyManagement();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts();if(name==='kk-profiling'&&window.loadKKStaff){window.kkStaffRole=user?.role||null;await window.loadKKStaff()};if(name==='kk-participants'&&window.loadKKEventStaff)await window.loadKKEventStaff();
       if(name==='kk-rewards'&&window.loadKKRewardsStaff)await window.loadKKRewardsStaff();if(name==='kk-ids'&&window.loadKKIDStaff)await window.loadKKIDStaff();if(name==='kk-services'&&window.loadKKServiceStaff)await window.loadKKServiceStaff()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
-document.querySelectorAll('[data-scan-open]').forEach(button=>{
- button.onclick=async()=>{
-  if(!user||!['sk','chairman'].includes(user.role))return;
-  await selectTab('kk-services');
-  window.openKKScan?.();
- };
-});
+// Top-right QR quick scan: open camera child; only navigate once a valid QR is decoded.
+$('#staff-quick-scanner').onclick=()=>{
+ if(!user||!['sk','chairman'].includes(user.role))return;
+ window.openQuickKKScan?.();
+};
+window.enterKKScanService=async kkId=>{
+ if(!user||!['sk','chairman'].includes(user.role))return;
+ await selectTab('kk-services');
+ await window.openKKScan?.({kkId});
+};
 $('#kk-service-open-scanner').onclick=()=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
  window.openKKScan?.();
