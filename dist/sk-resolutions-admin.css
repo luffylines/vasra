@@ -155,3 +155,28 @@ body.account-workspace[data-theme=dark] #panel-sk-resolutions :is(.skres-paginat
  #panel-sk-resolutions .skres-admin-actions button{flex:1}
  #panel-sk-resolutions .skres-admin-row{padding:11px}
  #panel-sk-resolutions .skres-admin-heading>a{width:auto}}
+
+
+/* Always-visible year shortcuts for archived SK Resolutions. */
+.skres-year-switcher{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0;margin:9px 0 13px}
+.skres-year-switcher button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:37px;
+ border:1px solid #c5d9f0;border-radius:10px;padding:8px 14px;background:#f5f9ff;color:#295b91;
+ font:800 12px/1.25 'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s}
+.skres-year-switcher button:hover{background:#e7f1ff;border-color:#a6c7ef}
+.skres-year-switcher button[aria-pressed=true]{background:#265eb3;border-color:#265eb3;color:#fff;
+ box-shadow:0 4px 12px #1b55a327}
+.skres-year-switcher button [data-year-count]{display:inline-flex;align-items:center;justify-content:center;
+ min-width:19px;min-height:19px;padding:0 4px;box-sizing:border-box;border-radius:7px;
+ background:#e4edfa;color:#315e95;font-size:10px}
+.skres-year-switcher button[aria-pressed=true] [data-year-count]{background:#ffffff2c;color:#fff}
+.skres-year-switcher button:focus-visible{outline:3px solid #84b4fb;outline-offset:2px}
+@media(max-width:640px){.skres-year-switcher{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x proximity;
+ padding-bottom:5px;scrollbar-width:thin}.skres-year-switcher button{flex:none;scroll-snap-align:start}}
+
+
+#panel-sk-resolutions .skres-index-filters{grid-template-columns:minmax(220px,1fr) minmax(150px,180px)}
+#panel-sk-resolutions .skres-year-switcher{margin:1px 0 12px}
+body.account-workspace[data-theme=dark] #panel-sk-resolutions .skres-year-switcher button{background:#244161;border-color:#567498;color:#e4f3ff}
+body.account-workspace[data-theme=dark] #panel-sk-resolutions .skres-year-switcher button[aria-pressed=true]{background:#3672c4;color:white;border-color:#75a9ef}
+body.account-workspace[data-theme=dark] #panel-sk-resolutions .skres-year-switcher button [data-year-count]{background:#3c5677;color:#eaf5ff}
+@media(max-width:610px){#panel-sk-resolutions .skres-index-filters{grid-template-columns:1fr}}
