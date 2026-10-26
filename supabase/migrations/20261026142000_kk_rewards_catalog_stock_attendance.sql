@@ -50,7 +50,7 @@ BEGIN
  AND u.role IN ('sk','chairman') AND u.disabled_at IS NULL AND NOT u.must_change LIMIT 1;
  SELECT m.* INTO kk FROM vasra.kk_sessions s JOIN vasra.kk_members m ON m.id=s.member_id
  WHERE s.token_hash=session_hash AND s.expires>clock_timestamp() LIMIT 1;
- IF action IN ('staff_list','save','review','attendance_award','set_image','image_access') THEN
+ IF action IN ('staff_list','save','toggle','review','attendance_award','set_image','image_access') THEN
   IF officer.id IS NULL AND action<>'image_access' THEN RETURN jsonb_build_object('error',403); END IF;
  ELSIF action IN ('catalog','request') THEN
   IF kk.id IS NULL THEN RETURN jsonb_build_object('error',401); END IF;
@@ -160,6 +160,21 @@ BEGIN
     VALUES(officer.id,officer.name,'kk_reward_saved',item_id::text,
       jsonb_build_object('title',title_text,'points',amount));
   RETURN jsonb_build_object('ok',true,'id',item_id);
+ END IF;
+
+ IF action='toggle' THEN
+  IF officer.role IS DISTINCT FROM 'chairman' THEN RETURN jsonb_build_object('error',403); END IF;
+  item_id=(payload->>'id')::uuid;
+  SELECT * INTO perk FROM vasra.kk_perks WHERE id=item_id FOR UPDATE;
+  IF NOT FOUND THEN RETURN jsonb_build_object('error',404); END IF;
+  flag=coalesce((payload->>'active')::boolean,false);
+  IF flag AND (perk.image_path IS NULL OR perk.quantity<=0)
+   THEN RETURN jsonb_build_object('error',409,'reason','reward_photo_and_stock_required'); END IF;
+  UPDATE vasra.kk_perks SET active=flag,updated_by=officer.id WHERE id=item_id;
+  INSERT INTO vasra.audit(actor_id,actor_name,action,entity,details)
+    VALUES(officer.id,officer.name,CASE WHEN flag THEN 'kk_reward_published' ELSE 'kk_reward_disabled' END,
+     item_id::text,jsonb_build_object('title',perk.title));
+  RETURN jsonb_build_object('ok',true);
  END IF;
 
  IF action='set_image' THEN
