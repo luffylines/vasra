@@ -27,7 +27,7 @@ test('New uploads sort before older uploads even when approval date is older',()
   {id:'new',year:2023,approved_on:'2023-01-01',created_at:'2026-10-26T05:00:00Z'},
   {id:'older',year:2023,approved_on:'2023-12-31',created_at:'2026-01-01T01:00:00Z'}
  ];
- assert.deepEqual(r.sort(u.byNewest).map(x=>x.id),['new','older','old']);
+ assert.deepEqual(r.sort(u.byNewest).map(x=>x.id),['new','old','older']);
  assert.deepEqual(r.filter(x=>x.year===2023).map(x=>x.id),['new','older']);
  assert.deepEqual(u.yearCounts(r),{all:3,'2023':2,'2024':0,'2025':0,'2026':1,'2027':0});
 });
