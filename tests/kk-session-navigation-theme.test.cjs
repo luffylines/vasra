@@ -31,7 +31,7 @@ test('Member workspace keeps distinctive sidebar, icons, profile and project fun
  assert.match(dashboard,/applyProjectResponse\(dashboard\)/);
  assert.match(dashboard,/renderProjects\(\)/);assert.match(dashboard,/renderRewards\(\)/);
  assert.match(dashboard,/data-join/);
- assert.match(dashboard,/request\('redeem'/);
+ assert.match(dashboard,/request\('rewards'/);
  assert.match(dashboard,/request\('settings\/password'/);
  assert.match(dashboard,/request\('settings\/email\/request'/);
  assert.match(dashboard,/aria-expanded/);
