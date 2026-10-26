@@ -84,7 +84,7 @@ test('secretary minutes are identified as a missing secure module, not false rec
 });
 test('staff roles cannot gain Chairman-only account management from the dashboard',()=>{
  assert.match(source,/if\(\['roster','duty-manage','users','audit'\]\.includes\(name\)&&user\?\.role!=='chairman'\)return/);
- assert.match(source,/if\(name==='budget'&&!\(user\?\.role==='chairman'\|\|user\?\.position==='treasurer'\)\)return/);
+ assert.match(source,/if\(name==='budget'\)name='monthly'/);
  assert.match(markup,/id="panel-users"/);
  assert.doesNotMatch(markup,/id="panel-budget"/);
 });
