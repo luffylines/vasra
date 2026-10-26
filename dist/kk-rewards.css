@@ -64,3 +64,46 @@ body.account-workspace[data-theme="dark"] :is(.kk-reward-editor input,.kk-reward
 @media(max-width:980px){.kk-rewards-catalog{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-rewards-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-reward-editor{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-rewards-attendance-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.kk-rewards-catalog,.kk-attendance-members,.kk-reward-editor,.kk-rewards-attendance-toolbar{grid-template-columns:1fr}.kk-rewards-head{flex-wrap:wrap}.kk-reward-editor .wide{grid-column:auto}}
 @media(max-width:410px){.kk-rewards-metrics{grid-template-columns:1fr 1fr;gap:8px}.kk-rewards-metrics article{padding:12px}.kk-reward-claim .kk-reward-actions{width:100%}}
+
+
+/* Aligned, modest-sized SK Rewards actions on desktop and phones. */
+#panel-kk-rewards .kk-reward-editor>.kk-rewards-actions{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,138px))!important;
+ gap:9px!important;align-items:stretch!important;justify-content:flex-start!important;margin-top:0;
+}
+#panel-kk-rewards .kk-reward-editor>.kk-rewards-actions button,
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button,
+#panel-kk-rewards .kk-reward-claim .kk-reward-actions button{
+ box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;
+ justify-content:center!important;text-align:center!important;height:39px!important;
+ min-height:39px!important;width:100%!important;min-width:0!important;
+ margin:0!important;padding:8px 12px!important;border-radius:9px!important;
+ font:750 12px/1.3 'DM Sans',sans-serif!important;
+}
+#panel-kk-rewards .kk-reward-editor{gap:12px;padding:15px}
+#panel-kk-rewards .kk-reward-editor .kk-reward-hint{margin:0}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
+ margin-top:auto;align-items:stretch;flex-wrap:nowrap;
+}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button{
+ font-size:11px!important;padding:8px 7px!important
+}
+#panel-kk-rewards .kk-reward-danger{color:#a3293b;border:1px solid #ebbbc4;background:#fff7f8}
+#panel-kk-rewards .kk-reward-danger:hover:not(:disabled){background:#ffe7eb;border-color:#d992a3}
+#panel-kk-rewards .kk-reward-danger:disabled{opacity:.46;cursor:not-allowed}
+#panel-kk-rewards .kk-reward-claim .kk-reward-actions{display:grid;grid-template-columns:repeat(2,minmax(125px,1fr));gap:8px}
+#panel-kk-rewards .kk-reward-claim .kk-reward-actions button{height:auto!important;min-height:39px!important}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-danger{
+ background:#4b2a39;border-color:#96516b;color:#ffe2e9}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-danger:hover:not(:disabled){background:#643247}
+@media(max-width:520px){
+ #panel-kk-rewards .kk-reward-editor{padding:11px;gap:10px}
+ #panel-kk-rewards .kk-reward-editor>.kk-rewards-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #panel-kk-rewards .kk-reward-product .kk-reward-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #panel-kk-rewards .kk-reward-claim .kk-reward-actions{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:340px){
+ #panel-kk-rewards .kk-reward-product .kk-reward-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #panel-kk-rewards .kk-reward-product .kk-reward-danger{grid-column:1/-1}
+}
