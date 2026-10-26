@@ -40,7 +40,7 @@ test('Staff roster is event-scoped with server timestamp, separate completed his
  assert.match(staff,/startCamera=async/);
  assert.match(staff,/BarcodeDetector/);
  assert.match(staff,/window\.jsQR/);
- assert.match(staff,/loadRoster\(id,seq\)/);
+ assert.match(staff,/loadRoster\(id,revision\)/);
  assert.match(server,/path==='\/api\/kk\/staff\/events\/export'/);
  assert.match(server,/data\.event\?\.status!=='Natapos'/);
  for(const heading of ['Event Title','KK ID','Full Name','Date (PHT)','Time (PHT)','Points','Checked In By'])
