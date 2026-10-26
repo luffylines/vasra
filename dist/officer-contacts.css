@@ -28,3 +28,17 @@
 .duty-contact-detail a{color:#1c579f;font-weight:700;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;min-width:0}
 .duty-contact-empty{margin:0;border:1px dashed #cfddef;border-radius:13px;padding:17px;color:#6a809d;font-size:13px;line-height:1.6;background:#f7faff}
 @media(max-width:680px){.settings-card-contact .contact-input-grid{grid-template-columns:1fr}.duty-contact-section{padding:17px}.duty-contact-heading{align-items:flex-start;flex-direction:column}.duty-contact-heading h2{font-size:20px}.duty-contact-list{grid-template-columns:1fr}}
+
+.duty-contact-detail a:has(.duty-contact-link-icon){
+ display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap
+}
+.duty-contact-detail .duty-contact-link-icon{
+ width:15px;height:15px;flex:none;vertical-align:middle;margin:0;
+ color:currentColor;stroke-linecap:round;stroke-linejoin:round
+}
+html[data-theme="dark"] body.portal-refresh .duty-contact-card{
+ background:#192d48;border-color:#435f85
+}
+html[data-theme="dark"] body.portal-refresh .duty-contact-detail{
+ border-color:#405c80;color:#c7dcf6
+}
