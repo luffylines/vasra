@@ -375,3 +375,41 @@ body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-review-
 body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-review-dismiss{
  background:#254362;color:#eaf4ff;border-color:#517aa4
 }
+
+
+/* Unified SK Services buttons: consistent height, icons, gutters and phone layout. */
+#panel-kk-services .kk-service-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+#panel-kk-services .kk-service-heading-actions button,
+#panel-kk-services .kk-service-review-actions button,
+#panel-kk-services .kk-service-complete-button,
+#panel-kk-services #kk-service-open-scanner{
+ box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
+ min-height:38px;height:38px;width:auto;min-width:104px;margin:0;padding:8px 12px;
+ border-radius:9px;font:750 11px/1.4 'DM Sans',sans-serif;white-space:normal;text-align:center;gap:7px
+}
+#panel-kk-services .kk-service-heading-actions button svg{height:16px;width:16px;flex:none}
+#panel-kk-services .kk-service-review-actions button{width:100%}
+#panel-kk-services .kk-service-admin-heading{gap:10px;margin-bottom:14px}
+#panel-kk-services .kk-service-admin-heading h2{font-size:clamp(21px,2vw,28px)}
+#panel-kk-services .kk-service-admin-heading p{font-size:11px;line-height:1.5}
+#panel-kk-services .kk-service-admin-filters{padding:13px;margin:0 0 17px;gap:9px}
+#panel-kk-services .kk-service-stats{gap:9px;margin:12px 0 17px}
+#panel-kk-services .kk-service-stats article{padding:12px;border-radius:11px}
+#panel-kk-services .kk-service-admin-card{padding:13px;gap:9px}
+#panel-kk-services .kk-service-admin-queue{gap:11px}
+#panel-kk-services .kk-service-review-form{gap:9px;padding-top:10px}
+#panel-kk-services .kk-service-edit-grid{gap:8px}
+#panel-kk-services .kk-service-review-actions{gap:8px;padding-top:9px}
+#panel-kk-services .kk-service-history-panel{padding:13px}
+#panel-kk-services :is(.kk-service-review-form input,.kk-service-review-form select,
+ .kk-service-admin-filters input,.kk-service-admin-filters select,
+ #kk-service-history-search){min-height:39px;padding:8px 10px;border-radius:8px}
+#panel-kk-services :is(button:focus-visible,select:focus-visible,input:focus-visible){
+ outline:3px solid #8fb9f6;outline-offset:2px
+}
+#panel-kk-services button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:620px){#panel-kk-services .kk-service-heading-actions{justify-content:flex-start}
+ #panel-kk-services .kk-service-heading-actions button{flex:1 1 auto;min-width:105px}
+ #panel-kk-services .kk-service-review-actions button{min-height:39px;height:auto}
+ #panel-kk-services .kk-service-admin-card{padding:11px}
+}
