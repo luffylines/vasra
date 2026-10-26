@@ -11,7 +11,7 @@
  let state={rewards:[],claims:[],projects:[],members:[],registrations:[],attendance:[],officer:{}},loading=false,working=false;
  const rewardCard=p=>{
   const available=Number(p.available||0),total=Number(p.quantity||0),claimed=Number(p.claimed||0),reserved=Number(p.pending||0);
-  return '<article class="kk-reward-product"><div class="kk-reward-image">'+
+  return '<article class="kk-reward-product'+(p.active?' is-published':'')+'"><div class="kk-reward-image">'+
    (p.image?'<img src="'+photoUrl(p)+'" alt="Reward photo: '+esc(p.title)+'" loading="lazy">':
      '<div class="kk-reward-no-image" aria-label="Reward photo not added yet">Add reward photo</div>')+'</div>'+
    '<div class="kk-reward-product-body"><div class="kk-reward-topline"><strong>'+esc(p.title)+'</strong>'+
@@ -21,9 +21,9 @@
    '<small>'+claimed+' claimed · '+reserved+' pending claim(s)</small>'+
    (state.officer.chairman?
     '<div class="kk-reward-actions"><button type="button" class="secondary" data-reward-edit="'+esc(p.id)+'">Edit</button>'+
-    '<button type="button" class="secondary" data-reward-publish="'+esc(p.id)+'">'+(p.active?'Disable':'Publish')+'</button>'+
+    (p.active?'':'<button type="button" class="secondary" data-reward-publish="'+esc(p.id)+'">Publish</button>')+
     '<button type="button" class="kk-reward-danger" data-reward-delete="'+esc(p.id)+'"'+
-      (claimed+reserved>0?' disabled title="Rewards with claims cannot be deleted; disable instead."':'')+
+      (claimed+reserved>0?' disabled title="May redemption history: hindi maaaring i-delete."':'')+
       '>Delete</button></div>':'')+
    '</div></article>';
  };
@@ -119,7 +119,7 @@
   const publish=e.target.closest('[data-reward-publish]');
   if(publish){
    const p=state.rewards.find(x=>x.id===publish.dataset.rewardPublish);
-   if(!p||!state.officer.chairman||!confirm((p.active?'Disable':'Publish')+' '+p.title+'?'))return;
+   if(!p||p.active||!state.officer.chairman||!confirm('Publish '+p.title+'?'))return;
    busy(publish,async()=>{
     await service({action:'toggle',id:p.id,active:!p.active});
     flash(p.active?'Reward disabled.':'Reward published.');
@@ -130,7 +130,7 @@
    const p=state.rewards.find(x=>x.id===remove.dataset.rewardDelete);
    if(!p||!state.officer.chairman)return;
    if(Number(p.claimed||0)+Number(p.pending||0)>0){
-    flash('This reward has redemption requests. Disable it to preserve transaction history.',true);
+    flash('May redemption history ang reward. Hindi maaaring burahin ito upang mapanatili ang records.',true);
     return;
    }
    if(!confirm('Delete reward "'+p.title+'"? This cannot be undone.'))return;
@@ -156,5 +156,13 @@
   }
 
  });
+ document.querySelector('#panel-kk-rewards').addEventListener('error',event=>{
+  const img=event.target;
+  if(!(img instanceof HTMLImageElement)||!img.matches('.kk-reward-image img'))return;
+  const fallback=document.createElement('div');
+  fallback.className='kk-reward-no-image';
+  fallback.textContent='Hindi ma-load ang reward photo. I-check ang upload.';
+  img.replaceWith(fallback);
+ },true);
  $('#kk-rewards-refresh').addEventListener('click',refresh);
 })();

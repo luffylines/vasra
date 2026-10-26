@@ -141,6 +141,34 @@
     '<p class="kk-dash-empty">Wala pang recorded event attendance. Kapag na-scan na ng SK Officer ang iyong KK ID sa event, dito makikita ang activity at points na nakuha mo.</p>';
   }catch(error){target.innerHTML='<p class="kk-dash-empty">Unable to load event attendance right now. Please refresh your Dashboard.</p>';}
  };
+ const renderRewardSpotlight=()=>{
+  const root=$('#kk-featured-rewards');if(!root||!member)return;
+  const list=Array.isArray(member.perks)?member.perks.slice(0,3):[];
+  const points=Number(member.available_points??member.points??0);
+  $('#kk-spotlight-points').textContent=String(points);
+  root.innerHTML=list.length?list.map(perk=>{
+   const stock=Number(perk.available||0);
+   return '<article class="kk-featured-reward"><div class="kk-featured-image">'+
+    (perk.image?'<img src="./api/kk/rewards/image/'+encodeURIComponent(perk.id)+'" alt="Larawan ng '+safe(perk.title)+'" loading="lazy">':
+     '<span class="kk-reward-preview-no-photo">Larawan ng reward</span>')+'</div>'+
+    '<div class="kk-featured-body"><span class="kk-featured-label">SK VASRA REWARD</span>'+
+    '<h4>'+safe(perk.title)+'</h4><p>'+safe(perk.description||'Makilahok sa SK activities para makakuha ng reward points.')+'</p>'+
+    '<div class="kk-featured-facts"><strong>'+safe(perk.cost)+' points</strong><span>'+stock+' available</span></div>'+
+    '<button class="kk-featured-open" type="button" data-open-rewards>'+
+    (stock<1?'Tingnan ang reward':'Tingnan at i-redeem')+' <span aria-hidden="true">→</span></button></div></article>';
+  }).join(''):'<div class="kk-rewards-preview-empty">Wala pang published SK rewards. Mag-participate sa mga programa ng SK at abangan ang mga bagong reward.</div>';
+ };
+ document.addEventListener('click',event=>{
+  if(event.target.closest('[data-open-rewards]'))tab('rewards');
+ });
+ document.addEventListener('error',event=>{
+  const image=event.target;
+  if(!(image instanceof HTMLImageElement)||!image.matches('.kk-member-reward-art img, .kk-featured-image img'))return;
+  const fallback=document.createElement('span');
+  fallback.className='kk-reward-preview-no-photo';
+  fallback.textContent='Hindi ma-load ang larawan sa ngayon';
+  image.replaceWith(fallback);
+ },true);
  const renderRewards=()=>{
   const list=Array.isArray(member.perks)?member.perks:[];
   const available=Number(member.available_points??member.points??0);
@@ -173,6 +201,7 @@
   $('#kk-dash-points').textContent=String(rewards.balance||0);
   $('#kk-dash-rewards-count').textContent=String(rewards.rewards.length);
   renderRewards();
+  renderRewardSpotlight();
  };
  window.addEventListener('focus',()=>{
   if(!member)return;

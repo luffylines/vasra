@@ -16,7 +16,8 @@ test('Reward photo upload is isolated from valid ID private bucket',()=>{
 test('Old reward images are recovered from identity storage with image-only guards',()=>{
  const start=db.indexOf('  async getReward(path){'),end=db.indexOf('  async deletePrivate(path)',start);
  const method=db.slice(start,end);
- assert.match(method,/uploaded\.status!==404/);
+ assert.match(method,/uploaded\.status===404/);
+ assert.match(method,/detail\?\.code==='NoSuchKey'/);
  assert.match(method,/\/storage\/v1\/object\/authenticated\/vasra-kk-identity/);
  assert.match(method,/^\s*if\(typeof path!=='string'\|\|!\/\^rewards\\\//m);
  assert.match(method,/if\(!mime\|\|bytes\.length<100\|\|bytes\.length>2000000/);

@@ -48,7 +48,14 @@
    const isHours=minutes>=parse(result.open_time||'09:00')&&minutes<parse(result.close_time||'18:00');
    const closed=result.mode==='closed'&&result.date===today;
    set('home-duty-summary',isHours&&!closed?'Bukas':'Sarado');
-   set('home-duty-description',closed?'Closed by SK officer':isHours?'Ayon sa kasalukuyang duty schedule':'Labas sa duty hours');
+   const fmtTime=(raw,fallback)=>{
+    const m=/^(\d{1,2}):(\d{2})/.exec(String(raw||fallback));
+    if(!m)return fallback;
+    const hour=Number(m[1]),minute=Number(m[2]);
+    if(hour>23||minute>59)return fallback;
+    return (hour%12||12)+':'+String(minute).padStart(2,'0')+(hour<12?' AM':' PM');
+   };
+   set('home-duty-description','Oras ng duty: '+fmtTime(result.open_time,'09:00')+' – '+fmtTime(result.close_time,'18:00'));
   }catch{set('home-duty-summary','—');set('home-duty-description','Hindi makumpirma ang duty status')}
  }
  projects();leaders();achievements();duty();

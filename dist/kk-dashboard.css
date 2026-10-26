@@ -242,3 +242,36 @@ body.kk-member-dashboard[data-theme="dark"] .kk-upcoming-event{background:#223a5
  .kk-member-dashboard .kk-dashboard-panel h2{font-size:19px}
  .kk-member-dashboard .kk-activity-card h3{font-size:15px}
 }
+
+/* KK member incentive preview: built from authenticated published reward catalog. */
+.kk-member-dashboard .kk-reward-spotlight{background:linear-gradient(145deg,#f3f8ff,#fff);border:1px solid #d5e4f7;border-radius:16px;padding:clamp(14px,2vw,22px);margin:16px 0 20px;min-width:0}
+.kk-member-dashboard .kk-reward-spotlight-head{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.kk-member-dashboard .kk-spotlight-eyebrow{letter-spacing:.15em;font-size:10px;font-weight:850;color:#2c6bb8}
+.kk-member-dashboard .kk-reward-spotlight-head h3{font:800 clamp(17px,2vw,22px)/1.35 Manrope,sans-serif;color:#123b6f;margin:7px 0}
+.kk-member-dashboard .kk-reward-spotlight-head p{font-size:12px;line-height:1.6;color:#607fa4;max-width:650px;margin:0}
+.kk-member-dashboard .kk-spotlight-all,.kk-member-dashboard .kk-featured-open{border:1px solid #2c65b9;background:#2d63b1;color:#fff;border-radius:9px;font-weight:750;cursor:pointer;padding:10px 14px;font-size:12px;min-height:40px}
+.kk-member-dashboard .kk-spotlight-all:hover,.kk-member-dashboard .kk-featured-open:hover{background:#1d4f9c}
+.kk-member-dashboard .kk-reward-spotlight-balance{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 13px;padding:10px 14px;background:#e7f1ff;border-radius:11px;color:#255383;font-size:12px}
+.kk-member-dashboard .kk-reward-spotlight-balance strong{font:850 19px/1.2 Manrope,sans-serif;color:#104a94}
+.kk-member-dashboard .kk-reward-spotlight-balance small{margin-left:auto;color:#5b799a;font-size:10px}
+.kk-member-dashboard .kk-featured-rewards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;min-width:0}
+.kk-member-dashboard .kk-featured-reward{display:flex;flex-direction:column;min-width:0;border:1px solid #d6e2f2;border-radius:13px;overflow:hidden;background:#fff;box-shadow:0 6px 22px #12345d0b}
+.kk-member-dashboard .kk-featured-image{aspect-ratio:16/9;background:#e7eff9;display:grid;place-items:center;overflow:hidden}
+.kk-member-dashboard .kk-featured-image img{width:100%;height:100%;object-fit:cover;display:block}
+.kk-member-dashboard .kk-reward-preview-no-photo{display:grid;place-items:center;text-align:center;height:100%;min-height:100px;padding:15px;color:#6884a3;font-size:12px;background:#edf3fb}
+.kk-member-dashboard .kk-featured-body{padding:14px;display:flex;flex-direction:column;align-items:stretch;gap:8px;flex:1;min-width:0}
+.kk-member-dashboard .kk-featured-label{font-size:9px;font-weight:850;color:#3971b2;letter-spacing:.12em}
+.kk-member-dashboard .kk-featured-body h4{margin:0;font:800 15px/1.45 Manrope,sans-serif;color:#153e70;overflow-wrap:anywhere}
+.kk-member-dashboard .kk-featured-body p{margin:0 0 4px;font-size:11px;line-height:1.55;color:#617f9f;flex:1;overflow-wrap:anywhere}
+.kk-member-dashboard .kk-featured-facts{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px;color:#557699}
+.kk-member-dashboard .kk-featured-facts strong{color:#1454a0}
+.kk-member-dashboard .kk-featured-open{margin-top:5px;width:100%;text-align:center}
+.kk-member-dashboard .kk-rewards-preview-empty{grid-column:1/-1;margin:0;padding:18px 15px;background:#fff;border:1px dashed #cbdcf0;border-radius:10px;color:#617a98;font-size:12px;line-height:1.6}
+body.kk-member-dashboard[data-theme="dark"] .kk-reward-spotlight,body.kk-member-dashboard[data-theme="dark"] .kk-featured-reward{background:#182e49;border-color:#3d5b7b}
+body.kk-member-dashboard[data-theme="dark"] .kk-reward-spotlight-head h3,body.kk-member-dashboard[data-theme="dark"] .kk-featured-body h4{color:#f0f6ff}
+body.kk-member-dashboard[data-theme="dark"] .kk-reward-spotlight-head p,body.kk-member-dashboard[data-theme="dark"] .kk-featured-body p{color:#c0d5ea}
+body.kk-member-dashboard[data-theme="dark"] .kk-reward-spotlight-balance{background:#294467;color:#d7e8fa}
+body.kk-member-dashboard[data-theme="dark"] .kk-reward-spotlight-balance strong{color:#fff}
+body.kk-member-dashboard[data-theme="dark"] .kk-rewards-preview-empty{background:#1f3856;color:#deebfa;border-color:#527599}
+@media(max-width:1050px){.kk-member-dashboard .kk-featured-rewards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.kk-member-dashboard .kk-featured-rewards{grid-template-columns:1fr}.kk-member-dashboard .kk-reward-spotlight-head{align-items:stretch}.kk-member-dashboard .kk-spotlight-all{width:100%}.kk-member-dashboard .kk-reward-spotlight-balance small{margin-left:0}}
