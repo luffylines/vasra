@@ -110,6 +110,8 @@
   busy(button,async()=>{
    const result=await service({action:'save',id:data.get('id')||null,title:data.get('title'),
      description:data.get('description'),cost:Number(data.get('cost')),quantity:Number(data.get('quantity'))});
+   // If photo upload fails, retry edits on this draft rather than creating a duplicate.
+   form.elements.id.value=result.id;
    if(photo){
     const bytes=await readPhoto(photo);
     await api('./api/kk/staff/rewards/image',{method:'POST',body:JSON.stringify({
