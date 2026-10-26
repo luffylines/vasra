@@ -1,7 +1,7 @@
 'use strict';
 (()=>{
  const $=s=>document.querySelector(s);
- const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;',"'":'&#39;'}[ch]));
+ const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
  const types={printing:'Free Printing',computer:'Free Computer Use',retabox:'RetaBox Donations'};
  const video=$('#kk-scan-video'),canvas=$('#kk-scan-canvas');
  if(!video||!canvas)return;
@@ -46,7 +46,7 @@
    '<div id="kk-scan-service-fields">'+detailFields('printing')+'</div>'+
    '<label>Officer note (optional)<input name="note" maxlength="500" placeholder="Record the actual service"></label>'+
    '<button type="submit" class="primary">Confirm & Record Completed</button></form>';
-  entryKey=crypto?.randomUUID?.()||null;
+  entryKey=globalThis.crypto?.randomUUID?.()||null;
   status('KK member verified. Choose an existing request or enter the actual walk-in service.');
  };
  const fetchScan=async body=>{
@@ -135,6 +135,7 @@
   status('Ready to scan. Start Camera or enter KK ID.');
  };
  const close=()=>{revision++;stopCamera();$('#kk-scan-panel').hidden=true;member=null;pending=[];entryKey=null;};
+ window.closeKKScan=close;
  $('#kk-scan-start').addEventListener('click',startCamera);
  $('#kk-scan-stop').addEventListener('click',stopCamera);
  $('#kk-scan-close').addEventListener('click',close);
