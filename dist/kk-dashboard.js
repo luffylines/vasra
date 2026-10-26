@@ -188,9 +188,20 @@
   }).join(''):
    '<div class="kk-dash-empty">Wala pang available SK rewards. Lalabas dito ang published rewards kasama ang larawan at stock.</div>';
   const redemptions=Array.isArray(member.redemptions)?member.redemptions:[];
-  $('#kk-redemption-list').innerHTML=redemptions.length?redemptions.map(r=>
-   '<div class="kk-dashboard-list"><strong>'+safe(r.title||r.perk)+'</strong><span>'+safe(r.cost)+' pts · '+safe(r.status)+
-   (r.note?' · '+safe(r.note):'')+'</span></div>').join(''):
+  const messageFor={pending:'Hinihintay ang approval ng SK. Naka-reserve ang points mo.',
+   approved:'Approved! Maaari mo nang i-claim ito sa SK VASRA Office. Dalhin ang verified KK ID.',
+   rejected:'Hindi naaprubahan. Available ulit ang naka-reserve na points.'};
+  const labelFor={pending:'Pending',approved:'Approved',rejected:'Rejected'};
+  $('#kk-redemption-list').innerHTML=redemptions.length?redemptions.map(r=>{
+   const status=['pending','approved','rejected'].includes(r.status)?r.status:'unknown';
+   return '<article class="kk-dashboard-list kk-redemption-entry is-'+status+'">'+
+     '<div class="kk-redemption-info"><strong>'+safe(r.title||r.perk)+'</strong>'+
+     '<small>'+safe(r.cost)+' points</small>'+
+     '<p>'+safe(messageFor[status]||'Sinusuri ang status ng request.')+'</p>'+
+     (r.note?'<p class="kk-redemption-note">SK note: '+safe(r.note)+'</p>':'')+
+     '</div><span class="kk-redemption-status is-'+status+'">'+
+     safe(labelFor[status]||'Update Pending')+'</span></article>';
+  }).join(''):
    '<div class="kk-dash-empty">Wala pang redemption requests.</div>';
  };
  const refreshRewards=async()=>{
