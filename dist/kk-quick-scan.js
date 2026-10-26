@@ -4,7 +4,12 @@
  const overlay=$('#kk-quick-overlay'),video=$('#kk-quick-video'),canvas=$('#kk-quick-canvas');
  if(!overlay||!video||!canvas)return;
  const statusEl=$('#kk-quick-status'),manual=$('#kk-quick-manual-id');
+ const frame=overlay.querySelector('.kk-quick-camera-frame'),hint=$('#kk-quick-camera-hint');
  let stream=null,timer=null,active=false,reading=false,busy=false,barcode=null,previousFocus=null,revision=0,notice='';
+ const cameraState=(value,hintText)=>{
+   overlay.dataset.camera=value;
+   if(hintText)hint.textContent=hintText;
+ };
  const message=(msg,error=false)=>{
   statusEl.textContent=String(msg);
   statusEl.dataset.kind=error?'error':'info';
@@ -18,6 +23,7 @@
   $('#kk-quick-camera-hint').hidden=false;
   $('#kk-quick-start').hidden=false;$('#kk-quick-stop').hidden=true;
   reading=false;
+  if(overlay.dataset.camera!=='unavailable')cameraState('idle','Camera is off. Start Camera or enter the KK ID.');
  };
  const close=()=>{
   stop();overlay.hidden=true;
@@ -68,11 +74,14 @@
  const start=async()=>{
   if(active||overlay.hidden)return;
   if(!navigator.mediaDevices?.getUserMedia){
+   cameraState('unavailable','No camera API on this browser. Enter the KK ID manually.');
    message('Camera unavailable. Use the manual KK ID field.',true);return;
   }
   if(!window.isSecureContext){
+   cameraState('unavailable','Open SK VASRA over HTTPS to use the camera.');
    message('Camera requires HTTPS. Use the secure SK VASRA website.',true);return;
   }
+  cameraState('starting','Waiting for camera permission…');
   try{
    barcode=null;
    if(typeof window.BarcodeDetector==='function'){
@@ -93,6 +102,7 @@
    if(overlay.hidden){media.getTracks().forEach(track=>track.stop());return;}
    stream=media;video.srcObject=media;video.hidden=false;
    await video.play();active=true;
+   cameraState('live');
    $('#kk-quick-camera-hint').hidden=true;
    $('#kk-quick-start').hidden=true;$('#kk-quick-stop').hidden=false;
    message('Camera scanning. Hold the QR steady inside the preview.');
@@ -100,6 +110,11 @@
   }catch(error){
    stop();
    const code=error?.name||'';
+   cameraState('unavailable',code==='NotFoundError'||code==='DevicesNotFoundError'?
+     'No camera detected. Check your device or enter a KK ID below.':
+     code==='NotAllowedError'||code==='PermissionDeniedError'?
+     'Camera permission blocked. Enable camera permission or use manual entry.':
+     'Camera could not start. You can still enter the KK ID below.');
    message(code==='NotAllowedError'||code==='PermissionDeniedError'
     ?'Camera blocked. Allow camera access in your browser settings, or enter the KK ID manually.'
     :code==='NotFoundError'||code==='DevicesNotFoundError'
@@ -111,7 +126,7 @@
   if(!overlay.hidden)return;
   previousFocus=document.activeElement;
   overlay.hidden=false;document.body.classList.add('kk-quick-open');
-  notice='';manual.value='';message('Opening camera…');
+  notice='';manual.value='';cameraState('starting','Waiting for camera permission…');message('Opening camera…');
   $('#kk-quick-close').focus();
   start();
  };
