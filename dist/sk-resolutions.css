@@ -46,3 +46,33 @@ html[data-theme="dark"] body.portal-refresh.sk-resolution-page .skres-filters :i
 html[data-theme="dark"] body.portal-refresh.sk-resolution-page .skres-filters label{color:#d2e3f9}
 html[data-theme="dark"] body.portal-refresh.sk-resolution-page .skres-card-bottom{border-color:#3f5877}
 html[data-theme="dark"] body.portal-refresh.sk-resolution-page .skres-refresh{background:#284666;border-color:#56779c;color:#eaf4ff}
+
+
+/* Compact official resolution browsing for the 2023–2027 archive. */
+.skres-hero{padding:23px 26px;margin:13px 0;border-radius:15px}
+.skres-hero h1{font-size:clamp(22px,3vw,32px);margin:5px 0}
+.skres-hero p{font-size:12px;line-height:1.6}
+.skres-hero-symbol{width:64px;height:64px;border-radius:13px}
+.skres-hero-symbol svg{width:36px;height:36px}
+.skres-content{padding:18px}
+.skres-filters{padding:12px 0;margin-bottom:8px;gap:9px}
+.skres-filters :is(input,select){min-height:38px;font-size:14px;border-radius:9px}
+.skres-filters select{appearance:none;-webkit-appearance:none;padding-right:34px;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23275b92' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;
+ background-repeat:no-repeat!important;background-position:right 10px center!important;background-size:17px!important}
+.skres-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:10px}
+.skres-card{padding:13px;border-radius:11px}
+.skres-card h3{font-size:13px;margin:9px 0 6px;line-height:1.5}
+.skres-card p{font-size:11px;margin:2px 0 8px;line-height:1.55}
+.skres-card p.skres-author{font-weight:650;color:#50769d}
+.skres-card .skres-card-bottom{padding-top:8px}
+.skres-card-bottom a{padding:8px 10px;font-size:10px}
+.skres-public-pagination{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:14px 0 4px}
+.skres-public-pagination>span{font-size:11px;color:#6885a3}
+.skres-public-pagination>div{display:flex;gap:8px}
+.skres-public-pagination button{border:1px solid #c9d9ed;border-radius:8px;padding:8px 13px;background:#eaf2fe;color:#245591;font-size:11px;font-weight:750}
+.skres-public-pagination button:disabled{opacity:.5;cursor:not-allowed}
+html[data-theme="dark"] body.portal-refresh.sk-resolution-page .skres-public-pagination :is(button){background:#29496d;color:#e6f3ff;border-color:#557499}
+html[data-theme="dark"] body.portal-refresh.sk-resolution-page .skres-card p.skres-author{color:#bddaff}
+html[data-theme="dark"] body.portal-refresh.sk-resolution-page .skres-public-pagination>span{color:#c6d8ed}
+@media(max-width:480px){.skres-hero{padding:19px}.skres-content{padding:12px}.skres-filters{gap:8px}.skres-card{padding:12px}}
