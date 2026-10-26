@@ -16,7 +16,7 @@ test('KK dashboard keeps sidebar logo but removes duplicate content toolbar bran
 test('Latest dark stylesheet loads on every KK page, not only after toggling',()=>{
  for(const page of pages){
   const html=read(page);
-  assert.match(html,/href="\.\/theme\.css\?v=20261025-kk-all-dark-v4" data-vasra-theme="true"/,page);
+  assert.match(html,/href="\.\/theme\.css\?v=20261026-kk-mobile-profile-v8" data-vasra-theme="true"/,page);
   assert.match(html,/src="\.\/theme\.js\?v=/,page);
  }
 });
