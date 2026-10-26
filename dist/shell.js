@@ -50,7 +50,7 @@
  // outage as an expired session.
  if(!document.body.classList.contains('account-workspace')){
   const loginIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>';
-  const logoutIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-5"/></svg>';
+  const logoutIcon='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="12" height="18" rx="2"/><path d="M10 12h11m-4-4 4 4-4 4"/></svg>';
   const dashboardIcon='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   nav.insertAdjacentHTML('beforeend','<a class="kk-mobile-nav-link" href="./kk-login">'+loginIcon+'<span>KK Login / Register</span></a>');
   const locationTag=document.querySelector('.page-top .location-tag');
