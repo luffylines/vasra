@@ -519,3 +519,28 @@ body.account-workspace[data-theme="dark"] #panel-kk-services .kk-service-history
  #panel-kk-services .kk-service-stats article{padding:9px}
  #panel-kk-services .kk-service-admin-card{padding:9px!important}
 }
+
+
+/* RetaBox rate field and Save Rate share one baseline with equal height. */
+#panel-kk-services #kk-retabox-rate-form{
+ display:grid!important;grid-template-columns:minmax(0,180px) 126px!important;
+ align-items:end!important;justify-content:start!important;column-gap:10px;row-gap:9px
+}
+#panel-kk-services #kk-retabox-rate-form>label{
+ display:flex!important;flex-direction:column!important;gap:7px!important;
+ min-width:0!important;max-width:none!important;margin:0!important
+}
+#panel-kk-services #kk-retabox-rate-form input,
+#panel-kk-services #kk-retabox-rate-form>button{
+ box-sizing:border-box!important;min-height:40px!important;height:40px!important;
+ margin:0!important;align-self:end!important
+}
+#panel-kk-services #kk-retabox-rate-form>button{
+ display:inline-flex;justify-content:center;align-items:center;
+ width:126px!important;min-width:0!important;padding:8px 12px!important;
+ border-radius:9px!important;font:750 12px 'DM Sans',sans-serif!important
+}
+@media(max-width:380px){
+ #panel-kk-services #kk-retabox-rate-form{grid-template-columns:minmax(0,1fr) minmax(100px,.7fr)!important}
+ #panel-kk-services #kk-retabox-rate-form>button{width:100%!important}
+}
