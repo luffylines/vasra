@@ -26,7 +26,7 @@ test('Compact staff list has year/status/search and pagination for large 2023-20
  assert.match(staff,/r\.author,r\.year,r\.approved_on/);
  assert.match(staff,/const parseTSV=text=>/);
  assert.match(staff,/const isoDate=\(text,year\)=>/);
- assert.match(staff,/Import Valid Rows as Drafts/);
+ assert.match(markup,/Import Valid Rows as Drafts/);
  assert.match(style,/skres-admin-grid\{grid-template-columns:minmax\(0,1fr\)/);
  assert.match(style,/appearance:none;-webkit-appearance:none/);
 });
