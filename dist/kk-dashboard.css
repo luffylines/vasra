@@ -161,3 +161,22 @@ html[data-theme="dark"] body.kk-member-dashboard .kk-overview-icon{background:#2
 @media(max-width:640px){
  .kk-member-dashboard .kk-overview-cards{grid-template-columns:1fr}
 }
+
+
+/* KK member redeemable reward catalog with real inventory. */
+#kk-reward-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#kk-reward-list .kk-member-reward{display:flex;flex-direction:column;padding:0;overflow:hidden;min-width:0;border-radius:14px}
+.kk-member-reward-art{width:100%;aspect-ratio:16/10;background:#eaf2fb;overflow:hidden}
+.kk-member-reward-art img{width:100%;height:100%;display:block;object-fit:cover}
+.kk-member-reward-no-photo{width:100%;height:100%;display:grid;place-items:center;text-align:center;font-size:12px;color:#6585ab}
+.kk-member-reward-details{display:flex;flex-direction:column;gap:10px;min-width:0;padding:15px;flex:1}
+.kk-member-reward-details h3{margin:0;font-size:16px;overflow-wrap:anywhere}
+.kk-member-reward-details p{margin:0;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.kk-member-reward-details button{margin-top:auto;min-height:39px;max-width:100%;font-size:12px}
+.kk-member-reward-summary{display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;font-size:12px;color:#2862a6}
+.kk-member-reward-summary strong{font-weight:850}
+.kk-member-reward-summary span{font-weight:650;color:#6583a3}
+body.kk-member-dashboard[data-theme="dark"] .kk-member-reward-art{background:#284466}
+body.kk-member-dashboard[data-theme="dark"] .kk-member-reward-summary span{color:#bcd3ec}
+@media(max-width:1024px){#kk-reward-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){#kk-reward-list{grid-template-columns:minmax(0,1fr)}}
