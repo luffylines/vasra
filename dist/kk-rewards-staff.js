@@ -3,8 +3,10 @@
  const $=selector=>document.querySelector(selector);
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const service=async(body)=>api('./api/kk/staff/rewards',body===undefined?{}:{method:'POST',body:JSON.stringify(body)});
- const flash=(message,isError=false)=>{const el=$('#kk-rewards-status');el.textContent=isError?message:'';el.dataset.kind=isError?'error':'info';
-   window.showVasraToast?.(message,isError?'error':'success');};
+ const flash=(message,isError=false)=>{
+   const el=$('#kk-rewards-status');el.textContent='';el.dataset.kind='info';
+   window.showVasraToast?.(message,isError?'error':'success');
+ };
  const photoUrl=p=>'./api/kk/rewards/image/'+encodeURIComponent(p.id);
  let state={rewards:[],claims:[],projects:[],members:[],registrations:[],attendance:[],officer:{}},loading=false,working=false;
  const rewardCard=p=>{
