@@ -1362,7 +1362,9 @@ async function updateDutyControls(){
   auto=$('#duty-set-auto'),retry=$('#duty-retry');
  const roster=typeof days!=='undefined'&&Array.isArray(days)?days[d.index]:null;
  const names=typeof liveAssignedNames!=='undefined'&&liveAssignedNames?liveAssignedNames[d.index]:roster?.names||dutyNames[d.index];
- const assigned=names?.length?names.join(' · '):'Walang nakatalagang SK officer';
+ const prettyDutyName=value=>String(value||'').normalize('NFKC').trim().replace(/\s+/g,' ')
+   .toLocaleLowerCase('en-PH').replace(/(^|[\s'-])([a-z])/g,(_,prefix,letter)=>prefix+letter.toUpperCase());
+ const assigned=names?.length?names.map(prettyDutyName).join(' · '):'Walang nakatalagang SK officer';
  $('#duty-assigned-name').textContent=assigned;
  $('#duty-control-date').textContent='Ngayong araw · '+new Intl.DateTimeFormat('fil-PH',{
   timeZone:'Asia/Manila',weekday:'long',month:'long',day:'numeric',year:'numeric'
