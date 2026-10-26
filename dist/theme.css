@@ -782,3 +782,37 @@ html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a{
 html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a:hover{
  background:#2a4770;color:#fff
 }
+
+/* Dark KK profile: all separator lines match surrounding dark surfaces. */
+html[data-theme="dark"] body.kk-body :is(
+ .kk-profile-toolbar,.kk-profile-sheet,.kk-profile-preview,.kk-preview-card,
+ .kk-review>div,.kk-step,.kk-yn-field,.kk-solo-field,
+ .kk-field-section,.kk-id-upload,.kk-profile-sheet-head,.kk-reg-toolbar){
+ border-color:#45648b!important
+}
+html[data-theme="dark"] body.kk-body .kk-field-section,
+html[data-theme="dark"] body.kk-body .kk-profile-sheet-head,
+html[data-theme="dark"] body.kk-body .kk-id-upload,
+html[data-theme="dark"] body.kk-body .kk-review>div{
+ border-color:#385677!important
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button{
+ color:#e0eeff;background:transparent
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:first-child{
+ border-right-color:#496c95
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:last-child{
+ border-left-color:#496c95
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:hover{
+ background:#315172
+}
+html[data-theme="dark"] body.kk-body .kk-profile-preview{
+ background:#1c314e;border-color:#4a698f
+}
+html[data-theme="dark"] body.kk-body .kk-preview-card{
+ background:#253e5c;border-color:#4b7199
+}
+html[data-theme="dark"] body.kk-body .kk-preview-card :is(dt,dd){color:#d6e8fb}
+html[data-theme="dark"] body.kk-body .kk-toolbar-logout svg{stroke:currentColor}
