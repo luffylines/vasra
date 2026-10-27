@@ -15,6 +15,12 @@
  const report=(msg,error=false,success=false)=>{const target=$('#kk-id-staff-status');if(!target)return;if(msg&&(error||success)){target.textContent='';window.showVasraToast(msg,error?'error':'success');return;}target.textContent=msg;target.dataset.kind='info';};
  const approved=r=>r.status==='approved'&&r.photo_exists&&/^VASRA-KK-\d+$/.test(r.kk_id||'');
  const date=v=>v?new Date(v).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',timeZone:'Asia/Manila'}):'—';
+ // Each visible action gets an equal-sized grid cell, regardless of review status.
+ const actionLayout=member=>{
+  const mail=['approved','rejected'].includes(member.status)&&member.email_state!=='accepted';
+  const total=1+(member.status==='pending'?2:0)+(mail?1:0)+(approved(member)?2:0);
+  return total===1?'single':total===3?'three':total===4?'four':'two';
+ };
  const filtered=()=>{
   const filter=$('#kk-id-staff-filter').value,q=$('#kk-id-staff-query').value.trim().toLowerCase();
   return rows.filter(r=>(filter==='all'||(filter==='printed'?!!r.printed_at:r.status===filter))&&
@@ -44,7 +50,7 @@
       r.email_state==='pending'?'Pending delivery':
       r.email_state==='sending'?'Sending…':
       r.email_state==='unavailable'?'Email setup pending':'Not queued')+'</small>':'')+
-    '</div><div class="kk-id-staff-actions">'+
+    '</div><div class="kk-id-staff-actions" data-layout="'+actionLayout(r)+'">'+
     '<button type="button" class="kk-id-view-button" data-card-preview="'+esc(r.member_id)+
        '" aria-controls="kk-id-staff-preview" aria-expanded="'+String(selected===r.member_id)+'">'+icon.eye+'<span>View Front & Back</span></button>'+
     (r.status==='pending'?'<button type="button" class="kk-id-approve-button" data-card-approve="'+esc(r.member_id)+'">'+icon.check+'<span>Approve Photo</span></button>'+
