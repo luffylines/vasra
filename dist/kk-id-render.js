@@ -99,11 +99,11 @@
   c.fillText(String(value??'').toUpperCase(),x,y,...(maxWidth?[maxWidth]:[]));
  };
  const cover=(c,img,x,y,w,h)=>{
-  if(!img){rounded(c,x,y,w,h,8,'#e5d9f5','#c9badf');txt(c,'PHOTO',x+w/2-48,y+h/2,25);return;}
+  if(!img){rounded(c,x,y,w,h,8,'#e8f2fc','#acc7e4');txt(c,'PHOTO',x+w/2-48,y+h/2,25);return;}
   const scale=Math.max(w/img.width,h/img.height),sourceW=w/scale,sourceH=h/scale;
   c.save();c.beginPath();c.roundRect(x,y,w,h,10);c.clip();
   c.drawImage(img,(img.width-sourceW)/2,(img.height-sourceH)/2,sourceW,sourceH,x,y,w,h);
-  c.restore();rounded(c,x,y,w,h,10,null,'#e1b5cb');
+  c.restore();rounded(c,x,y,w,h,10,null,'#bfd8f1');
  };
  const dateText=value=>{
   if(!value)return 'PENDING';
@@ -119,17 +119,17 @@
    logoImage('./barangay-vasra-logo.jpg'),logoImage('./sk%20logo.jpg')
   ]);
   let bg=x.createLinearGradient(0,0,W,H);
-  bg.addColorStop(0,'#fffefb');bg.addColorStop(.34,'#faf0ff');
-  bg.addColorStop(.73,'#f1e7fe');bg.addColorStop(1,'#fff2b0');
+  bg.addColorStop(0,'#102647');bg.addColorStop(.34,'#123058');
+  bg.addColorStop(.73,'#112c51');bg.addColorStop(1,'#0b2040');
   x.fillStyle=bg;x.fillRect(0,0,W,H);
   const g=x.createRadialGradient(1100,710,20,1100,710,650);
-  g.addColorStop(0,'#ffe97566');g.addColorStop(1,'#ffffff00');
+  g.addColorStop(0,'#2e56805e');g.addColorStop(1,'#122a4500');
   x.fillStyle=g;x.fillRect(0,0,W,H);
-  x.strokeStyle='#bb9de250';x.lineWidth=3;
+  x.strokeStyle='#8ac4f077';x.lineWidth=2;
   for(let n=0;n<8;n++){x.beginPath();x.arc(1230,460,120+n*48,0,Math.PI*1.8);x.stroke();}
   for(let n=0;n<8;n++){x.beginPath();x.arc(110,760,120+n*50,Math.PI,Math.PI*1.85);x.stroke();}
-  rounded(x,11,11,W-22,H-22,44,null,'#e2beef');
-  rounded(x,20,20,W-40,H-40,40,null,'#fff8');
+  rounded(x,11,11,W-22,H-22,44,null,'#7aaad3');
+  rounded(x,20,20,W-40,H-40,40,null,'#4c749a');
   // User-provided Barangay Vasra seal on the LEFT; SK VASRA on the RIGHT.
   // Both occupy the exact same 112x112 slot. Clip source background noise
   // outside the circular Barangay seal without distorting its proportions.
@@ -144,30 +144,30 @@
   const centeredHeader=(value,y,size,color,weight,maxWidth)=>{
    x.save();x.textAlign='center';txt(x,value,W/2,y,size,color,weight,maxWidth);x.restore();
   };
-  centeredHeader('REPUBLIKA NG PILIPINAS',81,24,'#192640',700,700);
-  centeredHeader('SANGGUNIANG KABATAAN',114,29,'#172441',800,760);
-  centeredHeader('SK VASRA IDENTIFICATION CARD',147,20,'#3a4271',650,760);
-  x.fillStyle='#edbcf4';x.fillRect(195,180,890,3);
+  centeredHeader('REPUBLIKA NG PILIPINAS',81,24,'#ffffff',700,700);
+  centeredHeader('SANGGUNIANG KABATAAN',114,29,'#ffffff',800,760);
+  centeredHeader('SK VASRA IDENTIFICATION CARD',147,20,'#b8d3f2',650,760);
+  x.fillStyle='#eabf5f';x.fillRect(195,180,890,3);
   const code=String(member.kk_id||'VASRA-KK-—'),status=member.status||'not_uploaded';
   if(face==='front'){
    cover(x,options.photo,50,264,260,260); // 1:1 square, not a passport crop
-   txt(x,'APELYIDO / SURNAME',336,255,21,'#677091',600);
-   txt(x,member.last_name||member.name||'—',336,296,41,'#18223c',800,880);
-   txt(x,'PANGALAN / GIVEN NAME',336,337,21,'#677091',600);
-   txt(x,member.first_name||'',336,378,41,'#18223c',800,880);
-   txt(x,'GITNANG PANGALAN / MIDDLE NAME',336,419,21,'#677091',600);
-   txt(x,member.middle_name||'—',336,454,31,'#18223c',700,860);
-   txt(x,'PETSA NG KAPANGANAKAN / DATE OF BIRTH',336,501,20,'#677091',600,630);
-   txt(x,dateText(member.birthdate),336,540,27,'#172441',700,550);
-   txt(x,'KASARIAN / SEX',940,501,20,'#677091',600);
-   txt(x,member.gender||'—',940,540,27,'#172441',700,250);
-   txt(x,'ADDRESS',55,635,20,'#657096',600);
+   txt(x,'APELYIDO / SURNAME',336,255,21,'#adc5df',600);
+   txt(x,member.last_name||member.name||'—',336,296,41,'#ffffff',800,880);
+   txt(x,'PANGALAN / GIVEN NAME',336,337,21,'#adc5df',600);
+   txt(x,member.first_name||'',336,378,41,'#ffffff',800,880);
+   txt(x,'GITNANG PANGALAN / MIDDLE NAME',336,419,21,'#adc5df',600);
+   txt(x,member.middle_name||'—',336,454,31,'#ffffff',700,860);
+   txt(x,'PETSA NG KAPANGANAKAN / DATE OF BIRTH',336,501,20,'#adc5df',600,630);
+   txt(x,dateText(member.birthdate),336,540,27,'#ffffff',700,550);
+   txt(x,'KASARIAN / SEX',940,501,20,'#adc5df',600);
+   txt(x,member.gender||'—',940,540,27,'#ffffff',700,250);
+   txt(x,'ADDRESS',55,635,20,'#adc5df',600);
    const address=[member.street,member.barangay||'Barangay Vasra',member.city||'Quezon City'].filter(Boolean).join(', ');
-   txt(x,address||'BARANGAY VASRA, QUEZON CITY',55,676,24,'#1e2b48',700,1172);
-   rounded(x,55,706,260,50,8,'#ffe89a');
-   txt(x,code,76,741,25,'#1b2541',800,236);
+   txt(x,address||'BARANGAY VASRA, QUEZON CITY',55,676,24,'#ffffff',700,1172);
+   rounded(x,55,706,260,50,8,'#eabc63');
+   txt(x,code,76,741,25,'#102647',800,236);
    x.save();x.textAlign='right';
-   txt(x,'KATIPUNAN NG KABATAAN · VASRA',1219,743,18,'#5e5478',700,650);
+   txt(x,'KATIPUNAN NG KABATAAN · VASRA',1219,743,18,'#b9cee5',700,650);
    x.restore();
    if(status!=='approved'||!options.photo){rounded(x,416,570,450,42,12,'#ffffffc7');
     txt(x,'PHOTO FOR SK VERIFICATION',450,599,22,'#9d4a59',800);}
@@ -180,16 +180,16 @@
     x.fillStyle='#121e34';
     for(let y=0;y<21;y++)for(let xx=0;xx<21;xx++)if(matrix[y][xx])x.fillRect(originX+(xx+4)*cell,originY+(y+4)*cell,cell+.3,cell+.3);
    }else{rounded(x,60,245,333,333,12,'#fff');txt(x,'QR PENDING',105,415,32);}
-   txt(x,'OFFICIAL KK ID',450,268,22,'#65708e',650);
-   txt(x,code,450,320,42,'#15233e',800,790);
-   txt(x,'DATE ISSUED',450,390,23,'#677190',650);
-   txt(x,dateText(member.issued_at),450,432,34,'#24304e',800,775);
-   txt(x,'BARANGAY VASRA',450,501,24,'#65708e',650);
-   txt(x,'QUEZON CITY · PHILIPPINES',450,537,29,'#1b2e52',800);
-   txt(x,'SCAN QR TO READ THE KK ID NUMBER',59,623,21,'#424d70',700,835);
-   x.fillStyle='#e3a8d0';x.fillRect(55,654,1170,3);
-   txt(x,'THIS CARD IS PROPERTY OF SK VASRA. IF FOUND, RETURN TO THE SK VASRA OFFICE.',56,693,20,'#4a5d78',700,1160);
-   txt(x,'40 FORESTRY ST, BARANGAY VASRA, QUEZON CITY',56,730,21,'#59647d',650,1130);
+   txt(x,'OFFICIAL KK ID',450,268,22,'#adc5df',650);
+   txt(x,code,450,320,42,'#ffffff',800,790);
+   txt(x,'DATE ISSUED',450,390,23,'#adc5df',650);
+   txt(x,dateText(member.issued_at),450,432,34,'#ffffff',800,775);
+   txt(x,'BARANGAY VASRA',450,501,24,'#adc5df',650);
+   txt(x,'QUEZON CITY · PHILIPPINES',450,537,29,'#ffffff',800);
+   txt(x,'SCAN QR TO READ THE KK ID NUMBER',59,623,21,'#bdd2e6',700,835);
+   x.fillStyle='#eabc63';x.fillRect(55,654,1170,3);
+   txt(x,'THIS CARD IS PROPERTY OF SK VASRA. IF FOUND, RETURN TO THE SK VASRA OFFICE.',56,693,20,'#bdd2e6',700,1160);
+   txt(x,'40 FORESTRY ST, BARANGAY VASRA, QUEZON CITY',56,730,21,'#bdd2e6',650,1130);
   }
   return c;
  };
