@@ -30,7 +30,7 @@ test('homepage failures remain explicit without inventing financial or official 
 test('default home and inner pages retain a single complete navigation and valid local assets',()=>{
  for(const name of ['index.html','projects.html','duty.html','contacts.html','transparency.html','youth-leaders.html']){
   const html=fs.readFileSync(path.join(dist,name),'utf8');assert.equal((html.match(/<nav aria-label="Pangunahing navigation">/g)||[]).length,1,name);
-  assert.match(html,/<a href="\.\/"[^>]*>.*?<span>Home<\/span>/s);assert.match(html,/href="\.\/projects.html"/);
+  assert.match(html,/<a href="\.\/"[^>]*>.*?<span>Home<\/span>/s);assert.match(html,/href="\.\/projects"/);
   for(const [,asset] of html.matchAll(/(?:src|href)="\.\/([^"?#]+\.(?:js|css))"/g))assert(fs.existsSync(path.join(dist,asset)),asset);
  }
  const account=fs.readFileSync(path.join(dist,'account.html'),'utf8');assert.match(account,/id="staff-nav"/);assert.match(account,/id="auth-form"/);

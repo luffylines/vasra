@@ -57,7 +57,8 @@
  const drawArchive=()=>{
   $('#kk-event-archive').innerHTML=finished.length?
     finished.map(p=>'<article class="kk-event-archived"><div><strong>'+esc(p.title)+'</strong>'+
-    '<small>Completed · '+Number(p.attendees||0)+' checked-in participants</small></div>'+
+    '<small>Completed · '+Number(p.attendees||0)+' checked-in participants</small>'+
+    (p.last_checkin_at?'<small>Last check-in: '+esc(pht.format(new Date(p.last_checkin_at)))+'</small>':'')+'</div>'+
     '<button type="button" class="secondary" data-event-export="'+esc(p.id)+'">Download Excel</button></article>').join(''):
     '<p class="kk-reward-empty">No completed events with registered attendance yet.</p>';
  };
@@ -79,7 +80,10 @@
   try{
    const data=await request('');
    events=Array.isArray(data.active_events)?data.active_events:[];
-   finished=Array.isArray(data.finished_events)?data.finished_events:[];
+   finished=Array.isArray(data.finished_events)?[...data.finished_events].sort((a,b)=>{
+    const date=p=>Date.parse(p.last_checkin_at||p.created_at||0)||0;
+    return date(b)-date(a);
+   }):[];
    officer=data.officer?.name||'Authenticated SK Officer';
    $('#kk-event-active-count').textContent=String(events.length);
    const preserved=currentEvent;

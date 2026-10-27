@@ -41,3 +41,9 @@ body.account-workspace[data-theme="dark"] #kk-event-scan-result{background:#224d
 body.account-workspace[data-theme="dark"] #kk-event-scan-result[data-kind="error"]{background:#542a38;color:#ffcbd4}
 @media(max-width:900px){.kk-event-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-event-scanner-grid{grid-template-columns:1fr}.kk-event-camera{min-height:230px}}
 @media(max-width:560px){.kk-event-workspace .kk-rewards-head{flex-wrap:wrap}.kk-event-stats{gap:8px}.kk-event-stats article{padding:11px}.kk-event-stats strong{font-size:20px}.kk-event-archived{align-items:flex-start;flex-direction:column}.kk-event-archived button{width:100%}}
+
+/* Recent attended events first; keep actions aligned on long event titles. */
+.kk-event-archive .kk-event-archived{min-width:0}
+.kk-event-archive .kk-event-archived>div{flex:1;min-width:0}
+.kk-event-archive .kk-event-archived button{flex:none;white-space:nowrap;align-self:center}
+@media(max-width:560px){.kk-event-archive .kk-event-archived button{align-self:stretch}}

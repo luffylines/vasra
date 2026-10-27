@@ -18,7 +18,7 @@
    node('home-recent-projects').innerHTML=cards.length?cards.map(p=>{
     const done=p.status==='Natapos';const pct=ratio(p.progress);
     const image=p.image_id?'<img src="./api/images/'+encodeURIComponent(p.image_id)+'" loading="lazy" alt="'+safe(p.title)+'">':'';
-    return '<a class="home-recent-card'+(done?' done':'')+'" href="./projects.html"><span class="home-recent-cover">'+image+'<span class="home-recent-category">'+safe(p.category||'Programa')+'</span></span><span class="home-recent-details"><h3>'+safe(p.title)+'</h3><span class="home-recent-date">'+safe(formatDate(p.published_at||p.updated||p.created_at))+'</span><span class="home-recent-progress"><span class="home-recent-track"><span style="width:'+pct+'%"></span></span>'+pct+'%</span><span class="home-recent-state">'+safe(done?'✓ Completed':p.status==='Isinasagawa'?'Ongoing':p.status||'Pinaplano')+'</span></span></a>';
+    return '<a class="home-recent-card'+(done?' done':'')+'" href="./projects"><span class="home-recent-cover">'+image+'<span class="home-recent-category">'+safe(p.category||'Programa')+'</span></span><span class="home-recent-details"><h3>'+safe(p.title)+'</h3><span class="home-recent-date">'+safe(formatDate(p.published_at||p.updated||p.created_at))+'</span><span class="home-recent-progress"><span class="home-recent-track"><span style="width:'+pct+'%"></span></span>'+pct+'%</span><span class="home-recent-state">'+safe(done?'✓ Completed':p.status==='Isinasagawa'?'Ongoing':p.status||'Pinaplano')+'</span></span></a>';
    }).join(''):'<p class="home-recent-placeholder">Wala pang nailathalang proyekto.</p>';
   }catch{
    set('home-total-projects','—');
@@ -47,7 +47,7 @@
    const parse=s=>{const n=String(s).split(':').map(Number);return n[0]*60+(n[1]||0)};
    const isHours=minutes>=parse(result.open_time||'09:00')&&minutes<parse(result.close_time||'18:00');
    const closed=result.mode==='closed'&&result.date===today;
-   set('home-duty-summary',isHours&&!closed?'Bukas':'Sarado');
+   set('home-duty-summary',isHours&&!closed?'Open':'Closed');
    const fmtTime=(raw,fallback)=>{
     const m=/^(\d{1,2}):(\d{2})/.exec(String(raw||fallback));
     if(!m)return fallback;
