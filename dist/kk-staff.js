@@ -94,7 +94,7 @@
     '<small>Uploaded: '+escVal(doc.uploaded_at?new Date(doc.uploaded_at).toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Manila'}):'Date not provided')+'</small>'+
     '<small>Secured file · staff-only access</small></div>'+
     '<button type="button" data-view-id="'+escVal(m.id)+'" aria-label="View secured valid ID for '+escVal(initials(m))+'">'+svgIcon('document')+' View File</button></div>':
-    '<p class="kk-muted">No document uploaded. Identity proof must be reviewed before verification, if required.</p>')+'</section>';
+    '<p class="kk-muted">No Valid ID uploaded. The applicant may still apply; SK staff must manually verify identity, barangay residency and eligibility before approval.</p>')+'</section>';
  };
 
  // A child edit view overlays only the selected applicant detail (parent stays

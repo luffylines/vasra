@@ -193,7 +193,7 @@
   }
   return c;
  };
- const pdf=(cards,fileName)=>{
+ const pdfBytes=cards=>{
   if(!cards.length)throw Error('No approved KK cards selected.');
   const enc=new TextEncoder(),chunks=[],positions=[0],imageCount=cards.length,objects=2+imageCount*3;
   let cursor=0;
@@ -220,7 +220,12 @@
   const xref=cursor;write('xref\n0 '+(objects+1)+'\n0000000000 65535 f \n');
   for(let i=1;i<=objects;i++)write(String(positions[i]).padStart(10,'0')+' 00000 n \n');
   write('trailer\n<< /Size '+(objects+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
-  const blob=new Blob(chunks,{type:'application/pdf'}),href=URL.createObjectURL(blob);
+  const bytes=new Uint8Array(cursor);let offset=0;
+  for(const piece of chunks){bytes.set(piece,offset);offset+=piece.length;}
+  return bytes;
+ };
+ const pdf=(cards,fileName)=>{
+  const blob=new Blob([pdfBytes(cards)],{type:'application/pdf'}),href=URL.createObjectURL(blob);
   const link=document.createElement('a');link.href=href;link.download=fileName.replace(/[^a-zA-Z0-9_.-]/g,'_');
   document.body.append(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(href),60000);
@@ -230,5 +235,5 @@
   const [front,back]=await Promise.all([art(member,'front',{photo}),art(member,'back',{photo})]);
   return {front,back};
  };
- window.KKIDRender={pair,pdf,qr,CR80:{widthMm:85.6,heightMm:54,widthPoints:PDF_W,heightPoints:PDF_H}};
+ window.KKIDRender={pair,pdf,pdfBytes,qr,CR80:{widthMm:85.6,heightMm:54,widthPoints:PDF_W,heightPoints:PDF_H}};
 })();

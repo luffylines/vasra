@@ -18,7 +18,7 @@ test('SK Vasra Identification Card stays branded with navy-blue CR80 artwork',()
 });
 test('Staff and member card images and PDFs still use the same renderer',()=>{
  for(const p of ['dist/account.html','dist/kk-dashboard.html'])
-  assert.match(read(p),/kk-id-render\.js\?v=20261027-kk-navy-v1/);
+  assert.match(read(p),/kk-id-render\.js\?v=20261027-kk-review-email-v1/);
  assert.match(read('dist/kk-id-staff.js'),/KKIDRender\.pair\(member/);
  assert.match(read('dist/kk-id-member.js'),/window\.KKIDRender\.pair/);
  assert.match(renderer,/85\.6\*MM/);

@@ -453,3 +453,13 @@ html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-reference-card.k
   flex-basis:100%
  }
 }
+
+/* ID review notification state, kept compact in the staff management list. */
+.kk-id-email-state{display:block;margin-top:5px;font-weight:650;color:#43658f;line-height:1.45}
+.kk-id-mail-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+ min-height:34px;padding:7px 11px;border-radius:9px;font-weight:700;font-size:12px;
+ border:1px solid #b7cfee;background:#f2f7ff;color:#194e92;cursor:pointer}
+.kk-id-mail-button svg{width:15px;height:15px;flex:none}
+.kk-id-mail-button:hover{background:#dfedff}
+body[data-theme="dark"] .kk-id-mail-button{background:#213b5b;color:#dceaff;border-color:#4775a5}
+body[data-theme="dark"] .kk-id-email-state{color:#c3d6f1}
