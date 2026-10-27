@@ -1,0 +1,31 @@
+/* Consistent modern title typography across SK staff, Projects and Home.
+   NFKC display normalization is handled by JS; original database titles remain unchanged. */
+#managed-projects .project-manage-info > h3.project-unified-title,
+.portal-refresh.projects-page #grid .cardbody > h3.project-unified-title,
+.portal-refresh #home-recent-projects .home-recent-details > h3.project-unified-title {
+ font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ font-size:16px;
+ font-weight:800;
+ line-height:1.4;
+ letter-spacing:-.02em;
+ text-transform:none;
+ font-style:normal;
+ font-variant:normal;
+ overflow-wrap:anywhere;
+ word-break:normal;
+}
+.portal-refresh.projects-page #detailbody > h2.project-unified-title{
+ font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ font-weight:800;
+ font-variant:normal;
+ text-transform:none;
+ overflow-wrap:anywhere;
+}
+@media(max-width:600px){
+ #managed-projects .project-manage-info > h3.project-unified-title,
+ .portal-refresh.projects-page #grid .cardbody > h3.project-unified-title,
+ .portal-refresh #home-recent-projects .home-recent-details > h3.project-unified-title{
+  font-size:15px;
+  line-height:1.4;
+ }
+}
