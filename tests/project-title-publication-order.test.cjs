@@ -47,7 +47,7 @@ test('public, homepage and staff use the same comparator and versioned assets',(
  assert.match(home,/SKProjectOrder\.sortProjectsNewestFirst\(all\)/);
  for(const [file,script] of [['dist/account.html','account.js'],['dist/index.html','home-landing.js']]){
   const html=read(file);
-  assert(html.indexOf('./project-event-order.js?v=20261027-title-date-v1')<html.indexOf('./'+script+'?v=20261027-title-date-v1'));
+  assert(html.indexOf('./project-event-order.js?v=20261027-title-date-v1')<html.indexOf('./'+script+'?v='+(script==='account.js'?'20261027-manual-card-v1':'20261027-title-date-v1')));
  }
  assert.match(read('dist/projects.html'),/app\.js\?v=20261027-title-date-v1/);
  const sw=read('dist/sw.js');assert.match(sw,/\.\/project-event-order\.js/);

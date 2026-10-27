@@ -38,7 +38,7 @@ test('Mobile event card prevents iPhone input zoom and clipped content',()=>{
  assert.match(css,/\.kk-project-registered,\.kk-project-attended/);
  assert.match(css,/\.kk-dashboard-grid\{grid-template-columns:minmax\(0,1fr\)\}/);
  assert.match(css,/font-size:16px;max-width:100%/);
- assert.match(read('dist/kk-dashboard.html'),/attendance-mobile-v4/);
+ assert.match(read('dist/kk-dashboard.html'),/20261026-kk-id-spacing-v7/);
  assert.match(read('dist/account.html'),/retabox-rate-ui-v7/);
 });
 test('Updated dashboard and camera scripts compile',()=>{

@@ -13,9 +13,9 @@ test('Contacts follows SK Resolution on every public page including active Conta
   assert.ok(nav,page+' public navigation exists');
   const anchors=[...nav[1].matchAll(/<a href="([^"]+)"/g)].map(x=>x[1]);
   assert.equal(anchors.length,8,page+' navigation has 8 pages');
-  assert.deepEqual(anchors.slice(-3),['./transparency','./sk-resolutions','./contacts.html'],page+' ordered end links');
-  assert.equal((nav[1].match(/href="\.\/contacts\.html"/g)||[]).length,1,page+' one Contacts link');
-  if(page==='contacts')assert.match(nav[1],/href="\.\/contacts\.html" aria-current="page"/);
+  assert.deepEqual(anchors.slice(-3),['./transparency','./sk-resolutions','./contacts'],page+' ordered end links');
+  assert.equal((nav[1].match(/href="\.\/contacts"/g)||[]).length,1,page+' one Contacts link');
+  if(page==='contacts')assert.match(nav[1],/href="\.\/contacts" aria-current="page"/);
  }
 });
 test('Every public sidebar footer has agreed labels and Facebook icon BEFORE link text without right icon',()=>{

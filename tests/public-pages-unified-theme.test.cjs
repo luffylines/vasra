@@ -20,7 +20,7 @@ test('SK Council, Awards, Transparency and Contacts share the Home shell and the
   assert.match(html,/<a class="brand" href="\.\/"><span class="sk-logo">/,'incorrect official logo in '+name);
   const nav=html.match(/<nav aria-label="Pangunahing navigation">[\s\S]*?<\/nav>/)?.[0];
   assert.ok(nav,'missing navigation in '+name);
-  for(const link of ['./projects.html','./duty.html','./youth-leaders','./achievements.html','./contacts.html','./transparency'])
+  for(const link of ['./projects','./duty','./youth-leaders','./achievements','./contacts','./transparency'])
    assert.ok(nav.includes('href="'+link+'"'),name+' is missing '+link);
  }
 });

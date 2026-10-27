@@ -7,7 +7,7 @@ const api=read('lib/handler.cjs'),db=read('lib/supabase.cjs');
 const schema=read('supabase/migrations/20261022170000_achievements_awards.sql');
 test('Achievements is a public page and a consistent SK VASRA sidebar link',()=>{
  const pages=['index','projects','duty','youth-leaders','contacts','transparency','account','achievements'];
- for(const p of pages)assert.match(read('dist/'+p+'.html'),/href="\.\/achievements\.html"/);
+ for(const p of pages)assert.match(read('dist/'+p+'.html'),/href="\.\/achievements"/);
  assert.match(read('dist/shell.js'),/key:'awards'/);
  assert.match(read('dist/index.html'),/id="home-awards-list"/);
  assert.match(read('dist/home-awards.js'),/api\('\.\/api\/achievements'\)/);
@@ -18,7 +18,7 @@ test('iPhone home screen and favicon continue using verified real SK Vasra artwo
  assert.match(index,/rel="apple-touch-icon" sizes="180x180"/);
  assert.match(index,/rel="icon" type="image\/jpeg"/);
  assert.match(read('dist/sw.js'),/\.\/apple-touch-icon-vasra\.png/);
- assert.match(read('dist/sw.js'),/\.\/achievements\.html/);
+ assert.match(read('dist/sw.js'),/\.\/achievements/);
 });
 test('SK officers can upload draft awards with up to twelve photos',()=>{
  const markup=read('dist/account.html');

@@ -22,9 +22,9 @@ test('SVG icons replace text symbols and sharp hero asset is versioned',()=>{
   assert.match(match[0],/class="home-card-svg"/);
   assert.match(match[0],/class="home-summary-chevron"/);
  }
- assert.doesNotMatch(html, /aria-hidden="true">(?:▣|♟|▦|★)<\\/span>/);
- assert.match(css,/home-memorial-circle\\.webp/);
- assert.match(html,/home-memorial\\.css\\?v=qmc-hd-20261027-v2/);
+ assert.doesNotMatch(html, /aria-hidden="true">(?:▣|♟|▦|★)<\/span>/);
+ assert.match(css,/home-memorial-circle\.webp/);
+ assert.match(html,/home-memorial\.css\?v=qmc-hd-20261027-v2/);
 });
 
 test('responsive homepage uses full-resolution landscape and portrait photographs',()=>{

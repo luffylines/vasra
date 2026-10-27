@@ -20,7 +20,7 @@ test('KK member portrait uses PRIVATE identity storage and not reward image vali
 });
 test('Rejected photo exposes re-upload UI and own review note without un-verifying profile',()=>{
  assert.match(member,/state==='rejected'\?'Rejected · Upload a New Photo'/);
- assert.match(member,/Choose a NEW photo and submit for SK approval/);
+ assert.match(member,/Upload a NEW photo for SK review/);
  assert.match(member,/uploadCard\.hidden=approved/);
  assert.match(member,/if\(memberApproval==='approved'\)/);
  assert.match(mailSql,/IF FOUND AND card\.status='approved'/);
@@ -62,6 +62,6 @@ test('Scripts keep valid JavaScript syntax and preview assets refresh',()=>{
  for(const p of ['dist/kk.js','dist/kk-id-member.js','dist/kk-id-staff.js','dist/kk-id-render.js','dist/kk-staff.js','lib/handler.cjs','lib/supabase.cjs'])
   assert.doesNotThrow(()=>new vm.Script(read(p),{filename:p}));
  assert.match(read('dist/kk-dashboard.html'),/kk-id-member\.js\?v=20261027-resubmit-pending-v1/);
- assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261027-kk-review-email-v1/);
+ assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261027-resubmit-pending-v1/);
  assert.match(read('dist/kk-profile.html'),/kk\.js\?v=20261027-optional-valid-id-v1/);
 });

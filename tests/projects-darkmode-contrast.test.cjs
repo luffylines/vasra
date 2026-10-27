@@ -53,5 +53,5 @@ test('Dark detail modal and empty state are legible without changing API',()=>{
  assert.match(theme,/projects-page #detail #detailbody :is\(h2,h3\)/);
  assert.match(theme,/projects-page #projects \.empty\{/);
  assert.match(theme,/projects-page #grid \.track>div\{/);
- assert.match(page,/<script src="\.\/app\.js">/);
+ assert.match(page,/<script src="\.\/app\.js(?:\?v=[a-zA-Z0-9-]+)?"\s*>/);
 });

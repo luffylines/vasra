@@ -65,7 +65,7 @@ test('Scanner dialog closes old large camera preview when device is unavailable'
  assert.match(qrCss,/grid-template-columns:minmax\(0,1fr\) 36px!important/);
  assert.match(qrCss,/#kk-quick-overlay\[data-camera="unavailable"\] \.kk-quick-camera-frame/);
  assert.match(qrCss,/@media\(max-width:480px\)/);
- assert.match(read('dist/account.html'),/kk-quick-scan\.js\?v=20261026-modal-reset-v5/);
+ assert.match(read('dist/account.html'),/kk-quick-scan\.js\?v=20261027-manual-card-v1/);
 });
 test('Updated JS compiles with no runtime syntax errors',()=>{
  for(const p of ['dist/kk-reset.js','dist/kk-quick-scan.js','lib/handler.cjs','lib/supabase.cjs'])

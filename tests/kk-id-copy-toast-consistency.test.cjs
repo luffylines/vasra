@@ -37,7 +37,7 @@ test('KK notifications use one right-side five-second toast with redirect flash'
   const html=read(view+'.html');
   assert.match(html,/src="\.\/common\.js\?v=20261025-kk-toast-right-v5"/);
   assert.match(html,new RegExp('src="\\.\\/kk\\.js\\?v='+
-   (view==='kk-login'?'20261026-kk-password-reset-v1':'20261026-kk-mobile-profile-v8')+'"'));
+   (view==='kk-login'?'20261026-kk-password-reset-v1':view==='kk-profile'?'20261027-optional-valid-id-v1':'20261026-kk-mobile-profile-v8')+'"'));
  }
 });
 

@@ -8,6 +8,10 @@ const css=fs.readFileSync(path.join(__dirname,'../dist/portal.css'),'utf8');
 const publishedStart=js.indexOf('function publishedCardDate(iso){');
 const publishedEnd=js.indexOf('const galleryIds=p=>',publishedStart);
 assert(publishedStart>=0&&publishedEnd>publishedStart);
+const titleStart=js.indexOf('const projectTitleForDisplay=');
+const titleEnd=js.indexOf('\n',titleStart);
+assert(titleStart>=0&&titleEnd>titleStart);
+const projectTitleForDisplay=new Function(js.slice(titleStart,titleEnd)+'\nreturn projectTitleForDisplay;')();
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 const publishedCardDate=new Function('esc',js.slice(publishedStart,publishedEnd)+'\nreturn publishedCardDate;')(esc);
 const renderStart=js.indexOf('function render(){');
@@ -18,9 +22,9 @@ function renderCards(projects){
  for(const id of ['search','grid','count','stat-all','stat-active','stat-done','stat-planned'])
   fields[id]={value:'',textContent:'',innerHTML:''};
  const $=sel=>fields[sel.slice(1)];
- const create=new Function('projects','filter','$','esc','sortProjectsNewestFirst','galleryIds','galleryUrl','publishedCardDate',
+ const create=new Function('projects','filter','$','esc','sortProjectsNewestFirst','galleryIds','galleryUrl','publishedCardDate','projectTitleForDisplay',
  js.slice(renderStart,renderEnd)+'\nreturn render;');
- create(projects,'Lahat',$,esc,rows=>rows,x=>x.image_ids||[],x=>'./api/images/'+x,publishedCardDate)();
+ create(projects,'Lahat',$,esc,rows=>rows,x=>x.image_ids||[],x=>'./api/images/'+x,publishedCardDate,projectTitleForDisplay)();
  return fields.grid.innerHTML;
 }
 const examples=[

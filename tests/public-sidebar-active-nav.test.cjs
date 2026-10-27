@@ -7,11 +7,11 @@ const vm=require('node:vm');
 const dist=path.resolve(__dirname,'../dist');
 const expected={
  'index.html':'./',
- 'projects.html':'./projects.html',
- 'duty.html':'./duty.html',
+ 'projects.html':'./projects',
+ 'duty.html':'./duty',
  'youth-leaders.html':'./youth-leaders',
- 'achievements.html':'./achievements.html',
- 'contacts.html':'./contacts.html',
+ 'achievements.html':'./achievements',
+ 'contacts.html':'./contacts',
  'transparency.html':'./transparency',
  'sk-resolutions.html':'./sk-resolutions'
 };
@@ -42,5 +42,5 @@ test('Client-side shell reconciles active state from URL for clean and .html rou
  assert.match(fs.readFileSync(path.join(dist,'mobile-nav.css'),'utf8'),/\.site-header nav a > i\{display:none!important\}/);
 });
 test('Service worker cache is bumped so old sidebar HTML cannot stay pinned on installed PWA',()=>{
- assert.match(fs.readFileSync(path.join(dist,'sw.js'),'utf8'),/vasra-v61-resolutions-kk-card-20261025/);
+ assert.match(fs.readFileSync(path.join(dist,'sw.js'),'utf8'),/vasra-v68-kk-reupload-rewards-delete-20261027/);
 });

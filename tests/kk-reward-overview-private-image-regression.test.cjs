@@ -32,7 +32,7 @@ test('KK overview uses published authenticated reward catalog without mock data'
 test('Published rewards show Edit and Delete, never Disable, and claim history remains protected',()=>{
  assert.match(staff,/p\.active\?'':'<button/);
  assert.doesNotMatch(staff,/\?\s*'Disable'/);
- assert.match(staff,/data-reward-delete/);assert.match(staff,/claimed\+reserved>0\?' disabled/);
+ assert.match(staff,/data-reward-delete/);assert.doesNotMatch(staff,/claimed\+reserved>0\?' disabled/);
  assert.match(staff,/data-claim-decision/);
 });
 test('SK duty card shows scheduled hours, not Labas sa duty hours',()=>{
