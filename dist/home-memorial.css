@@ -209,3 +209,15 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
 @media(prefers-reduced-motion:reduce){
  .home-memorial-hero .home-memorial-actions a{transition:none;}
 }
+
+/* Slightly smaller, balanced Open / Closed typography. Scoped to the public
+   SK Duty summary card; schedule, icons, and live status logic remain unchanged. */
+.home-summary-card.duty #home-duty-summary{
+  font-size:clamp(21px,1.75vw,25px);
+  line-height:1.22;
+  font-weight:750;
+  letter-spacing:-.02em;
+}
+@media(max-width:600px){
+  .home-summary-card.duty #home-duty-summary{font-size:22px}
+}

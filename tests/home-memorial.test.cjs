@@ -24,7 +24,7 @@ test('SVG icons replace text symbols and sharp hero asset is versioned',()=>{
  }
  assert.doesNotMatch(html, /aria-hidden="true">(?:▣|♟|▦|★)<\\/span>/);
  assert.match(css,/home-memorial-circle\\.webp/);
- assert.match(html,/home-memorial\\.css\\?v=qmc-hd-20261027-v1/);
+ assert.match(html,/home-memorial\\.css\\?v=qmc-hd-20261027-v2/);
 });
 
 test('responsive homepage uses full-resolution landscape and portrait photographs',()=>{
@@ -32,11 +32,20 @@ test('responsive homepage uses full-resolution landscape and portrait photograph
  assert.match(css,/background-image:url\("\.\/home-memorial-circle-mobile\.webp"\)/);
  assert.match(css,/@media\(max-width:600px\)/);
  assert.match(css,/background-size:cover/);
- assert.match(html,/home-memorial\.css\?v=qmc-hd-20261027-v1/);
+ assert.match(html,/home-memorial\.css\?v=qmc-hd-20261027-v2/);
  const desktop=fs.readFileSync(path.join(dist,'home-memorial-circle.webp'));
  const mobile=fs.readFileSync(path.join(dist,'home-memorial-circle-mobile.webp'));
  assert(desktop.length>100000,'desktop image unexpectedly compressed');
  assert(mobile.length>100000,'mobile image unexpectedly compressed');
  assert.equal(desktop.toString('ascii',0,4),'RIFF');
  assert.equal(mobile.toString('ascii',0,4),'RIFF');
+});
+
+test('Open / Closed status typography is balanced across desktop and mobile cards',()=>{
+ const block=css.match(/\.home-summary-card\.duty #home-duty-summary\{[^}]+\}/);
+ assert.ok(block,'Dedicated SK Duty card typography must exist');
+ assert.match(block[0],/font-size:clamp\(21px,1\.75vw,25px\)/);
+ assert.match(css,/@media\(max-width:600px\)\{\s*\.home-summary-card\.duty #home-duty-summary\{font-size:22px\}/);
+ assert.match(html,/home-memorial\.css\?v=qmc-hd-20261027-v2/);
+ assert.match(js,/isHours&&!closed\?'Open':'Closed'/);
 });
