@@ -320,10 +320,10 @@ $('#staff-quick-scanner').onclick=()=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
  window.openQuickKKScan?.();
 };
-window.enterKKScanService=async kkId=>{
+window.enterKKScanService=async(kkId,mode='manual')=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
  await selectTab('kk-services');
- await window.openKKScan?.({kkId});
+ await window.openKKScan?.({kkId,mode});
 };
 $('#kk-service-open-scanner').onclick=()=>{
  if(!user||!['sk','chairman'].includes(user.role))return;

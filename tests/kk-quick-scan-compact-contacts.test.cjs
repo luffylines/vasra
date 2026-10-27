@@ -16,10 +16,10 @@ test('Toolbar opens child camera and only routes to SK Services after valid KK I
  assert.match(quick,/navigator\.mediaDevices\.getUserMedia/);
  assert.match(quick,/window\.BarcodeDetector/);
  assert.match(quick,/window\.jsQR/);
- assert.match(quick,/window\.enterKKScanService\(raw\)/);
- assert.match(account,/window\.enterKKScanService=async kkId=>/);
+ assert.match(quick,/window\.enterKKScanService\(raw,mode\)/);
+ assert.match(account,/window\.enterKKScanService=async\(kkId,mode='manual'\)=>/);
  assert.match(account,/await selectTab\('kk-services'\)/);
- assert.match(account,/await window\.openKKScan\?\.\(\{kkId\}\)/);
+ assert.match(account,/await window\.openKKScan\?\.\(\{kkId,mode\}\)/);
  assert.match(quick,/VASRA-KK-\[0-9\]\{1,10\}/);
 });
 test('QR decoder is locally vendored and safe manual fallback is retained',()=>{
@@ -29,7 +29,7 @@ test('QR decoder is locally vendored and safe manual fallback is retained',()=>{
  assert.doesNotMatch(scanner,/cdn\.jsdelivr\.net/);
  assert.match(scanner,/id="kk-scan-service-type"|name="service_type"/);
  assert.match(scanner,/action:'lookup'/);
- assert.match(scanner,/window\.openKKScan=async\(\{kkId=null,autoStart=false\}/);
+ assert.match(scanner,/window\.openKKScan=async\(\{kkId=null,mode='manual',autoStart=false\}/);
  assert.match(account,/window\.openKKScan\?\.\(\{autoStart:true\}\)/);
  assert.ok(read('dist/vendor-jsqr.js').length>100000);
  assert.match(read('dist/vendor-jsqr.LICENSE'),/Apache License/);

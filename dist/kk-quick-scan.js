@@ -31,22 +31,26 @@
   previousFocus?.focus?.();previousFocus=null;
  };
  window.closeQuickKKScan=close;
- const recognized=async value=>{
+ const recognized=async(value,mode='qr')=>{
   if(busy||overlay.hidden)return;
   const raw=String(value||'').trim().toUpperCase();
   if(!/^VASRA-KK-[0-9]{1,10}$/.test(raw)){
    if(notice!==raw){notice=raw;message('This QR is not a VASRA KK ID. Scan the QR on the back of the approved card.',true);}
    return;
   }
-  busy=true;message('Verified KK ID format. Opening SK Services…');
-  stop(); // stop camera before navigating
-  close();
+  busy=true;message('Checking verified KK membership and card status…');
   try{
+   // Do not close the QR modal before the server validates the approved card.
+   // Manual entry is available for verified members without a card.
+   const found=await api('./api/kk/staff/services/scan',{
+    method:'POST',body:JSON.stringify({action:'lookup',kk_id:raw,mode})});
+   if(!found?.ok)throw Error('KK member could not be verified.');
    if(typeof window.enterKKScanService!=='function')throw Error('Service scanner is unavailable. Reload the dashboard.');
-   await window.enterKKScanService(raw);
+   stop();close();
+   await window.enterKKScanService(raw,mode);
   }catch(error){
-   overlay.hidden=false;document.body.classList.add('kk-quick-open');
-   message('Unable to open verified KK member: '+error.message,true);
+   if(overlay.hidden){overlay.hidden=false;document.body.classList.add('kk-quick-open');}
+   stop();message(error.message,true);
   }finally{busy=false;}
  };
  const scan=async()=>{
@@ -133,7 +137,7 @@
  $('#kk-quick-close').addEventListener('click',close);
  $('#kk-quick-start').addEventListener('click',start);
  $('#kk-quick-stop').addEventListener('click',()=>{stop();message('Camera stopped. Start again or enter KK ID manually.');});
- $('#kk-quick-manual-form').addEventListener('submit',e=>{e.preventDefault();recognized(manual.value);});
+ $('#kk-quick-manual-form').addEventListener('submit',e=>{e.preventDefault();recognized(manual.value,'manual');});
  overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
  document.addEventListener('keydown',e=>{
   if(overlay.hidden)return;

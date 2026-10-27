@@ -103,10 +103,12 @@
   const selected=currentEvent,seq=revision;
   setStatus('Verifying KK ID and recording the +10 points check-in…');
   try{
-   const row=await request('/checkin',{project_id:selected,kk_id:id});
+   const row=await request('/checkin',{project_id:selected,kk_id:id,mode:automatic?'qr':'manual'});
    if(seq!==revision||selected!==currentEvent)return;
+   const cardNotice=row.card_verified?'Verified Member ID/Card':
+      "Member's ID/Card is not verified — manual KK ID accepted";
    const message='CHECKED IN: '+row.name+' ('+row.kk_id+') · +10 points · '+
-      pht.format(new Date(row.checked_in_at))+' · '+(row.officer||officer);
+      pht.format(new Date(row.checked_in_at))+' · '+(row.officer||officer)+' · '+cardNotice;
    setStatus(message);
    toast(row.name+' checked in · +10 points');
    $('#kk-event-manual-id').value='';
