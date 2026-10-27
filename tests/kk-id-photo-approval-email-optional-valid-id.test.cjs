@@ -61,7 +61,7 @@ test('Valid ID is optional but KK profiling still needs SK review',()=>{
 test('Scripts keep valid JavaScript syntax and preview assets refresh',()=>{
  for(const p of ['dist/kk.js','dist/kk-id-member.js','dist/kk-id-staff.js','dist/kk-id-render.js','dist/kk-staff.js','lib/handler.cjs','lib/supabase.cjs'])
   assert.doesNotThrow(()=>new vm.Script(read(p),{filename:p}));
- assert.match(read('dist/kk-dashboard.html'),/kk-id-member\.js\?v=20261027-kk-review-email-v1/);
+ assert.match(read('dist/kk-dashboard.html'),/kk-id-member\.js\?v=20261027-resubmit-pending-v1/);
  assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261027-kk-review-email-v1/);
  assert.match(read('dist/kk-profile.html'),/kk\.js\?v=20261027-optional-valid-id-v1/);
 });

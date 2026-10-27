@@ -3,8 +3,9 @@
  const $=s=>document.querySelector(s);
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const request=(path,body)=>api('./api/kk/staff/id-cards'+path,body?{method:'POST',body:JSON.stringify(body)}:{});
- const photo=id=>'./api/kk/staff/id-cards/'+encodeURIComponent(id)+'/photo';
- let rows=[],selected=null,previewRevision=0,busy=false;
+ const photo=(id,uploadedAt)=>'./api/kk/staff/id-cards/'+encodeURIComponent(id)+'/photo'+
+  (uploadedAt?'?v='+encodeURIComponent(uploadedAt):'');
+ let rows=[],selected=null,previewRevision=0,busy=false,loading=false;
  const icon={
   eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></svg>',
   pdf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v6h5M10 16h6m-6 3h5"/></svg>',
@@ -50,7 +51,7 @@
   $('#kk-id-staff-list').innerHTML=list.length?list.map(r=>
    '<article class="kk-id-staff-item'+(selected===r.member_id?' selected':'')+'">'+
     '<div class="kk-id-staff-photo">'+(r.photo_exists?
-    '<img loading="lazy" src="'+photo(r.member_id)+'" alt="KK ID member portrait of '+esc(r.name)+'">':
+    '<img loading="lazy" src="'+photo(r.member_id,r.uploaded_at)+'" alt="KK ID member portrait of '+esc(r.name)+'">':
     '<span>NO PHOTO</span>')+'</div><div class="kk-id-staff-details">'+
     '<h3>'+esc(r.name)+'</h3><p>'+esc(r.kk_id||'Not issued')+'</p>'+
     '<small>Birthday: '+esc(r.birthdate||'—')+'</small>'+
@@ -100,7 +101,7 @@
   const revision=++previewRevision,message=$('#kk-id-staff-preview-status');
   message.textContent='Rendering official front and back preview…';
   try{
-   const {front,back}=await window.KKIDRender.pair(row,row.photo_exists?photo(row.member_id):null);
+   const {front,back}=await window.KKIDRender.pair(row,row.photo_exists?photo(row.member_id,row.uploaded_at):null);
    if(previewRevision!==revision)return;
    $('#kk-id-staff-front').src=front.toDataURL('image/jpeg',.9);
    $('#kk-id-staff-back').src=back.toDataURL('image/jpeg',.9);
@@ -109,6 +110,8 @@
   }catch(e){message.textContent='Cannot render portrait: '+e.message;report(message.textContent,true);}
  };
  const load=async()=>{
+  if(loading)return;
+  loading=true;
   report('Loading verified KK IDs…');
   try{
    const response=await request('');
@@ -119,10 +122,11 @@
     ' pending photo review · '+rows.filter(approved).length+' ready for PDF · '+
     rows.filter(r=>r.printed_at).length+' printed');
   }catch(e){report('Unable to load KK IDs: '+e.message,true);}
+  finally{loading=false;}
  };
  const make=async(member)=>{
   if(!approved(member))throw Error('SK officer must approve the submitted portrait before official PDF export.');
-  return window.KKIDRender.pair(member,photo(member.member_id));
+  return window.KKIDRender.pair(member,photo(member.member_id,member.uploaded_at));
  };
  const pdfOne=async member=>{
   const pair=await make(member);
@@ -240,5 +244,20 @@
    }
   }catch(e){report('Review failed: '+e.message,true);target.disabled=false;}
  });
+ // A youth may submit a replacement while an officer keeps KK IDs open.
+ // Refresh only the visible, idle review list; don't interrupt a card preview
+ // or a live approval/print/email action. Opening KK IDs still refreshes via account.js.
+ const reviewPanel=$('#panel-kk-ids');
+ const refreshIfIdle=()=>{
+  if(!reviewPanel||reviewPanel.hidden||document.hidden||
+     busy||loading||selected!==null)return;
+  load();
+ };
+ window.addEventListener('focus',refreshIfIdle);
+ document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden)refreshIfIdle();
+ });
+ const reviewPolling=setInterval(refreshIfIdle,20000);
+ window.addEventListener('pagehide',()=>clearInterval(reviewPolling),{once:true});
  window.loadKKIDStaff=load;
 })();

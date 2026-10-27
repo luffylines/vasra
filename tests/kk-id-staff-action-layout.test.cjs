@@ -48,7 +48,7 @@ test('All existing card controls retain their working delegated handlers',()=>{
  assert.match(staff,/request\('\/notify'/);
  assert.match(staff,/KKIDRender\.pdf\(/);
  assert.doesNotThrow(()=>new vm.Script(staff));
- assert.match(markup,/kk-id-staff\.js\?v=20261027-kk-actions-aligned-v1/);
- assert.match(markup,/kk-id-card\.css\?v=20261027-kk-actions-aligned-v1/);
+ assert.match(markup,/kk-id-staff\.js\?v=20261027-resubmit-pending-v1/);
+ assert.match(markup,/kk-id-card\.css\?v=20261027-resubmit-pending-v1/);
  assert.match(read('dist/sw.js'),/vasra-v66-kk-id-action-alignment-20261027/);
 });

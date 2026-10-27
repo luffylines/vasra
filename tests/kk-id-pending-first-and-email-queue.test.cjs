@@ -40,7 +40,7 @@ test('Sorting is performed after searching and filtering, with summary showing p
    'data-card-mail','data-card-printed','data-card-preview'])
   assert(js.includes(a),'unchanged action: '+a);
  assert.doesNotThrow(()=>new vm.Script(js));
- assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261027-pending-first-email-v1/);
+ assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261027-resubmit-pending-v1/);
 });
 test('Approved KK ID reviews can be queued even when issued before the email migration',()=>{
  const sql=read('supabase/migrations/20261027170000_kk_card_review_email_pdf_resubmit.sql');

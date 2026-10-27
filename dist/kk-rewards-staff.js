@@ -144,12 +144,16 @@
   if(remove){
    const p=state.rewards.find(x=>x.id===remove.dataset.rewardDelete);
    if(!p||!state.officer.chairman)return;
-   const warning='Delete reward "'+p.title+'"? It will disappear from the rewards catalog. '+
-    'Approved redemptions and points spent remain in the history. '+
-    'Pending requests will be cancelled (reserved points released), and rejected requests removed. Continue?';
+   const warning='Delete reward "'+p.title+'"?\n\n'+
+    '• It will disappear from the SK and KK rewards catalogs.\n'+
+    '• '+Number(p.claimed||0)+' approved redemption(s) and spent points stay in history.\n'+
+    '• '+Number(p.pending||0)+' pending request(s) will be cancelled and reserved points released.\n'+
+    '• Rejected requests for this reward will be removed.\n\n'+
+    'This cannot be undone. Continue?';
    if(!confirm(warning))return;
    busy(remove,async()=>{
     const result=await service({action:'delete',id:p.id});
+    if(result?.ok!==true)throw Error('The server did not confirm reward deletion.');
     if(form.elements.id.value===p.id)form.reset();
     flash('Reward removed. '+Number(result.preserved_approved||0)+' approved record(s) preserved; '+
       Number(result.cancelled_pending||0)+' pending released; '+Number(result.removed_rejected||0)+' rejected removed.');
