@@ -153,6 +153,19 @@ CREATE TRIGGER kk_card_review_mail_after_review
  AFTER UPDATE OF status ON vasra.kk_id_cards
  FOR EACH ROW EXECUTE FUNCTION vasra.kk_enqueue_card_review_mail();
 
+-- An ID approved before this queue existed should remain eligible for a
+-- staff-triggered one-time send. Backfill is queue-only: it sends no emails.
+INSERT INTO vasra.kk_card_review_mail
+ (member_id,card_path,recipient_email,kk_id,decision,review_note)
+SELECT c.member_id,c.storage_path,u.email,p.kk_id,c.status,coalesce(c.review_note,'')
+FROM vasra.kk_id_cards c
+JOIN vasra.kk_members u ON u.id=c.member_id
+JOIN vasra.kk_profiles p ON p.member_id=c.member_id
+WHERE p.status='verified' AND c.status IN ('approved','rejected')
+  AND nullif(c.storage_path,'') IS NOT NULL
+  AND nullif(btrim(u.email),'') IS NOT NULL
+ON CONFLICT(member_id,card_path) DO NOTHING;
+
 CREATE OR REPLACE FUNCTION public.vasra_kk_card_mail(
  action text,payload jsonb DEFAULT '{}'::jsonb,session_hash text DEFAULT NULL::text)
 RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path='' AS $mail$

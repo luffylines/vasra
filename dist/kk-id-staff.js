@@ -21,10 +21,23 @@
   const total=1+(member.status==='pending'?2:0)+(mail?1:0)+(approved(member)?2:0);
   return total===1?'single':total===3?'three':total===4?'four':'two';
  };
+ // One shared priority everywhere in this staff list, including after refresh/search:
+ // review queue first; approved cards intentionally stay below incomplete IDs.
+ const reviewPriority={pending:0,rejected:1,not_uploaded:2,approved:3};
+ const reviewTimestamp=row=>{
+  const raw=Date.parse(row.uploaded_at||row.reviewed_at||'');
+  return Number.isFinite(raw)?raw:0;
+ };
+ const sortForReview=(items)=>[...items].sort((a,b)=>{
+  const aRank=reviewPriority[a.status]??2;
+  const bRank=reviewPriority[b.status]??2;
+  return aRank-bRank||reviewTimestamp(b)-reviewTimestamp(a)||
+   String(a.kk_id||'').localeCompare(String(b.kk_id||''),undefined,{numeric:true});
+ });
  const filtered=()=>{
   const filter=$('#kk-id-staff-filter').value,q=$('#kk-id-staff-query').value.trim().toLowerCase();
-  return rows.filter(r=>(filter==='all'||(filter==='printed'?!!r.printed_at:r.status===filter))&&
-   (!q||[r.name,r.kk_id].some(v=>String(v||'').toLowerCase().includes(q))));
+  return sortForReview(rows.filter(r=>(filter==='all'||(filter==='printed'?!!r.printed_at:r.status===filter))&&
+   (!q||[r.name,r.kk_id].some(v=>String(v||'').toLowerCase().includes(q)))));
  };
  const paint=()=>{
   const host=$('#kk-id-staff-list'),previewPanel=$('#kk-id-staff-preview');
@@ -102,7 +115,8 @@
    if(response?.ok!==true||!Array.isArray(response.members))throw Error('Invalid SK ID response.');
    rows=response.members;
    closePreview(); // Never auto-open an ID preview, even after a refresh or review.
-   report(rows.length+' verified members · '+rows.filter(approved).length+' ready for PDF · '+
+   report(rows.length+' verified members · '+rows.filter(r=>r.status==='pending').length+
+    ' pending photo review · '+rows.filter(approved).length+' ready for PDF · '+
     rows.filter(r=>r.printed_at).length+' printed');
   }catch(e){report('Unable to load KK IDs: '+e.message,true);}
  };
