@@ -5,9 +5,10 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const Mail=require('../lib/vasra-email-template.cjs');
 const handler=read('lib/handler.cjs');
-test('All four VASRA Resend flows use one SK logo branded email theme alongside plain text',()=>{
- assert.equal((handler.match(/Mail\.renderEmail\(/g)||[]).length,5);
- for(const start of ['async function sendAccountEmail','async function sendKKEmailChangeLink',
+test('All six VASRA Resend flows use one SK logo branded email theme alongside plain text',()=>{
+ assert.equal((handler.match(/Mail\.renderEmail\(/g)||[]).length,6);
+ for(const start of ['async function sendRewardApprovalNotification','async function deliverKKCardReviewEmail',
+   'async function sendAccountEmail','async function sendKKEmailChangeLink',
    'async function sendKKReviewEmail','async function sendPublicContactEmail']){
    const at=handler.indexOf(start);
    assert.ok(at>=0,start);
