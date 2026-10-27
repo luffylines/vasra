@@ -36,21 +36,31 @@
   border-radius:0;
   pointer-events:none;
 }
-.portal-refresh.projects-page .project-hero>div,
-.portal-refresh.projects-page .project-hero .hero-year{
+.portal-refresh.projects-page .project-hero>div:first-child{
   position:relative;
   z-index:2;
-}
-.portal-refresh.projects-page .project-hero>div:first-child{
   min-width:0;
   max-width:600px;
+}
+/* Take badge and year out of flex layout so the badge can sit at the far right. */
+.portal-refresh.projects-page .project-hero .hero-year{
+  position:absolute;
+  right:19px;
+  bottom:15px;
+  top:auto;
+  z-index:2;
 }
 .portal-refresh.projects-page .project-hero h1,
 .portal-refresh.projects-page .project-hero p{
   text-shadow:0 1px 10px rgba(4,21,44,.35);
 }
-.portal-refresh.projects-page .hero-mark{
+.portal-refresh.projects-page .project-hero > .hero-mark{
   display:flex;
+  position:absolute;
+  right:clamp(20px,2.6vw,38px);
+  top:50%;
+  left:auto;
+  z-index:2;
   width:235px;
   height:235px;
   flex-shrink:0;
@@ -65,7 +75,7 @@
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
   border-radius:50%;
-  transform:none;
+  transform:translateY(-50%);
   text-align:center;
 }
 .portal-refresh.projects-page .hero-mark-logo{
@@ -104,7 +114,8 @@
   background:rgba(52,103,170,.80);
 }
 @media(max-width:950px){
- .portal-refresh.projects-page .hero-mark{
+ .portal-refresh.projects-page .project-hero > .hero-mark{
+  right:18px;
   width:170px;
   height:170px;
   gap:5px;
@@ -115,14 +126,19 @@
  .portal-refresh.projects-page .hero-mark small{font-size:6px}
  .portal-refresh.projects-page .project-hero::before{background-position:59% center}
 }
-@media(max-width:650px){
+@media(min-width:761px) and (max-width:950px){
+ .portal-refresh.projects-page .project-hero>div:first-child{
+  max-width:calc(100% - 210px);
+ }
+}
+@media(max-width:760px){
  .portal-refresh.projects-page .project-hero::before{background-position:67% 32%}
  .portal-refresh.projects-page .project-hero::after{
   background:linear-gradient(90deg,rgba(7,27,56,.94),rgba(10,38,75,.72) 70%,rgba(10,38,75,.52)),
              linear-gradient(0deg,rgba(9,33,68,.56),transparent);
  }
  /* Avoid a logo floating over the heading or duty button at narrow widths. */
- .portal-refresh.projects-page .hero-mark{display:none}
+ .portal-refresh.projects-page .project-hero > .hero-mark{display:none}
  .portal-refresh.projects-page .project-hero>div:first-child{max-width:100%}
 }
 @media(prefers-reduced-motion:reduce){
