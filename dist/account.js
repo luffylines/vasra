@@ -337,7 +337,9 @@ const managedPhotoUrl=id=>'./api/images/'+encodeURIComponent(id);
 const projectTitleForDisplay=value=>String(value??'').normalize('NFKC').replace(/\s+/g,' ').trim();
 
 async function loadProjects(){
- managed=(await api('./api/manage/projects')).projects;
+ const response=await api('./api/manage/projects');
+ const projectRows=Array.isArray(response.projects)?response.projects:[];
+ managed=window.SKProjectOrder.sortProjectsNewestFirst(projectRows);
  updateChairmanMetrics();
  $('#managed-projects').innerHTML=managed.map(p=>{
   const ids=managedGalleryIds(p),photoCount=ids.length;

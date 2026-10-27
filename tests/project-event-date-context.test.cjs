@@ -6,7 +6,7 @@ const app=fs.readFileSync(path.join(__dirname,'../dist/app.js'),'utf8');
 const fb=fs.readFileSync(path.join(__dirname,'../lib/facebook-import.cjs'),'utf8');
 const staff=fs.readFileSync(path.join(__dirname,'../dist/account.js'),'utf8');
 const FB=require('../lib/facebook-import.cjs'),context=require('../lib/caption-analysis.cjs');
-const datesStart=app.indexOf('// Sort by actual activity date');
+const datesStart=app.indexOf('// Read a valid date from a project title');
 const datesEnd=app.indexOf('const galleryIds=p=>',datesStart);
 assert(datesStart>=0&&datesEnd>datesStart);
 const dates=new Function(app.slice(datesStart,datesEnd)+'\nreturn {projectActivityTimestamp,sortProjectsNewestFirst};')();
@@ -103,12 +103,12 @@ test('abbreviated and localized dates are recognized, including Unicode bold hea
  assert.equal(dates.projectActivityTimestamp({title:'2026-09-27 | Project'}),Date.UTC(2026,8,27));
  assert(Number.isNaN(dates.projectActivityTimestamp({title:'February 31, 2026 | Invalid'})));
 });
-test('projects with unknown activity date sort after dated events, even when just published',()=>{
+test('projects with no title date use their publication day among dated events',()=>{
  const rows=[
   {id:'unknown',title:'SK Project',publish_at:'2026-10-17T12:00:00Z'},
   {id:'known',title:'Sep 12, 2026 | Right Move',publish_at:'2026-10-10T12:00:00Z'}
  ];
- assert.deepEqual(dates.sortProjectsNewestFirst(rows).map(p=>p.id),['known','unknown']);
+ assert.deepEqual(dates.sortProjectsNewestFirst(rows).map(p=>p.id),['unknown','known']);
 });
 test('same activity day uses publish timestamp only as a stable tie breaker',()=>{
  const rows=[

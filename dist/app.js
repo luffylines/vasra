@@ -10,10 +10,8 @@ const publishedPHT=iso=>{
   :'Petsa hindi naitala';
 };
 
-// Sort by actual activity date in the title first, not the upload/publish
-// timestamp. Supports the historic projects with no stored activity_date.
-// Explicit event dates (not upload/publication timestamps) order public projects.
-// Old records do not have an activity_date DB field, so parse the event title.
+// Read a valid date from a project title, including historical stylized captions.
+// Records without a valid title date are placed using their actual publish day.
 const monthNumber=Object.freeze({
  january:1,jan:1,enero:1,
  february:2,feb:2,pebrero:2,
@@ -64,17 +62,34 @@ function projectActivityTimestamp(project){
  // Unknown event dates are deliberately NOT treated as today's new projects.
  return NaN;
 }
+// A missing/invalid date at the beginning of a project title falls back to
+// the publication CALENDAR DAY in Philippine time, not a separate "unknown" group.
+// Comparing calendar days also avoids timezone/time-of-day altering title order.
+function projectPublicationDay(project){
+ const raw=Date.parse(project?.publish_at||'');
+ if(!Number.isFinite(raw))return NaN;
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{
+  timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'
+ }).formatToParts(new Date(raw)).map(x=>[x.type,x.value]));
+ return validActivityTimestamp(parts.year,parts.month,parts.day);
+}
+function projectSortDay(project){
+ // Only a valid TITLE date determines event order. Historical activity_date
+ // metadata remains readable but must not override the title or publish fallback.
+ const fromTitle=projectActivityTimestamp({title:project?.title});
+ return Number.isFinite(fromTitle)?fromTitle:projectPublicationDay(project);
+}
 function sortProjectsNewestFirst(rows){
  return [...rows].sort((a,b)=>{
-  const aDate=projectActivityTimestamp(a),bDate=projectActivityTimestamp(b);
+  const aDate=projectSortDay(a),bDate=projectSortDay(b);
   const aKnown=Number.isFinite(aDate),bKnown=Number.isFinite(bDate);
   if(aKnown!==bKnown)return aKnown?-1:1;
   if(aKnown&&aDate!==bDate)return bDate-aDate;
-  // Publication time only orders projects *within* the same activity day
-  // or within the unknown-date group. It never outranks an older event day.
-  const publishedA=Date.parse(a.publish_at||'')||0;
-  const publishedB=Date.parse(b.publish_at||'')||0;
-  return publishedB-publishedA||String(a.id||'').localeCompare(String(b.id||''));
+  const publishedA=Date.parse(a.publish_at||'');
+  const publishedB=Date.parse(b.publish_at||'');
+  const timeA=Number.isFinite(publishedA)?publishedA:0;
+  const timeB=Number.isFinite(publishedB)?publishedB:0;
+  return timeB-timeA||String(a.id||'').localeCompare(String(b.id||''));
  });
 }
 

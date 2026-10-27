@@ -9,13 +9,13 @@
  const dateParts=()=>Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
  const formatDate=v=>{const d=new Date(v);return Number.isNaN(d.getTime())?'':new Intl.DateTimeFormat('en-PH',{timeZone,month:'short',day:'numeric',year:'numeric'}).format(d)};
  const ratio=v=>Math.max(0,Math.min(100,Number(v)||0));
- const newest=(a,b)=>Date.parse(b.published_at||b.updated||b.created_at||0)-Date.parse(a.published_at||a.updated||a.created_at||0);
+ // Match the public Projects ordering: title date, or published day if undated.
  async function projects(){
   try{
    const result=await api('./api/projects');
    const all=Array.isArray(result.projects)?result.projects:[];
    set('home-total-projects',all.length);
-   const cards=all.slice().sort(newest).slice(0,4);
+   const cards=window.SKProjectOrder.sortProjectsNewestFirst(all).slice(0,4);
    node('home-recent-projects').innerHTML=cards.length?cards.map(p=>{
     const done=p.status==='Natapos';const pct=ratio(p.progress);
     const image=p.image_id?'<img src="./api/images/'+encodeURIComponent(p.image_id)+'" loading="lazy" alt="'+safe(p.title)+'">':'';
