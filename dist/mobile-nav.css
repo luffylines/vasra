@@ -1,0 +1,220 @@
+
+/* Shared navigation + accessibility. Desktop keeps the original fixed sidebar. */
+.site-header nav a .nav-icon{width:20px;height:20px;flex:none;display:block;stroke:currentColor;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.site-header nav a{min-height:46px}
+.site-header nav a .nav-icon{opacity:.96}
+.site-header nav a:hover .nav-icon,.site-header nav a[aria-current] .nav-icon{opacity:1}
+.mobile-appbar,.sidebar-close,.sidebar-backdrop{display:none}
+.portal-refresh .contact-grid .contact-icon{display:grid;place-items:center}
+.portal-refresh .contact-grid .contact-icon svg{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.portal-refresh .contact-grid a{transition:border-color .18s,box-shadow .18s,transform .18s}
+.portal-refresh .contact-grid a:hover{transform:translateY(-2px)}
+.portal-refresh .contact-grid .contact-icon{flex:none}
+@media (max-width:850px){
+  body.mobile-menu-ready .mobile-appbar{position:sticky;z-index:40;top:0;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:66px;padding:10px 18px;background:#13294d;color:#fff;box-shadow:0 4px 18px rgba(12,30,60,.13)}
+  body.mobile-menu-ready .mobile-appbar .mobile-brand{display:flex;align-items:center;gap:11px;min-width:0;color:#fff;font-weight:800;font-family:Manrope,system-ui,sans-serif;font-size:13px;letter-spacing:.5px}
+  body.mobile-menu-ready .mobile-appbar .mobile-brand img{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:11px;flex:none}
+  body.mobile-menu-ready .mobile-appbar .mobile-brand small{display:block;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:#bdcce1;letter-spacing:0;margin-top:2px}
+  body.mobile-menu-ready .mobile-menu-toggle,
+  body.mobile-menu-ready .sidebar-close{width:44px;height:44px;min-width:44px;display:grid;place-items:center;appearance:none;cursor:pointer;background:#ffffff11;border:1px solid #ffffff35;border-radius:12px;color:#fff;padding:0}
+  body.mobile-menu-ready .mobile-menu-toggle:hover,
+  body.mobile-menu-ready .sidebar-close:hover{background:#ffffff27}
+  body.mobile-menu-ready .mobile-menu-toggle svg,
+  body.mobile-menu-ready .sidebar-close svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  body.mobile-menu-ready .site-header,
+  body.mobile-menu-ready.portal-refresh .site-header{
+    position:fixed;inset:0 auto 0 0;width:min(310px,85vw);height:100dvh;min-height:0;
+    display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
+    padding:25px 18px 20px;border-radius:0;margin:0;z-index:61;
+    overflow-y:auto;overscroll-behavior:contain;background:#102346;
+    box-shadow:14px 0 50px rgba(7,24,49,.24);
+    transform:translateX(-105%);visibility:hidden;pointer-events:none;transition:transform .22s ease,visibility .22s ease
+  }
+  body.mobile-menu-ready.menu-open .site-header{transform:translateX(0);visibility:visible;pointer-events:auto}
+  body.mobile-menu-ready .site-header .brand{padding:4px 55px 0 5px;min-height:50px;justify-content:flex-start;color:white}
+  body.mobile-menu-ready .site-header .brand small{color:#a9bcd9}
+  body.mobile-menu-ready .site-header .nav-label{display:block;margin:32px 10px 12px;font-size:10px;letter-spacing:1.6px}
+  body.mobile-menu-ready .site-header nav,
+  body.mobile-menu-ready.portal-refresh .site-header nav{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:6px;margin:0;flex-wrap:nowrap}
+  body.mobile-menu-ready .site-header nav a,
+  body.mobile-menu-ready.portal-refresh .site-header nav a{
+    min-height:48px;width:100%;flex:none;flex-basis:auto;display:flex;align-items:center;
+    justify-content:flex-start;gap:13px;padding:13px 14px;border-radius:11px;
+    font-size:13px;font-weight:600;color:#b9c9df;background:transparent;box-shadow:none
+  }
+  body.mobile-menu-ready .site-header nav a .nav-icon{width:20px;height:20px}
+  body.mobile-menu-ready .site-header nav a[aria-current],
+  body.mobile-menu-ready.portal-refresh .site-header nav a[aria-current]{background:#294b7e;color:#fff;box-shadow:inset 3px 0 #91bfff}
+  body.mobile-menu-ready .site-header nav a i{display:none}
+  body.mobile-menu-ready .site-header .sidebar-bottom{display:block;margin-top:auto;padding:22px 10px 4px}
+  body.mobile-menu-ready .sidebar-close{position:absolute;top:24px;right:15px;z-index:3}
+  body.mobile-menu-ready .sidebar-backdrop{position:fixed;inset:0;width:100%;height:100dvh;border:0;padding:0;margin:0;background:rgba(6,18,37,.52);z-index:60;cursor:pointer}
+  body.mobile-menu-ready.menu-open .sidebar-backdrop{display:block}
+  body.mobile-menu-ready.menu-open{overflow:hidden}
+  body.mobile-menu-ready .portal-main{margin-left:0;max-width:none}
+  body.mobile-menu-ready .page-top{margin-top:0}
+}
+@media(prefers-reduced-motion:reduce){
+  body.mobile-menu-ready .site-header{transition:none}
+  .portal-refresh .contact-grid a{transition:none}
+  .portal-refresh .contact-grid a:hover{transform:none}
+}
+
+/* Modern Facebook link in public sidebar footer on every page. */
+.site-header .sidebar-bottom .social-footer-link{display:flex;align-items:center;gap:8px}
+.site-header .sidebar-bottom .social-footer-link svg{width:16px;height:16px;flex:none;fill:currentColor;stroke:none}
+
+
+/* Philippine-time clock in public and staff headers. */
+.page-top .location-tag{display:inline-flex;align-items:center;justify-content:flex-end;gap:9px;white-space:nowrap;flex-wrap:wrap;text-align:right}
+.page-top .ph-live-clock{display:inline-flex;align-items:center;padding-left:10px;border-left:1px solid currentColor;font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.2px;white-space:nowrap;font-variant-numeric:tabular-nums}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .page-top .ph-live-clock{color:#e1efff}
+.audit-row .audit-ip{display:block;margin-top:5px;color:#697f9f;font-size:11px;font-variant-numeric:tabular-nums}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .audit-ip{color:#c4d5ef!important}
+@media(max-width:850px){
+ .page-top .location-tag{gap:0;max-width:44%;letter-spacing:0}
+ .page-top .ph-location-name{display:none}
+ .page-top .ph-live-clock{border-left:0;padding-left:0;font-size:11px;letter-spacing:0}
+ body.account-workspace .account-top-right .location-tag{display:inline-flex!important;align-items:center;margin-right:4px;max-width:none}
+}
+@media(max-width:390px){
+ body.account-workspace .account-top-right .location-tag{margin-right:1px}
+ body.account-workspace .page-top .ph-live-clock{font-size:10px}
+}
+
+
+/* Shared responsive stability for all public pages and staff workspace.
+   Keep navigation as an off-canvas drawer; no horizontally clipped cards/forms. */
+@media(max-width:850px){
+ html{scroll-padding-top:78px}
+ body.mobile-menu-ready{max-width:100%;overflow-x:clip}
+ body.mobile-menu-ready .mobile-appbar{
+  padding:10px max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left));
+  min-height:66px;max-width:100%;box-sizing:border-box
+ }
+ body.mobile-menu-ready .mobile-appbar .mobile-brand{max-width:calc(100% - 65px);overflow:hidden;text-decoration:none}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand small{overflow:hidden;text-overflow:ellipsis}
+ body.mobile-menu-ready .portal-main{width:100%;min-width:0;box-sizing:border-box;max-width:100%;overflow-x:clip}
+ body.mobile-menu-ready .portal-main section,
+ body.mobile-menu-ready .portal-main article,
+ body.mobile-menu-ready .portal-main .home-panel,
+ body.mobile-menu-ready .portal-main .leaders-chart-section{min-width:0;max-width:100%;box-sizing:border-box}
+ body.mobile-menu-ready .portal-main :is(.grid,.home-columns,.home-shortcuts,.home-highlights,.home-metrics,.contact-grid,.duty-stage,.org-tier-grid)>*{min-width:0}
+ body.mobile-menu-ready .portal-main :is(img,video,canvas){max-width:100%}
+ body.mobile-menu-ready .page-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+ body.mobile-menu-ready .page-top>span:first-child{min-width:0;overflow-wrap:anywhere}
+ body.mobile-menu-ready .page-top .location-tag{flex:none;max-width:38%;justify-content:flex-end}
+ body.mobile-menu-ready .portal-footer{display:flex;flex-wrap:wrap;gap:8px 16px}
+ body.mobile-menu-ready .site-header{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+ body.mobile-menu-ready .sidebar-backdrop{touch-action:none}
+ body.account-workspace.mobile-menu-ready .account-main{min-width:0;max-width:100%;box-sizing:border-box}
+ body.account-workspace.mobile-menu-ready .account-main :is(input,select,textarea){max-width:100%;box-sizing:border-box}
+}
+@media(max-width:600px){
+ body.mobile-menu-ready .mobile-appbar{min-height:62px;gap:9px}
+ body.mobile-menu-ready .mobile-menu-toggle{flex:none}
+ body.mobile-menu-ready .portal-main{padding-right:15px;padding-left:15px}
+ body.mobile-menu-ready .portal-main .page-top{min-height:49px;height:auto;padding-block:12px;margin-bottom:15px}
+ body.mobile-menu-ready .portal-main .page-top .ph-live-clock{font-size:11px}
+ body.mobile-menu-ready .portal-main :is(.home-shortcuts,.home-highlights,.home-metrics,.home-officials,.contact-grid){min-width:0}
+ body.mobile-menu-ready .portal-main :is(.project-hero,.page-heading){max-width:100%}
+ body.mobile-menu-ready .portal-main :is(.project-hero h1,.page-heading h1){overflow-wrap:break-word}
+ body.mobile-menu-ready .portal-main :is(.contact-grid strong,.contact-grid a,.section-copy){overflow-wrap:anywhere}
+ body.account-workspace.mobile-menu-ready .account-main .settings-layout{grid-template-columns:minmax(0,1fr)}
+ body.account-workspace.mobile-menu-ready .account-main :is(.form-row,.settings-card,.panel,.form-panel){min-width:0;max-width:100%;box-sizing:border-box}
+ body.account-workspace.mobile-menu-ready .account-actions{justify-content:flex-end}
+}
+@media(max-width:370px){
+ body.mobile-menu-ready .mobile-appbar .mobile-brand{font-size:12px}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand img{width:35px;height:35px}
+ body.mobile-menu-ready .portal-main{padding-inline:11px}
+ body.mobile-menu-ready .page-top{font-size:9px}
+ body.mobile-menu-ready .page-top .ph-live-clock{font-size:10px}
+}
+
+/* iPhone Safari does not auto-zoom inputs at 16px or above; do not disable pinch-zoom. */
+@media(max-width:850px){
+ body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea,[contenteditable="true"]){font-size:16px!important;-webkit-text-size-adjust:100%}
+ body .auth-form-card :is(input,select,textarea),body .account-workspace :is(input,select,textarea){font-size:16px!important}
+}
+
+/* Separate public Katipunan ng Kabataan access (never staff /account login). */
+.kk-page-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0;margin-left:auto}
+.kk-top-login{display:inline-flex;align-items:center;gap:7px;border-radius:10px;border:1px solid #bfd5f1;background:#eaf2ff;color:#255ca4;text-decoration:none;font:800 11px 'DM Sans',sans-serif;padding:9px 13px;transition:background .2s}
+.kk-top-login:hover{background:#d9eafa}.kk-top-login svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.site-header nav a.kk-mobile-nav-link{display:none}
+@media(max-width:850px){
+ .kk-top-login{display:none}
+ .kk-page-actions{margin-left:auto}
+ .site-header nav a.kk-mobile-nav-link{display:flex;align-items:center;gap:12px;margin-top:8px;border:1px solid #7798c850;background:#31548b45;color:#fff}
+ .site-header nav a.kk-mobile-nav-link svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+}
+
+/* Mobile form focus: Safari/Chrome can zoom when editable controls use
+   font-size <16px. Keep pinch zoom enabled and preserve accessible scrolling. */
+@media (hover:none) and (pointer:coarse){
+ input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]),
+ select,textarea{
+  font-size:16px!important;
+  -webkit-text-size-adjust:100%;
+ }
+}
+@media(max-width:520px){
+ .portal-main,.portal-content,.staff-main,.workspace-content,
+ .contacts-redesign,.contacts-connect,.contacts-form-panel,
+ .contacts-location-panel,.contacts-overview{min-width:0;max-width:100%}
+ .contacts-redesign .contacts-message-form input,
+ .contacts-redesign .contacts-message-form textarea,
+ .contacts-redesign .contacts-message-form select{min-width:0;max-width:100%}
+}
+
+/* Public nav selection is represented by aria-current, never a trailing dot. */
+.site-header nav a > i{display:none!important}
+
+
+/* Logged-in KK controls: server-verified membership link plus real logout. */
+.kk-page-actions .kk-member-entry{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+ min-height:40px;padding:9px 12px;border-radius:10px;border:1px solid #c4d8f3;
+ color:#285d9b;background:#edf5ff;text-decoration:none;font:800 11px 'DM Sans',sans-serif}
+.kk-page-actions .kk-member-entry svg,.kk-page-actions .kk-top-login svg{
+ height:17px;width:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;
+ stroke-linecap:round;stroke-linejoin:round
+}
+.kk-page-actions .kk-top-login.kk-signout{cursor:pointer;min-height:40px}
+.site-header nav a.kk-mobile-signout{background:#7a2e414a;border-color:#df94a94a;color:#f5e9ee}
+.kk-logout-error{color:#a23542;border:1px solid #eca7b0;background:#fff4f5;
+ border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.5}
+@media(max-width:850px){
+ .kk-page-actions .kk-member-entry{display:none}
+ .kk-page-actions .kk-top-login.kk-signout{display:none}
+ .site-header nav a.kk-mobile-signout{display:flex}
+}
+@media(min-width:851px){.site-header nav a.kk-mobile-signout{display:none}}
+
+
+/* Authenticated KK phone header: visible sign-out beside theme and menu. */
+.kk-appbar-logout{display:none}
+@media(max-width:850px){
+ .kk-appbar-logout{display:inline-flex;align-items:center;justify-content:center;
+  width:40px;height:41px;min-height:41px;flex:none;margin-right:3px;padding:9px;
+  border:1px solid #748bb54a;border-radius:11px;background:#ffffff12;color:#f2f6ff;cursor:pointer}
+ .kk-appbar-logout svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand{flex:1 1 auto;min-width:0;max-width:none}
+ body.mobile-menu-ready .mobile-appbar .vasra-theme-toggle{margin-left:0}
+}
+@media(max-width:430px){
+ body.mobile-menu-ready .mobile-appbar .mobile-brand small{display:none}
+ body.mobile-menu-ready .mobile-appbar .mobile-brand{font-size:12px}
+ .kk-appbar-logout,body.mobile-menu-ready .mobile-appbar .vasra-theme-toggle{width:36px;height:38px;min-height:38px;padding:8px}
+}
+
+/* Public sidebar identity and Facebook link — both desktop and mobile drawer. */
+.site-header .sidebar-bottom .sidebar-motto{display:flex;align-items:center;gap:8px;min-width:0}
+.site-header .sidebar-bottom .sidebar-motto strong{color:#dce9ff;font-size:10px;font-weight:750;line-height:1.5;overflow-wrap:anywhere}
+.site-header .sidebar-bottom .sidebar-motto .sidebar-dot{flex:0 0 6px;margin-right:0}
+.site-header .sidebar-bottom>small{margin:5px 0 0 14px;font-size:10px;line-height:1.5}
+.site-header .sidebar-bottom .social-footer-link{display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;margin-top:15px;max-width:100%;text-decoration:none}
+.site-header .sidebar-bottom .social-footer-link .sidebar-facebook-icon{width:17px;height:17px;flex:0 0 17px;fill:currentColor;stroke:none}
+.site-header .sidebar-bottom .social-footer-link:hover{text-decoration:underline}

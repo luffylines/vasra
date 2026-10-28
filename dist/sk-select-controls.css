@@ -1,0 +1,42 @@
+/* Unified native selects: one crisp SVG chevron with consistent inset, mobile safe. */
+body.account-workspace select:not([multiple]):not([size]){
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+  min-height:42px;
+  padding-right:44px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232f5c93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right 13px center!important;
+  background-size:18px 18px!important;
+  text-overflow:ellipsis;
+  cursor:pointer;
+}
+body.account-workspace select:not([multiple]):not([size]):focus-visible{
+  outline:2px solid #3d76c9;outline-offset:2px;
+}
+body.account-workspace[data-theme="dark"] select:not([multiple]):not([size]){
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23c3dbf9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;
+}
+@media(max-width:650px){
+ body.account-workspace select:not([multiple]):not([size]){padding-right:40px!important;background-position:right 11px center!important;font-size:16px!important}
+}
+/* Camera action labels and their compact controls are actually centered. */
+body.account-workspace .kk-quick-controls{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}
+body.account-workspace :is(#kk-quick-start,#kk-quick-stop,#kk-event-camera-start,#kk-event-camera-stop){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;
+ line-height:1.4;
+}
+body.account-workspace :is(#kk-quick-start,#kk-quick-stop)[hidden],
+body.account-workspace :is(#kk-event-camera-start,#kk-event-camera-stop)[hidden]{display:none!important}
+/* Avoid edge-hugging filters while retaining full width on narrow screens. */
+body.account-workspace #panel-kk-participants .kk-event-select-label{max-width:min(100%,740px)}
+body.account-workspace :is(#kk-service-type-filter,#kk-service-status-filter,#kk-service-date-filter,#kk-id-staff-filter,#kk-event-active-select){border-radius:10px}
+body.account-workspace .kk-id-staff-search{gap:12px;align-items:center}
+body.account-workspace .kk-service-admin-filters label{min-width:0}
+@media(max-width:680px){
+ body.account-workspace .kk-id-staff-search{align-items:stretch;flex-wrap:wrap}
+ body.account-workspace .kk-id-staff-search>select{width:100%}
+}

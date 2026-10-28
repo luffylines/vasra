@@ -1,0 +1,49 @@
+/* Responsive, private SK event attendance workspace; integrates with staff dark theme. */
+#panel-kk-participants[hidden],#kk-event-scanner-panel[hidden],#kk-event-video[hidden],#kk-event-canvas[hidden]{display:none!important}
+.kk-event-workspace{max-width:1280px;margin:0 auto;padding:0 0 24px}
+.kk-event-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}
+.kk-event-stats article{display:flex;flex-direction:column;gap:8px;border:1px solid #d4e3f3;border-radius:13px;background:#fff;padding:16px}
+.kk-event-stats span{font-size:11px;font-weight:650;color:#587a9c}
+.kk-event-stats strong{font:850 24px/1.2 Manrope,sans-serif;color:#16508c}
+.kk-event-select-label{display:grid;max-width:700px;gap:8px;font-size:12px;font-weight:750;color:#3d6389}
+.kk-event-select-label select,.kk-event-manual input{width:100%;min-width:0;border:1px solid #c9ddf1;border-radius:10px;background:#fff;color:#123b68;font-size:16px;min-height:42px;padding:10px 12px}
+.kk-event-scanner-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px;align-items:start}
+.kk-event-camera{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:#eaf2fc;border:1px dashed #b7d1ef;min-height:270px;border-radius:14px;padding:14px}
+#kk-event-video{display:block;width:100%;max-height:360px;object-fit:cover;border-radius:9px;background:#101f32}
+#kk-event-camera-hint{margin:0;text-align:center;color:#416b97;font-size:12px}
+.kk-event-manual{display:grid;align-content:start;gap:12px}
+#kk-event-manual-form{display:grid;gap:12px}
+#kk-event-manual-form label{display:grid;gap:9px;font-size:12px;font-weight:750;color:#42688f}
+#kk-event-scan-result{padding:14px;background:#e6f7ef;color:#166846;font-size:12px;font-weight:700;line-height:1.6;border-radius:10px;overflow-wrap:anywhere;min-height:36px;margin:0}
+#kk-event-scan-result[data-kind="error"]{background:#fff0f0;color:#a42735}
+.kk-event-manual small{font-size:11px;color:#6883a4;line-height:1.5}
+.kk-event-table-wrap{width:100%;overflow-x:auto;border-radius:10px;border:1px solid #d5e3f1}
+.kk-event-table{width:100%;border-collapse:collapse;min-width:750px;font-size:12px}
+.kk-event-table thead{background:#e9f1fc;color:#31577e}
+.kk-event-table th,.kk-event-table td{text-align:left;padding:12px;border-bottom:1px solid #dce7f4;white-space:nowrap}
+.kk-event-table tr:last-child td{border-bottom:0}
+.kk-event-table td strong{color:#19844f}
+.kk-event-archive{display:grid;gap:10px}
+.kk-event-archived{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 15px;background:#f9fbfe;border:1px solid #d2e2f2;border-radius:10px}
+.kk-event-archived>div{display:grid;gap:4px;min-width:0}
+.kk-event-archived strong{color:#194c80;font-size:12px;overflow-wrap:anywhere}
+.kk-event-archived small{color:#6984a0;font-size:11px}
+.kk-event-archived button,#kk-event-manual-form button{min-height:38px;font-size:12px;border-radius:9px;padding:8px 13px}
+body.account-workspace[data-theme="dark"] :is(.kk-event-stats article,.kk-event-archived){background:#1d334e;border-color:#45658c}
+body.account-workspace[data-theme="dark"] :is(.kk-event-stats strong,.kk-event-archived strong){color:#e5f4ff}
+body.account-workspace[data-theme="dark"] :is(.kk-event-stats span,.kk-event-archived small,#kk-event-camera-hint,.kk-event-manual small){color:#b5cbe6}
+body.account-workspace[data-theme="dark"] :is(.kk-event-select-label select,.kk-event-manual input){background:#1a2d47;color:#e7f1fe;border-color:#456a91}
+body.account-workspace[data-theme="dark"] .kk-event-camera{background:#233c5a;border-color:#57789b}
+body.account-workspace[data-theme="dark"] .kk-event-table-wrap{border-color:#47658a}
+body.account-workspace[data-theme="dark"] .kk-event-table thead{background:#244366;color:#e1f1ff}
+body.account-workspace[data-theme="dark"] .kk-event-table th,body.account-workspace[data-theme="dark"] .kk-event-table td{border-color:#446486;color:#d8eafa}
+body.account-workspace[data-theme="dark"] #kk-event-scan-result{background:#224d3b;color:#cbfbe2}
+body.account-workspace[data-theme="dark"] #kk-event-scan-result[data-kind="error"]{background:#542a38;color:#ffcbd4}
+@media(max-width:900px){.kk-event-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-event-scanner-grid{grid-template-columns:1fr}.kk-event-camera{min-height:230px}}
+@media(max-width:560px){.kk-event-workspace .kk-rewards-head{flex-wrap:wrap}.kk-event-stats{gap:8px}.kk-event-stats article{padding:11px}.kk-event-stats strong{font-size:20px}.kk-event-archived{align-items:flex-start;flex-direction:column}.kk-event-archived button{width:100%}}
+
+/* Recent attended events first; keep actions aligned on long event titles. */
+.kk-event-archive .kk-event-archived{min-width:0}
+.kk-event-archive .kk-event-archived>div{flex:1;min-width:0}
+.kk-event-archive .kk-event-archived button{flex:none;white-space:nowrap;align-self:center}
+@media(max-width:560px){.kk-event-archive .kk-event-archived button{align-self:stretch}}

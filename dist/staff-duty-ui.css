@@ -1,0 +1,282 @@
+/* Focused mobile-friendly styles for the chairman's SK Officials and SK Duty editors. */
+#roster-form{row-gap:16px;align-items:start}
+#roster-form>label:not(.checkline){display:flex;flex-direction:column;gap:7px;min-width:0;font-size:12px;font-weight:750;color:#31527c}
+#roster-form>label:not(.checkline)>input,#roster-form>label:not(.checkline)>select{box-sizing:border-box;width:100%;min-height:46px;margin:0;font-size:14px}
+#roster-form .roster-photo-editor.wide{grid-column:1;grid-row:2;align-self:stretch;margin:0}
+#roster-form .roster-profile-message.wide{grid-column:1/-1;grid-row:3}
+#roster-form .roster-form-actions{grid-column:2;grid-row:2;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:12px;padding:18px;border:1px solid #d5e4f7;border-radius:14px;background:#f5f9ff;box-sizing:border-box}
+#roster-form .roster-public-toggle{display:inline-flex!important;align-items:center;gap:10px;margin:0!important;font-size:13px;font-weight:750;color:#234877;cursor:pointer}
+#roster-form .roster-public-toggle input{width:18px;height:18px;accent-color:#245cb9;flex:none;margin:0}
+#roster-form .roster-form-actions-hint{font-size:11px;line-height:1.5;color:#6b83a1;margin:0}
+#roster-form .roster-form-button-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;width:100%}
+#roster-form .roster-form-button-row button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;margin:0!important;border-radius:10px;white-space:normal;font-size:12px;font-weight:750}
+#roster-form .roster-form-button-row .primary{background:#2159b4;color:white}
+#roster-form .roster-form-button-row .secondary{background:white;border:1px solid #c6d9ef;color:#355b8b}
+.duty-manager-panel .duty-manager-single,.duty-manager-panel .duty-manager-hours-disclosure{max-width:100%;box-sizing:border-box}
+.duty-manager-panel .duty-manager-single{box-shadow:0 10px 30px rgba(27,65,117,.045)}
+.duty-manager-panel :is(.duty-manager-pick-label,.duty-manager-single-week legend){font-size:13px}
+.duty-manager-panel .duty-manager-selected{min-width:0}
+.duty-manager-panel .duty-manager-selected-detail,.duty-manager-panel .duty-manager-source{overflow-wrap:anywhere}
+.duty-manager-panel .duty-manager-photo-upload{max-width:100%;box-sizing:border-box}
+.duty-manager-panel .duty-manager-day-chip span{min-width:0;min-height:46px;font-size:12px}
+.duty-manager-panel .duty-manager-day-chip input:disabled{cursor:not-allowed}
+/* Uniform accessible SVG arrow in light and dark modes. */
+#duty-officer-select,#roster-form select[name="position"]{
+ appearance:none;-webkit-appearance:none;padding-right:46px!important;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%232a5180' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;
+ background-repeat:no-repeat!important;background-position:right 13px center!important;background-size:19px 19px!important;cursor:pointer
+}
+#duty-officer-select:focus-visible,#roster-form select[name="position"]:focus-visible,#roster-form .roster-form-button-row button:focus-visible{outline:3px solid #74a8fc;outline-offset:2px}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form .roster-form-actions{background:#1d3554!important;border-color:#5677a0!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form :is(.roster-public-toggle,.roster-form-actions-hint){color:#e5f0ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form .roster-form-button-row .secondary{background:#264361!important;color:#eaf3ff!important;border-color:#6c91bb!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] #roster-form>label:not(.checkline){color:#e6f0ff!important}
+body.account-workspace[data-staff-mode="staff"][data-theme="dark"] :is(#duty-officer-select,#roster-form select[name="position"]){
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%23ebf4ff' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;
+ color:#f1f7ff!important
+}
+@media(max-width:740px){
+ #roster-form{grid-template-columns:minmax(0,1fr);padding:15px;gap:14px}
+ #roster-form>.roster-form-actions,#roster-form>.roster-photo-editor.wide,#roster-form>.roster-profile-message.wide{grid-column:1;grid-row:auto;width:100%;min-width:0}
+ #roster-form .roster-form-actions{padding:14px}
+ .duty-manager-panel .duty-manager-single{padding:16px}
+ .duty-manager-panel .duty-manager-selected{grid-template-columns:105px minmax(0,1fr);gap:14px}
+ .duty-manager-panel .duty-manager-photo-preview{width:105px;height:130px}
+ .duty-manager-panel .duty-manager-day-choices{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .duty-manager-panel .duty-manager-hours-inner{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:420px){
+ #roster-form .roster-form-button-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #roster-form .roster-form-button-row button{padding:10px 7px;width:100%;min-width:0}
+ #roster-form .roster-photo-editor{flex-wrap:wrap;padding:12px}
+ #roster-form .roster-photo-info{width:100%}
+ .duty-manager-panel .duty-manager-single{padding:13px}
+ .duty-manager-panel .duty-manager-single-heading{align-items:flex-start}
+ .duty-manager-panel .duty-manager-help{font-size:10px}
+ .duty-manager-panel .duty-manager-selected{grid-template-columns:minmax(0,1fr)}
+ .duty-manager-panel .duty-manager-photo-preview{width:125px;height:144px}
+ .duty-manager-panel .duty-manager-selected-detail{width:100%}
+ .duty-manager-panel .duty-manager-day-choices{gap:6px}
+ .duty-manager-panel .duty-manager-day-chip span{font-size:11px;padding:9px 2px}
+ .duty-manager-panel .duty-manager-hours-disclosure>summary{padding:14px}
+}
+
+/* SK Duty compact portrait-mobile UI. Loaded last, after the admin theme.
+   No wide circles, oversized warning banners or full-screen-height buttons. */
+@media screen and (max-width:820px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls.duty-office-card{
+  display:block;box-sizing:border-box;min-width:0;max-width:100%;
+  height:auto!important;min-height:0!important;padding:12px!important;
+  margin:0 0 13px!important;border-radius:13px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls.duty-office-card[hidden]{display:none!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading{
+  display:grid!important;grid-template-columns:32px minmax(0,1fr)!important;
+  align-items:start!important;justify-items:start!important;gap:5px 10px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-icon{
+  width:32px!important;height:32px!important;min-height:0!important;
+  border-radius:9px!important;grid-column:1!important;grid-row:1!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-icon svg{
+  width:17px!important;height:17px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-text{
+  min-width:0!important;grid-column:2!important;grid-row:1!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-eyebrow{
+  font-size:9px!important;line-height:1.3!important;letter-spacing:.5px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading h3{
+  font-size:16px!important;line-height:1.23!important;margin:3px 0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading p{
+  font-size:11px!important;line-height:1.4!important;margin:0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls #duty-mode-badge{
+  grid-column:1/-1!important;grid-row:2!important;justify-self:start!important;
+  display:inline-flex!important;position:static!important;
+  align-items:center!important;justify-content:flex-start!important;gap:7px!important;
+  box-sizing:border-box!important;overflow:visible!important;
+  width:fit-content!important;max-width:100%!important;
+  height:auto!important;min-height:28px!important;max-height:36px!important;
+  aspect-ratio:auto!important;flex:none!important;
+  margin:5px 0 0!important;padding:5px 10px!important;
+  border-radius:999px!important;font-size:11px!important;line-height:1.2!important;
+  text-align:left!important;white-space:normal!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls #duty-mode-badge .duty-status-dot{
+  width:7px!important;height:7px!important;min-width:7px!important;min-height:7px!important;
+  max-width:7px!important;max-height:7px!important;flex:0 0 7px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-metrics{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  gap:7px!important;margin:11px 0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info{
+  display:flex!important;align-items:center!important;gap:9px!important;
+  box-sizing:border-box!important;min-height:0!important;max-width:100%!important;
+  padding:8px 10px!important;border-radius:10px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info-icon{
+  flex:0 0 31px!important;width:31px!important;height:31px!important;
+  min-width:31px!important;min-height:31px!important;
+  border-radius:9px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info-icon svg{
+  width:17px!important;height:17px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-label{
+  font-size:10px!important;line-height:1.3!important;margin:0 0 3px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info strong{
+  font-size:12px!important;line-height:1.4!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls #duty-control-info{
+  font-size:11px!important;line-height:1.45!important;margin:7px 0 11px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-actions{
+  display:flex!important;flex-flow:row wrap!important;gap:7px!important;
+  align-items:stretch!important;min-height:0!important;margin:0!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button{
+  box-sizing:border-box!important;display:inline-flex!important;position:static!important;
+  flex:1 1 138px!important;width:auto!important;min-width:0!important;
+  height:42px!important;min-height:42px!important;max-height:42px!important;
+  aspect-ratio:auto!important;align-self:auto!important;justify-content:center!important;
+  align-items:center!important;gap:6px!important;
+  padding:8px!important;margin:0!important;border-radius:9px!important;
+  font-size:11px!important;line-height:1.2!important;text-align:center!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button svg{
+  width:15px!important;height:15px!important;flex:0 0 15px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button#duty-retry{
+  flex:1 1 100%!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button[hidden]{
+  display:none!important;
+ }
+ /* An unverified office status cannot be changed: show only the small Retry button. */
+ body.account-workspace[data-staff-mode="staff"] #duty-controls:has(#duty-mode-badge[data-state="unknown"])
+ .duty-card-actions :is(#duty-set-closed,#duty-set-auto){
+  display:none!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-note{
+  margin:9px 0 0!important;padding-top:8px!important;font-size:10px!important;
+ }
+}
+@media screen and (max-width:360px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button{
+  flex-basis:100%!important;
+ }
+}
+
+/* iPhone SK Duty compact controls and status: no large stretched blocks. */
+@media(max-width:850px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard #duty-controls.duty-office-card{width:100%!important;max-width:100%!important;min-height:0!important;height:auto!important;padding:14px!important;border-radius:15px!important;box-sizing:border-box!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading{display:flex!important;align-items:flex-start!important;flex-wrap:wrap!important;gap:10px!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-heading-text{flex:1 1 160px!important;min-width:0!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-mode-badge{display:inline-flex!important;width:auto!important;height:auto!important;min-height:27px!important;min-width:0!important;max-width:100%!important;padding:5px 10px!important;border-radius:999px!important;font-size:11px!important;line-height:1.4!important;flex:0 1 auto!important;position:static!important;aspect-ratio:auto!important;box-shadow:none!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-info{min-height:58px!important;height:auto!important;padding:10px!important;border-radius:10px!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-metrics{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin:10px 0!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-action-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:1 1 142px!important;width:auto!important;height:42px!important;min-height:42px!important;max-height:42px!important;min-width:0!important;padding:6px 11px!important;border-radius:9px!important;font-size:12px!important;line-height:1.25!important;white-space:normal!important}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-action-button svg{width:17px!important;height:17px!important;flex:none}
+ body.account-workspace[data-staff-mode="staff"] #duty-controls .duty-card-note{font-size:11px!important;line-height:1.5!important;margin-top:8px!important}
+}
+
+@media(max-width:850px){
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button{
+  flex:1 1 138px!important;height:42px!important;min-height:42px!important;max-height:42px!important;
+  width:auto!important;min-width:0!important;padding:6px 10px!important;
+  border-radius:9px!important;font-size:12px!important;
+ }
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls .duty-card-actions button.duty-action-button[hidden]{display:none!important}
+ body.account-workspace[data-staff-mode="staff"] #dashboard > #duty-controls #duty-mode-badge{
+  width:auto!important;height:auto!important;min-width:0!important;min-height:27px!important;
+  max-width:100%!important;aspect-ratio:auto!important;border-radius:999px!important;
+  padding:5px 10px!important;box-shadow:none!important;font-size:11px!important;
+  display:inline-flex!important;position:static!important;
+ }
+}
+
+/* Duty photo and weekday editor: review-before-save presentation. */
+.duty-manager-panel .duty-manager-single,
+.duty-manager-panel .duty-manager-hours-disclosure{max-width:1100px}
+.duty-manager-panel .duty-manager-selected{
+ display:grid;grid-template-columns:minmax(120px,160px) minmax(0,1fr);
+ align-items:start;gap:19px;padding:18px;
+ background:#f4f8ff;border:1px solid #d2e3f7;border-radius:15px
+}
+.duty-manager-panel .duty-manager-photo-preview{
+ width:100%;max-width:160px;height:auto;min-height:180px;aspect-ratio:4/5;
+ box-sizing:border-box;border-radius:13px
+}
+.duty-manager-panel .duty-manager-photo-preview img:not([hidden]){
+ object-fit:cover;object-position:center 20%
+}
+.duty-manager-panel .duty-manager-selected-detail{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.duty-manager-panel .duty-manager-selected-detail>strong{font-size:19px;line-height:1.25}
+.duty-manager-panel .duty-manager-source{margin:2px 0;overflow-wrap:anywhere}
+.duty-manager-panel .duty-manager-private-note{
+ margin:0 0 2px;color:#42668f;font-size:11px;line-height:1.55;
+ padding:8px 11px;border-left:3px solid #72a2db;background:#eaf3ff;border-radius:5px
+}
+.duty-manager-panel .duty-manager-photo-upload{
+ max-width:100%;white-space:normal;text-align:left;min-height:42px
+}
+.duty-manager-panel .duty-manager-photo-preview.duty-manager-pending{
+ border:2px dashed #2a69c2;box-shadow:0 0 0 3px #2a69c219
+}
+.duty-manager-photo-pending{
+ position:absolute;z-index:2;top:8px;left:6px;right:6px;
+ display:block;padding:5px 7px;border-radius:7px;background:#173b6fdd;
+ color:#fff;font-size:9px;font-weight:850;letter-spacing:.4px;text-align:center
+}
+.duty-save-confirm{border:1px solid #d3e2f4;border-radius:18px;padding:0;max-width:440px;width:calc(100% - 28px);color:#244a77;box-shadow:0 24px 70px #071a36a0}
+.duty-save-confirm::backdrop{background:#081d3da6}
+.duty-save-confirm-inner{padding:26px;display:flex;flex-direction:column;gap:12px;background:#fff;border-radius:18px}
+.duty-confirm-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:13px;background:#e7f1ff;color:#2862ac}
+.duty-confirm-icon svg{width:24px;height:24px}
+.duty-save-confirm h3{font:800 20px/1.3 Manrope,sans-serif;color:#1b426f;margin:0}
+.duty-save-confirm p{margin:0;line-height:1.7;color:#637e9c;font-size:13px;overflow-wrap:anywhere}
+.duty-confirm-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:10px}
+.duty-confirm-actions button{min-height:43px;min-width:106px;font-size:12px;padding:10px 13px;border-radius:9px}
+.duty-save-confirm button:focus-visible{outline:3px solid #70a6f0;outline-offset:2px}
+body.account-workspace[data-theme="dark"] .duty-save-confirm-inner{background:#172e4c}
+body.account-workspace[data-theme="dark"] .duty-save-confirm h3{color:#eef6ff}
+body.account-workspace[data-theme="dark"] .duty-save-confirm p{color:#c1d5ec}
+body.account-workspace[data-theme="dark"] .duty-manager-panel .duty-manager-private-note{background:#1d3e67;color:#d6e7ff}
+@media(max-width:600px){
+ .duty-manager-panel .duty-manager-selected{grid-template-columns:110px minmax(0,1fr);padding:12px;gap:12px}
+ .duty-manager-panel .duty-manager-photo-preview{width:110px;min-height:140px;max-width:110px}
+ .duty-manager-panel .duty-manager-selected-detail>strong{font-size:15px}
+ .duty-manager-panel .duty-manager-photo-upload{padding:9px;font-size:11px}
+ .duty-manager-panel .duty-manager-private-note{font-size:10px}
+ .duty-save-confirm-inner{padding:20px}
+}
+@media(max-width:390px){
+ .duty-manager-panel .duty-manager-selected{grid-template-columns:minmax(0,1fr)}
+ .duty-manager-panel .duty-manager-photo-preview{width:125px;max-width:125px}
+ .duty-confirm-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .duty-confirm-actions button{min-width:0}
+}
+
+/* Fixed confirmation alignment: both actions equal width on desktop and mobile. */
+.duty-save-confirm .duty-confirm-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:10px;width:100%;justify-content:stretch}
+.duty-save-confirm .duty-confirm-actions button{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:0;width:100%;min-height:46px;padding:11px 12px;margin:0;border-radius:10px;line-height:1.3;text-align:center}
+.duty-save-confirm-inner{width:100%;box-sizing:border-box}
+.duty-upload-progress[hidden]{display:none!important}
+.duty-upload-progress{position:sticky;z-index:60;bottom:14px;margin:17px 0 8px;padding:14px 16px;background:#eaf4ff;border:1px solid #96bbe9;box-shadow:0 8px 30px #133b692a;border-radius:12px;color:#204e87}
+.duty-upload-progress-header{display:flex;gap:10px;align-items:center;margin-bottom:9px;min-width:0}
+.duty-upload-progress-header strong{flex:1;min-width:0;font:800 12px/1.45 'DM Sans',sans-serif}
+.duty-upload-progress-header span:last-child{font:800 12px 'DM Sans',sans-serif}
+.duty-upload-progress progress{display:block;width:100%;height:8px;accent-color:#2d67b7;border-radius:20px}
+.duty-upload-progress p{font-size:11px;margin:8px 0 0;color:#5579a2}
+.duty-upload-spinner{height:17px;width:17px;flex:none;border-radius:50%;border:2px solid #c5ddf9;border-top-color:#2e66b1;animation:duty-upload-spin .8s linear infinite}
+@keyframes duty-upload-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.duty-upload-spinner{animation:none}}
+body.account-workspace[data-theme="dark"] .duty-upload-progress{background:#193454;border-color:#4779b2;color:#e9f4ff}
+body.account-workspace[data-theme="dark"] .duty-upload-progress p{color:#bdd8f6}
+@media(max-width:520px){.duty-save-confirm-inner{padding:18px}.duty-save-confirm .duty-confirm-actions{gap:8px}.duty-save-confirm .duty-confirm-actions button{min-height:46px;padding:10px 7px;font-size:12px}.duty-upload-progress{bottom:8px;padding:12px}}

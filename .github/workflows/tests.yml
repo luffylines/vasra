@@ -1,0 +1,62 @@
+name: SK VASRA Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - fix/kk-id-logo-centered-header-20261025
+      - fix/kk-id-logo-centered-header-20261025
+      - fix/kk-id-upload-first-theme-20261025
+      - feature/kk-id-reference-duplex-pdf-20261025
+      - fix/kk-profile-editor-variable-collision-20261025
+      - feature/sk-resolutions-home-darkmode-20261025
+      - fix/duty-persistent-public-photo-20261025
+      - fix/kk-google-shared-oauth-auth-phone-20261025
+      - fix/duty-persistent-public-photo-20261025
+      - feature/sk-services-officer-workflow-20261025
+      - fix/kk-profile-doc-preview-delete-age-actions-20261025
+      - feature/kk-sk-services-20261025
+      - feature/kk-profiling-reference-layout-20261025
+      - fix/projects-darkmode-contrast-20261025
+      - fix/public-sidebar-darkmode-unification-20261025
+      - feature/kk-session-dashboard-theme-20261025
+      - fix/kk-readiness-duty-mobile-placeholder-20261025
+      - feature/kk-youth-profiling-20261024
+      - migration/vercel-supabase
+      - ui/sk-council-branding-home-icons-20261024
+      - feature/officer-contact-details-20261024
+  push:
+    branches:
+      - main
+      - fix/kk-rewards-image-showcase-duty-hours-20261027
+      - fix/kk-id-logo-centered-header-20261025
+      - fix/kk-id-logo-centered-header-20261025
+      - fix/kk-id-upload-first-theme-20261025
+      - feature/kk-id-reference-duplex-pdf-20261025
+      - fix/kk-profile-editor-variable-collision-20261025
+      - feature/sk-resolutions-home-darkmode-20261025
+      - feature/sk-resolutions-home-darkmode-20261025
+      - fix/duty-persistent-public-photo-20261025
+      - fix/compact-project-cover-cards-20261017
+      - feature/officer-contact-details-20261024
+      - ui/contacts-form-map-20261024
+      - feature/kk-youth-profiling-20261024
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Node 24 regression tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run integration and regression tests
+        run: npm test

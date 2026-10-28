@@ -1,0 +1,83 @@
+.officer-portrait{display:block;position:relative;overflow:hidden;flex-shrink:0;width:96px;height:112px;border-radius:18px;background:#dce8f6;border:1px solid #cedced}
+.officer-portrait img{position:absolute;max-width:none!important;height:auto!important;object-fit:initial!important;border-radius:0!important;box-shadow:none!important}
+.portrait-single img{width:300%!important;left:-100%;top:-72%}
+.portrait-left img{width:333.333%!important;left:-50%;top:-79%}
+.portrait-right img{width:333.333%!important;left:-193%;top:-79%}
+.home-officer .officer-portrait{width:64px;height:75px;border-radius:12px}
+.trans-person .officer-portrait{margin-bottom:8px}
+.portal-refresh .duty-stage{grid-template-columns:minmax(0,1fr);min-height:0}
+.portal-refresh .duty-info{padding:30px}
+.duty-officer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin:23px 0}
+.duty-officer-card{display:flex;align-items:center;gap:22px;padding:24px;border:1px solid #dce6f4;background:linear-gradient(130deg,#f3f7fe,#fff);border-radius:18px;min-width:0}
+.duty-officer-card .officer-portrait{width:124px;height:145px}
+.duty-officer-card h3{font-size:22px;line-height:1.35;color:#23466f;margin:0 0 8px}
+.duty-officer-card p{font-size:13px;color:#597293;margin:0 0 12px}
+.duty-officer-card small{display:block;font-size:12px;line-height:1.8;color:#607998}
+.duty-poster-secondary{align-self:flex-start;border:1px solid #cad8ec;border-radius:9px;padding:11px 15px;background:#f5f8fd;color:#395e8c;font:inherit;font-size:12px;min-height:44px}
+.home-metrics .summary-empty{font-size:16px;line-height:1.5;letter-spacing:0}
+@media(max-width:600px){.portal-refresh .duty-info{padding:22px}.duty-officer-grid{grid-template-columns:minmax(0,1fr)}.duty-officer-card{padding:18px;gap:16px;align-items:flex-start}.duty-officer-card .officer-portrait{width:90px;height:106px}.duty-officer-card h3{font-size:19px}}
+
+/* The connected organizational hierarchy is shown on the SK Youth Leaders page. */
+.org-source-note{font-size:12px;line-height:1.6;color:#526e92;background:#eef4fc;border:1px solid #d5e3f4;border-radius:11px;padding:11px 15px;margin:16px 0 0}
+
+
+/* SK Youth Leaders — clean, compact leadership tree. Public display is read-only. */
+.org-chart{--org-line:#a7bbd9;max-width:1080px;margin:30px auto 8px;padding:0 10px}
+.org-lead{display:flex;justify-content:center;gap:16px;position:relative;padding-bottom:36px}
+.org-lead:after{content:"";position:absolute;left:50%;bottom:0;height:36px;border-left:2px solid var(--org-line)}
+.org-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;border:1px solid #dae5f3;background:linear-gradient(145deg,#fff,#f7faff);border-radius:18px;padding:20px 14px;min-width:0;box-shadow:0 8px 24px rgba(29,62,104,.045);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.org-card:hover{transform:translateY(-3px);border-color:#a9c4e7;box-shadow:0 12px 25px rgba(29,62,104,.1)}
+.org-card .officer-portrait{width:74px;height:85px;margin:0;border-radius:15px}
+.org-person{display:grid;gap:4px}
+.org-card strong{font-size:13px;line-height:1.45;color:#183b66;overflow-wrap:anywhere}
+.org-card small{font-size:11px;line-height:1.5;color:#7087a4}
+.org-chair{width:214px;background:linear-gradient(160deg,#e8f1ff,#fbfdff);border:1px solid #a7c6ee;padding:22px 16px;box-shadow:0 12px 24px rgba(31,82,153,.09)}
+.org-chair .officer-portrait{width:88px;height:101px}
+.org-tier{position:relative;padding:25px 0 8px;border-top:2px solid var(--org-line)}
+.org-tier+.org-tier{margin-top:28px}
+.org-tier+.org-tier:after{content:"";position:absolute;left:50%;top:-30px;height:30px;border-left:2px solid var(--org-line)}
+.org-tier:before{content:"";position:absolute;left:50%;top:-1px;height:24px;border-left:2px solid var(--org-line)}
+.org-tier-heading{display:flex;flex-direction:column;align-items:center;gap:5px;margin:0 0 18px;text-align:center}
+.org-tier-heading span{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#6486b4}
+.org-tier-heading h3{font-size:17px;font-weight:800;color:#244b7d;margin:0}
+.org-tier-grid{display:flex;align-items:stretch;justify-content:center;gap:14px;flex-wrap:wrap}
+.org-tier-grid>.org-card{width:174px;max-width:calc(50% - 8px);position:relative}
+.org-tier-grid>.org-card:before{content:"";position:absolute;top:-38px;left:50%;height:18px;border-left:2px solid var(--org-line);display:none}
+.org-note{text-align:center;color:#6c809e;font-size:12px;margin:0 0 24px}
+.org-source-note{font-size:12px;line-height:1.6;color:#526e92;background:#eef4fc;border:1px solid #d5e3f4;border-radius:11px;padding:11px 15px;margin:16px 0 0}
+#leaders-retry{margin-top:18px;min-height:44px}
+#leaders-directory .trans-empty a{text-decoration:underline;color:#285699}
+@media(max-width:690px){
+ .org-chart{margin-top:22px;padding:0 0 0 10px;border-left:2px solid var(--org-line)}
+ .org-lead{justify-content:flex-start;padding:0 0 22px 22px}
+ .org-lead:after{left:0;bottom:42px;height:0;width:22px;border-top:2px solid var(--org-line);border-left:0}
+ .org-chair{width:min(100%,310px)}
+ .org-tier{border-top:0;padding:12px 0 10px 22px}
+ .org-tier:before{left:0;top:48px;width:22px;height:0;border-left:0;border-top:2px solid var(--org-line)}
+ .org-tier+.org-tier{margin-top:10px}.org-tier+.org-tier:after{display:none}
+ .org-tier-heading{align-items:flex-start;text-align:left}
+ .org-tier-grid{justify-content:flex-start;gap:10px}
+ .org-tier-grid>.org-card{width:calc(50% - 5px);max-width:none}
+ .org-card{padding:14px 10px}
+ .org-card .officer-portrait{width:62px;height:72px}
+ .org-chair .officer-portrait{width:76px;height:88px}
+}
+@media(max-width:385px){.org-tier-grid>.org-card{width:100%}.org-card{flex-direction:row;text-align:left;gap:14px}.org-person{text-align:left}}
+@media(prefers-reduced-motion:reduce){.org-card{transition:none}.org-card:hover{transform:none}}
+
+
+/* Reliable portrait loading and readable fallback across Safari, Chrome and Firefox. */
+.officer-portrait{isolation:isolate;display:grid;place-items:center;line-height:1;aspect-ratio:96/112}
+.officer-portrait-fallback{position:absolute;inset:0;z-index:0;display:grid;place-items:center;
+ background:linear-gradient(140deg,#e0ecfa,#cbdff4);color:#2b568c;
+ font-family:Manrope,system-ui,sans-serif;font-size:clamp(16px,2.5vw,23px);font-weight:800;letter-spacing:.02em}
+.officer-portrait img{z-index:1;opacity:0;pointer-events:none;transition:opacity .14s ease;
+ display:block;min-height:0;min-width:0}
+.officer-portrait.portrait-loaded:not(.portrait-error) img{opacity:1}
+.officer-portrait.portrait-error img{display:none}
+.officer-portrait.portrait-fallback-only{background:#e1ebf8}
+@media(prefers-reduced-motion:reduce){.officer-portrait img{transition:none}}
+
+/* Independently uploaded officer photos must never be cropped like 2026 collage posters. */
+.officer-portrait.portrait-profile-photo img{width:100%!important;height:100%!important;
+ left:0!important;top:0!important;object-fit:cover!important;max-width:100%!important;border-radius:0!important}

@@ -1,6 +1,131 @@
 {
   "version": 2,
   "framework": null,
-  "buildCommand": "node scripts/prepare-vercel-static.cjs",
-  "outputDirectory": "public"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index?__path=:path*"
+    },
+    {
+      "source": "/account",
+      "destination": "/account.html"
+    },
+    {
+      "source": "/duty",
+      "destination": "/duty.html"
+    },
+    {
+      "source": "/contacts",
+      "destination": "/contacts.html"
+    },
+    {
+      "source": "/transparency",
+      "destination": "/transparency.html"
+    },
+    {
+      "source": "/youth-leaders",
+      "destination": "/youth-leaders.html"
+    },
+    {
+      "source": "/kk-login",
+      "destination": "/kk-login.html"
+    },
+    {
+      "source": "/kk-register",
+      "destination": "/kk-register.html"
+    },
+    {
+      "source": "/kk-profile",
+      "destination": "/kk-profile.html"
+    },
+    {
+      "source": "/kk-dashboard",
+      "destination": "/kk-dashboard.html"
+    },
+    {
+      "source": "/sk-resolutions",
+      "destination": "/sk-resolutions.html"
+    },
+    {
+      "source": "/kk-reset",
+      "destination": "/kk-reset.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/projects.html"
+    },
+    {
+      "source": "/achievements",
+      "destination": "/achievements.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/account.html",
+      "destination": "/account",
+      "permanent": true
+    },
+    {
+      "source": "/duty.html",
+      "destination": "/duty",
+      "permanent": true
+    },
+    {
+      "source": "/contacts.html",
+      "destination": "/contacts",
+      "permanent": true
+    },
+    {
+      "source": "/transparency.html",
+      "destination": "/transparency",
+      "permanent": true
+    },
+    {
+      "source": "/youth-leaders.html",
+      "destination": "/youth-leaders",
+      "permanent": true
+    },
+    {
+      "source": "/kk-login.html",
+      "destination": "/kk-login",
+      "permanent": true
+    },
+    {
+      "source": "/kk-register.html",
+      "destination": "/kk-register",
+      "permanent": true
+    },
+    {
+      "source": "/kk-profile.html",
+      "destination": "/kk-profile",
+      "permanent": true
+    },
+    {
+      "source": "/kk-dashboard.html",
+      "destination": "/kk-dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/sk-resolutions.html",
+      "destination": "/sk-resolutions",
+      "permanent": true
+    },
+    {
+      "source": "/kk-reset.html",
+      "destination": "/kk-reset",
+      "permanent": true
+    },
+    {
+      "source": "/projects.html",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/achievements.html",
+      "destination": "/achievements",
+      "permanent": true
+    }
+  ],
+  "buildCommand": "npm run check:deploy"
 }

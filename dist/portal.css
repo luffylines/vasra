@@ -1,0 +1,459 @@
+/* Shared public portal refinement. Staff and transparency layouts retain their styles. */
+.portal-refresh{--muted:#61728b;--line:#dfe7f2;background:#f3f6fb;color:#182d4d}
+.portal-refresh .site-header{background:linear-gradient(165deg,#132c54,#0b1c38);box-shadow:8px 0 32px #16336109}
+.portal-refresh .nav-label{color:#a0b4d4;letter-spacing:1.8px}
+.portal-refresh .site-header nav a{padding:16px 14px;border-radius:12px;color:#b8c8e1}
+.portal-refresh .site-header nav a[aria-current]{background:linear-gradient(110deg,#315ca0,#274777);box-shadow:inset 3px 0 #91bfff,0 5px 15px #06152d30;color:#fff}
+.portal-refresh .sidebar-bottom small{color:#9aafcc}
+.portal-refresh .page-top{height:78px;margin-bottom:28px;color:#627490}
+.portal-refresh .page-top b{color:#233d63;font-weight:700}
+.portal-refresh .location-tag{background:#e8eef7;padding:8px 12px;border-radius:30px;color:#526b8c}
+.portal-refresh .project-hero,.portal-refresh .page-heading{background:radial-gradient(ellipse at 100% 0,#4070ac55,transparent 65%),linear-gradient(120deg,#142d53,#234b7c);border:1px solid #ffffff20;border-radius:22px;box-shadow:0 16px 40px #15335c12;color:#fff}
+.portal-refresh .project-hero{padding:40px;min-height:320px}
+.portal-refresh .project-hero h1{font-size:clamp(34px,3.2vw,48px);letter-spacing:-1.8px}
+.portal-refresh .project-hero p{font-size:14px;max-width:490px;color:#d0dff1}
+.portal-refresh .hero-label{font-size:10px;letter-spacing:1.4px;color:#cedff7;line-height:1.7}
+.portal-refresh .hero-link{padding:12px 17px;border:1px solid #ffffff35;border-radius:10px;background:#ffffff0d;font-size:12px;margin-top:20px}
+.portal-refresh .hero-link:hover{background:#ffffff20}
+.portal-refresh .hero-mark{transform:none;border:1px solid #ffffff24;border-radius:50%;width:235px;height:235px;flex-shrink:0;padding:0;background:#ffffff06;align-self:center}
+.portal-refresh .hero-mark>span{font-size:86px;letter-spacing:-8px;padding-right:8px}
+.portal-refresh .hero-mark b{font-size:23px;letter-spacing:10px;padding-left:10px}
+.portal-refresh .hero-mark small{font-size:5px}
+.portal-refresh .stats{gap:16px;margin-top:22px}
+.portal-refresh .stats>div{padding:23px;border-radius:16px;gap:9px;box-shadow:0 5px 18px #233d6205;border-top:3px solid #3562b7!important}
+.portal-refresh .stats>div:nth-child(2){border-top-color:#338a83!important}
+.portal-refresh .stats>div:nth-child(3){border-top-color:#5778a4!important}
+.portal-refresh .stats>div:nth-child(4){border-top-color:#be9550!important}
+.portal-refresh .stats span{font-size:12px;color:#4c6280;font-weight:600}
+.portal-refresh .stats strong{font-size:36px;color:#203e68}
+.portal-refresh .stats>div:after{display:none}
+.portal-refresh .stats small{font-size:11px;color:#6a7d96}
+.portal-refresh #projects{padding-top:36px}
+.portal-refresh .sectionhead h2{font-size:25px;line-height:1.4}
+.portal-refresh .sectionhead p{font-size:13px;color:#61728b;line-height:1.7}
+.portal-refresh .toolbar{background:#fff;border:1px solid var(--line);padding:12px;border-radius:14px;gap:16px;flex-wrap:wrap}
+.portal-refresh .filters{background:#edf2f9;gap:4px;max-width:100%}
+.portal-refresh .filters button{font-size:12px;padding:11px 14px;color:#526886;min-height:42px}
+.portal-refresh .filters .selected{background:#244e91;color:#fff;box-shadow:0 3px 8px #244e9120}
+.portal-refresh .search{min-height:44px;flex:1;max-width:310px;background:#f7f9fd}
+.portal-refresh .search input{font-size:13px;width:100%;min-width:0}
+.portal-refresh #count{font-size:12px;color:#607592}
+.portal-refresh .grid{gap:20px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.portal-refresh .card{border-radius:18px;box-shadow:0 6px 22px #16345b07}
+.portal-refresh .card:hover{box-shadow:0 14px 30px #16345b12}
+.portal-refresh .cardbody{padding:23px}
+.portal-refresh .card h3{font-size:19px;overflow-wrap:anywhere}
+.portal-refresh .card p{font-size:13px}
+.portal-refresh .category{color:#355b93;font-size:10px}
+.portal-refresh .cardbottom button{background:#edf3fc;border-radius:8px;padding:11px 13px;min-height:44px}
+.portal-refresh .empty{padding:48px 24px;border-radius:18px;background:radial-gradient(ellipse at top,#eaf1fc,transparent 70%),#fff;border:1px dashed #b8cae2;display:flex;align-items:center;flex-direction:column}
+.portal-refresh .empty-icon{display:grid;place-items:center;width:60px;height:60px;background:#e0eafb;color:#315d9d;border-radius:18px;font-size:28px;box-shadow:0 6px 16px #315d9d0c}
+.portal-refresh .empty h3{font-size:20px;color:#27456f;margin:20px 0 8px}
+.portal-refresh .empty p{font-size:13px;max-width:420px;margin:0 0 20px;line-height:1.8}
+.portal-refresh .secondary{display:inline-block;background:#fff;padding:12px 16px;border:1px solid #cdd9e9;font-size:12px;min-height:44px}
+.portal-refresh .primary{background:#2b59a5;border:1px solid #ffffff1c;border-radius:10px;font-size:13px;min-height:46px}
+.portal-refresh .primary:hover{background:#204780}
+.portal-refresh .page-heading{padding:34px 36px;margin-bottom:28px;flex-wrap:wrap}
+.portal-refresh .page-heading .eyebrow{font-size:10px;color:#c3d7f3;letter-spacing:1.6px}
+.portal-refresh .page-heading h1{font-size:clamp(32px,3vw,44px);line-height:1.2;margin:14px 0}
+.portal-refresh .page-heading h1 em,.portal-refresh .project-hero h1 em{color:#adcef9}
+.portal-refresh .page-heading p{font-size:14px;color:#d3e0f2;line-height:1.8;max-width:560px}
+.portal-refresh .schedule-heading{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:30px 0 18px}
+.portal-refresh .schedule-heading .eyebrow{font-size:10px;color:#617a9e}
+.portal-refresh .schedule-heading h2{font-size:22px;margin:7px 0 0;line-height:1.4}
+.portal-refresh .schedule-heading>span{font-size:11px;color:#647b9b}
+.portal-refresh .day-switch{gap:10px;margin-bottom:22px}
+.portal-refresh .day-switch button{border-radius:13px;padding:17px 6px;min-height:77px;box-shadow:0 3px 10px #16345b04}
+.portal-refresh .day-switch button small{color:#647b9a;font-size:10px}
+.portal-refresh .day-switch button.selected small{color:#d4e4ff}
+.portal-refresh .day-switch button.selected{background:#244e91;border-color:#244e91}
+.portal-refresh .day-switch button.today.selected{background:#146b46;border-color:#146b46}
+.portal-refresh .duty-stage{border-radius:20px;box-shadow:0 8px 28px #16345b07;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr)}
+.portal-refresh .duty-info{padding:36px;gap:28px;border-top:4px solid #4476ba}
+.portal-refresh .duty-info .eyebrow{font-size:10px;color:#526e96;line-height:1.7}
+.portal-refresh .duty-info h2{font-size:clamp(28px,2.7vw,38px);line-height:1.25;color:#203e68}
+.portal-refresh .duty-info h2 small{font-size:13px;color:#5a7499;margin-top:10px}
+.portal-refresh .office-line,.portal-refresh .office-line span{font-size:13px;color:#5b7290;line-height:1.8}
+.portal-refresh .service-label{font-size:10px;color:#617a9c}
+.portal-refresh .service-chips span{background:#f1f5fc;color:#4b668d;border-color:#e0e9f6;font-size:11px;padding:9px 11px;border-radius:8px}
+.portal-refresh .duty-poster{background:radial-gradient(ellipse at center,#d0def0,#edf3fb);padding:28px}
+.portal-refresh .duty-poster img{max-height:425px;border-radius:12px;box-shadow:0 12px 28px #18395824}
+.portal-refresh .duty-poster>span{font-size:11px;padding:11px 16px;bottom:35px}
+.portal-refresh .resolution{background:#fff;border-radius:13px;padding:20px;margin-top:22px}
+.portal-refresh .resolution summary{color:#4e6688;line-height:1.7}
+.portal-refresh .resolution p{color:#596e8c;font-size:13px}
+.portal-refresh .contact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.portal-refresh .contact-grid a{display:flex;flex-direction:column;align-items:flex-start;gap:13px;padding:26px;min-height:290px;background:#fff;border:1px solid var(--line);box-shadow:0 6px 22px #16345b06;border-radius:18px;overflow-wrap:anywhere}
+.portal-refresh .contact-grid .contact-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#eaf1fc;color:#2b5799;font:700 24px Manrope;letter-spacing:0}
+.portal-refresh .contact-grid a>span:not(.contact-icon){font-size:10px;color:#526e96;letter-spacing:1px}
+.portal-refresh .contact-grid strong{font-size:16px;line-height:1.65;margin:0;color:#243f65}
+.portal-refresh .contact-grid small{font-size:12px;line-height:1.6;color:#627795}
+.portal-refresh .contact-grid a>span.contact-action{display:flex;justify-content:space-between;gap:15px;width:100%;border-top:1px solid var(--line);padding-top:17px;margin-top:auto;font-size:12px;letter-spacing:0;color:#285394;font-weight:700}
+.portal-refresh .contact-grid a:hover{border-color:#9db7da;box-shadow:0 12px 28px #16345b10}
+.portal-refresh .contact-office{background:radial-gradient(ellipse at right,#3c64914d,transparent),#182f56;border-radius:22px;padding:38px}
+.portal-refresh .contact-office .eyebrow{font-size:10px;color:#bdcfea;line-height:1.7}
+.portal-refresh .contact-office p{color:#cad8ed;font-size:14px}
+.portal-refresh .office-hours{background:#ffffff08;border:1px solid #ffffff22;border-radius:16px;padding:26px;align-self:center}
+.portal-refresh .office-hours>span,.portal-refresh .office-hours strong small{color:#bfd3ef}
+.portal-refresh .install-strip{background:#eaf0fa;border:1px solid #dce6f5;border-radius:14px;padding:20px 24px;font-size:13px;gap:20px}
+.portal-refresh .install-strip small{font-size:12px;color:#617695}
+.portal-refresh .portal-footer{font-size:11px;color:#647895;padding-top:28px}
+@media(max-width:1150px){.portal-refresh .hero-mark{width:180px;height:180px}.portal-refresh .hero-mark>span{font-size:70px}.portal-refresh .stats>div{padding:18px}.portal-refresh .stats small{display:block}.portal-refresh .contact-grid{grid-template-columns:1fr}.portal-refresh .contact-grid a{min-height:0;display:grid;grid-template-columns:46px 1fr;column-gap:20px}.portal-refresh .contact-icon{grid-row:1/4}.portal-refresh .contact-grid strong,.portal-refresh .contact-grid small,.portal-refresh .contact-grid .contact-action{grid-column:2}.portal-refresh .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.portal-refresh .site-header nav a{padding:14px 8px;border-radius:10px 10px 0 0;font-size:11px}.portal-refresh .site-header nav a[aria-current]{box-shadow:inset 0 -3px #91bfff}.portal-refresh .project-hero{padding:30px;min-height:0}.portal-refresh .page-heading{padding:28px}.portal-refresh .schedule-heading{align-items:flex-start;flex-direction:column}.portal-refresh .duty-info{padding:27px}.portal-refresh .duty-stage{grid-template-columns:minmax(0,1fr) minmax(230px,.8fr)}}
+@media(max-width:600px){.portal-refresh .page-top{height:62px;font-size:10px;margin-bottom:20px}.portal-refresh .location-tag{font-size:7px;padding:7px;letter-spacing:.6px}.portal-refresh .site-header nav a{font-size:10px;gap:5px}.portal-refresh .project-hero,.portal-refresh .page-heading{padding:26px 23px;border-radius:17px}.portal-refresh .hero-mark{display:none}.portal-refresh .hero-label{font-size:8px}.portal-refresh .project-hero h1{font-size:34px}.portal-refresh .stats{gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}.portal-refresh .stats>div{padding:16px;min-width:0}.portal-refresh .stats span{font-size:11px}.portal-refresh .stats small{font-size:10px;line-height:1.5}.portal-refresh .stats strong{font-size:30px}.portal-refresh .toolbar{flex-direction:column;padding:10px}.portal-refresh .filters{justify-content:flex-start}.portal-refresh .filters button{font-size:11px;padding:10px}.portal-refresh .search{max-width:none;width:100%}.portal-refresh .grid{grid-template-columns:minmax(0,1fr)}.portal-refresh .day-switch{gap:6px;grid-template-columns:repeat(4,minmax(0,1fr))}.portal-refresh .day-switch button{min-height:68px;padding:12px 4px}.portal-refresh .day-switch button>span{font-size:11px}.portal-refresh .duty-stage{grid-template-columns:minmax(0,1fr)}.portal-refresh .duty-poster img{max-height:380px}.portal-refresh .contact-grid a{padding:22px;gap:12px}.portal-refresh .contact-grid strong{font-size:15px}.portal-refresh .contact-office{padding:26px}.portal-refresh .office-hours{width:100%;padding:22px}.portal-refresh .install-strip{padding:18px;flex-wrap:wrap}.portal-refresh .portal-footer{font-size:10px}.portal-refresh .empty h3{font-size:18px}}
+
+
+/* Compact public project cards and an image gallery inside See More. */
+.project-photo-badge{
+ position:absolute;bottom:11px;right:11px;z-index:2;
+ background:rgba(12,32,60,.85);border:1px solid rgba(255,255,255,.25);
+ padding:7px 11px;color:white;font-weight:700;font-size:11px;border-radius:18px;
+}
+#detail .project-detail-gallery{margin:18px 0 22px}
+#detail .project-gallery-cover{overflow:hidden;border-radius:14px;background:#e5edf8;border:1px solid #dae5f5;display:grid;place-items:center}
+#detail .project-gallery-cover img{width:100%;max-height:380px;object-fit:contain;display:block}
+#detail .project-gallery-thumbs{display:flex;gap:9px;overflow-x:auto;padding:10px 1px 4px}
+#detail .project-gallery-thumb{flex:0 0 76px;width:76px;height:68px;border-radius:10px;border:2px solid transparent;overflow:hidden;padding:0;background:#edf3fc}
+#detail .project-gallery-thumb.selected{border-color:#2b63bf;box-shadow:0 0 0 2px #deebff}
+#detail .project-gallery-thumb img{width:100%;height:100%;object-fit:cover}
+#detail .project-gallery-count{font-size:11px;color:#6a7f9e;margin:4px 0}
+@media(max-width:600px){
+ #detail .project-gallery-thumb{flex-basis:65px;width:65px;height:60px}
+}
+
+
+/* Accessible large-photo viewer, independent of the project's See More dialog. */
+#detail .project-gallery-cover{
+ width:100%;padding:0;position:relative;cursor:zoom-in;color:inherit;
+}
+#detail .project-gallery-cover img{max-height:400px}
+#detail .photo-zoom-label{
+ position:absolute;right:12px;bottom:12px;border-radius:9px;
+ background:rgba(15,35,65,.83);padding:9px 12px;color:#fff;
+ font-size:12px;font-weight:700;pointer-events:none;
+}
+#image-lightbox{
+ width:min(1180px,calc(100vw - 28px));max-width:1180px;
+ max-height:calc(100dvh - 30px);height:min(850px,calc(100dvh - 30px));
+ border:1px solid #365178;border-radius:18px;overflow:hidden;
+ padding:0;background:#0d1728;color:#f4f7ff;
+ box-shadow:0 35px 100px #0008;
+}
+#image-lightbox::backdrop{background:rgba(0,9,22,.86);backdrop-filter:blur(6px)}
+#image-lightbox .lightbox-toolbar{display:flex;align-items:center;gap:12px;min-height:66px;padding:12px 22px;border-bottom:1px solid #ffffff22}
+#image-lightbox .lightbox-toolbar strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#image-lightbox #lightbox-counter{margin-left:auto;white-space:nowrap;color:#bbcbe2;font-size:13px;font-variant-numeric:tabular-nums}
+#image-lightbox #lightbox-close{width:38px;height:38px;display:grid;place-items:center;border:1px solid #ffffff33;background:#ffffff12;color:#fff;border-radius:10px;font-size:16px}
+#image-lightbox .lightbox-view{min-height:0;height:calc(100% - 118px);display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;gap:12px;padding:12px 16px}
+#image-lightbox .lightbox-view img{display:block;max-height:100%;max-width:100%;height:auto;width:auto;object-fit:contain;justify-self:center}
+#image-lightbox .lightbox-arrow{height:52px;width:46px;border:1px solid #ffffff33;border-radius:12px;color:#fff;background:#ffffff18;font-size:38px;line-height:1}
+#image-lightbox .lightbox-arrow:disabled{opacity:.24;cursor:default}
+#image-lightbox .lightbox-tip{height:45px;margin:0;text-align:center;padding:10px 12px;color:#b1c4e0;font-size:12px}
+@media(max-width:600px){
+ #image-lightbox{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px);width:calc(100vw - 12px);border-radius:12px}
+ #image-lightbox .lightbox-toolbar{padding:8px 12px}
+ #image-lightbox .lightbox-view{grid-template-columns:30px minmax(0,1fr) 30px;gap:3px;padding:7px}
+ #image-lightbox .lightbox-arrow{width:30px;height:44px;font-size:27px}
+ #image-lightbox .lightbox-tip{font-size:10px}
+}
+
+
+/* Accessible, larger text across SK VASRA project cards and See More dialog. */
+.portal-refresh .cardbody .category{font-size:12px;line-height:1.5;letter-spacing:.5px;text-transform:uppercase;font-weight:800;color:#315a91}
+.portal-refresh .cardbody h3{font-size:clamp(19px,1.5vw,23px);line-height:1.3;font-weight:800;letter-spacing:-.4px}
+.portal-refresh .cardbody p{font-size:14px;line-height:1.65}
+.portal-refresh #detail{
+ width:min(720px,calc(100vw - 30px));max-width:720px;
+ max-height:min(90dvh,950px);overflow-y:auto;
+ padding:38px 42px 36px;border-radius:20px;
+ box-shadow:0 28px 85px rgba(10,32,65,.26);
+}
+.portal-refresh #detail #detailbody>.eyebrow{
+ display:block;font-size:14px;line-height:1.4;letter-spacing:.6px;
+ text-transform:uppercase;color:#32609e;font-weight:800;margin-bottom:8px;
+}
+.portal-refresh #detail #detailbody>h2{
+ font-family:Manrope,system-ui,sans-serif;
+ font-size:clamp(28px,3vw,38px);font-weight:800;
+ letter-spacing:-.9px;line-height:1.2;
+ color:#172f52;margin:6px 30px 20px 0;overflow-wrap:anywhere;
+}
+.portal-refresh #detail #detailbody>p{
+ font-size:15px;line-height:1.75;color:#385170;margin:15px 0;
+ overflow-wrap:anywhere;
+}
+.portal-refresh #detail #detailbody>p>b{color:#1b3f73;font-weight:800}
+.portal-refresh #detail #detailbody>h3{
+ font-size:19px;line-height:1.4;font-weight:800;color:#1a385f;margin:26px 0 10px;
+}
+.portal-refresh #detail .project-gallery-count{font-size:13px;line-height:1.5;color:#4b678c}
+.portal-refresh #detail .project-gallery-thumb{flex-basis:92px;width:92px;height:78px}
+.portal-refresh #detail .project-gallery-cover img{max-height:450px}
+.portal-refresh #detail .trans-picker{font-size:13px}
+.portal-refresh #detail .trans-report p,.portal-refresh #detail .trans-empty{font-size:14px;line-height:1.65}
+@media(max-width:650px){
+ .portal-refresh #detail{width:calc(100vw - 14px);max-height:94dvh;padding:28px 20px;border-radius:15px}
+ .portal-refresh #detail #detailbody>.eyebrow{font-size:12px}
+ .portal-refresh #detail #detailbody>h2{font-size:clamp(26px,7vw,32px)}
+ .portal-refresh #detail #detailbody>p{font-size:14px}
+ .portal-refresh #detail .project-gallery-thumb{flex-basis:72px;width:72px;height:64px}
+}
+
+
+/* Project publication date: readable across project cards and See More. */
+.portal-refresh .cardbottom .card-publish-date{
+ display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+ font-size:12px;line-height:1.55;color:#526c91;
+ min-width:0;max-width:100%;
+}
+.portal-refresh .cardbottom .card-publish-date strong{font-weight:800;color:#274c7b}
+.portal-refresh .cardbottom .card-publish-date>span[aria-hidden]{color:#2d63ab;font-size:15px}
+.portal-refresh #detail .detail-publication-meta{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+ margin:24px 0 12px;padding:15px 17px;background:#edf4ff;border:1px solid #d4e5fc;
+ border-radius:12px;font-size:13px;line-height:1.6;color:#3f6088;
+}
+.portal-refresh #detail .detail-publication-meta strong{font-size:14px;color:#194779}
+@media(max-width:650px){
+ .portal-refresh .cardbottom .card-publish-date{flex:1 1 100%}
+ .portal-refresh #detail .detail-publication-meta{align-items:flex-start;flex-direction:column;gap:3px}
+}
+
+/* Four-column public catalogue, with the FULL original cover visible (no crop).
+   Narrower card width, not a sliced image, is the intended compact layout. */
+.portal-refresh #grid{gap:14px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.portal-refresh #grid .card{min-width:0;border-radius:13px;display:flex;flex-direction:column}
+.portal-refresh #grid .cover{
+ width:100%;height:auto;min-height:0;aspect-ratio:16 / 9;
+ position:relative;background:#e5edfa;isolation:isolate;
+}
+.portal-refresh #grid .cover::after{display:none}
+.portal-refresh #grid .cover .project-placeholder{
+ position:absolute;inset:0;display:grid;place-items:center;font-size:14px;
+ font-weight:850;letter-spacing:.15em;color:#5c7dab;
+}
+.portal-refresh #grid .cover .project-photo{
+ position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:contain;object-position:center;
+}
+.portal-refresh #grid .cover .project-photo[hidden]{display:none!important}
+.portal-refresh #grid .cover .badge{z-index:2}
+.portal-refresh #grid .cover .project-photo-badge{bottom:8px;right:8px;font-size:10px;padding:5px 9px}
+.portal-refresh #grid .cardbody{padding:15px;display:flex;flex-direction:column;flex:1;min-width:0}
+.portal-refresh #grid .cardbody .category{font-size:11px}
+.portal-refresh #grid .cardbody h3{font-size:17px;line-height:1.32;margin:6px 0;overflow-wrap:anywhere}
+.portal-refresh #grid .cardbody>p{font-size:12px;line-height:1.5;margin:4px 0 6px;min-height:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* A consistent bottom section anchors progress, publication and CTA across
+   every card in the same row, regardless of title/summary wrapping. */
+.portal-refresh #grid .project-card-bottom{margin-top:auto;display:flex;flex-direction:column;gap:0;min-width:0}
+.portal-refresh #grid .project-card-progress{display:flex;flex-direction:column;min-width:0}
+.portal-refresh #grid .progresslabel{margin-top:0;padding-top:12px;font-size:11px}
+.portal-refresh #grid .track{margin-top:5px}
+.portal-refresh #grid .cardbottom{display:flex;flex-direction:column;align-items:stretch;gap:11px;margin-top:13px;
+ padding-top:12px;border-top:1px solid #e5ebf4;min-width:0}
+.portal-refresh #grid .cardbottom .card-publish-date{display:flex;align-items:center;gap:7px;min-width:0;
+ width:100%;min-height:24px;flex-wrap:nowrap;color:#4e6688;font-size:11px;line-height:1.35}
+.portal-refresh #grid .cardbottom .card-publish-date>svg{width:16px;height:16px;flex:none;color:#4775b0}
+.portal-refresh #grid .project-card-published-at{flex:1;min-width:0;display:block}
+.portal-refresh #grid .project-card-published-at time{display:flex;gap:5px;align-items:center;
+ white-space:nowrap;overflow:hidden;font-size:11px;font-weight:650;letter-spacing:-.18px;
+ font-variant-numeric:tabular-nums}
+.portal-refresh #grid .project-card-date-day,.portal-refresh #grid .project-card-date-time{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.portal-refresh #grid .project-card-date-day{flex:none}
+.portal-refresh #grid .project-card-date-time{flex:1}
+.portal-refresh #grid .project-card-date-separator{flex:none;color:#8ba2c2}
+.portal-refresh #grid .project-see-more{display:flex;align-items:center;justify-content:space-between;gap:12px;
+ width:100%;min-height:42px;padding:7px 9px 7px 13px;background:#eaf2ff;color:#1d4e8c;
+ border:1px solid #d2e3fa;border-radius:10px;font-size:12px;font-weight:800;text-align:left;
+ transition:background-color .18s,border-color .18s,box-shadow .18s,transform .18s}
+.portal-refresh #grid .project-see-more:hover{background:#d9eaff;border-color:#9cc4f6;
+ box-shadow:0 3px 10px #1e559525;transform:translateY(-1px)}
+.portal-refresh #grid .project-see-more:focus-visible{outline:3px solid #84b5fb;outline-offset:2px}
+.portal-refresh #grid .project-see-more-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;
+ border-radius:8px;background:#d1e4ff;color:#265a9b}
+.portal-refresh #grid .project-see-more-icon svg{width:16px;height:16px}
+
+@media(max-width:1250px){
+ .portal-refresh #grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:950px){
+ .portal-refresh #grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ .portal-refresh #grid{grid-template-columns:minmax(0,1fr);gap:12px}
+ .portal-refresh #grid .cardbody{padding:13px}
+ .portal-refresh #grid .cardbody h3{font-size:16px}
+ .portal-refresh #grid .project-card-published-at time{font-size:12px;gap:6px}
+}
+
+/* Modern duty photos are authoritative after a managed roster is published. */
+.portal-refresh .duty-stage #poster-link[hidden]{display:none!important}
+.portal-refresh .duty-stage #duty-officer-portraits[hidden]{display:none!important}
+.portal-refresh .duty-officer-portraits{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;align-items:start;
+ padding:22px;min-width:0;background:linear-gradient(135deg,#e5f0ff,#f6faff);
+ border:1px solid #d1e2f6;border-radius:17px
+}
+.portal-refresh .duty-profile{display:flex;flex-direction:column;align-items:center;text-align:center;
+ padding:15px 12px;border:1px solid #d5e3f3;border-radius:14px;background:#fff;min-width:0}
+.portal-refresh .duty-profile-frame{width:min(170px,100%);aspect-ratio:4/5;display:grid;place-items:center;
+ position:relative;overflow:hidden;border:1px solid #d4e0f0;border-radius:13px;background:#dcecff;color:#2b5a8a}
+.portal-refresh .duty-profile-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.portal-refresh .duty-profile-fallback{font-size:34px;font-weight:850;letter-spacing:1.5px}
+.portal-refresh .duty-profile strong{font-size:14px;color:#1b4273;margin:13px 0 4px;overflow-wrap:anywhere}
+.portal-refresh .duty-profile small{font-size:11px;color:#58749a}
+.portal-refresh .duty-profile-empty{color:#496b93;text-align:center;align-self:center;font-size:13px;line-height:1.6}
+@media(max-width:650px){
+ .portal-refresh .duty-officer-portraits{padding:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .portal-refresh .duty-profile{padding:10px}
+ .portal-refresh .duty-profile-frame{max-width:130px}
+}
+
+/* Public project image viewer: responsive laptop height + browser zoom. */
+#image-lightbox[open]{
+ box-sizing:border-box!important;position:fixed!important;inset:0!important;margin:auto!important;
+ display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;
+ width:min(1180px,calc(100vw - 24px))!important;
+ height:min(850px,calc(100dvh - 24px))!important;max-height:calc(100dvh - 24px)!important;
+ max-width:calc(100vw - 24px)!important;padding:0!important;overflow:hidden!important;
+}
+#image-lightbox[open] .lightbox-toolbar,#image-lightbox[open] .lightbox-tip{box-sizing:border-box;min-height:0!important}
+#image-lightbox[open] .lightbox-view{
+ box-sizing:border-box!important;height:auto!important;min-height:0!important;
+ max-height:100%!important;overflow:hidden!important;
+ grid-template-columns:44px minmax(0,1fr) 44px!important;
+}
+#image-lightbox[open] .lightbox-view img{
+ display:block!important;max-width:100%!important;max-height:100%!important;
+ width:auto!important;height:auto!important;object-fit:contain!important;
+ min-height:0!important;
+}
+@media(max-height:650px), (max-width:650px){
+ #image-lightbox[open]{height:calc(100dvh - 12px)!important;max-height:calc(100dvh - 12px)!important}
+ #image-lightbox[open] .lightbox-toolbar{min-height:46px!important;padding:6px 10px!important}
+ #image-lightbox[open] .lightbox-view{grid-template-columns:32px minmax(0,1fr) 32px!important;gap:4px!important;padding:5px!important}
+ #image-lightbox[open] .lightbox-arrow{width:32px!important;height:40px!important}
+ #image-lightbox[open] .lightbox-tip{padding:5px 8px!important;margin:0!important;font-size:10px!important}
+}
+
+/* Fill the managed SK Duty image panel like the original duty poster.
+   The photograph is always visible in full (contain), with a softly
+   blurred duplicate filling the leftover sides instead of empty whitespace. */
+.portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"]{
+ display:block;position:relative;align-self:stretch;min-height:390px;
+ width:100%;height:100%;padding:0;gap:0;
+ background:#d5e6f8;border:0;border-left:1px solid #c8dbef;
+ border-radius:0;overflow:hidden
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile{
+ display:block;position:relative;min-height:390px;
+ width:100%;height:100%;padding:0;margin:0;border:0;border-radius:0;
+ overflow:hidden;background:#cbdff6
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile-frame{
+ position:absolute;inset:0;display:block;max-width:none;
+ width:100%;height:100%;aspect-ratio:auto;border:0;border-radius:0;
+ overflow:hidden;background:linear-gradient(125deg,#bfd6ee,#e3eef9)
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile-frame img{
+ position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;
+ border:0;border-radius:0
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] img.duty-photo-backdrop{
+ object-fit:cover;object-position:center 28%;z-index:1;
+ filter:blur(18px) brightness(.83);transform:scale(1.12);
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] img.duty-photo-primary{
+ object-fit:contain;object-position:center center;z-index:2;
+ filter:drop-shadow(0 2px 10px #0c244c2c)
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile:after{
+ content:"";position:absolute;z-index:3;pointer-events:none;inset:55% 0 0;
+ background:linear-gradient(0deg,#071d3ac7 0%,#071d3a35 45%,transparent 100%);
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile strong,
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile small{
+ position:absolute;left:17px;right:17px;z-index:4;display:block;
+ color:white;text-align:center;margin:0;text-shadow:0 2px 8px #071d3ab8;
+ overflow-wrap:anywhere
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile strong{
+ bottom:41px;font:800 clamp(16px,1.8vw,20px)/1.4 Manrope,sans-serif
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile small{
+ bottom:21px;font:600 12px/1.35 'DM Sans',sans-serif;color:#e6f2ff
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile-fallback{
+ position:absolute;left:0;right:0;top:45%;z-index:1;color:#244f89
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"] img[hidden]{display:none!important}
+/* Multiple assigned officers keep equal, full-height image cards. */
+.portal-refresh #duty-officer-portraits[data-layout="group"]{align-items:stretch;padding:12px}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile{
+ min-height:255px;padding:10px;border-radius:12px
+}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile-frame{
+ width:100%;height:195px;max-width:none;aspect-ratio:auto
+}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-photo-primary{
+ object-fit:contain;z-index:2
+}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-photo-backdrop{
+ object-fit:cover;filter:blur(12px);transform:scale(1.1);opacity:.65
+}
+@media(max-width:900px){
+ .portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"]{min-height:340px}
+ .portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile{min-height:340px}
+}
+@media(max-width:650px){
+ .portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"]{min-height:315px;border-left:0;border-top:1px solid #c8dbef}
+ .portal-refresh #duty-officer-portraits[data-layout="single"] .duty-profile{min-height:315px}
+ .portal-refresh #duty-officer-portraits[data-layout="group"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile-frame{height:160px;max-width:none}
+ .portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile{min-height:228px}
+}
+@media(max-width:390px){
+ .portal-refresh #duty-officer-portraits[data-layout="group"]{grid-template-columns:minmax(0,1fr)}
+}
+
+
+/* When the SK has not uploaded a dedicated duty portrait, do not stretch the
+   initials across a giant blank poster. The organizational portrait remains
+   independent and is never silently substituted for an SK Duty picture. */
+.portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"][data-photo-state="missing"]{
+ min-height:0;height:auto;padding:16px;background:#f1f6fd;border-radius:0
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile{
+ position:relative;display:flex;flex-direction:column;justify-content:center;
+ align-items:center;gap:7px;width:100%;height:auto;min-height:0;
+ padding:20px 12px;background:#fff;border:1px solid #d7e4f4;border-radius:15px
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile-frame{
+ position:relative;inset:auto;display:grid;place-items:center;
+ width:90px;height:106px;min-height:0;max-width:100%;aspect-ratio:90/106;
+ background:#dbeaf9;border:1px solid #c8d9ee;border-radius:13px
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile-fallback{
+ position:static;inset:auto;display:block;color:#244f89;font-size:27px;line-height:1.2
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile:after{display:none}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile strong,
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile small{
+ position:static;inset:auto;display:block;margin:0;text-shadow:none;
+ text-align:center;color:#214674
+}
+.portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile small{
+ color:#58749a
+}
+.portal-refresh #duty-officer-portraits .duty-photo-notice{
+ display:block;margin:6px auto 0;font:500 12px/1.5 'DM Sans',sans-serif;
+ color:#5d7596;text-align:center;max-width:230px
+}
+.portal-refresh #duty-officer-portraits .duty-photo-notice[hidden]{display:none!important}
+@media(max-width:650px){
+ .portal-refresh .duty-stage #duty-officer-portraits[data-layout="single"][data-photo-state="missing"]{
+  min-height:0;padding:12px;border-top:1px solid #c8dbef
+ }
+ .portal-refresh #duty-officer-portraits[data-layout="single"][data-photo-state="missing"] .duty-profile{
+  min-height:0;padding:16px 12px
+ }
+}

@@ -9,7 +9,6 @@
 .site-header .sk-logo{width:44px;height:44px;background:white;border-radius:12px;padding:4px;display:flex;align-items:center;justify-content:center}.site-header .sk-logo img{position:static;width:100%;height:100%;max-width:100%;object-fit:contain}.officer-create{display:flex;gap:16px;align-items:flex-end;background:white;padding:20px;border:1px solid var(--line);border-radius:12px;margin:20px 0}.officer-create label{flex:1;margin:0}.officer-create button{margin:0}.credential-note{background:#fff8e8;border:1px solid #eddaad;padding:20px;border-radius:12px;font-size:12px}.credential-note code{font-size:14px;overflow-wrap:anywhere}.credential-note .secondary{display:block;margin-top:15px}@media(max-width:650px){.officer-create{flex-direction:column;align-items:stretch}.site-header .sk-logo{width:38px;height:38px}}
 .duty-info h2>span{font-size:inherit;color:inherit;font-weight:inherit}.day-switch button>span{font-size:12px}.day-switch button small{font-size:9px}.day-switch button.selected>span{color:#fff}.duty-info h2 small{font-size:12px}.office-line{font-size:12px}.office-line span{font-size:11px}.service-chips span{font-size:10px}.page-heading p{font-size:13px}.resolution summary{font-size:11px}@media(max-width:600px){.day-switch button>span{font-size:9px}.day-switch button small{font-size:8px}.page-heading p{font-size:12px}.resolution summary{font-size:10px}}
 
-
 /* Duty photo modal and Philippine-time office schedule */
 .duty-poster{border:0;width:100%;font:inherit;text-align:inherit;cursor:zoom-in}
 .schedule-pill.is-open{background:#e7f6ee;color:#14633d;border:1px solid #b9e5cb}
@@ -43,3 +42,96 @@
 .day-switch button.today.selected>span,.day-switch button.today.selected small{color:white}
 .day-switch button.today i{display:block!important;width:7px;height:7px;right:9px;top:8px;background:#22c55e}
 .day-switch button.today.selected i{background:#bbf7d0}
+
+
+/* Public SK transparency & monthly reports */
+.transparency-main{max-width:1500px}
+.trans-hero{border-radius:18px;background:linear-gradient(125deg,#142b53,#284e88);color:white;padding:42px 48px;margin:8px 0 24px}
+.trans-hero .eyebrow{color:#bcd5ff;letter-spacing:1.6px;font-size:10px}
+.trans-hero h1{font-size:clamp(30px,3vw,47px);line-height:1.15;letter-spacing:-1.3px;margin:16px 0}
+.trans-hero h1 em{font-style:normal;color:#a7c4ff}
+.trans-hero p{color:#dbe5f6;line-height:1.7;font-size:14px;max-width:710px}
+.trans-section{border:1px solid #e0e6ef;background:#fff;border-radius:16px;padding:30px;margin:0 0 22px}
+.trans-section .eyebrow{font-size:10px;letter-spacing:1.3px;color:#7186a9;font-weight:700}
+.trans-section h2{font-size:27px;letter-spacing:-.7px;margin:9px 0 13px;color:#162b4e}
+.trans-section h3{font-size:17px;color:#1d3154;margin:26px 0 14px}
+.trans-section p{font-size:14px;line-height:1.85;color:#61718b}
+.trans-legal a{color:#2452ac;text-decoration:underline;text-underline-offset:3px}
+.trans-sectionhead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.trans-sectionhead p{margin-top:0}
+.trans-picker{color:#5d6f8c;font-weight:650;font-size:12px;display:flex;gap:10px;align-items:center;white-space:nowrap}
+.trans-picker select{padding:10px 14px;background:#f9fbff;border:1px solid #d5e0f0;border-radius:9px;font:inherit;color:#203658;min-width:130px}
+.trans-roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:18px}
+.trans-person{padding:22px 15px;border:1px solid #e1e8f1;border-radius:12px;text-align:center;background:#f9fbff;display:flex;flex-direction:column;align-items:center;gap:6px}
+.trans-avatar{display:grid;place-items:center;width:50px;height:50px;border-radius:50%;background:#dce8ff;color:#204780;font-weight:800;font-size:21px}
+.trans-person strong{color:#1d3353;font-size:14px;overflow-wrap:anywhere}
+.trans-person small{color:#6e7f96}
+.trans-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:16px 0 18px}
+.trans-stats article{padding:22px;border:1px solid #dfe8f3;border-radius:12px;background:#f7faff;display:flex;flex-direction:column;gap:9px}
+.trans-stats article span{color:#526788;font-size:12px;font-weight:600}
+.trans-stats article strong{font-size:clamp(18px,2vw,26px);overflow-wrap:anywhere;color:#1b3d73}
+.trans-stats article small{font-size:11px;color:#7184a2;line-height:1.55}
+.trans-note{padding:15px 18px;border:1px solid #e0e7f2;border-radius:10px;color:#60718b;background:#fafcff;font-size:12px;line-height:1.6}
+.trans-report-list{display:flex;flex-direction:column;gap:10px;margin-top:15px}
+.trans-report{padding:18px 20px;background:#fafcff;border:1px solid #e1e8f3;border-radius:11px}
+.trans-report-top,.trans-spending{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.trans-report strong{font-size:14px;color:#18375f}
+.trans-report-top span,.trans-report small{font-size:11px;color:#7889a3}
+.trans-report p{white-space:pre-wrap;margin:12px 0;line-height:1.65}
+.trans-meta{font-size:12px;color:#667992}
+.trans-spending small{display:block;margin-top:5px}
+.trans-empty{background:#f8fbff;border:1px dashed #cfdaea;border-radius:12px;color:#7586a0;padding:28px;text-align:center;font-size:13px;line-height:1.7}
+.trans-editform{padding:20px;border:1px solid #dce6f3;background:#fff;border-radius:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:16px 0}
+.trans-editform label{font-size:12px;color:#4c6385;display:flex;flex-direction:column;gap:6px}
+.trans-editform input,.trans-editform select,.trans-editform textarea{width:100%;padding:12px;border:1px solid #d7e0ed;border-radius:8px;font:inherit;font-size:13px;color:#203353;background:#fff}
+.trans-editform label.wide{grid-column:1/-1}
+.trans-editform label.checkline{flex-direction:row;align-items:center;gap:9px}
+.trans-editform .checkline input{width:auto}
+.trans-editform button{justify-self:start;align-self:end}
+@media(max-width:800px){.trans-hero{padding:29px 23px}.trans-section{padding:23px 19px}.trans-stats{grid-template-columns:1fr}.trans-sectionhead{flex-direction:column}.trans-editform{grid-template-columns:1fr}.trans-report-top,.trans-spending{align-items:flex-start}}
+
+.trans-editform [hidden]{display:none!important}
+.trans-report-list .secondary{margin-top:7px}
+
+.trans-org-group{margin-top:20px}.trans-org-group:first-child{margin-top:4px}.trans-org-group h3{font-size:13px;letter-spacing:.3px;color:#4d678e;margin:0 0 12px}.trans-org-group>.trans-roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,210px));gap:12px}#officials-grid{display:block}.trans-org-group{width:100%}
+
+/* Five public destinations wrap comfortably on narrow screens. */
+@media(max-width:600px){.site-header nav{flex-wrap:wrap}.site-header nav a{min-width:0;flex-basis:28%}}
+
+/* SK Full Disclosure Policy Board — 5 public Drive disclosure categories. */
+.sk-fdp-board{position:relative;isolation:isolate;border-color:#d1e1f5!important;
+ background:linear-gradient(137deg,#ffffff 55%,#f2f7ff 100%)!important;padding:27px!important;overflow:hidden}
+.sk-fdp-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}
+.sk-fdp-board h2{font:800 clamp(24px,3vw,34px)/1.22 Manrope,sans-serif;letter-spacing:-1px;color:#163a69;margin:9px 0 12px}
+.sk-fdp-board h2 em{font-style:normal;color:#3d79c7}
+.sk-fdp-heading p{font-size:13px;line-height:1.7;max-width:720px;margin:0;color:#607d9f}
+.sk-fdp-heading-mark{display:inline-flex;align-items:center;white-space:nowrap;gap:7px;border:1px solid #d4e5f9;
+ background:#eaf3ff;color:#245a99;padding:9px 12px;border-radius:999px;font:800 11px 'DM Sans',sans-serif}
+.sk-fdp-heading-mark svg{width:16px;height:16px}
+.sk-fdp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.sk-fdp-card{display:flex;flex-direction:column;min-width:0;min-height:240px;padding:20px;border:1px solid #dce7f6;
+ border-radius:15px;background:#fff;box-shadow:0 4px 16px #113d6e0b;color:inherit;text-decoration:none}
+.sk-fdp-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:19px}
+.sk-fdp-card-icon{width:43px;height:43px;display:grid;place-items:center;background:#eaf2ff;border-radius:12px;color:#2869bd}
+.sk-fdp-card-icon svg{width:23px;height:23px}
+.sk-fdp-card-number{font:800 10px/1.3 'DM Sans',sans-serif;letter-spacing:1px;color:#8fa4c0}
+.sk-fdp-card-body{flex:1;min-width:0}
+.sk-fdp-card-year{display:inline-block;font:800 10px 'DM Sans',sans-serif;letter-spacing:.8px;color:#3b6aab;margin-bottom:4px}
+.sk-fdp-board .sk-fdp-card h3{font:800 15px/1.38 Manrope,sans-serif;letter-spacing:-.2px;color:#173d6d;margin:5px 0 9px}
+.sk-fdp-board .sk-fdp-card p{font:400 11px/1.65 'DM Sans',sans-serif;color:#6983a5;margin:0}
+.sk-fdp-card-action{margin-top:18px;padding-top:12px;border-top:1px solid #e8eef7;
+ display:flex;align-items:center;justify-content:space-between;gap:10px;font:750 11px/1.5 'DM Sans',sans-serif;color:#7d8faa}
+.sk-fdp-card-action svg{width:17px;height:17px;flex:none;opacity:.35}
+.sk-fdp-card-live{cursor:pointer;border-color:#b5d2f5;box-shadow:0 4px 20px #1b5bad13;transition:transform .18s,border-color .18s,box-shadow .18s}
+.sk-fdp-card-live .sk-fdp-card-action{color:#2865af}
+.sk-fdp-card-live .sk-fdp-card-action svg{opacity:1}
+.sk-fdp-card-live:hover{transform:translateY(-3px);border-color:#6b9fdc;box-shadow:0 15px 35px #204c811f}
+.sk-fdp-card-live:focus-visible{outline:3px solid #347dcf;outline-offset:3px}
+.sk-fdp-footer{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ margin-top:20px;padding-top:16px;border-top:1px solid #dce7f6}
+.sk-fdp-footer #sk-fdp-status{font:500 11px/1.65 'DM Sans',sans-serif;color:#5d7898;max-width:680px}
+.sk-fdp-source{font:800 10px/1.4 'DM Sans',sans-serif;color:#91a3b9}
+@media(max-width:1080px){.sk-fdp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:660px){.sk-fdp-board{padding:17px!important}.sk-fdp-heading{flex-direction:column}.sk-fdp-card{padding:16px;min-height:220px}.sk-fdp-grid{gap:10px}}
+@media(max-width:470px){.sk-fdp-grid{grid-template-columns:minmax(0,1fr)}.sk-fdp-card{min-height:170px}.sk-fdp-card-top{margin-bottom:10px}.sk-fdp-board h2{font-size:25px}.sk-fdp-heading-mark{white-space:normal}}
+@media(prefers-reduced-motion:reduce){.sk-fdp-card-live{transition:none}}

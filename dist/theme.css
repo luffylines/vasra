@@ -1,0 +1,818 @@
+/* SK VASRA shared dark theme. Light mode keeps the current visual design.
+   This stylesheet is deliberately scoped away from SK staff workspace. */
+.vasra-theme-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;
+ width:41px;height:41px;min-height:41px;padding:8px;color:#285b97;border:1px solid #c6d8ee;
+ background:#eaf2ff;border-radius:11px;cursor:pointer;transition:background .15s,color .15s}
+.vasra-theme-toggle svg{width:19px;height:19px;flex:none}
+.vasra-theme-toggle svg{display:block!important;width:19px;height:19px}
+.vasra-theme-toggle svg:nth-child(n+2){display:none!important}
+.vasra-theme-toggle:focus-visible{outline:3px solid #82b4ff;outline-offset:2px}
+body.portal-refresh .mobile-appbar .vasra-theme-toggle{display:none}
+body.kk-body .kk-auth-card{position:relative}
+body.kk-body .kk-auth-theme-button{position:absolute;right:16px;top:15px}
+body.kk-body .kk-reg-toolbar>.vasra-theme-toggle{margin-left:auto}
+@media(max-width:850px){
+ body.portal-refresh .mobile-appbar .vasra-theme-toggle{display:inline-flex;margin-left:auto;margin-right:3px}
+ body.portal-refresh .kk-page-actions>.vasra-theme-toggle{display:none}
+}
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body:not(.account-workspace){background:#0b1425;color:#e3eeff}
+html[data-theme="dark"] body:not(.account-workspace) .vasra-theme-toggle{
+ background:#1b3355;border-color:#3b5680;color:#e9f3ff}
+html[data-theme="dark"] body:not(.account-workspace) :is(a,button,input,textarea,select):focus-visible{
+ outline:3px solid #79b5ff;outline-offset:2px}
+/* Consistent dark contrast across all public routes: projects, duty, council,
+   awards, contacts, transparency and their existing cards. */
+html[data-theme="dark"] body.portal-refresh{--line:#304467;--muted:#afc4e2;color:#e2edff;background:#0c1629}
+html[data-theme="dark"] body.portal-refresh .portal-main{color:#e2edff}
+html[data-theme="dark"] body.portal-refresh .page-top{color:#b1c4e1;border-bottom-color:#334769}
+html[data-theme="dark"] body.portal-refresh .page-top b{color:#e5efff}
+html[data-theme="dark"] body.portal-refresh .location-tag{background:#1d3453;color:#bcd4f5}
+html[data-theme="dark"] body.portal-refresh :is(.page-heading,.schedule-heading,.section-heading,.duty-contact-heading) h1,
+html[data-theme="dark"] body.portal-refresh :is(.page-heading,.schedule-heading,.section-heading,.duty-contact-heading) h2,
+html[data-theme="dark"] body.portal-refresh :is(.home-panel,.home-section,.contact-grid,.projects-layout,.org-tier-heading) h2{
+ color:#ecf4ff}
+html[data-theme="dark"] body.portal-refresh :is(.home-panel,.home-feature,.home-card,.home-officer,.home-metric,
+ .project-card,.project-tile,.project-item,.card,.cardbody,.org-card,.trans-person,.trans-org-group,
+ .duty-info,.duty-profile,.duty-contact-card,.duty-contact-section,.contact-card,.contact-form-panel,
+ .contacts-form-panel,.contacts-location-panel,.contacts-overview,.trans-card,.transparency-card,
+ .award-card,.awards-card,.metric-card,.notice-panel,.detail-card,.news-card,.schedule-card,
+ .home-shortcut,.contact-item,.office-card,.disclosure-card,.trans-empty,.kk-dash-empty){
+ background-color:#15233b;color:#e3eeff;border-color:#304664}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.duty-profile,.home-shortcut){background-image:linear-gradient(145deg,#182b4b,#111e34)}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.trans-person,.duty-profile,.duty-info,.duty-contact-card,.contact-card,.home-card,.home-panel,.project-card,.cardbody,.award-card,.awards-card,.disclosure-card) :is(h2,h3,h4,strong,b){
+ color:#e4efff}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.trans-person,.duty-profile,.duty-info,.duty-contact-card,.contact-card,.home-panel,.project-card,.cardbody,.award-card,.awards-card,.disclosure-card) :is(p,small,time,span){
+ color:inherit}
+html[data-theme="dark"] body.portal-refresh :is(.org-card,.trans-person,.duty-profile,.duty-contact-card,.home-card,.project-card,.award-card,.awards-card) small{color:#b3c7e5}
+html[data-theme="dark"] body.portal-refresh :is(.day-switch button,.service-chips span,.duty-contact-detail,.org-source-note,.org-note,
+ .home-filter button,.filter-bar button,.tab-button,.tag-chip,.contacts-form-panel input,.contacts-form-panel textarea,
+ .contacts-form-panel select,.contact-form input,.contact-form textarea,.contact-form select){
+ background:#1c3151;color:#dbeaff;border-color:#385277}
+html[data-theme="dark"] body.portal-refresh .day-switch button.selected{background:#315da2}
+html[data-theme="dark"] body.portal-refresh .day-switch button.selected :is(span,small){color:#fff}
+html[data-theme="dark"] body.portal-refresh :is(input,select,textarea){
+ background:#182b45;color:#f0f6ff;border-color:#435d80}
+html[data-theme="dark"] body.portal-refresh :is(input,textarea)::placeholder{color:#9fb4d0}
+html[data-theme="dark"] body.portal-refresh :is(.home-panel,.home-section,.page-heading,.org-tier,.schedule-heading,.duty-contact-section) p{color:#b9cbe6}
+html[data-theme="dark"] body.portal-refresh .portal-footer{border-color:#304467;color:#a9c0dd}
+html[data-theme="dark"] body.portal-refresh .site-header{background:linear-gradient(165deg,#102648,#09172e)}
+html[data-theme="dark"] body.portal-refresh .mobile-appbar{background:#102748;color:#f1f6ff}
+html[data-theme="dark"] body.portal-refresh .mobile-menu-toggle{color:#e5efff;border-color:#4e698d}
+html[data-theme="dark"] body.portal-refresh .kk-top-login{background:#233f69;color:#f0f7ff;border-color:#466893}
+html[data-theme="dark"] body.portal-refresh .kk-member-entry{background:#1d3455;border-color:#466893;color:#eaf3ff}
+/* KK login, register, profile and verified member dashboard */
+html[data-theme="dark"] body.kk-body{--line:#344969;--ink:#e5efff;--muted:#aac0dd;background:#0c1527;color:#e8f1ff}
+html[data-theme="dark"] body.kk-body :is(.kk-registration,.kk-auth-layout,.kk-auth-card,.kk-profile-sheet,.kk-perks,
+ .kk-summary article,.kk-step,.kk-dashboard-panel,.kk-activity-card,.kk-settings-card,.kk-review>div,
+ .kk-dash-empty,.kk-dashboard-list,.kk-profile-preview,.kk-preview-card,.kk-dashboard,.kk-privacy,
+ .kk-readiness,.kk-id-drop,.kk-yn-field,.kk-auth-icon,.kk-register-prompt){
+ background-color:#15253f;color:#e9f3ff;border-color:#334d71}
+html[data-theme="dark"] body.kk-body :is(.kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-dashboard-panel,.kk-summary article,.kk-step,.kk-settings-card,.kk-activity-card){
+ background-image:none}
+html[data-theme="dark"] body.kk-body :is(h1,h2,h3,h4,.kk-register-brand strong,.kk-summary strong,.kk-dashboard-list strong,
+ .kk-form-section-head h3,.kk-label-title,.kk-auth-card h2,.kk-dashboard-head h1,.kk-profile-sheet h2,
+ .kk-settings-card h3,.kk-activity-card h3,.kk-yn-field legend){
+ color:#f0f6ff}
+html[data-theme="dark"] body.kk-body :is(.kk-tag,.kk-dashboard-head p,.kk-helper,.kk-form label,.kk-auth-card .kk-sub,
+ .kk-summary span,.kk-review span,.kk-review strong,.kk-dashboard-panel p,.kk-dashboard-list span,
+ .kk-register-brand small,.kk-form-section-head p,.kk-id-drop>span,.kk-id-drop>strong,.kk-footer,.kk-steps small){
+ color:#b5c9e6}
+html[data-theme="dark"] body.kk-body :is(input:not([type=checkbox]),select,textarea,
+ .kk-form input:not([type=checkbox]),.kk-form select,.kk-form textarea){
+ background:#0e2038;color:#edf5ff;border-color:#425f84}
+html[data-theme="dark"] body.kk-body :is(input,textarea)::placeholder{color:#93abcd}
+html[data-theme="dark"] body.kk-body .kk-form :is(input,textarea,select):focus{background:#192d4b}
+html[data-theme="dark"] body.kk-body :is(.kk-btn-quiet,.kk-register-home,.kk-password-toggle,.kk-register-action,
+ .kk-dashboard-tabs button,.kk-ph-number,.kk-ph-prefix,.kk-step span,.kk-id-chip-row span){
+ background:#203958;color:#e4f0ff;border-color:#48668c}
+html[data-theme="dark"] body.kk-body :is(.kk-btn,.kk-dashboard-tabs button[aria-current=page]){
+ border-color:#5585c7}
+html[data-theme="dark"] body.kk-body .kk-form .kk-ph-number input[name="phone"]{background:#0e2038}
+html[data-theme="dark"] body.kk-body .kk-auth-story{background:radial-gradient(circle at 100% 80%,#23477e,#0c1d38)}
+html[data-theme="dark"] body.kk-body .kk-auth-story :is(h1,h2,h3,.kk-story-brand strong){color:#fff}
+html[data-theme="dark"] body.kk-body .kk-auth-story :is(p,small){color:#cadfff}
+html[data-theme="dark"] body.kk-body .kk-feedback{background:#1b3556;color:#bfe1ff;border-color:#3e6597}
+html[data-theme="dark"] body.kk-body .kk-feedback[data-kind="error"],
+html[data-theme="dark"] body.kk-body .kk-readiness[data-status="unavailable"],
+html[data-theme="dark"] body.kk-body .kk-load-error{background:#3b202a;color:#ffd0cc;border-color:#95525b}
+html[data-theme="dark"] body.kk-body .kk-feedback[data-kind="success"]{background:#173f36;color:#b3efce;border-color:#287855}
+html[data-theme="dark"] body.kk-body .kk-step.active{background:#23446f;border-color:#5385c1}
+html[data-theme="dark"] body.kk-body .kk-step.active :is(strong,small){color:#f0f7ff}
+html[data-theme="dark"] body.kk-body .kk-dashboard-panel[hidden],
+html[data-theme="dark"] body.kk-body .kk-feedback[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){.vasra-theme-toggle{transition:none}}
+
+
+/* Avoid overlapping Home and Appearance actions on compact KK login. */
+@media(max-width:760px){
+ body.kk-auth-page .kk-mobile-home{margin-right:51px}
+ body.kk-auth-page .kk-auth-theme-button{right:16px;top:15px}
+}
+/* Keep nested KK form widgets readable, including dependent school/address lists. */
+html[data-theme="dark"] body.kk-body :is(.kk-school-picker,.kk-school-list,.kk-address-list,.kk-profile-preview,
+ .kk-preview-card,.kk-id-drop,.kk-ph-number,.kk-yn-field,.kk-profile-sheet-head,.kk-form-section-head){
+ border-color:#3c5578;color:#e9f3ff}
+html[data-theme="dark"] body.kk-body :is(.kk-review>div,.kk-profile-preview,.kk-id-drop,.kk-school-list,.kk-address-list){
+ background:#172a45}
+html[data-theme="dark"] body.kk-body :is(.kk-id-drop>strong,.kk-yn-field legend,.kk-form-section-head h3){color:#eef6ff}
+
+
+/* Unified public pages: dark-mode coverage for the specific content cards
+   that are not represented by the generic portal .card / .org-card classes.
+   Retain the published content, chart connectors and official photos. */
+html[data-theme="dark"] body.portal-refresh.leaders-compact .leaders-heading h1,
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-tier-heading h3,
+html[data-theme="dark"] body.portal-refresh .awards-toolbar h2,
+html[data-theme="dark"] body.portal-refresh .sk-fdp-heading h2,
+html[data-theme="dark"] body.portal-refresh .trans-section h2{
+ color:#eff6ff}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .leaders-heading :is(p,.eyebrow),
+html[data-theme="dark"] body.portal-refresh .awards-toolbar span,
+html[data-theme="dark"] body.portal-refresh .trans-section .eyebrow{
+ color:#b5c9e7}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .leaders-chart-section,
+html[data-theme="dark"] body.portal-refresh .trans-section,
+html[data-theme="dark"] body.portal-refresh .trans-report,
+html[data-theme="dark"] body.portal-refresh .trans-legal,
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card,
+html[data-theme="dark"] body.portal-refresh .award-card,
+html[data-theme="dark"] body.portal-refresh .awards-empty{
+ background:#162740;border-color:#3c5373;color:#e4efff;box-shadow:0 8px 24px #030c1b3b}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-board{
+ background:linear-gradient(137deg,#182b47,#10203a)!important;
+ border-color:#3c567a!important}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card{
+ background:#1b304e;border-color:#435c7f}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card:hover{
+ background:#243f62;border-color:#6287b2}
+html[data-theme="dark"] body.portal-refresh :is(.award-card-body h3,.sk-fdp-card-body h3,
+ .sk-fdp-card-body strong,.trans-report h3,.trans-report strong,.awards-empty strong){color:#f1f7ff}
+html[data-theme="dark"] body.portal-refresh :is(.award-card-body p,.award-card-body dt,
+ .award-card-body dd,.award-category,.award-reference,.trans-report p,.sk-fdp-card-body p,
+ .sk-fdp-card-year,.sk-fdp-source,.trans-report time){color:#b9d0ed}
+html[data-theme="dark"] body.portal-refresh .award-card-cover{background:#243954}
+html[data-theme="dark"] body.portal-refresh .award-card-body dl{border-color:#3c5575}
+html[data-theme="dark"] body.portal-refresh .sk-fdp-card-icon{background:#2c507e;color:#d7eaff}
+html[data-theme="dark"] body.portal-refresh :is(.trans-empty,.awards-empty){
+ background:#192d4b;color:#bed1eb;border-color:#4a6487}
+html[data-theme="dark"] body.portal-refresh .trans-picker :is(select,input),
+html[data-theme="dark"] body.portal-refresh .trans-section :is(select,input){
+ background:#142944;color:#e7f2ff;border-color:#4a678d}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-card{
+ background:#1b304e;color:#eaf4ff;border-color:#455e80}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-card :is(strong,b){color:#eff6ff}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-card small{color:#bed0e9}
+html[data-theme="dark"] body.portal-refresh.leaders-compact .org-tier-heading span{color:#b3c9e8}
+
+/* Contacts includes its own strongly scoped light cards, forms and map overlay.
+   Override them at higher specificity than contacts-page.css in dark mode. */
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-overview{
+ background:transparent;color:#e5efff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-overview .contacts-info-card,
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-form-panel,.contacts-location-panel){
+ background:#172a46;border-color:#3a5578;color:#e9f3ff;
+ box-shadow:0 7px 24px #030b1d48}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-overview .contacts-info-card:hover{
+ background:#1e3658;border-color:#6c92c4}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-info-icon{
+ background:#274770;color:#c4dcff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-info-label,.contacts-section-kicker){
+ color:#a5c5f4}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-info-card strong,
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-form-panel,.contacts-location-panel) h2{
+ color:#edf5ff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-info-card small,.contacts-section-sub,
+ .contacts-consent,.contacts-message-note,.contacts-map-tip,.contacts-office-meta small){
+ color:#b6cce9}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign :is(.contacts-info-action,.contacts-office-meta>a,
+ .contacts-map-tip a){color:#9dc7ff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form label:not(.contacts-consent),
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form .contacts-label-title{
+ color:#dcecff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form :is(input:not([type=checkbox]),select,textarea){
+ background:#0f2139;color:#f0f7ff;border-color:#46638a}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form :is(input,select,textarea):focus{
+ background:#172b48;border-color:#78abec}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-message-form :is(input,textarea)::placeholder{
+ color:#a2b9d7}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-office-meta{
+ background:#1e3554;border-color:#446388}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-office-meta :is(strong,span){
+ color:#d9eaff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-map-wrap{
+ background:#213a58;border-color:#456286}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-map-open{
+ background:#213d62;color:#dcecff;border-color:#5578a8}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback{
+ background:#233a59;border-color:#496b99;color:#dcecff}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback[data-kind="success"]{
+ background:#153d32;border-color:#287554;color:#aaf0d2}
+html[data-theme="dark"] body.portal-refresh.contacts-redesign .contacts-feedback[data-kind="error"]{
+ background:#45262e;border-color:#9a5360;color:#ffdbd7}
+
+
+/* Public Projects — contrast-complete dark theme.
+   Only applies on /projects(.html), never changes light mode or other pages. */
+html[data-theme="dark"] body.portal-refresh.projects-page{
+ --line:#354e71;--ink:#ecf5ff;--muted:#b8cbe7
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .sectionhead h2{
+ color:#f0f7ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .sectionhead h2 span,
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .sectionhead p,
+html[data-theme="dark"] body.portal-refresh.projects-page #count{
+ color:#b8cde9
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .stats>div{
+ background:#172a46;border-color:#3b5679!important;color:#e8f3ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .stats>div :is(strong,b){color:#edf6ff}
+html[data-theme="dark"] body.portal-refresh.projects-page .stats>div :is(span,small){color:#bed0e9}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .toolbar{
+ background:#172a46;border-color:#3b5576;color:#e8f2ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters{
+ background:#10243c;border:1px solid #3b5677
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button{
+ color:#c4d5ef;background:transparent;border:1px solid transparent
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button:hover{
+ background:#263f62;color:#fff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button.selected,
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .filters button[aria-pressed="true"]{
+ background:#3567ad;color:#fff;border-color:#6592ce
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search{
+ background:#0f2037;border:1px solid #4a6486;color:#d8eaff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search:focus-within{
+ border-color:#7caff2;box-shadow:0 0 0 3px #5a93ea33
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search input{
+ background:transparent;color:#f0f7ff;border:0;box-shadow:none
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search input::placeholder{color:#a9bfdc}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .search :is(svg,span){color:#bed7fb;stroke:currentColor}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .card{
+ background:#172a46;border-color:#385376;color:#e8f3ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody{
+ background:#172a46;color:#e8f3ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody .category{
+ color:#a7d1ff;font-weight:800
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody h3{color:#f2f8ff}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbody>p{color:#d1e0f4}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .progresslabel :is(span,b){
+ color:#e4f1ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .track{background:#324b6a}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .track>div{background:#79adf4}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbottom{
+ border-top-color:#3f5778
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbottom .card-publish-date,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-published-at time,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-date-day,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-date-time{
+ color:#b8d4f5
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cardbottom .card-publish-date>svg,
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-card-date-separator{
+ color:#92b9e9
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cover .badge{
+ background:#e7f1ff;color:#173d71;border:1px solid #ffffff;
+ font-weight:800;text-shadow:none;opacity:1
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .cover .project-placeholder{
+ color:#315986
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-see-more{
+ background:#23456f;color:#edf6ff;border-color:#4b73a6
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-see-more:hover{
+ background:#325e95;border-color:#85b0e9
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #grid .project-see-more-icon{
+ background:#35629a;color:#f0f7ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .empty{
+ background:#162c49;border-color:#48678d;color:#c6d9f2
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .empty :is(h3,p){color:#dbe9ff}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .empty-icon{
+ background:#2b507e;color:#e3f1ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #projects .secondary,
+html[data-theme="dark"] body.portal-refresh.projects-page .install-strip .secondary{
+ background:#23446b;color:#eef6ff;border-color:#4b6f9b
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .install-strip{
+ color:#d8e7fa;border-color:#3e5778
+}
+html[data-theme="dark"] body.portal-refresh.projects-page .install-strip small{
+ color:#b2c8e5
+}
+/* See More dialog: the light-only text colors would otherwise be unreadable. */
+html[data-theme="dark"] body.portal-refresh.projects-page #detail{
+ background:#14253f;color:#eaf4ff;border-color:#486486
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>.eyebrow{
+ color:#a8d1ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody :is(h2,h3){
+ color:#f1f7ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>p,
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>p>b,
+html[data-theme="dark"] body.portal-refresh.projects-page #detail #detailbody>.muted,
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .project-gallery-count{
+ color:#cbddf5
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .detail-publication-meta{
+ background:#1c3353;border-color:#415e83;color:#d6e8ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .detail-publication-meta :is(strong,span){
+ color:#dcecff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail :is(.trans-report,.trans-empty){
+ background:#1b314d;border-color:#3f5c80;color:#d6e8ff
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail .trans-picker :is(select,input){
+ background:#172d49;color:#edf6ff;border-color:#526c90
+}
+html[data-theme="dark"] body.portal-refresh.projects-page #detail :is(a,.close){color:#a9d2ff}
+
+
+/* Keep theme toggle inside the ordered KK login/registration action group. */
+body.kk-body .kk-auth-top-actions .vasra-theme-toggle{
+ position:static!important;inset:auto!important;margin:0!important;flex:none
+}
+html[data-theme="dark"] body.kk-body .kk-auth-top-actions .kk-auth-nav-link{
+ background:#1b3355;border-color:#3b5680;color:#e9f3ff
+}
+html[data-theme="dark"] body.kk-body .kk-auth-top-actions .kk-auth-nav-link:hover{background:#2a4772}
+
+
+/* Homepage: every nested light-theme-only block needs explicit readable dark
+   surfaces AND foregrounds. The older generic card rule missed nested text. */
+html[data-theme="dark"] body.portal-refresh .home-main{
+ --line:#385477;--ink:#eff6ff;--muted:#bfcee4;color:#eaf3ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-panel,.home-shortcuts a,.home-project,.home-metrics article,.home-budget-total,
+ .home-award,.home-values article,.home-officials .trans-person,.home-status,
+ .home-year-tag,.home-note,.home-highlights .trans-empty){
+ color:#e7f1ff;border-color:#3e587b
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-panel,.home-shortcuts a,.home-project,.home-award,.home-officials .trans-person,
+ .home-highlights .trans-empty){background:#162a45;background-image:none;box-shadow:0 8px 18px #040c1e34}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-metrics article,.home-budget-total,.home-values article>span,
+ .home-year-tag,.home-status,.home-award-icon,.home-shortcut-symbol){
+ background:#203b5f;background-image:none;color:#d3e6ff;border-color:#527097
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-shortcuts a:hover,
+html[data-theme="dark"] body.portal-refresh .home-main .home-award:hover{
+ background:#254368;border-color:#82abe0
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-shortcuts strong,.home-shortcuts .home-shortcut-top span,.home-shortcuts small,
+ .home-panel h2,.home-panel h3,.home-values h3,.home-values article>span,
+ .home-metrics strong,.home-budget-total strong,.home-expense strong,
+ .home-award strong,.home-project h3,.home-officer h3,.home-year-tag,
+ .home-contact-links a,.home-date,.home-award-icon,.home-shortcut-symbol){
+ color:#f0f7ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-panel p,.home-panel .home-note,.home-values p,.home-metrics span,
+ .home-metrics small,.home-budget-total>span,.home-budget-total small,
+ .home-expense>span,.home-project p,.home-project small,
+ .home-award small,.home-award>span:last-child>span,.home-shortcuts small,
+ .home-about .eyebrow,.home-sectionhead .eyebrow,.home-shortcut-top span,
+ .home-date,.home-officer p,.home-duty #home-duty-status){
+ color:#c0d4f0
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-text-link,.home-project>a,.home-shortcuts a:focus-visible strong,
+ .home-sectionhead>a,.home-contact-links a:hover){
+ color:#a9d4ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main :is(
+ .home-values article,.home-expense,.home-project,.home-award,
+ .home-sectionhead){border-bottom-color:#3e587b}
+html[data-theme="dark"] body.portal-refresh .home-main .home-status.is-open{
+ background:#194f43;color:#baf7d5
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-shortcuts .home-shortcut-symbol{
+ background:#244366;border-color:#567da9;color:#cce7ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-award-icon{
+ background:#294d77;color:#cfe6ff
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-contact-links :is(a,small){color:#d5e7ff}
+html[data-theme="dark"] body.portal-refresh .home-main :is(.home-shortcuts a,.home-award,.home-project):focus-within{
+ border-color:#93bef5;outline-color:#78b5ff
+}
+/* Preserve the contrast of bright action buttons inside darker home cards. */
+html[data-theme="dark"] body.portal-refresh .home-main .primary{
+ background:#2d62b0;color:#fff;border-color:#4f83ce
+}
+html[data-theme="dark"] body.portal-refresh .home-main .primary:hover{background:#3976ca;color:#fff}
+html[data-theme="dark"] body.portal-refresh .home-main .home-hero :is(h1,p,.hero-label,.home-actions a){
+ color:#fff
+}
+html[data-theme="dark"] body.portal-refresh .home-main .home-hero h1 em{color:#a9cfff}
+
+
+/* OCT 25: unified KK dark palette applied after earlier feature styles.
+   All selectors are scoped to logged-out KK auth, registration, profile,
+   and logged-in member dashboard; the actual ID canvas remains untouched. */
+html[data-theme="dark"] body.kk-body{
+ --kk-dark-base:#0b1729;--kk-dark-card:#162a45;--kk-dark-nested:#203a5b;
+ --kk-dark-line:#425e83;--kk-dark-text:#f0f6ff;--kk-dark-muted:#c0d4ee;
+ --ink:#f0f6ff;--muted:#c0d4ee;--line:#425e83;--soft:#162a45;
+ background:#0b1729;color:#f0f6ff;color-scheme:dark
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-main,.kk-workspace-content,.kk-dashboard,.kk-profile-workspace){color:#eaf3ff}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-header,.kk-auth-card,.kk-registration,.kk-profile-sheet,
+ .kk-dashboard-panel,.kk-activity-card,.kk-settings-card,.kk-settings-id-link,
+ .kk-overview-note,.kk-dash-empty,.kk-dashboard-list,.kk-review>div,
+ .kk-perk,.kk-privacy,.kk-preview-card,.kk-profile-preview,.kk-id-drop,
+ .kk-step,.kk-yn-field,.kk-readiness,.kk-notice,.kk-service-form,
+ .kk-service-history-row,.kk-service-requests-header,.kk-service-request-summary,
+ .kk-service-history-panel,.kk-id-profile-card,.kk-id-upload-card){
+ background:#162a45;background-image:none;border-color:#425e83;color:#f0f6ff;
+ box-shadow:none
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-summary article,.kk-overview-card,.kk-activity-card,
+ .kk-service-form,.kk-service-history-row,.kk-service-request-summary,
+ .kk-review>div,.kk-profile-preview,.kk-preview-card,.kk-settings-id-link,
+ .kk-step,.kk-yn-field,.kk-form-section-head,.kk-privacy,.kk-perk){
+ background:#203a5b;background-image:none;border-color:#506f98;color:#f0f6ff
+}
+html[data-theme="dark"] body.kk-body :is(
+ h1,h2,h3,h4,h5,legend,strong,.kk-page-heading h1,.kk-dashboard-head h1,
+ .kk-dashboard-panel h2,.kk-dashboard-panel h3,.kk-activity-card h3,
+ .kk-auth-card h2,.kk-settings-card h3,.kk-form-section-head h3,
+ .kk-id-heading h2,.kk-id-upload-card h3,.kk-id-reference-title h3,
+ .kk-summary strong,.kk-activity-card strong,.kk-overview-card strong,
+ .kk-service-history-row strong,.kk-perk strong,.kk-preview-card strong,
+ .kk-register-brand strong,.kk-brand b){color:#f1f7ff}
+html[data-theme="dark"] body.kk-body :is(
+ p,small,time,.kk-tag,.kk-sub,.kk-dashboard-head p,.kk-welcome,.kk-helper,
+ .kk-dashboard-panel p,.kk-registration p,.kk-profile-sheet p,
+ .kk-form label,.kk-service-form label,.kk-review span,.kk-summary span,
+ .kk-overview-card small,.kk-activity-card small,.kk-id-heading p,
+ .kk-id-reference-title p,.kk-id-preview-note,.kk-id-upload-card p,
+ .kk-id-helper,.kk-settings-id-link p,.kk-form-section-head p,
+ .kk-service-history-row small,.kk-service-form small,.kk-service-status,
+ .kk-section-heading p,.kk-auth-card .kk-sub,.kk-step small,.kk-register-brand small,
+ .kk-privacy p,.kk-dashboard-list span,.kk-preview-card span,
+ .kk-readiness p,.kk-address-note,.kk-google-note,.kk-session-hint){
+ color:#c5d7ee
+}
+html[data-theme="dark"] body.kk-body :is(
+ input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){
+ background:#12263f;color:#edf6ff;border-color:#59789f;
+ caret-color:#c8e4ff;
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-form input,.kk-form select,.kk-form textarea,.kk-service-form input,
+ .kk-service-form select,.kk-service-form textarea,
+ .kk-auth-card .kk-form input,.kk-auth-card .kk-form select){
+ background:#12263f;color:#edf6ff;border-color:#59789f
+}
+html[data-theme="dark"] body.kk-body :is(input,textarea)::placeholder{color:#a9bfd9;opacity:1}
+html[data-theme="dark"] body.kk-body :is(select option,optgroup){
+ background:#12263f;color:#f0f6ff
+}
+html[data-theme="dark"] body.kk-body :is(input,select,textarea):focus-visible{
+ outline:3px solid #85baff;outline-offset:2px;border-color:#8cc2ff
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-label-title,.kk-section-heading h3,.kk-field-section>h3,.kk-form label,
+ .kk-service-form label,.kk-radio-line label,.kk-yn-field legend,
+ .kk-step strong,.kk-perk-title,.kk-privacy strong){color:#d9e8fa}
+html[data-theme="dark"] body.kk-body :is(
+ a:not(.kk-btn),.kk-text-link,.kk-dashboard-list a,.kk-switch a,
+ .kk-form a,.kk-copy-id,.kk-text-link:hover){color:#a9d5ff}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn,.kk-auth-submit,.kk-service-form .kk-btn,
+ .kk-id-upload-card .kk-btn){background:#306ec6;color:#fff;border-color:#548fe0}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn,.kk-auth-submit,.kk-service-form .kk-btn,
+ .kk-id-upload-card .kk-btn):hover{background:#397fdc;color:#fff}
+html[data-theme="dark"] body.kk-body :is(.kk-btn:disabled,.kk-auth-submit:disabled){
+ opacity:.6;cursor:not-allowed
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn-quiet,.kk-register-home,.kk-auth-nav-link,.kk-copy-id,
+ .kk-google,.kk-password-toggle,.kk-retry-barangays){
+ background:#26476e;border-color:#6187b5;color:#edf6ff
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn-quiet,.kk-register-home,.kk-auth-nav-link,.kk-copy-id,
+ .kk-google,.kk-password-toggle):hover{background:#305680;color:#fff}
+html[data-theme="dark"] body.kk-body .kk-summary article{
+ background:linear-gradient(145deg,#1c3758,#162a45);border-color:#47698e
+}
+html[data-theme="dark"] body.kk-body .kk-member-dashboard .kk-overview-card,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-card{
+ background:linear-gradient(145deg,#223d5e,#182d48);border-color:#4e7098
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard :is(
+ .kk-workspace-topbar,.kk-workspace-footer){
+ background:#14263e;border-color:#3c587a;color:#eaf3ff
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-sidebar{
+ background:linear-gradient(180deg,#102540,#102039);color:#edf6ff
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-nav button[aria-current=page]{
+ background:#315e99;border-color:#74a8eb;color:#fff
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-nav :is(button,a){
+ color:#d5e5f8
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-nav :is(button,a):hover{
+ background:#263e61;color:#fff
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-dashboard-panel,.kk-id-workspace,.kk-settings-card,.kk-activity-card){
+ border-color:#47658a
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-service-status-pending,.kk-readiness.pending){background:#514328;color:#ffdb91}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-service-status-approved,.kk-readiness.ready){background:#204a3f;color:#b4f0d7}
+html[data-theme="dark"] body.kk-body .kk-service-status-rejected{
+ background:#573142;color:#ffd3db
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-feedback[data-kind=error],.kk-load-error,.kk-form [aria-invalid=true]){
+ color:#ffb7c4;border-color:#b95a72
+}
+html[data-theme="dark"] body.kk-body :is(.kk-feedback[data-kind=success],
+ .kk-service-earned){color:#b8f0d5}
+html[data-theme="dark"] body.kk-body .kk-ph-number{
+ background:#142b47;border-color:#59789f
+}
+html[data-theme="dark"] body.kk-body .kk-ph-number :is(input[name=phone],input[name=emergency_phone]){
+ background:#12263f!important;color:#eaf3ff!important
+}
+html[data-theme="dark"] body.kk-body .kk-ph-prefix{
+ background:#294970;color:#edf6ff;border-color:#59789f
+}
+html[data-theme="dark"] body.kk-body :is(.kk-upload-zone,.kk-id-drop,
+ .kk-school-list,.kk-address-list,.kk-privacy,.kk-id-chip-row .kk-chip){
+ background:#1b3554;color:#eaf3ff;border-color:#5276a0
+}
+html[data-theme="dark"] body.kk-body :is(.kk-id-upload-zone,.kk-id-selected-photo){
+ border-color:#6087b5
+}
+html[data-theme="dark"] body.kk-body .kk-google.disabled{
+ background:#1c344f;color:#a9bbd4;border-color:#405b7f
+}
+html[data-theme="dark"] body.kk-body :is(.kk-workspace,.kk-main){
+ scrollbar-color:#42658c #12263f
+}
+@media(max-width:650px){
+ html[data-theme="dark"] body.kk-body .kk-dashboard-panel{box-shadow:none}
+ html[data-theme="dark"] body.kk-body .kk-dashboard-head{color:#edf6ff}
+}
+
+
+/* October 25 — KK complete dark-surface hierarchy.
+   Dark shell != card surface: only bounded cards carry solid panels.
+   Shared by KK login, register, profile and all dashboard tabs. */
+html[data-theme="dark"] body.kk-body{
+ --kk-shell:#0c172a;--kk-panel:#182d49;--kk-inner:#243f60;
+ --kk-input:#11263f;--kk-outline:#47688f;--kk-title:#f1f7ff;
+ --kk-copy:#c8daef;--kk-link:#9fd0ff;
+ background:var(--kk-shell);color:var(--kk-title);color-scheme:dark
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-main,.kk-dashboard,.kk-workspace,.kk-workspace-content,
+ .kk-profile-workspace,.kk-dashboard-head,.kk-page-heading,
+ .kk-field-grid,.kk-form-fields,.kk-step-fields,
+ .kk-workspace-grid,.kk-overview-cards,.kk-dashboard-grid,
+ .kk-settings-grid,.kk-service-history,.kk-profile-sheet-head){
+ background:transparent;background-image:none
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-perks,
+ .kk-profile-preview,.kk-dashboard-panel,.kk-id-reference-card,
+ .kk-id-upload-card,.kk-settings-card,.kk-workspace-panel){
+ background:var(--kk-panel);background-image:none;
+ border-color:var(--kk-outline);color:var(--kk-title);
+ box-shadow:0 10px 30px #040d1e35
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-summary article,.kk-overview-card,.kk-activity-card,
+ .kk-dashboard-list,.kk-dash-empty,.kk-service-form,
+ .kk-service-history-row,.kk-privacy,.kk-preview-card,
+ .kk-review>div,.kk-yn-field,.kk-step,.kk-perk,
+ .kk-readiness,.kk-upload-zone,.kk-id-drop,.kk-id-selected-photo,
+ .kk-settings-id-link,.kk-school-list,.kk-address-list,
+ .kk-form-section-head,.kk-address-note){
+ background:var(--kk-inner);background-image:none;
+ border:1px solid #5578a3;color:var(--kk-title);
+ box-shadow:none
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard :is(
+ .kk-dashboard-panel,.kk-id-reference-card,.kk-id-upload-card){
+ background:var(--kk-panel);background-image:none;border-color:var(--kk-outline)
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard :is(
+ .kk-activity-card,.kk-settings-card,.kk-overview-card,
+ .kk-service-form,.kk-service-history-row,.kk-dash-empty,
+ .kk-dashboard-list,.kk-settings-id-link){
+ background:var(--kk-inner);background-image:none;border-color:#5578a3
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-summary article{
+ background:linear-gradient(135deg,#233f61,#1a304c);border-color:#53739b
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-card{
+ background:linear-gradient(135deg,#2a496d,#1f3959);border-color:#557ca9
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-icon,
+html[data-theme="dark"] body.kk-body :is(.kk-step span,.kk-form-section-icon){
+ background:#33577c;color:#e5f3ff
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-field-section,.kk-profile-sheet-head,.kk-step-one>.kk-section-heading){
+ border-color:var(--kk-outline)
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-field-section h2,.kk-profile-preview h3,.kk-preview-card h4,
+ .kk-yn-field legend,.kk-step-one>.kk-section-heading,
+ .kk-register-brand strong,.kk-section-heading h3,
+ .kk-dashboard-panel h2,.kk-dashboard-panel h3,
+ .kk-service-history-row strong,.kk-overview-card strong,
+ .kk-summary article strong,.kk-page-heading h1,
+ .kk-profile-sheet h2,.kk-auth-card h2,.kk-perk h3){
+ color:var(--kk-title)
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-preview-card dt,.kk-preview-card dd,.kk-profile-preview>p,
+ .kk-review span,.kk-review strong,.kk-dash-empty,.kk-field-section p,
+ .kk-dashboard-list span,.kk-overview-card small,.kk-activity-card small,
+ .kk-service-form label,.kk-yn-field label,.kk-form label,
+ .kk-checkbox,.kk-privacy p,.kk-privacy summary,.kk-readiness p,
+ .kk-step small,.kk-step strong,.kk-service-history-row small,
+ .kk-service-history-row strong,.kk-id-preview-note,
+ .kk-id-reference-title p,.kk-id-approved-details p){
+ color:var(--kk-copy)
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-form input:not([type=checkbox]):not([type=radio]),
+ .kk-form select,.kk-form textarea,.kk-service-form input,
+ .kk-service-form select,.kk-service-form textarea,
+ .kk-staff-filters input,.kk-ph-number input,
+ .kk-registration input:not([type=checkbox]):not([type=radio])){
+ background:var(--kk-input);border-color:#6484aa;
+ color:var(--kk-title);-webkit-text-fill-color:currentColor
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-form input,.kk-form select,.kk-form textarea,
+ .kk-service-form input,.kk-service-form select,.kk-service-form textarea):focus{
+ background:#1b3656;border-color:#87b9f3;
+ box-shadow:0 0 0 3px #71a6ed33
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-dashboard-panel)
+ :is(a:not(.kk-btn),.kk-text-link){color:var(--kk-link)}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-step.active,.kk-readiness[data-status="checking"]){
+ background:#294d78;border-color:#83b1ec;color:#fff
+}
+html[data-theme="dark"] body.kk-body .kk-step.active span{
+ background:#3e78c6;color:#fff
+}
+html[data-theme="dark"] body.kk-body .kk-step.done span{
+ background:#245f4f;color:#c2ffe0
+}
+html[data-theme="dark"] body.kk-body .kk-readiness[data-status="ready"]{
+ background:#1e483c;border-color:#418872;color:#d0f7e3
+}
+html[data-theme="dark"] body.kk-body .kk-load-error,
+html[data-theme="dark"] body.kk-body .kk-feedback[data-kind="error"]{
+ background:#4a2734;border-color:#b06376;color:#ffd0d8
+}
+html[data-theme="dark"] body.kk-body .kk-service-status-pending{
+ background:#654f2c;color:#ffe5a9
+}
+html[data-theme="dark"] body.kk-body .kk-service-status-approved{
+ background:#245c4d;color:#c2f8d9
+}
+html[data-theme="dark"] body.kk-body .kk-service-status-rejected{
+ background:#653443;color:#ffced7
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-upload-zone{
+ background:#2b4c71;border-color:#82a9d5
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-upload-zone:hover{
+ background:#355a84
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-upload-zone :is(strong,small){
+ color:#ebf5ff
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-selected-photo{
+ background:#243f60;border-color:#6489b5
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-approved-label{
+ color:#a4f3cf
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-approved-details>strong{
+ color:#f5f9ff
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-id-approved-details>p{
+ color:#cbdef5
+}
+html[data-theme="dark"] body.kk-body .kk-footer{
+ background:transparent;border-color:#38516f;color:#bcd0e8
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-footer{
+ background:#14263e;border-color:#425d80
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn-quiet,.kk-register-home,.kk-google,.kk-password-toggle):not(:disabled){
+ background:#294b70;border-color:#648bb7;color:#e9f4ff
+}
+html[data-theme="dark"] body.kk-body :is(
+ .kk-btn,.kk-auth-submit):not(:disabled):focus-visible{
+ outline:3px solid #acd3ff;outline-offset:2px
+}
+@media(max-width:640px){
+ html[data-theme="dark"] body.kk-body :is(
+ .kk-auth-card,.kk-registration,.kk-profile-sheet,.kk-dashboard-panel){
+  border-color:#456388
+ }
+}
+
+
+/* Login uses one two-column card; its parent must not stay white in dark mode. */
+html[data-theme="dark"] body.kk-auth-page .kk-auth-layout{
+ background:var(--kk-panel);border-color:var(--kk-outline);
+ box-shadow:0 15px 40px #040d1e55
+}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story{
+ background:radial-gradient(ellipse at 100% 0%,#476a9d45,transparent 64%),#122744;
+ color:#eff6ff
+}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story :is(h1,strong){color:#f1f7ff}
+html[data-theme="dark"] body.kk-auth-page .kk-auth-story :is(p,small){color:#c5d9f2}
+html[data-theme="dark"] body.kk-auth-page :is(
+ .kk-register-prompt,.kk-story-features>div,.kk-auth-footnote){
+ color:#cfddf0;border-color:#49688b
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a{
+ color:#d6e7fa
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-sidebar-bottom>a:hover{
+ background:#2a4770;color:#fff
+}
+
+/* Dark KK profile: all separator lines match surrounding dark surfaces. */
+html[data-theme="dark"] body.kk-body :is(
+ .kk-profile-toolbar,.kk-profile-sheet,.kk-profile-preview,.kk-preview-card,
+ .kk-review>div,.kk-step,.kk-yn-field,.kk-solo-field,
+ .kk-field-section,.kk-id-upload,.kk-profile-sheet-head,.kk-reg-toolbar){
+ border-color:#45648b!important
+}
+html[data-theme="dark"] body.kk-body .kk-field-section,
+html[data-theme="dark"] body.kk-body .kk-profile-sheet-head,
+html[data-theme="dark"] body.kk-body .kk-id-upload,
+html[data-theme="dark"] body.kk-body .kk-review>div{
+ border-color:#385677!important
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button{
+ color:#e0eeff;background:transparent
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:first-child{
+ border-right-color:#496c95
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:last-child{
+ border-left-color:#496c95
+}
+html[data-theme="dark"] body.kk-body .kk-step-one .kk-count-field button:hover{
+ background:#315172
+}
+html[data-theme="dark"] body.kk-body .kk-profile-preview{
+ background:#1c314e;border-color:#4a698f
+}
+html[data-theme="dark"] body.kk-body .kk-preview-card{
+ background:#253e5c;border-color:#4b7199
+}
+html[data-theme="dark"] body.kk-body .kk-preview-card :is(dt,dd){color:#d6e8fb}
+html[data-theme="dark"] body.kk-body .kk-toolbar-logout svg{stroke:currentColor}

@@ -1,0 +1,151 @@
+/* Dedicated SK VASRA Rewards workspace */
+#panel-kk-rewards[hidden]{display:none!important}
+.kk-rewards-workspace{max-width:1280px;margin:0 auto;padding:0 0 30px}
+.kk-rewards-head,.kk-rewards-section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.kk-rewards-head{margin:0 0 20px}
+.kk-rewards-head h2{font:800 clamp(21px,2.3vw,28px)/1.25 Manrope,sans-serif;color:#183c67;margin:6px 0}
+.kk-rewards-head p,.kk-rewards-section-head p{font-size:12px;line-height:1.55;color:#6783a3;max-width:680px;margin:0}
+#kk-rewards-status[data-kind="error"]{padding:10px;color:#a32737}
+.kk-rewards-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.kk-rewards-metrics article,.kk-rewards-card{background:#fff;border:1px solid #d3e1f1;border-radius:14px}
+.kk-rewards-metrics article{padding:16px;display:flex;flex-direction:column;gap:9px}
+.kk-rewards-metrics span{font:650 11px/1.4 'DM Sans',sans-serif;color:#667f9e}
+.kk-rewards-metrics strong{font:850 23px/1.1 Manrope,sans-serif;color:#1d518f}
+.kk-rewards-card{padding:clamp(16px,2vw,23px);margin-bottom:17px}
+.kk-rewards-section-head{margin-bottom:18px;flex-wrap:wrap}
+.kk-rewards-section-head h3{font:800 18px/1.3 Manrope,sans-serif;color:#153a65;margin:0}
+.kk-rewards-empty,.kk-reward-empty{font-size:12px;color:#6d86a3;line-height:1.55}
+.kk-reward-editor{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:16px;margin-bottom:21px;background:#f6faff;border:1px solid #d0e2f6;border-radius:13px}
+.kk-reward-editor[hidden]{display:none!important}
+.kk-reward-editor label,.kk-rewards-attendance-toolbar label{font:750 11px/1.35 'DM Sans',sans-serif;color:#405f84;display:grid;gap:7px;min-width:0}
+.kk-reward-editor .wide{grid-column:1/-1}
+.kk-reward-editor :is(input,textarea,select),.kk-rewards-attendance-toolbar :is(input,select){
+ box-sizing:border-box;width:100%;min-width:0;padding:11px 12px;border:1px solid #c7d8eb;border-radius:9px;font-size:16px;background:#fff;color:#143a68}
+.kk-reward-hint{font-size:11px;line-height:1.5;color:#6a86a6;margin:5px 0}
+.kk-rewards-actions,.kk-reward-actions{display:flex;align-items:center;justify-content:flex-start;gap:9px;flex-wrap:wrap}
+.kk-rewards-actions button,.kk-reward-actions button{min-height:36px;padding:8px 13px;border-radius:9px;font-size:11px;font-weight:750}
+.kk-rewards-catalog{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch;gap:13px}
+.kk-reward-product{display:flex;flex-direction:column;min-width:0;border:1px solid #d5e3f2;border-radius:13px;overflow:hidden;background:#fff}
+.kk-reward-image{aspect-ratio:16/10;background:#e7f0fb;overflow:hidden}
+.kk-reward-image img{display:block;width:100%;height:100%;object-fit:cover}
+.kk-reward-no-image{width:100%;height:100%;display:grid;place-items:center;text-align:center;font-size:11px;color:#7593b5}
+.kk-reward-product-body{display:flex;flex-direction:column;gap:10px;padding:13px;flex:1;min-width:0}
+.kk-reward-topline{display:flex;justify-content:space-between;gap:9px;align-items:flex-start;flex-wrap:wrap}
+.kk-reward-topline>strong{font:800 13px/1.4 Manrope,sans-serif;color:#163e70;overflow-wrap:anywhere}
+.kk-reward-state{display:inline-flex;align-items:center;width:max-content;max-width:100%;font-size:10px;font-weight:750;padding:5px 9px;border-radius:30px;color:#785a1b;background:#fbf1d3}
+.kk-reward-state.is-active{color:#146744;background:#dcf5e9}
+.kk-reward-product-body p{font-size:11px;color:#5b789a;line-height:1.5;margin:0;overflow-wrap:anywhere}
+.kk-reward-product-body small{font-size:10px;color:#6885a3;overflow-wrap:anywhere}
+.kk-reward-numbers{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;font:800 12px/1.4 'DM Sans',sans-serif;color:#1b579e}
+.kk-reward-product .kk-reward-actions{margin-top:auto;padding-top:4px}
+.kk-reward-claims{display:grid;gap:10px}
+.kk-reward-claim{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid #d4e2f2;background:#f9fbfe;border-radius:11px;padding:13px 16px}
+.kk-reward-claim h4{font:800 13px/1.4 Manrope,sans-serif;color:#174271;margin:3px 0}
+.kk-reward-claim p{font-size:11px;margin:0 0 4px;color:#426a94}
+.kk-reward-claim small{font-size:10px;color:#6985a1}
+.kk-rewards-attendance-toolbar{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.7fr) minmax(0,1fr);gap:12px;margin-bottom:16px}
+.kk-attendance-summary{display:flex;justify-content:space-between;gap:14px;font-size:12px;font-weight:800;color:#19487e;padding-bottom:11px}
+.kk-attendance-members{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.kk-attendance-member{display:flex;align-items:center;gap:9px;min-width:0;padding:12px;border:1px solid #d5e2f0;border-radius:10px;background:#fafdff;cursor:pointer}
+.kk-attendance-member input{flex:none;accent-color:#285eaf;width:17px;height:17px}
+.kk-attendance-member span:nth-child(2){display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.kk-attendance-member strong{font-size:12px;color:#204b7c;overflow-wrap:anywhere}
+.kk-attendance-member small{font-size:10px;color:#657f9d;overflow-wrap:anywhere}
+.kk-attendance-badge{font-size:9px;color:#6e8ba7;white-space:normal}
+.kk-attendance-badge.awarded{color:#198454}
+#kk-attendance-award{min-height:40px;font-size:12px}
+body.account-workspace[data-theme="dark"] :is(.kk-rewards-metrics article,.kk-rewards-card,.kk-reward-product,.kk-reward-claim,.kk-attendance-member){background:#1d334e;border-color:#486a90}
+body.account-workspace[data-theme="dark"] :is(.kk-reward-editor){background:#243c5a;border-color:#4b729a}
+body.account-workspace[data-theme="dark"] :is(.kk-rewards-head h2,.kk-rewards-section-head h3,.kk-reward-topline>strong,.kk-reward-claim h4,.kk-attendance-member strong,.kk-attendance-summary){color:#eff7ff}
+body.account-workspace[data-theme="dark"] :is(.kk-rewards-head p,.kk-rewards-section-head p,.kk-reward-product-body p,.kk-attendance-member small,.kk-reward-product-body small,.kk-reward-claim small){color:#b9d0ea}
+body.account-workspace[data-theme="dark"] :is(.kk-reward-editor label,.kk-rewards-attendance-toolbar label){color:#d8e9fc}
+body.account-workspace[data-theme="dark"] :is(.kk-reward-editor input,.kk-reward-editor textarea,.kk-rewards-attendance-toolbar input,.kk-rewards-attendance-toolbar select){background:#1a2d47;color:#e7f2ff;border-color:#55789c}
+@media(max-width:1300px){.kk-rewards-catalog{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:980px){.kk-rewards-catalog{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-rewards-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-reward-editor{grid-template-columns:repeat(2,minmax(0,1fr))}.kk-rewards-attendance-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.kk-rewards-catalog,.kk-attendance-members,.kk-reward-editor,.kk-rewards-attendance-toolbar{grid-template-columns:1fr}.kk-rewards-head{flex-wrap:wrap}.kk-reward-editor .wide{grid-column:auto}}
+@media(max-width:410px){.kk-rewards-metrics{grid-template-columns:1fr 1fr;gap:8px}.kk-rewards-metrics article{padding:12px}.kk-reward-claim .kk-reward-actions{width:100%}}
+
+
+/* Aligned, modest-sized SK Rewards actions on desktop and phones. */
+#panel-kk-rewards .kk-reward-editor>.kk-rewards-actions{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,138px))!important;
+ gap:9px!important;align-items:stretch!important;justify-content:flex-start!important;margin-top:0;
+}
+#panel-kk-rewards .kk-reward-editor>.kk-rewards-actions button,
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button,
+#panel-kk-rewards .kk-reward-claim .kk-reward-actions button{
+ box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;
+ justify-content:center!important;text-align:center!important;height:39px!important;
+ min-height:39px!important;width:100%!important;min-width:0!important;
+ margin:0!important;padding:8px 12px!important;border-radius:9px!important;
+ font:750 12px/1.3 'DM Sans',sans-serif!important;
+}
+#panel-kk-rewards .kk-reward-editor{gap:12px;padding:15px}
+#panel-kk-rewards .kk-reward-editor .kk-reward-hint{margin:0}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
+ margin-top:auto;align-items:stretch;flex-wrap:nowrap;
+}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button{
+ font-size:11px!important;padding:8px 7px!important
+}
+#panel-kk-rewards .kk-reward-danger{color:#a3293b;border:1px solid #ebbbc4;background:#fff7f8}
+#panel-kk-rewards .kk-reward-danger:hover:not(:disabled){background:#ffe7eb;border-color:#d992a3}
+#panel-kk-rewards .kk-reward-danger:disabled{opacity:.46;cursor:not-allowed}
+#panel-kk-rewards .kk-reward-claim .kk-reward-actions{display:grid;grid-template-columns:repeat(2,minmax(125px,1fr));gap:8px}
+#panel-kk-rewards .kk-reward-claim .kk-reward-actions button{height:auto!important;min-height:39px!important}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-danger{
+ background:#4b2a39;border-color:#96516b;color:#ffe2e9}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-danger:hover:not(:disabled){background:#643247}
+@media(max-width:520px){
+ #panel-kk-rewards .kk-reward-editor{padding:11px;gap:10px}
+ #panel-kk-rewards .kk-reward-editor>.kk-rewards-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #panel-kk-rewards .kk-reward-product .kk-reward-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #panel-kk-rewards .kk-reward-claim .kk-reward-actions{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:340px){
+ #panel-kk-rewards .kk-reward-product .kk-reward-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #panel-kk-rewards .kk-reward-product .kk-reward-danger{grid-column:1/-1}
+}
+
+/* Professional reward catalog and unified actions */
+#panel-kk-rewards .kk-rewards-card{box-shadow:0 7px 25px #193f6114}
+#panel-kk-rewards .kk-reward-product{border-color:#d9e5f4;box-shadow:0 7px 19px #193f6114;transition:transform .17s,box-shadow .17s}
+#panel-kk-rewards .kk-reward-product:hover{transform:translateY(-2px);box-shadow:0 12px 24px #193f6122}
+#panel-kk-rewards .kk-reward-image{aspect-ratio:16/9;min-height:145px;border-bottom:1px solid #dce7f4}
+#panel-kk-rewards .kk-reward-product-body{gap:11px;padding:16px}
+#panel-kk-rewards .kk-reward-topline>strong{font-size:15px}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#panel-kk-rewards .kk-reward-product.is-published .kk-reward-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button{font-size:12px!important;padding:9px 8px!important}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button:disabled{cursor:not-allowed}
+#panel-kk-rewards .kk-reward-no-image{font-size:12px;line-height:1.5;padding:18px;text-align:center}
+@media(max-width:480px){#panel-kk-rewards .kk-reward-product-body{padding:13px}
+#panel-kk-rewards .kk-reward-product.is-published .kk-reward-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Clear Pending / Approved / Rejected SK review states and notification visibility. */
+#panel-kk-rewards .kk-reward-claim{align-items:center;min-width:0;gap:15px}
+#panel-kk-rewards .kk-reward-claim.is-pending{border-left:4px solid #d99b17}
+#panel-kk-rewards .kk-reward-claim.is-approved{border-left:4px solid #149b60;background:#f7fdf9}
+#panel-kk-rewards .kk-reward-claim.is-rejected{border-left:4px solid #d13d4a;background:#fffafa}
+#panel-kk-rewards .kk-reward-claim-person{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+#panel-kk-rewards .kk-reward-claim-person h4{margin:0;font-size:13px}
+#panel-kk-rewards .kk-reward-claim-person p{margin:0}
+#panel-kk-rewards .kk-claim-status-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+#panel-kk-rewards .kk-claim-status-actions .kk-reward-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#panel-kk-rewards .kk-redemption-status{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;
+ border-radius:999px;padding:7px 12px;font-size:11px;font-weight:850;min-width:85px}
+#panel-kk-rewards .kk-redemption-status.is-pending{color:#85570c;background:#fff2cb;border-color:#f8d781}
+#panel-kk-rewards .kk-redemption-status.is-approved{color:#087448;background:#d8f6e7;border-color:#a8e6c8}
+#panel-kk-rewards .kk-redemption-status.is-rejected{color:#a82336;background:#ffe3e6;border-color:#ffc0c7}
+#panel-kk-rewards .kk-approval-email{margin-top:3px;font-size:10px;color:#6b7c91}
+#panel-kk-rewards .kk-approval-email.is-accepted{color:#14744e}
+#panel-kk-rewards .kk-approval-email.is-pending{color:#94661d}
+#panel-kk-rewards .kk-reward-email-retry{font-size:11px;min-height:35px}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim{background:#1d334e;border-color:#486a90}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim.is-pending{border-left-color:#e9b544}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim.is-approved{border-left-color:#29c98b}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim.is-rejected{border-left-color:#ff707c}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim :is(h4,p,small){color:#e1eefa}
+@media(max-width:650px){#panel-kk-rewards .kk-claim-status-actions{justify-content:flex-start;width:100%}
+#panel-kk-rewards .kk-reward-claim{padding:13px}}
