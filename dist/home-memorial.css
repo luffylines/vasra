@@ -1,7 +1,7 @@
 /* Scoped memorial-circle homepage only. Public sidebar/header and other routes stay unchanged. */
 .home-main{min-width:0}
 .home-memorial-hero{isolation:isolate;position:relative;display:flex;align-items:center;overflow:hidden;border-radius:22px;background:#163660;color:#fff;min-height:410px;padding:clamp(24px,4vw,48px);box-shadow:0 16px 30px #122b4f0e}
-.home-memorial-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:url("./home-memorial-circle.webp") no-repeat right 42%;background-size:auto 145%}
+.home-memorial-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:url("https://quezoncity.gov.ph/wp-content/uploads/2025/01/vasra3.jpg") no-repeat right 42%;background-size:auto 145%}
 .home-memorial-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#102a50 0%,#153763ed 28%,#17375cba 51%,#102e503d 78%,#102a5014 100%)}
 .home-memorial-content{width:min(100%,610px);position:relative;z-index:1}
 .home-memorial-kicker{display:flex;align-items:center;gap:11px;font-size:clamp(9px,.9vw,12px);letter-spacing:.19em;line-height:1.55;color:#d5e6f8;font-weight:500}
@@ -91,7 +91,7 @@ html[data-theme="dark"] body.portal-refresh .home-recent-state{background:#23447
 /* 2026-10-26: sharp memorial image and consistent vector icons.
    Keep specificity scoped to the public homepage. */
 .home-memorial-hero::before{
- background-image:url("./home-memorial-circle.webp");
+ background-image:url("https://quezoncity.gov.ph/wp-content/uploads/2025/01/vasra3.jpg");
  background-repeat:no-repeat;
  background-position:right center;
  background-size:auto 115%;
@@ -146,7 +146,7 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
  align-items:center;
 }
 .home-memorial-hero::before{
- background-image:url("./home-memorial-circle.webp");
+ background-image:url("https://quezoncity.gov.ph/wp-content/uploads/2025/01/vasra3.jpg");
  background-size:cover;
  background-position:center 35%;
  background-repeat:no-repeat;
@@ -178,7 +178,7 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
    border-radius:18px;
  }
  .home-memorial-hero::before{
-   background-image:url("./home-memorial-circle-mobile.webp");
+   background-image:url("https://quezoncity.gov.ph/wp-content/uploads/2025/01/vasra3.jpg");
    background-position:center top;
    background-size:cover;
    background-repeat:no-repeat;
@@ -220,4 +220,32 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
 }
 @media(max-width:600px){
   .home-summary-card.duty #home-duty-summary{font-size:22px}
+}
+
+/* 2026-10-29: Official Barangay Vasra multipurpose building (barangay offices).
+   Photograph: Quezon City Government, Jan 18 2025.
+   https://quezoncity.gov.ph/inauguration-of-vasra-multipurpose-building/
+   Do not show Quezon Memorial Circle in this homepage hero. */
+.home-memorial-hero::before{
+ background-image:url("https://quezoncity.gov.ph/wp-content/uploads/2025/01/vasra3.jpg");
+ background-repeat:no-repeat;
+ background-size:cover;
+ background-position:66% 42%;
+}
+.home-memorial-hero::after{
+ background:linear-gradient(90deg,rgba(9,31,62,.95) 0%,rgba(10,36,69,.85) 26%,rgba(12,42,79,.60) 52%,rgba(13,44,75,.13) 91%),
+ linear-gradient(0deg,rgba(9,31,61,.32),transparent 56%);
+}
+@media (min-width:1201px){
+ .home-memorial-hero::before{background-position:61% 42%;}
+}
+@media (min-width:601px) and (max-width:1200px){
+ .home-memorial-hero::before{background-position:60% 42%;background-size:cover;}
+}
+@media (max-width:600px){
+ .home-memorial-hero::before{background-position:60% 36%;background-size:cover;}
+ .home-memorial-hero::after{
+  background:linear-gradient(180deg,rgba(8,30,58,.79) 0%,rgba(9,34,67,.45) 24%,rgba(12,39,73,.20) 43%,rgba(11,37,70,.80) 65%,#102d54 90%),
+  linear-gradient(90deg,rgba(7,28,57,.25),transparent 80%);
+ }
 }

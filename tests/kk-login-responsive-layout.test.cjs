@@ -79,7 +79,7 @@ test('Responsive layout handles desktop, phone and narrow phone without viewport
  assert.match(css,/\.kk-auth-page\[data-view="register"\] \.kk-field-grid\{grid-template-columns:minmax\(0,1fr\)\}/);
  assert.match(css,/font:500 16px 'DM Sans'/);
  assert.match(contactCss,/@media\(max-width:560px\)/);
- assert.match(read('dist/sw.js'),/vasra-v68-kk-reupload-rewards-delete-20261027/);
+ assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
 });
 test('Staff sign-in UI remains unchanged by the youth login redesign',()=>{
  const staff=read('dist/account.html');
