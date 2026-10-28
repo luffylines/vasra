@@ -49,5 +49,5 @@ test('Approved KK ID reviews can be queued even when issued before the email mig
  assert.match(sql,/ON CONFLICT\(member_id,card_path\) DO NOTHING/);
  assert.match(sql,/ALTER TABLE vasra\.kk_card_review_mail ENABLE ROW LEVEL SECURITY/);
  assert.match(sql,/GRANT EXECUTE ON FUNCTION public\.vasra_kk_card_mail.*TO service_role/s);
- assert.match(read('dist/sw.js'),/vasra-v68-kk-reupload-rewards-delete-20261027/);
+ assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
 });

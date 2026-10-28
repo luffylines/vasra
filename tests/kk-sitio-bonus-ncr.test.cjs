@@ -56,7 +56,7 @@ test('Error states explain session or network instead of falsely claiming missin
  assert.match(kk,/Hindi ma-load ang KK profile/);
  assert.match(kk,/id="kk-retry-load"/);
  assert.match(kk,/Go to KK Login/);
- assert.match(read('dist/sw.js'),/vasra-v68-kk-reupload-rewards-delete-20261027/);
+ assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
  for(const [p,s] of [['kk-staff.js',staff],['kk.js',kk],['handler.cjs',handler]])assert.doesNotThrow(()=>new vm.Script(s,{filename:p}));
 });
 

@@ -43,7 +43,7 @@ test('Event roster belongs to SK Participants; private KK history renders only o
 });
 test('New dashboard has valid source and preview route',()=>{
  assert.ok(read('vercel.json').includes('"source": "/kk-dashboard"'));
- assert.ok(read('dist/sw.js').includes('vasra-v68-kk-reupload-rewards-delete-20261027'));
+ assert.ok(read('dist/sw.js').includes('vasra-v69-homepage-barangay-hall-20261029'));
  assert.ok(read('dist/kk-dashboard.css').includes('@media(max-width:650px)'));
  for(const file of ['dist/kk-dashboard.js','dist/kk.js','dist/kk-staff.js','lib/handler.cjs'])
  assert.doesNotThrow(()=>new vm.Script(read(file),{filename:file}));

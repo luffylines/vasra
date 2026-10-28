@@ -33,5 +33,5 @@ test('Master/detail applicant list remains compact with readable sections and au
 });
 test('Changes parse and PWA version is updated',()=>{
  new vm.Script(js,{filename:'dist/kk.js'});new vm.Script(staff,{filename:'dist/kk-staff.js'});
- assert.match(read('dist/sw.js'),/vasra-v68-kk-reupload-rewards-delete-20261027/);
+ assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
 });

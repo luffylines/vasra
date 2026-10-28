@@ -54,5 +54,5 @@ test('Updated files are valid scripts and HTML/PWA caches point at current versi
  assert.match(account,/kk-id-staff\.js\?v=20261027-resubmit-pending-v1/);
  assert.match(account,/kk-rewards-staff\.js\?v=20261027-safe-reward-delete-v1/);
  assert.match(read('dist/kk-dashboard.html'),/kk-id-member\.js\?v=20261027-resubmit-pending-v1/);
- assert.match(read('dist/sw.js'),/vasra-v68-kk-reupload-rewards-delete-20261027/);
+ assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
 });

@@ -37,5 +37,5 @@ test('first step hides Back, red required markers next to text and mobile previe
 });
 test('scripts parse and PWA cache is invalidated',()=>{
  for(const p of ['dist/kk.js','dist/kk-staff.js','lib/handler.cjs','lib/supabase.cjs'])assert.doesNotThrow(()=>new vm.Script(read(p),{filename:p}));
- assert.ok(read('dist/sw.js').includes('vasra-v68-kk-reupload-rewards-delete-20261027'));
+ assert.ok(read('dist/sw.js').includes('vasra-v69-homepage-barangay-hall-20261029'));
 });
