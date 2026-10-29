@@ -46,50 +46,13 @@ begin
   select * into old_profile from vasra.officials where id=item and published and not archived for update;
   if not found then return jsonb_build_object('error',404,'reason','publish_officer_first'); end if;
   assigned_days:=coalesce(old_profile.duty_days,'{}'::smallint[]);
-  -- Mon-Sat: at most one regular weekday per officer; Sunday attendance is optional.
-  -- Only the SK Chairman can confirm the actual officers reporting on Sunday.
+  -- Monday-Saturday assignments allow two officials; Sunday is separate.
   if payload ? 'duty_day' then
    if payload->>'duty_day' is null then
     assigned_days:=case when 7::smallint=any(assigned_days) then array[7::smallint] else '{}'::smallint[] end;
-   elsif payload->>'duty_day' ~ '^[1-6]
-  requested_photo:=old_profile.duty_photo_id;
-  if payload ? 'duty_photo_id' then
-   requested_photo:=nullif(payload->>'duty_photo_id','')::uuid;
-   if requested_photo is not null and not exists(
-      select 1 from vasra.images i where i.id=requested_photo and i.ready
-       and (i.owner=actor.id or i.id=old_profile.duty_photo_id)
-   ) then return jsonb_build_object('error',400,'reason','duty_photo_unavailable'); end if;
-  end if;
-  update vasra.officials set duty_days=assigned_days,duty_photo_id=requested_photo,updated_by=actor.id where id=item;
-  insert into vasra.audit(actor_id,actor_name,action,entity,details)
-  values(actor.id,actor.name,'duty_officer_updated',item::text,jsonb_build_object(
-   'previous_duty_days',old_profile.duty_days,'duty_days',assigned_days,
-   'old_duty_photo_id',old_profile.duty_photo_id,'new_duty_photo_id',requested_photo));
-  return jsonb_build_object('ok',true,'id',item,'duty_days',assigned_days,'duty_photo_id',requested_photo);
- end if;
- if action='update' then
-  item:=(payload->>'id')::uuid;
-  select * into old_profile from vasra.officials where id=item and not archived for update;
-  if not found then return jsonb_build_object('error',404); end if;
-  -- Organizational photo saves do not change duty assignment or duty portrait.
-  assigned_days:=old_profile.duty_days;
-  requested_photo:=nullif(payload->>'photo_id','')::uuid;
-  if requested_photo is not null and not exists(
-   select 1 from vasra.images i where i.id=requested_photo and i.ready
-   and (i.owner=actor.id or i.id=old_profile.photo_id)
-  ) then return jsonb_build_object('error',400,'reason','photo_unavailable'); end if;
-  update vasra.officials set photo_id=requested_photo,updated_by=actor.id where id=item;
-  insert into vasra.audit(actor_id,actor_name,action,entity,details)
-  values(actor.id,actor.name,'official_profile_updated',item::text,jsonb_build_object(
-   'previous_photo_id',old_profile.photo_id,'new_photo_id',requested_photo,
-   'previous_duty_days',old_profile.duty_days,'new_duty_days',assigned_days));
-  return jsonb_build_object('ok',true,'id',item,'photo_id',requested_photo,'duty_days',assigned_days);
- end if;
- return jsonb_build_object('error',404);
-end $$; then
+   elsif payload->>'duty_day' ~ '^[1-6]$' then
     assigned_days:=array[(payload->>'duty_day')::smallint];
     if 7::smallint=any(old_profile.duty_days) then assigned_days:=array_append(assigned_days,7::smallint); end if;
-    -- Serialize concurrent duty assignments so a third officer cannot sneak in.
     perform pg_advisory_xact_lock(20261029,(payload->>'duty_day')::int);
     if (select count(*) from vasra.officials o
         where o.id<>item and o.published and not o.archived
