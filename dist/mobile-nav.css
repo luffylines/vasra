@@ -209,3 +209,12 @@ body.account-workspace[data-staff-mode="staff"][data-theme="dark"] .audit-row .a
  body.mobile-menu-ready .mobile-appbar .mobile-brand{font-size:12px}
  .kk-appbar-logout,body.mobile-menu-ready .mobile-appbar .vasra-theme-toggle{width:36px;height:38px;min-height:38px;padding:8px}
 }
+
+/* Public sidebar identity and Facebook link — both desktop and mobile drawer. */
+.site-header .sidebar-bottom .sidebar-motto{display:flex;align-items:center;gap:8px;min-width:0}
+.site-header .sidebar-bottom .sidebar-motto strong{color:#dce9ff;font-size:10px;font-weight:750;line-height:1.5;overflow-wrap:anywhere}
+.site-header .sidebar-bottom .sidebar-motto .sidebar-dot{flex:0 0 6px;margin-right:0}
+.site-header .sidebar-bottom>small{margin:5px 0 0 14px;font-size:10px;line-height:1.5}
+.site-header .sidebar-bottom .social-footer-link{display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;margin-top:15px;max-width:100%;text-decoration:none}
+.site-header .sidebar-bottom .social-footer-link .sidebar-facebook-icon{width:17px;height:17px;flex:0 0 17px;fill:currentColor;stroke:none}
+.site-header .sidebar-bottom .social-footer-link:hover{text-decoration:underline}

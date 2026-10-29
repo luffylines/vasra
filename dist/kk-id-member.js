@@ -45,11 +45,11 @@
   try{
    const response=await api('./api/kk/id-card');
    if(response?.ok!==true)throw Error('Unable to load KK ID details.');
-   const found=!!response.photo_exists,state=response.status||'not_uploaded';
+   const state=response.status||'not_uploaded',found=!!response.photo_exists&&state!=='rejected';
    memberApproval=state;
    if(version!==revision)return;
    approvalView(found&&state==='approved',found?'./api/kk/id-card/photo?t='+Date.now():null);
-   $('#kk-id-card-approval').textContent=found?(state==='approved'?
+   $('#kk-id-card-approval').textContent=state==='rejected'?'Rejected · Upload a New Photo':found?(state==='approved'?
     (response.printed_at?'Printed · Official ID':'Photo Approved · Ready for Print'):
     state==='rejected'?'Needs Photo Correction':'Awaiting SK Photo Approval'):'No Photo Yet';
    $('#kk-id-card-approval').dataset.status=state;
@@ -68,12 +68,15 @@
    download.disabled=!exportReady;
    $('#kk-id-render-front').src=cards.front.toDataURL('image/jpeg',.92);
    $('#kk-id-render-back').src=cards.back.toDataURL('image/jpeg',.92);
-   notice.textContent=state==='approved'?
+   notice.textContent=state==='rejected'?
+    ('Your previous portrait was rejected: '+(response.review_note||'Please upload a clearer 2×2 portrait.')+'. Upload a NEW photo for SK review.'):
+    state==='approved'?
     (response.printed_at?'Your official KK ID has been recorded as printed.':
      'Your portrait is approved. You can download both sides as an actual CR80-size PDF.'):
     found?'Portrait submitted. The preview will update after SK verification.':
      'Upload your portrait to complete the ID; the preview already shows your verified membership details and QR.';
-   if(state==='rejected'&&response.review_note)tell('SK Officer: '+response.review_note,true);
+   // Rejection reason lives on the ID card, not as a fresh error toast on every refresh.
+   // A replacement upload receives a new Pending status from the server.
   }catch(err){notice.textContent='Cannot render KK ID: '+err.message;tell('Cannot load KK ID details: '+err.message,true);}
  };
  upload.addEventListener('submit',async e=>{
@@ -92,8 +95,16 @@
     binary+=String.fromCharCode(...bytes.subarray(i,i+32768));
    const response=await api('./api/kk/id-card/photo',{method:'POST',
     body:JSON.stringify({name:file.name,mime:file.type,data:btoa(binary)})});
-   if(response?.ok!==true)throw Error('Photo upload was not confirmed');
-   upload.reset();clearPreview();tell('Photo submitted. Waiting for SK Officer review.');
+   if(response?.ok!==true||response.status!=='pending')
+    throw Error('The server did not confirm the new photo is Pending.');
+   // Never show a stale Rejected badge/reason after a successful replacement.
+   memberApproval='pending';exportReady=false;download.disabled=true;
+   $('#kk-id-card-approval').textContent='Pending · Awaiting SK Photo Approval';
+   $('#kk-id-card-approval').dataset.status='pending';
+   $('#kk-id-preview-note').textContent=
+    'New portrait successfully submitted. Your previous rejection has been cleared. Waiting for SK approval.';
+   upload.reset();clearPreview();
+   tell('New photo received! Status changed to Pending for SK review.');
    await load();
   }catch(err){tell('Hindi na-upload: '+err.message,true);}
   finally{button.disabled=false;}

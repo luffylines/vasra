@@ -57,7 +57,8 @@
  const drawArchive=()=>{
   $('#kk-event-archive').innerHTML=finished.length?
     finished.map(p=>'<article class="kk-event-archived"><div><strong>'+esc(p.title)+'</strong>'+
-    '<small>Completed · '+Number(p.attendees||0)+' checked-in participants</small></div>'+
+    '<small>Completed · '+Number(p.attendees||0)+' checked-in participants</small>'+
+    (p.last_checkin_at?'<small>Last check-in: '+esc(pht.format(new Date(p.last_checkin_at)))+'</small>':'')+'</div>'+
     '<button type="button" class="secondary" data-event-export="'+esc(p.id)+'">Download Excel</button></article>').join(''):
     '<p class="kk-reward-empty">No completed events with registered attendance yet.</p>';
  };
@@ -79,7 +80,10 @@
   try{
    const data=await request('');
    events=Array.isArray(data.active_events)?data.active_events:[];
-   finished=Array.isArray(data.finished_events)?data.finished_events:[];
+   finished=Array.isArray(data.finished_events)?[...data.finished_events].sort((a,b)=>{
+    const date=p=>Date.parse(p.last_checkin_at||p.created_at||0)||0;
+    return date(b)-date(a);
+   }):[];
    officer=data.officer?.name||'Authenticated SK Officer';
    $('#kk-event-active-count').textContent=String(events.length);
    const preserved=currentEvent;
@@ -99,10 +103,12 @@
   const selected=currentEvent,seq=revision;
   setStatus('Verifying KK ID and recording the +10 points check-in…');
   try{
-   const row=await request('/checkin',{project_id:selected,kk_id:id});
+   const row=await request('/checkin',{project_id:selected,kk_id:id,mode:automatic?'qr':'manual'});
    if(seq!==revision||selected!==currentEvent)return;
+   const cardNotice=row.card_verified?'Verified Member ID/Card':
+      "Member's ID/Card is not verified — manual KK ID accepted";
    const message='CHECKED IN: '+row.name+' ('+row.kk_id+') · +10 points · '+
-      pht.format(new Date(row.checked_in_at))+' · '+(row.officer||officer);
+      pht.format(new Date(row.checked_in_at))+' · '+(row.officer||officer)+' · '+cardNotice;
    setStatus(message);
    toast(row.name+' checked in · +10 points');
    $('#kk-event-manual-id').value='';

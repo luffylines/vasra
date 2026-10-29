@@ -11,8 +11,8 @@ test('Register has no Step 1 scope variables and stays independent from Valid ID
 test('Step 1 requires uploaded Valid ID, with clear feedback before saving',()=>{
  const profile=js.slice(js.indexOf("if(view!=='profile')"));
  assert.match(profile,/addressFields\(\)\+validIDSection\(\)/);
- assert.match(profile,/if\(current===1&&!validID\?\.exists\)/);
- assert.match(profile,/Mag-upload muna ng Valid ID bago mag-Save & Next/);
+ assert.doesNotMatch(profile,/if\(current===1&&!validID\?\.exists\)/);
+ assert.match(profile,/Wala pa akong Valid ID/);
  assert.match(profile,/send\('id\/upload',payload\)/);
  assert.match(profile,/accepted:|Accepted:/i);
  assert.match(profile,/idBusy/);
@@ -33,5 +33,5 @@ test('Master/detail applicant list remains compact with readable sections and au
 });
 test('Changes parse and PWA version is updated',()=>{
  new vm.Script(js,{filename:'dist/kk.js'});new vm.Script(staff,{filename:'dist/kk-staff.js'});
- assert.match(read('dist/sw.js'),/vasra-v61-resolutions-kk-card-20261025/);
+ assert.match(read('dist/sw.js'),/vasra-v68-kk-reupload-rewards-delete-20261027/);
 });

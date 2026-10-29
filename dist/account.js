@@ -320,10 +320,10 @@ $('#staff-quick-scanner').onclick=()=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
  window.openQuickKKScan?.();
 };
-window.enterKKScanService=async kkId=>{
+window.enterKKScanService=async(kkId,mode='manual')=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
  await selectTab('kk-services');
- await window.openKKScan?.({kkId});
+ await window.openKKScan?.({kkId,mode});
 };
 $('#kk-service-open-scanner').onclick=()=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
@@ -333,8 +333,13 @@ document.querySelectorAll('[data-admin-open]').forEach(b=>b.onclick=()=>{selectT
 // The gallery's first image is authoritative when an older record has no image_id.
 const managedGalleryIds=p=>Array.isArray(p.image_ids)&&p.image_ids.length?p.image_ids:(p.image_id?[p.image_id]:[]);
 const managedPhotoUrl=id=>'./api/images/'+encodeURIComponent(id);
+// Display-only: imported decorative Unicode is normalized; stored titles remain intact.
+const projectTitleForDisplay=value=>String(value??'').normalize('NFKC').replace(/\s+/g,' ').trim();
+
 async function loadProjects(){
- managed=(await api('./api/manage/projects')).projects;
+ const response=await api('./api/manage/projects');
+ const projectRows=Array.isArray(response.projects)?response.projects:[];
+ managed=window.SKProjectOrder.sortProjectsNewestFirst(projectRows);
  updateChairmanMetrics();
  $('#managed-projects').innerHTML=managed.map(p=>{
   const ids=managedGalleryIds(p),photoCount=ids.length;
@@ -343,7 +348,7 @@ async function loadProjects(){
    :'<span class="project-manage-thumbnail is-empty" aria-label="Wala pang larawan"><span class="project-thumb-fallback" aria-hidden="true">SK</span></span>';
   return `<article class="manage-row project-manage-row">
    <div class="project-manage-media">${thumbnail}<span class="project-manage-photo-count">${photoCount?photoCount+' '+(photoCount===1?'photo':'photos'):'No photos'}</span></div>
-   <div class="project-manage-info"><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3>${esc(p.title)}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p>
+   <div class="project-manage-info"><span class="badge-inline">${esc(projectPublishStatus(p))} · ${esc(p.status)}</span><h3 class="project-unified-title">${esc(projectTitleForDisplay(p.title))}</h3><p>Gumawa: <b>${esc(p.creator_name)}</b> · ${dateText(p.created)}</p><p>Huling edit: <b>${esc(p.editor_name)}</b> · ${dateText(p.updated)}</p>
    <div class="project-quick-progress"><div class="project-progress-caption"><span>Project completion</span><strong>${p.progress}%</strong></div><div class="project-progress-bar" role="progressbar" aria-label="Project completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.progress}"><span style="width:${p.progress}%"></span></div></div></div>
    <div class="project-row-actions">${!p.published&&['sk','chairman'].includes(user?.role)?'<button type="button" class="project-publish-trigger" data-publish="'+esc(p.id)+'" aria-label="Publish now ang '+esc(p.title)+'">'+managementActionIcon('globe')+' Publish Now</button>':''}${photoCount?'<button type="button" class="secondary project-view-photos" data-view-gallery="'+esc(p.id)+'" aria-label="View photos of '+esc(p.title)+'">'+managementActionIcon('photos')+' Photos ('+photoCount+')</button>':''}${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-progress-trigger" data-progress="'+esc(p.id)+'" aria-label="Update progress ng '+esc(p.title)+'">'+managementActionIcon('progress')+' Update Progress</button>':''}<button type="button" class="secondary project-edit-trigger" data-edit="${esc(p.id)}" aria-label="I-edit ang ${esc(p.title)}">${managementActionIcon('edit')} Edit</button>${['sk','chairman'].includes(user?.role)?'<button type="button" class="project-delete-trigger" data-delete="'+esc(p.id)+'" aria-label="I-delete ang '+esc(p.title)+'">'+managementActionIcon('delete')+' Delete</button>':''}</div>
   </article>`;

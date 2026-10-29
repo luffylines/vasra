@@ -467,3 +467,14 @@ html[data-theme="dark"] .kk-auth-page[data-view="login"] #kk-login-form .kk-logi
  .kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-session-hint{font-size:9px}
  .kk-auth-page[data-view="login"] #kk-login-form .kk-login-options .kk-forgot-link{font-size:10px}
 }
+
+/* Applicants without formal ID may request SK manual verification. */
+.kk-no-id-choice{display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding:12px 14px;
+ border:1px solid #b9d0ee;background:#f0f7ff;border-radius:12px;color:#17365c;font-size:14px;
+ font-weight:650;line-height:1.55;cursor:pointer}
+.kk-no-id-choice input{width:18px;height:18px;min-width:18px;flex:none;margin-top:2px;accent-color:#2968bc}
+.kk-no-id-choice input:disabled{cursor:not-allowed;opacity:.6}
+.kk-optional-label{font-size:12px;font-weight:650;color:#65809f}
+.kk-id-optional-note{font-size:12px;line-height:1.5;margin:8px 0;color:#5c789b}
+html[data-theme="dark"] .kk-no-id-choice{background:#183657;color:#dcecff;border-color:#40658e}
+html[data-theme="dark"] .kk-id-optional-note,html[data-theme="dark"] .kk-optional-label{color:#b5d2ed}

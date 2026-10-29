@@ -318,21 +318,27 @@
  };
  const savedFields=(form)=>{
   for(const [name,value] of new FormData(form)){
-   if(name==='consent'||name==='guardian_consent')continue;
+   if(name==='consent'||name==='guardian_consent'||name==='no_valid_id')continue;
    if(name==='emergency_phone'){
     const mobile=kkPhilippineMobile(value);
     if(!mobile)throw Error('Emergency contact must have 10 digits starting with 9 after +63.');
     data[name]=mobile;
    }else data[name]=String(value);
   }
+  if(current===1)data.no_valid_id=(!validID?.exists&&form.querySelector('[name="no_valid_id"]')?.checked)?'yes':'no';
   if(current===5){data.consent=!!form.querySelector('[name="consent"]')?.checked;data.guardian_consent=!!form.querySelector('[name="guardian_consent"]')?.checked;}
   renderPreview();
  };
- const validIDSection=()=>'<section class="kk-id-upload kk-full-span" aria-label="Valid ID upload"><div class="kk-form-section-head"><span class="kk-form-section-icon">▣</span><div><h3>Valid ID <span class="kk-required">*</span></h3>'+
-  '<p>Upload a clear image or PDF of a valid ID (PSA, QCID, Voter ID, Driver’s License, Passport, National ID). Maximum 2.5 MB.</p></div></div>'+
+ const validIDSection=()=>'<section class="kk-id-upload kk-full-span" aria-label="Valid ID upload"><div class="kk-form-section-head"><span class="kk-form-section-icon">▣</span><div><h3>Valid ID <small class="kk-optional-label">(Optional)</small></h3>'+
+  '<p>Upload a clear image or PDF if you have one (PSA, QCID, Voter ID, Driver’s License, Passport, National ID). Maximum 2.5 MB. Hindi required para makapag-register.</p></div></div>'+
   '<label class="kk-id-drop"><span class="kk-upload-symbol" aria-hidden="true">☁</span><strong>'+ (validID?.exists?'Replace Valid ID':'Choose a file / Drag & Drop')+'</strong>'+
   '<span id="kk-id-upload-status">'+(validID?.exists?'Uploaded: '+esc(validID.name||'Valid ID'):'Accepted: JPG, PNG or PDF · 2.5 MB maximum')+'</span>'+
-  '<input type="file" name="kk_valid_id" id="kk-valid-id-file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"'+(validID?.exists?'':' required')+'></label>'+
+  '<input type="file" name="kk_valid_id" id="kk-valid-id-file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"></label>'+
+// No ID does not imply automatic SK verification, and the user may upload later.
+  '<label class="kk-no-id-choice"><input type="checkbox" name="no_valid_id" value="yes"'+
+  (!validID?.exists&&data.no_valid_id==='yes'?' checked':'')+' '+(validID?.exists?'disabled':'')+
+  '> Wala pa akong Valid ID. Ipa-review ko muna ang aking registration sa SK.</label>'+
+  '<p class="kk-id-optional-note">Puwede kang mag-Save &amp; Next kahit walang Valid ID. SK officer ang magve-verify ng iyong mga detalye bago ma-approve ang membership.</p>'+
   '<div class="kk-id-chip-row"><span>PSA / Birth Certificate</span><span>QCID</span><span>Voter’s ID</span><span>Driver’s License</span><span>Passport</span><span>National ID</span></div></section>';
  const yesNoField=(name,label)=>'<fieldset class="kk-yn-field"><legend>'+esc(label)+' <span class="kk-required">*</span></legend>'+
   '<label><input type="radio" name="'+name+'" value="yes" required'+(data[name]==='yes'?' checked':'')+'> Yes</label>'+
@@ -363,7 +369,7 @@
    previewSection('Education',[['Attainment',displayProfileValue('education',data.education)],['School',data.school_name],['Year Level',displayProfileValue('year_level',data.year_level)]])+
    previewSection('Additional Information',[['Registered SK Voter',displayProfileValue('sk_voter',data.sk_voter)],['National Voter',displayProfileValue('national_voter',data.national_voter)],['Voted Last Election',displayProfileValue('voted_last_election',data.voted_last_election)],['KK Assembly',displayProfileValue('kk_assembly',data.kk_assembly)]])+
    previewSection('Emergency Contact',[['Name',data.emergency_name],['Contact Number',data.emergency_phone]])+
-   previewSection('Valid ID',[['Document',validID?.exists?'Uploaded · '+(validID.name||'Valid ID'):'Required']]);
+   previewSection('Valid ID',[['Document',validID?.exists?'Uploaded · '+(validID.name||'Valid ID'):'Not uploaded · SK manual review']]);
  };
 
  const stepBody=()=>{
@@ -414,7 +420,7 @@
    '<p class="kk-helper">Ito ay gagamitin lamang sa naaangkop na emergency at hindi ilalathala.</p>';
   const items=[['Full Name',[account.member.first_name,account.member.middle_name,account.member.last_name].filter(Boolean).join(' ')],['Birthdate',account.member.birthdate],
    ['Email',account.member.email],['Resident Address',[data.residence_region||'NCR',data.residence_province||'Metro Manila',data.residence_city||'Quezon City',data.residence_barangay||''].filter(Boolean).join(' · ')],['Sitio / Purok',sitios.find(s=>String(s.id)===String(data.sitio_id))?.name||'—'],['Street',data.street||'—'],['Educational Status',displayProfileValue('education_status',data.education_status)],['Education',displayProfileValue('education',data.education)],['Course / Program',data.course_program||'—'],['Year / Grade Level',displayProfileValue('year_level',data.year_level)],
-   ['SK Voter',displayProfileValue('sk_voter',data.sk_voter)],['National Voter',displayProfileValue('national_voter',data.national_voter)],['Voted Last Election',displayProfileValue('voted_last_election',data.voted_last_election)],['Attended KK Assembly',displayProfileValue('kk_assembly',data.kk_assembly)],['Valid ID',validID?.exists?'Uploaded':'Not uploaded'],['Emergency Contact',data.emergency_name||'—']];
+   ['SK Voter',displayProfileValue('sk_voter',data.sk_voter)],['National Voter',displayProfileValue('national_voter',data.national_voter)],['Voted Last Election',displayProfileValue('voted_last_election',data.voted_last_election)],['Attended KK Assembly',displayProfileValue('kk_assembly',data.kk_assembly)],['Valid ID',validID?.exists?'Uploaded':'Not uploaded · SK manual verification needed'],['Emergency Contact',data.emergency_name||'—']];
   const age=(()=>{const now=new Date(),bd=new Date(account.member.birthdate+'T00:00:00Z');return now.getUTCFullYear()-bd.getUTCFullYear()-Number((now.getUTCMonth()*100+now.getUTCDate())<(bd.getUTCMonth()*100+bd.getUTCDate()));})();
   return '<div class="kk-review">'+items.map(([k,v])=>'<div><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join('')+'</div>'+
   '<label class="kk-checkbox"><input name="consent" type="checkbox"'+(data.consent?' checked':'')+' required><span>I certify that the details are accurate and consent to confidential SK KK profiling verification.</span></label>'+
@@ -501,7 +507,7 @@
       reader.onerror=()=>reject(Error('Cannot read file'));reader.onload=()=>resolve(String(reader.result||''));reader.readAsDataURL(file);});
     const payload={name:file.name.slice(0,120),mime:file.type,data:bytes.split(',')[1]};
     const reply=await send('id/upload',payload);
-    validID=reply.document;
+    validID=reply.document;data.no_valid_id='no';
     feedback('Valid ID uploaded securely. SK Officers can view it during verification.','success');
     renderStep();
   }catch(err){feedback('Valid ID upload failed: '+err.message,'error');}
@@ -538,12 +544,7 @@
  });
  $('#kk-step-form').addEventListener('submit',async e=>{
   e.preventDefault();const form=e.currentTarget;
-  // The secure Valid ID upload is only part of Step 1, never account registration.
-  if(current===1&&!validID?.exists){
-   feedback(idBusy?'Hindi pa tapos ang Valid ID upload.':'Mag-upload muna ng Valid ID bago mag-Save & Next.','error');
-   if(!idBusy)$('#kk-valid-id-file')?.focus();
-   return;
-  }
+  // A youth without a Valid ID may apply; verification stays with SK staff.
   if(idBusy){feedback('Hindi pa tapos ang Valid ID upload.','error');return;}
   if(!form.reportValidity())return;
   const identityRequired=!account.member.first_name||!account.member.birthdate;

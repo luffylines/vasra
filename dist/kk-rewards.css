@@ -107,3 +107,45 @@ body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-danger:ho
  #panel-kk-rewards .kk-reward-product .kk-reward-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
  #panel-kk-rewards .kk-reward-product .kk-reward-danger{grid-column:1/-1}
 }
+
+/* Professional reward catalog and unified actions */
+#panel-kk-rewards .kk-rewards-card{box-shadow:0 7px 25px #193f6114}
+#panel-kk-rewards .kk-reward-product{border-color:#d9e5f4;box-shadow:0 7px 19px #193f6114;transition:transform .17s,box-shadow .17s}
+#panel-kk-rewards .kk-reward-product:hover{transform:translateY(-2px);box-shadow:0 12px 24px #193f6122}
+#panel-kk-rewards .kk-reward-image{aspect-ratio:16/9;min-height:145px;border-bottom:1px solid #dce7f4}
+#panel-kk-rewards .kk-reward-product-body{gap:11px;padding:16px}
+#panel-kk-rewards .kk-reward-topline>strong{font-size:15px}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#panel-kk-rewards .kk-reward-product.is-published .kk-reward-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button{font-size:12px!important;padding:9px 8px!important}
+#panel-kk-rewards .kk-reward-product .kk-reward-actions button:disabled{cursor:not-allowed}
+#panel-kk-rewards .kk-reward-no-image{font-size:12px;line-height:1.5;padding:18px;text-align:center}
+@media(max-width:480px){#panel-kk-rewards .kk-reward-product-body{padding:13px}
+#panel-kk-rewards .kk-reward-product.is-published .kk-reward-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Clear Pending / Approved / Rejected SK review states and notification visibility. */
+#panel-kk-rewards .kk-reward-claim{align-items:center;min-width:0;gap:15px}
+#panel-kk-rewards .kk-reward-claim.is-pending{border-left:4px solid #d99b17}
+#panel-kk-rewards .kk-reward-claim.is-approved{border-left:4px solid #149b60;background:#f7fdf9}
+#panel-kk-rewards .kk-reward-claim.is-rejected{border-left:4px solid #d13d4a;background:#fffafa}
+#panel-kk-rewards .kk-reward-claim-person{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+#panel-kk-rewards .kk-reward-claim-person h4{margin:0;font-size:13px}
+#panel-kk-rewards .kk-reward-claim-person p{margin:0}
+#panel-kk-rewards .kk-claim-status-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+#panel-kk-rewards .kk-claim-status-actions .kk-reward-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#panel-kk-rewards .kk-redemption-status{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;
+ border-radius:999px;padding:7px 12px;font-size:11px;font-weight:850;min-width:85px}
+#panel-kk-rewards .kk-redemption-status.is-pending{color:#85570c;background:#fff2cb;border-color:#f8d781}
+#panel-kk-rewards .kk-redemption-status.is-approved{color:#087448;background:#d8f6e7;border-color:#a8e6c8}
+#panel-kk-rewards .kk-redemption-status.is-rejected{color:#a82336;background:#ffe3e6;border-color:#ffc0c7}
+#panel-kk-rewards .kk-approval-email{margin-top:3px;font-size:10px;color:#6b7c91}
+#panel-kk-rewards .kk-approval-email.is-accepted{color:#14744e}
+#panel-kk-rewards .kk-approval-email.is-pending{color:#94661d}
+#panel-kk-rewards .kk-reward-email-retry{font-size:11px;min-height:35px}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim{background:#1d334e;border-color:#486a90}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim.is-pending{border-left-color:#e9b544}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim.is-approved{border-left-color:#29c98b}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim.is-rejected{border-left-color:#ff707c}
+body.account-workspace[data-theme="dark"] #panel-kk-rewards .kk-reward-claim :is(h4,p,small){color:#e1eefa}
+@media(max-width:650px){#panel-kk-rewards .kk-claim-status-actions{justify-content:flex-start;width:100%}
+#panel-kk-rewards .kk-reward-claim{padding:13px}}

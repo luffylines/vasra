@@ -50,6 +50,14 @@
     {
       "source": "/kk-reset",
       "destination": "/kk-reset.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/projects.html"
+    },
+    {
+      "source": "/achievements",
+      "destination": "/achievements.html"
     }
   ],
   "redirects": [
@@ -106,6 +114,16 @@
     {
       "source": "/kk-reset.html",
       "destination": "/kk-reset",
+      "permanent": true
+    },
+    {
+      "source": "/projects.html",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/achievements.html",
+      "destination": "/achievements",
       "permanent": true
     }
   ],

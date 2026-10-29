@@ -5,9 +5,10 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const Mail=require('../lib/vasra-email-template.cjs');
 const handler=read('lib/handler.cjs');
-test('All four VASRA Resend flows use one SK logo branded email theme alongside plain text',()=>{
- assert.equal((handler.match(/Mail\.renderEmail\(/g)||[]).length,4);
- for(const start of ['async function sendAccountEmail','async function sendKKEmailChangeLink',
+test('All six VASRA Resend flows use one SK logo branded email theme alongside plain text',()=>{
+ assert.equal((handler.match(/Mail\.renderEmail\(/g)||[]).length,6);
+ for(const start of ['async function sendRewardApprovalNotification','async function deliverKKCardReviewEmail',
+   'async function sendAccountEmail','async function sendKKEmailChangeLink',
    'async function sendKKReviewEmail','async function sendPublicContactEmail']){
    const at=handler.indexOf(start);
    assert.ok(at>=0,start);
@@ -64,7 +65,7 @@ test('Manual KK ID input and Find Member are aligned at 42px on phone and deskto
  assert.match(style,/grid-template-columns:minmax\(0,1fr\) 112px!important/);
  assert.match(style,/@media\(max-width:480px\)/);
  assert.match(style,/@media\(max-width:340px\)/);
- assert.match(html,/kk-qr-scan\.css\?v=20261026-align-manual-v6/);
+ assert.match(html,/kk-qr-scan\.css\?v=20261027-manual-card-v1/);
  assert.match(html,/id="kk-quick-manual-id"/);
 });
 test('Updated mail template and handler syntax compile',()=>{

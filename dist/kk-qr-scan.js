@@ -5,7 +5,7 @@
  const types={printing:'Free Printing',computer:'Free Computer Use',retabox:'RetaBox Donations'};
  const video=$('#kk-scan-video'),canvas=$('#kk-scan-canvas');
  if(!video||!canvas)return;
- let stream=null,active=false,processing=false,decoding=false,detector=null,timer=null,revision=0,member=null,pending=[],entryKey=null,jsQRLoading=null;
+ let stream=null,active=false,processing=false,decoding=false,detector=null,timer=null,revision=0,member=null,pending=[],entryKey=null,jsQRLoading=null,entryMode='manual';
  const status=(msg,error=false)=>{const el=$('#kk-scan-status');el.textContent=msg;el.dataset.kind=error?'error':'info';};
  const detailFields=(type,d={})=>{
   if(type==='printing')return '<div class="kk-scan-fields"><label>Paper size<select name="paper_size"><option value="short"'+(d.paper_size==='short'?' selected':'')+'>Short</option><option value="long"'+(d.paper_size==='long'?' selected':'')+'>Long</option></select></label>'+
@@ -27,9 +27,14 @@
   member=data.member;pending=data.pending||[];
   const officer=data.officer?.name||'Signed-in SK Officer';
   $('#kk-scan-member').hidden=false;
-  $('#kk-scan-member').innerHTML='<div class="kk-scan-member-profile"><span class="kk-scan-id-badge">VERIFIED KK MEMBER</span>'+
+  const cardVerified=data.card_verified===true;
+  const label=cardVerified?'VERIFIED MEMBER ID / CARD':'VERIFIED KK MEMBER';
+  const notice=cardVerified
+   ?'<p class="kk-scan-card-notice is-verified">Member ID/Card: Verified by SK — QR and manual entry are available.</p>'
+   :'<p class="kk-scan-card-notice is-unverified" role="status">Member ID/Card: Not Verified. This KK member is verified, but the 2×2 photo or SK card approval is still missing. Manual KK ID entry is allowed.</p>';
+  $('#kk-scan-member').innerHTML='<div class="kk-scan-member-profile"><span class="kk-scan-id-badge">'+label+'</span>'+
     '<h4>'+esc(member.name)+'</h4><p>'+esc(member.kk_id)+'</p>'+
-    '<small>SK Officer: <strong>'+esc(officer)+'</strong> · authenticated session</small></div>';
+    '<small>SK Officer: <strong>'+esc(officer)+'</strong> · authenticated session</small>'+notice+'</div>';
   const existing=$('#kk-scan-pending');
   existing.hidden=!pending.length;
   existing.innerHTML=pending.length?'<h4>Pending requests ('+pending.length+')</h4>'+
@@ -47,7 +52,8 @@
    '<label>Officer note (optional)<input name="note" maxlength="500" placeholder="Record the actual service"></label>'+
    '<button type="submit" class="primary">Confirm & Record Completed</button></form>'+(pending.length?'</details>':'');
   entryKey=globalThis.crypto?.randomUUID?.()||null;
-  status('Verified KK member · Review a pending request or record a walk-in service.');
+  status(cardVerified?'Verified Member ID/Card. Review a pending request or record a service.':
+   "Verified KK member. Member's ID/Card is not verified yet; manual entry is allowed.");
  };
  const fetchScan=async body=>{
   const result=await api('./api/kk/staff/services/scan',{method:'POST',body:JSON.stringify(body)});
@@ -59,7 +65,7 @@
   if(!/^VASRA-KK-[0-9]{1,10}$/.test(id))throw Error('Scan a valid SK VASRA KK ID (for example, VASRA-KK-02).');
   return id;
  };
- const lookup=async raw=>{
+ const lookup=async(raw,mode='manual')=>{
   if(processing)return;
   processing=true;
   const seq=++revision;
@@ -69,7 +75,8 @@
    status('Looking up verified KK member…');
    member=null;pending=[];entryKey=null;
    hide('#kk-scan-member');hide('#kk-scan-pending');hide('#kk-scan-walkin');
-   const data=await fetchScan({action:'lookup',kk_id:id});
+   const data=await fetchScan({action:'lookup',kk_id:id,mode});
+   entryMode=mode;
    if(seq!==revision)return;
    $('#kk-scan-manual-input').value=id;
    showResult(data);
@@ -97,7 +104,7 @@
     if(w>0&&h>0){canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});
      ctx.drawImage(video,0,0,w,h);const pixels=ctx.getImageData(0,0,w,h);value=window.jsQR(pixels.data,w,h,{inversionAttempts:'attemptBoth'})?.data||null;}
    }
-   if(value){await lookup(value);return;}
+   if(value){await lookup(value,'qr');return;}
   }catch(error){status('Camera QR reader error: '+error.message,true);}
   finally{decoding=false;}
  };
@@ -132,12 +139,12 @@
    timer=setInterval(decodeFrame,230);
   }catch(e){stopCamera();status('Cannot start camera: '+(e.name==='NotAllowedError'?'Please allow camera access in browser settings.':e.message),true);}
  };
- window.openKKScan=async({kkId=null,autoStart=false}={})=>{
+ window.openKKScan=async({kkId=null,mode='manual',autoStart=false}={})=>{
   const panel=$('#kk-scan-panel');panel.hidden=false;
   panel.scrollIntoView?.({behavior:'smooth',block:'start'});
   member=null;pending=[];entryKey=null;
   hide('#kk-scan-member');hide('#kk-scan-pending');hide('#kk-scan-walkin');
-  if(kkId){await lookup(kkId);return;}
+  if(kkId){await lookup(kkId,mode);return;}
   status('Ready to scan. Hold a QR in front of the camera or enter a KK ID.');
   if(autoStart)startCamera();
  };
@@ -150,8 +157,8 @@
  $('#kk-scan-start').addEventListener('click',startCamera);
  $('#kk-scan-stop').addEventListener('click',stopCamera);
  $('#kk-scan-close').addEventListener('click',close);
- $('#kk-scan-manual-submit').addEventListener('click',()=>lookup($('#kk-scan-manual-input').value));
- $('#kk-scan-manual-input').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();lookup(e.target.value);}});
+ $('#kk-scan-manual-submit').addEventListener('click',()=>lookup($('#kk-scan-manual-input').value,'manual'));
+ $('#kk-scan-manual-input').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();lookup(e.target.value,'manual');}});
  $('#kk-scan-panel').addEventListener('change',e=>{
   if(e.target.id==='kk-scan-service-type')$('#kk-scan-service-fields').innerHTML=detailFields(e.target.value);
  });
@@ -164,7 +171,7 @@
   if(!confirm('Confirm '+types[kind]+' for '+member.name+' ('+member.kk_id+')? This records an APPROVED and COMPLETED service with your SK account.'))return;
   if(!existing&&!entryKey){status('Secure request identifier unavailable. Refresh this page.',true);return;}
   const action=existing?'complete_pending':'walkin_complete',requestId=existing||undefined;
-  const payload={action,kk_id:member.kk_id,service_type:kind,details,note:form.elements.note.value};
+  const payload={action,kk_id:member.kk_id,mode:entryMode,service_type:kind,details,note:form.elements.note.value};
   if(existing)payload.request_id=requestId;
   else payload.entry_key=entryKey;
   const button=form.querySelector('button[type="submit"]');button.disabled=true;processing=true;
@@ -175,7 +182,7 @@
    window.showVasraToast?.('Service completed and saved to SK / KK history.','success');
    await window.loadKKServiceStaff?.();
    entryKey=null;
-   const d=await fetchScan({action:'lookup',kk_id:id});
+   const d=await fetchScan({action:'lookup',kk_id:id,mode:entryMode});
    showResult(d);
   }catch(err){status(err.message,true);window.showVasraToast?.(err.message,'error');}
   finally{processing=false;button.disabled=false;}

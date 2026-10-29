@@ -2599,3 +2599,16 @@ body.account-workspace #staff-project-gallery[open] .staff-gallery-arrow{
 body.account-workspace #staff-project-gallery[open] .staff-gallery-arrow svg{
  width:18px;height:18px;flex:none;stroke:currentColor;
 }
+
+/* Consistent two-column progress dialog actions (mobile and desktop). */
+body.account-workspace #progress-dialog .progress-dialog-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+ align-items:stretch;justify-content:stretch;
+}
+body.account-workspace #progress-dialog .progress-dialog-actions>button{
+ display:inline-flex;align-items:center;justify-content:center;
+ width:100%;height:44px;min-height:44px;box-sizing:border-box;
+ margin:0;line-height:1.25;text-align:center;font-size:13px;
+ padding:10px 12px;font-weight:750;
+}
+@media(max-width:370px){body.account-workspace #progress-dialog .progress-dialog-actions{gap:8px}}

@@ -49,6 +49,6 @@ test('Left Barangay logo and right SK logo use equal 112-pixel slots and centere
 test('Preview and print share same versioned renderer to prevent mixed old logo assets',()=>{
  for(const name of frontBackPages){
   const file=fs.readFileSync(path.join(root,'dist',name),'utf8');
-  assert.match(file,/src="\.\/kk-id-render\.js\?v=20261025-kk-id-on-demand-v2"/);
+  assert.match(file,/src="\.\/kk-id-render\.js\?v=20261027-kk-review-email-v1"/);
  }
 });

@@ -11,10 +11,10 @@ test('Scan is available on all SK officer workspaces and opens the SK Services p
  assert.match(html,/id="kk-quick-overlay"/);
  assert.match(html,/id="kk-service-open-scanner"/);
  assert.match(html,/id="kk-scan-panel"/);
- assert.match(account,/window\.enterKKScanService=async kkId=>/);
+ assert.match(account,/window\.enterKKScanService=async\(kkId,mode='manual'\)=>/);
  assert.match(account,/window\.openQuickKKScan\?\.\(\)/);
  assert.match(account,/await selectTab\('kk-services'\)/);
- assert.match(account,/window\.openKKScan\?\.\(\{kkId\}\)/);
+ assert.match(account,/window\.openKKScan\?\.\(\{kkId,mode\}\)/);
  assert.match(account,/window\.closeKKScan\?\.\(\)/);
  assert.match(scan,/window\.closeKKScan=close/);
  assert.match(css,/#kk-scan-video\[hidden\]/);

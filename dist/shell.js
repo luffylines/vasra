@@ -7,9 +7,9 @@
   {part:'duty',key:'duty',icon:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="m9 16 2 2 4-4"/>'},
   {part:'youth-leaders',key:'leaders',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'},
   {part:'achievements',key:'awards',icon:'<path d="M8 21h8m-4-4v4M7 4h10v6a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4m9-6h3v2a4 4 0 0 1-4 4"/>'},
-  {part:'contacts',key:'contacts',icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>'},
   {part:'transparency',key:'transparency',icon:'<path d="M3 3v18h18"/><path d="M7 16V9M12 16V5M17 16v-6"/>'},
-  {part:'sk-resolutions',key:'resolutions',icon:'<path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h4M8 12h8M8 16h8"/>'}
+  {part:'sk-resolutions',key:'resolutions',icon:'<path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h4M8 12h8M8 16h8"/>'},
+  {part:'contacts',key:'contacts',icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>'},
  ];
  const header=document.querySelector('header.site-header');
  const nav=header?.querySelector('nav[aria-label="Pangunahing navigation"]');
@@ -40,6 +40,9 @@
   if(old)old.outerHTML=icon(route.icon);
   else a.insertAdjacentHTML('afterbegin',icon(route.icon));
  }
+ // Ensure Contacts is the last public navigation link, including older cached HTML.
+ const contactLink=[...nav.querySelectorAll('a[href]')].find(a=>match(a.getAttribute('href'))==='contacts');
+ if(contactLink)nav.append(contactLink);
  const fbPath='<path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v4H8v7h4v-7h3l.6-4H12V7.7c0-.5.3-.7.8-.7H15V3z"/>';
  document.querySelectorAll('.sidebar-bottom a[href*="facebook.com"]').forEach(link=>{
   if(!link.querySelector('svg'))link.insertAdjacentHTML('afterbegin',icon(fbPath));

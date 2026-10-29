@@ -294,3 +294,10 @@ body.account-workspace[data-theme="dark"] #kk-quick-overlay[data-camera="unavail
  #kk-quick-overlay #kk-quick-manual-form>div{grid-template-columns:minmax(0,1fr)!important;}
  #kk-quick-overlay #kk-quick-manual-form button[type="submit"]{width:100%!important;}
 }
+
+/* Differentiate verified member profile and SK-approved KK identity card. */
+.kk-scan-card-notice{margin:12px 0 0;padding:11px 13px;border-radius:10px;font-size:12px;line-height:1.5;font-weight:650}
+.kk-scan-card-notice.is-unverified{background:#fff4d9;color:#805615;border:1px solid #e7cb89}
+.kk-scan-card-notice.is-verified{background:#e5f8ed;color:#137348;border:1px solid #a9e3c2}
+body[data-theme="dark"] .kk-scan-card-notice.is-unverified{background:#473b26;color:#ffe4ad;border-color:#776039}
+body[data-theme="dark"] .kk-scan-card-notice.is-verified{background:#1b4437;color:#c2f9da;border-color:#417961}

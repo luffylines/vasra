@@ -1,6 +1,6 @@
 const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');
 const dist=path.join(__dirname,'../dist');const html=fs.readFileSync(path.join(dist,'index.html'),'utf8'),css=fs.readFileSync(path.join(dist,'home-memorial.css'),'utf8'),js=fs.readFileSync(path.join(dist,'home-landing.js'),'utf8');
-test('memorial scene is localized to homepage with official portal brand untouched',()=>{
+test('Barangay Vasra Hall scene retains official portal brand',()=>{
  assert.match(html,/class="home-memorial-hero"/);assert.match(css,/home-memorial-circle\.webp/);
  assert.match(html,/src="\.\/sk%20logo.jpg"/);assert.match(html,/home-memorial\.css/);
  assert.match(html,/home-landing\.js/);assert.match(html,/home-awards\.js/);
@@ -22,9 +22,9 @@ test('SVG icons replace text symbols and sharp hero asset is versioned',()=>{
   assert.match(match[0],/class="home-card-svg"/);
   assert.match(match[0],/class="home-summary-chevron"/);
  }
- assert.doesNotMatch(html, /aria-hidden="true">(?:▣|♟|▦|★)<\\/span>/);
- assert.match(css,/home-memorial-circle\\.webp/);
- assert.match(html,/home-memorial\\.css\\?v=qmc-hd-20261027-v1/);
+ assert.doesNotMatch(html, /aria-hidden="true">(?:▣|♟|▦|★)<\/span>/);
+ assert.match(css,/home-memorial-circle\.webp/);
+ assert.match(html,/home-memorial\.css\?v=20261029-brgy-hall-v1/);
 });
 
 test('responsive homepage uses full-resolution landscape and portrait photographs',()=>{
@@ -32,11 +32,20 @@ test('responsive homepage uses full-resolution landscape and portrait photograph
  assert.match(css,/background-image:url\("\.\/home-memorial-circle-mobile\.webp"\)/);
  assert.match(css,/@media\(max-width:600px\)/);
  assert.match(css,/background-size:cover/);
- assert.match(html,/home-memorial\.css\?v=qmc-hd-20261027-v1/);
- const desktop=fs.readFileSync(path.join(dist,'home-memorial-circle.webp'));
- const mobile=fs.readFileSync(path.join(dist,'home-memorial-circle-mobile.webp'));
+ assert.match(html,/home-memorial\.css\?v=20261029-brgy-hall-v1/);
+ const desktop=fs.readFileSync(path.join(dist,'brgy-vasra-hall-banner.webp'));
+ const mobile=fs.readFileSync(path.join(dist,'brgy-vasra-hall-mobile.webp'));
  assert(desktop.length>100000,'desktop image unexpectedly compressed');
  assert(mobile.length>100000,'mobile image unexpectedly compressed');
  assert.equal(desktop.toString('ascii',0,4),'RIFF');
  assert.equal(mobile.toString('ascii',0,4),'RIFF');
+});
+
+test('Open / Closed status typography is balanced across desktop and mobile cards',()=>{
+ const block=css.match(/\.home-summary-card\.duty #home-duty-summary\{[^}]+\}/);
+ assert.ok(block,'Dedicated SK Duty card typography must exist');
+ assert.match(block[0],/font-size:clamp\(21px,1\.75vw,25px\)/);
+ assert.match(css,/@media\(max-width:600px\)\{\s*\.home-summary-card\.duty #home-duty-summary\{font-size:22px\}/);
+ assert.match(html,/home-memorial\.css\?v=20261029-brgy-hall-v1/);
+ assert.match(js,/isHours&&!closed\?'Open':'Closed'/);
 });
