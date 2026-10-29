@@ -304,3 +304,6 @@ body.account-workspace[data-theme="dark"] .duty-manager-sunday-check,body.accoun
 body.account-workspace[data-theme="dark"] .duty-manager-week-summary h3,body.account-workspace[data-theme="dark"] .duty-manager-roster-heading strong,body.account-workspace[data-theme="dark"] .duty-manager-roster-person{color:#edf5ff}
 @media(max-width:600px){.duty-manager-week-summary{padding:12px}.duty-manager-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.duty-manager-roster-day{padding:9px}.duty-manager-roster-heading{flex-direction:column;gap:2px}}
 @media(max-width:400px){.duty-manager-roster-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Preserve KK Profiling role visibility even where staff-nav display overrides [hidden]. */
+#staff-nav [data-tab="kk-profiling"][hidden]{display:none!important}
