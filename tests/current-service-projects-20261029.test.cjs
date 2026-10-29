@@ -107,13 +107,61 @@ test('Current Project is touch-responsive on iPhone and Android viewport sizes',
  assert.match(css,/#panel-current-projects \.current-project-admin-card textarea\{/);
  assert.match(css,/font-size:16px/);
  assert.match(css,/object-fit:contain/);
- assert.match(home,/id="current-project-poster-preview"/);
+ assert.match(home,/id="current-project-poster-zoom"/);
  assert.match(home,/id="current-project-poster-close"/);
- assert.match(script,/posterPreview\.showModal\(\)/);
- assert.match(script,/posterPreview\?\.open/);
+ assert.match(script,/zoom.hidden=false/);
+ assert.match(script,/closeZoom\(\)/);
  assert.match(script,/window\.addEventListener\('pageshow'/);
- assert.match(home,/current-projects\.css\?v=20261029-mobile-v3/);
- assert.match(home,/current-projects\.js\?v=20261029-mobile-v3/);
- assert.match(admin,/current-projects\.css\?v=20261029-mobile-v3/);
- assert.match(admin,/current-projects\.js\?v=20261029-mobile-v3/);
+ assert.match(home,/current-projects\.css\?v=20261029-poster-v4/);
+ assert.match(home,/current-projects\.js\?v=20261029-poster-v4/);
+ assert.match(admin,/current-projects\.css\?v=20261029-poster-v4/);
+ assert.match(admin,/current-projects\.js\?v=20261029-poster-v4/);
+});
+
+
+test('Unicode-safe teaser never splits Facebook mathematical bold letters or emoji',()=>{
+ const src=read('dist/current-projects.js');
+ assert.match(src,/new Intl\.Segmenter\('fil',\{granularity:'grapheme'\}\)/);
+ assert.match(src,/graphemes\.slice\(0,max\)\.join\(''\)/);
+ assert.doesNotMatch(src,/safe\(format\(x\.summary\)\.slice\(0,185\)\)/);
+ assert.match(src,/safe\(teaser\(x\.summary\)\)/);
+ const segmenter=Intl.Segmenter;
+ assert.equal(typeof segmenter,'function');
+ const teaser=(raw,max=150)=>{
+  const summary=String(raw).replace(/\s+/g,' ').trim();
+  const graphemes=Array.from(new Intl.Segmenter('fil',{granularity:'grapheme'}).segment(summary),x=>x.segment);
+  if(graphemes.length<=max)return summary;
+  const cropped=graphemes.slice(0,max).join('');
+  const lastSpace=cropped.lastIndexOf(' ');
+  const end=lastSpace>=max*.65?cropped.slice(0,lastSpace):cropped;
+  return end.trimEnd()+'…';
+ };
+ const examples=[
+  'Narito ang '+('𝐅𝐑𝐄𝐄 𝐏𝐑𝐈𝐍𝐓𝐈𝐍𝐆 𝐀𝐍𝐃 𝐏𝐇𝐎𝐓𝐎𝐂𝐎𝐏𝐘𝐈𝐍𝐆 ').repeat(12),
+  'Service '.repeat(24)+'🎉👩‍💻🇵🇭'+' maraming salamat',
+  'Short text'
+ ];
+ for(const text of examples){
+  const preview=teaser(text);
+  assert(!preview.includes('�'), 'Bad Unicode replacement in preview');
+  assert(!/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/u.test(preview));
+ }
+});
+test('Poster zoom happens within same top-layer dialog and previews are compact at all widths',()=>{
+ const home=read('dist/index.html');
+ const js=read('dist/current-projects.js');
+ const css=read('dist/current-projects.css');
+ assert.match(home,/id="current-project-poster-zoom"/);
+ assert.match(home,/id="current-project-poster-full-image"/);
+ assert.doesNotMatch(home,/id="current-project-poster-preview"/);
+ assert.match(js,/zoom\.hidden=false/);
+ assert.match(js,/zoom\.hidden=true/);
+ assert.match(js,/zoomClose\.addEventListener\('click'/);
+ assert.match(js,/dialog\.addEventListener\('cancel',e=>\{e\.preventDefault\(\);if\(zoom&&!zoom\.hidden\)closeZoom\(\)/);
+ assert.doesNotMatch(js,/posterPreview\.showModal/);
+ assert.match(css,/\.current-project-poster-zoom\[hidden\]\{display:none!important\}/);
+ assert.match(css,/\.current-project-section \.current-project-cover\{\s*height:196px/);
+ assert.match(css,/\.current-project-modal \.current-project-detail-image\{\s*position:relative;top:auto;align-self:start;\s*height:310px/);
+ assert.match(css,/\.current-project-section \.current-project-cover\{height:170px/);
+ assert.match(css,/#panel-current-projects \.current-project-admin-image\{\s*height:215px/);
 });
