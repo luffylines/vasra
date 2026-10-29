@@ -1,7 +1,7 @@
-/* Scoped memorial-circle homepage only. Public sidebar/header and other routes stay unchanged. */
+/* SK VASRA public homepage: Barangay Vasra Hall photograph. Preserve sidebar, copy and controls. */
 .home-main{min-width:0}
 .home-memorial-hero{isolation:isolate;position:relative;display:flex;align-items:center;overflow:hidden;border-radius:22px;background:#163660;color:#fff;min-height:410px;padding:clamp(24px,4vw,48px);box-shadow:0 16px 30px #122b4f0e}
-.home-memorial-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:url("./home-memorial-circle.webp") no-repeat right 42%;background-size:auto 145%}
+.home-memorial-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:url("./brgy-vasra-hall-banner.webp") no-repeat right 42%;background-size:auto 145%}
 .home-memorial-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#102a50 0%,#153763ed 28%,#17375cba 51%,#102e503d 78%,#102a5014 100%)}
 .home-memorial-content{width:min(100%,610px);position:relative;z-index:1}
 .home-memorial-kicker{display:flex;align-items:center;gap:11px;font-size:clamp(9px,.9vw,12px);letter-spacing:.19em;line-height:1.55;color:#d5e6f8;font-weight:500}
@@ -88,10 +88,10 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card :is(small,strong,
 html[data-theme="dark"] body.portal-refresh .home-recent-cover .home-recent-category{color:#fff}
 html[data-theme="dark"] body.portal-refresh .home-recent-state{background:#234471;color:#e9f3ff}
 
-/* 2026-10-26: sharp memorial image and consistent vector icons.
+/* Sharp photograph and consistent vector icons.
    Keep specificity scoped to the public homepage. */
 .home-memorial-hero::before{
- background-image:url("./home-memorial-circle.webp");
+ background-image:url("./brgy-vasra-hall-banner.webp");
  background-repeat:no-repeat;
  background-position:right center;
  background-size:auto 115%;
@@ -136,9 +136,9 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
  color:inherit
 }
 
-/* Final sharp scenic hero backgrounds for device-specific aspect ratios. */
+/* Sharp Barangay Vasra Hall hero backgrounds for device-specific aspect ratios. */
 
-/* Quezon Memorial Circle high-resolution backgrounds. Keep homepage photo separate
+/* Barangay Vasra Hall high-resolution backgrounds. Keep homepage photo separate
    from typography and clickable controls for genuine responsive rendering. */
 .home-memorial-hero{
  background-color:#102f59;
@@ -146,9 +146,9 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
  align-items:center;
 }
 .home-memorial-hero::before{
- background-image:url("./home-memorial-circle.webp");
+ background-image:url("./brgy-vasra-hall-banner.webp");
  background-size:cover;
- background-position:center 35%;
+ background-position:right 24%;
  background-repeat:no-repeat;
 }
 .home-memorial-hero::after{
@@ -162,11 +162,11 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
 .home-memorial-hero .home-memorial-actions{position:relative;z-index:1;}
 @media(min-width:1201px){
  .home-memorial-hero{min-height:480px;}
- .home-memorial-hero::before{background-position:center 30%;}
+ .home-memorial-hero::before{background-position:right 26%;}
 }
 @media(min-width:601px) and (max-width:960px){
  .home-memorial-hero{min-height:470px;}
- .home-memorial-hero::before{background-position:60% 36%;background-size:cover;}
+ .home-memorial-hero::before{background-position:right center;background-size:cover;}
  .home-memorial-hero::after{background:linear-gradient(90deg,rgba(9,29,58,.90),rgba(9,31,60,.60) 59%,rgba(8,29,57,.15));}
 }
 @media(max-width:600px){
@@ -178,8 +178,8 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
    border-radius:18px;
  }
  .home-memorial-hero::before{
-   background-image:url("./home-memorial-circle-mobile.webp");
-   background-position:center top;
+   background-image:url("./brgy-vasra-hall-mobile.webp");
+   background-position:center 22%;
    background-size:cover;
    background-repeat:no-repeat;
  }
