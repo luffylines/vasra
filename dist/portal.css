@@ -457,3 +457,12 @@
   min-height:0;padding:16px 12px
  }
 }
+
+/* Show both duty portraits equally, or many confirmed Sunday members. */
+.portal-refresh #duty-officer-portraits[data-layout="group"]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:11px;padding:14px;min-width:0}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile{min-width:0;max-width:100%}
+.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile-frame{width:100%;max-width:220px;aspect-ratio:4/5}
+.portal-refresh #duty-officer-portraits[data-layout="group"] img.duty-photo-primary{object-fit:contain;z-index:2}
+.portal-refresh #duty-officer-portraits[data-layout="group"] img.duty-photo-backdrop{object-fit:cover;filter:blur(10px) brightness(.9);transform:scale(1.1);z-index:1}
+.portal-refresh #duty-officer-portraits[data-layout="empty"]{display:grid;place-items:center;min-height:260px}
+@media(max-width:500px){.portal-refresh #duty-officer-portraits[data-layout="group"]{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:8px}.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile{padding:8px 5px}.portal-refresh #duty-officer-portraits[data-layout="group"] .duty-profile strong{font-size:11px}}

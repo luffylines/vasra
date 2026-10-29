@@ -74,13 +74,13 @@ function selectDay(index){
   selected=index;
   const d=managedDutyDays?managedDutyDays[index]:days[index];
   document.querySelectorAll('[data-day]').forEach((b,i)=>{b.classList.toggle('selected',i===index);b.setAttribute('aria-pressed',String(i===index))});
-  $('#day-kicker').textContent=d.day.toUpperCase()+' / OFFICER'+(d.names.length>1?'S':'')+' OF THE DAY';
+  $('#day-kicker').textContent=index===6?'LINGGO / SK COUNCIL ON DUTY':d.day.toUpperCase()+' / OFFICER'+(d.names.length>1?'S':'')+' OF THE DAY';
   const displayOfficerName=name=>String(name||'').normalize('NFKC').trim().replace(/\s+/g,' ')
    .toLocaleLowerCase('en-PH').replace(/(^|[\s'-])([a-z])/g,(_,prefix,letter)=>prefix+letter.toUpperCase());
-  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(displayOfficerName(name))}<small>${esc(d.roles[i])}</small></span>`).join('')||'Walang naka-assign';
+  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(displayOfficerName(name))}<small>${esc(d.roles[i])}</small></span>`).join('')||(index===6?'SK Council · Sunday attendance to be confirmed':'Walang naka-assign');
   const times=publishedDutyHours?.find(h=>h.weekday===index+1);
   const fmt=clock=>{const [h,m]=String(clock).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
-  $('#officer-role').textContent='Office hours · '+fmt(times?.open_time||'09:00')+'–'+fmt(times?.close_time||'18:00')+' (PHT)';
+  $('#officer-role').textContent='Office hours · '+fmt(index===6?'09:00':times?.open_time||'09:00')+'–'+fmt(index===6?'18:00':times?.close_time||'18:00')+' (PHT)';
   dutyContactRows();
   const poster=$('#poster-link'),photos=$('#duty-officer-portraits');
   poster.hidden=!!managedDutyDays;photos.hidden=!managedDutyDays;
@@ -98,7 +98,7 @@ function selectDay(index){
      '</span><strong>'+esc(p.name)+'</strong><small>'+esc(({
       chairman:'SK Chairperson',kagawad:'SK Kagawad',secretary:'SK Secretary',treasurer:'SK Treasurer'
      })[p.position]||'SK Officer')+'</small>'+photoNotice+'</article>';
-   }).join(''):'<p class="duty-profile-empty">Walang naka-assign na officer sa araw na ito. Makipag-ugnay sa SK Office.</p>';
+   }).join(''):'<p class="duty-profile-empty">'+(index===6?'Lahat ng SK Council ay maaaring mag-duty tuwing Linggo. Wala pang kumpirmadong papasok. Bukas pa rin ang opisina 9 AM–6 PM.':'Walang naka-assign na officer sa araw na ito. Makipag-ugnay sa SK Office.')+'</p>';
    photos.querySelectorAll('img').forEach(img=>{
     img.addEventListener('error',()=>{
      img.hidden=true;
@@ -136,7 +136,7 @@ function updateSchedule(){
   });
   const configured=(typeof publishedDutyHours!=='undefined'&&Array.isArray(publishedDutyHours))?
    publishedDutyHours.find(h=>h.weekday===today):null;
-  const opens=configured?.open_time||'09:00',closes=configured?.close_time||'18:00';
+  const opens=today===6?'09:00':configured?.open_time||'09:00',closes=today===6?'18:00':configured?.close_time||'18:00';
   const minute=now.hour*60+now.minute;
   const toMinutes=t=>{const p=String(t).split(':').map(Number);return p[0]*60+p[1];};
   const hoursOpen=minute>=toMinutes(opens)&&minute<toMinutes(closes);
