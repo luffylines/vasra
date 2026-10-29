@@ -325,8 +325,8 @@ document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dat
 let staffAutoRefreshRunning=false,lastStaffAutoCheck=0;
 const staffAutoLoaders={
  'kk-profiling':()=>window.refreshKKStaffIfIdle?.(),
- 'kk-services':()=>window.loadKKServiceStaff?.(),
- 'kk-rewards':()=>window.loadKKRewardsStaff?.(),
+ 'kk-services':()=>window.refreshKKServiceStaffIfIdle?.(),
+ 'kk-rewards':()=>window.refreshKKRewardsStaffIfIdle?.(),
  'kk-participants':()=>window.refreshKKEventStaffIfIdle?.(),
  'duty-manage':()=>loadDutyManagement(),
  'disclosure':()=>window.loadDisclosureAdmin?.(),

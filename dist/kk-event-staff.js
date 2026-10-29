@@ -96,6 +96,12 @@
   finally{fetching=false;}
  };
  window.loadKKEventStaff=refresh;
+ window.refreshKKEventStaffIfIdle=()=>{
+  if(page.hidden||document.hidden||fetching||busy||active||stream)return;
+  const focused=document.activeElement;
+  if(focused&&page.contains(focused)&&focused.closest('input,textarea,select,[contenteditable="true"]'))return;
+  return refresh();
+ };
  const checkin=async(raw,automatic=false)=>{
   if(!currentEvent||busy)return;
   let id;try{id=safeId(raw);}catch(e){setStatus(e.message,true);if(!automatic)toast(e.message,true);return;}

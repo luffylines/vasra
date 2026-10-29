@@ -78,6 +78,19 @@
   finally{loading=false;}
  };
  window.loadKKRewardsStaff=refresh;
+ window.refreshKKRewardsStaffIfIdle=()=>{
+  const panel=$('#panel-kk-rewards');
+  if(!panel||panel.hidden||document.hidden||loading||working)return;
+  const editor=$('#kk-reward-editor');
+  if(editor&&!editor.hidden&&(
+    editor.querySelector('[name="id"]')?.value ||
+    editor.querySelector('[name="title"]')?.value?.trim() ||
+    editor.querySelector('input[type="file"]')?.files?.length
+  ))return;
+  const focused=document.activeElement;
+  if(focused&&panel.contains(focused)&&focused.closest('input,textarea,select,[contenteditable="true"]'))return;
+  return refresh();
+ };
  const form=$('#kk-reward-editor');
  const readPhoto=async file=>{
   if(!file)return null;

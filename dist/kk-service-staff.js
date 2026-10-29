@@ -183,6 +183,14 @@
   finally{loading=false;}
  };
  window.loadKKServiceStaff=refresh;
+ // Background updates must never interrupt a request under review or a scanner.
+ window.refreshKKServiceStaffIfIdle=()=>{
+  const panel=$('#panel-kk-services');
+  if(!panel||panel.hidden||document.hidden||loading||reviewingId!==null||historyTimer)return;
+  const active=document.activeElement;
+  if(active&&panel.contains(active)&&active.closest('input,textarea,select,[contenteditable="true"]'))return;
+  return refresh();
+ };
  for(const id of ['kk-service-type-filter','kk-service-status-filter','kk-service-date-filter','kk-service-custom-date'])
   $('#'+id)?.addEventListener('change',render);
  $('#kk-service-search')?.addEventListener('input',render);
