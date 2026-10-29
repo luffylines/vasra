@@ -39,10 +39,14 @@
  const getApi=async path=>api('./api/kk/'+path);
  const send=async(path,data)=>api('./api/kk/'+path,{method:'POST',body:JSON.stringify(data)});
  if(view==='login'){
+  // Only three known tabs are accepted. No arbitrary redirect URLs.
+  const requestedService=new URLSearchParams(location.search).get('service');
+  const nextService=['printing','computer','retabox'].includes(requestedService)?requestedService:null;
+  if(nextService){try{sessionStorage.setItem('vasra-kk-requested-service',nextService)}catch{}}
   // A valid cookie survives navigation back to the public homepage. Skip the
   // login form entirely when the server confirms a current KK session.
   getApi('me').then(active=>{
-   if(active?.member?.id)location.replace(active.profile?.status==='verified'?'./kk-dashboard':'./kk-profile');
+   if(active?.member?.id)location.replace(active.profile?.status==='verified'?'./kk-dashboard'+(nextService?'#'+nextService:''):'./kk-profile');
   }).catch(()=>{/* Keep login available when service is temporarily unavailable. */});
   const google=$('#kk-google-login'),note=$('#kk-google-note');
   // Password visibility for KK youth only; independent of the SK staff login.
@@ -64,6 +68,11 @@
   }catch{note.textContent='Hindi ma-check ang Google Sign-In ngayon. Gamitin muna ang email/password.';}
   const query=new URLSearchParams(location.search);
   if(query.get('google_error'))feedback(query.get('google_error')==='link_required'?'May existing password account sa email na ito. Mag-login gamit ang password; hindi awtomatikong ili-link ang Google.':'Hindi natuloy ang Google Sign-In.','error');
+  if(nextService){
+   const intro=document.querySelector('.kk-auth-card .kk-sub');
+   if(intro)intro.textContent='Mag-login muna sa verified KK account para makapag-request ng '+
+    ({printing:'Free Printing & Photocopying',computer:'VASRA Mind Hub',retabox:'RetaBox'})[nextService]+'.';
+  }
   const form=$('#kk-login-form');
   form.addEventListener('submit',async e=>{
    e.preventDefault();if(!form.reportValidity())return;
@@ -73,7 +82,7 @@
     if(b.ok){
      // Go directly to the verified dashboard; incomplete/rejected users resume profiling.
      let next='./kk-profile';
-     try{const active=await getApi('me');if(active?.profile?.status==='verified')next='./kk-dashboard';}catch{}
+     try{const active=await getApi('me');if(active?.profile?.status==='verified')next='./kk-dashboard'+(nextService?'#'+nextService:'');}catch{}
      window.queueVasraToast?.('Successfully signed in to your KK account.','success');
      location.replace(next);
     }

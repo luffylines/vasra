@@ -228,7 +228,11 @@
  });
  async function reload(){
   const data=await request('me');
-  if(!data?.member){location.replace('./kk-login');return false;}
+  if(!data?.member){
+   const requested=['printing','computer','retabox'].includes(location.hash.slice(1))?location.hash.slice(1):'';
+   location.replace('./kk-login'+(requested?'?service='+requested:''));
+   return false;
+  }
   if(data.profile?.status!=='verified'){location.replace('./kk-profile');return false;}
   member=data;
   const dashboard=await request('dashboard');
@@ -293,7 +297,12 @@
  });
  try{
   const ready=await reload();if(!ready)return;
+  // OAuth sign-in also returns here: restore only a whitelisted requested service.
+  let remembered='';
+  try{remembered=sessionStorage.getItem('vasra-kk-requested-service')||'';sessionStorage.removeItem('vasra-kk-requested-service')}catch{}
+  if(!['printing','computer','retabox'].includes(remembered))remembered='';
   if(sections.has(location.hash.slice(1))||location.hash==='#activities')tab(location.hash.slice(1),false);
+  else if(remembered)tab(remembered,true);
   if(location.hash.startsWith('#confirm-email=')){
    const token=decodeURIComponent(location.hash.slice('#confirm-email='.length));
    tab('settings');
