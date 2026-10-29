@@ -85,3 +85,35 @@ test('Portrait posters are entirely visible in homepage overlay, admin preview a
  assert.match(script,/data-service-preview/);
  assert.match(script,/preview\.showModal\(\)/);
 });
+
+
+test('Current Project is touch-responsive on iPhone and Android viewport sizes',()=>{
+ const css=read('dist/current-projects.css');
+ const script=read('dist/current-projects.js');
+ const home=read('dist/index.html');
+ const admin=read('dist/account.html');
+ for(const width of [850,650,380]){
+  assert(css.includes('@media(max-width:'+width+'px)'), 'Missing mobile breakpoint '+width);
+ }
+ assert.match(css,/height:calc\(100dvh - 24px\)/);
+ assert.match(css,/overflow-x:hidden;overflow-y:auto/);
+ assert.match(css,/-webkit-overflow-scrolling:touch/);
+ assert.match(css,/env\(safe-area-inset-bottom\)/);
+ assert.match(css,/orientation:landscape/);
+ assert.match(css,/#panel-current-projects \.current-project-admin-actions/);
+ assert.match(css,/grid-template-columns:minmax\(0,1fr\)/);
+ assert.match(css,/current-project-admin-actions \.current-project-upload input\[type="file"\]/);
+ assert.match(css,/pointer-events:auto;cursor:pointer/);
+ assert.match(css,/#panel-current-projects \.current-project-admin-card textarea\{/);
+ assert.match(css,/font-size:16px/);
+ assert.match(css,/object-fit:contain/);
+ assert.match(home,/id="current-project-poster-preview"/);
+ assert.match(home,/id="current-project-poster-close"/);
+ assert.match(script,/posterPreview\.showModal\(\)/);
+ assert.match(script,/posterPreview\?\.open/);
+ assert.match(script,/window\.addEventListener\('pageshow'/);
+ assert.match(home,/current-projects\.css\?v=20261029-mobile-v3/);
+ assert.match(home,/current-projects\.js\?v=20261029-mobile-v3/);
+ assert.match(admin,/current-projects\.css\?v=20261029-mobile-v3/);
+ assert.match(admin,/current-projects\.js\?v=20261029-mobile-v3/);
+});
