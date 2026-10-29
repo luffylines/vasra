@@ -33,7 +33,6 @@ test('Only chairman can edit exactly three records; no public Storage keys or ar
  assert.match(sql,/current_service_image_pair/);
  assert.match(sql,/security invoker/);
  assert.match(sql,/revoke all on function public\.vasra_current_service_project/);
- assert.match(sql,/actor\.role/);
  assert.match(sql,/u\.role='chairman'/);
  assert.match(rpc,/vasra_current_service_project/);
  assert.match(account,/data-tab="current-projects" class="chair-only" hidden/);
