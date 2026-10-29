@@ -786,3 +786,10 @@ body[data-theme="dark"] .kk-delete-dialog :is(#kk-delete-copy,#kk-delete-cancel)
 #panel-kk-profiling .kk-document-error[hidden]{display:none}
 @media(max-width:690px){#panel-kk-profiling .kk-document-inline-viewer iframe{height:62vh;min-height:380px}
 #panel-kk-profiling .kk-validid-full-image{max-height:60vh!important}}
+
+#staff-nav [data-tab="kk-profiling"] .kk-pending-badge{
+ display:inline-flex;align-items:center;justify-content:center;
+ margin-left:auto;flex:none;min-width:21px;min-height:21px;padding:2px 5px;
+ border-radius:999px;background:#fae8ae;color:#743e04;font:800 11px/1 Arial,sans-serif;
+}
+#staff-nav [data-tab="kk-profiling"] .kk-pending-badge[hidden]{display:none!important}

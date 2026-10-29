@@ -2,9 +2,10 @@
 (() => {
  const $=selector=>document.querySelector(selector);
  const escVal=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
- const request=(path,body)=>api('./api/kk/staff'+(path?'/'+path:''),body?{method:'POST',body:JSON.stringify(body)}:{});
+ const request=(path,body)=>api('./api/kk/staff'+(path?'/'+path:''),body?{method:'POST',body:JSON.stringify(body)}:{cache:'no-store'});
  let members=[],sitios=[],perks=[],redemptions=[],participation=[];
  let loading=false, selectedMemberId=null, detailTab='profile', pendingDeleteMemberId=null;
+ let actionInProgress=false;
  const status=(message='',error=false,success=false)=>{const target=$('#kk-staff-message');if(!target)return;if(message&&(error||success)){target.textContent='';window.showVasraToast(message,error?'error':'success');return;}target.textContent=message;target.dataset.kind='info';};
  const initials=m=>[m.first_name,m.middle_name,m.last_name].filter(Boolean).join(' ');
  // Parse YYYY-MM-DD as a calendar date. Date.parse() UTC conversion can make
@@ -25,6 +26,13 @@
   return initials(m)+(age===null?'':' ('+age+')');
  };
  const stats=()=>{
+  const pending=members.filter(m=>m.status==='pending').length;
+  const nav=document.querySelector('#staff-nav [data-tab="kk-profiling"]');
+  if(nav&&!nav.hidden){
+   let badge=nav.querySelector('.kk-pending-badge');
+   if(!badge&&pending){badge=document.createElement('span');badge.className='kk-pending-badge';badge.setAttribute('aria-label','Pending KK verifications');nav.appendChild(badge);}
+   if(badge){badge.textContent=String(pending);badge.hidden=pending===0;badge.title=pending+' KK applications awaiting verification';}
+  }
   const states=['draft','pending','verified','rejected'];
   $('#kk-staff-stats').innerHTML=states.map(state=>'<div class="kk-stat"><span>'+state+'</span><b>'+members.filter(x=>x.status===state).length+'</b></div>').join('');
  };
@@ -284,6 +292,11 @@
   const chosen=$('#kk-staff-order')?.value||'new';
   const createdKey=m=>Date.parse(m.created_at||m.submitted_at||m.updated_at||'1970-01-01T00:00:00Z')||0;
   showing.sort((a,b)=>{
+   // Pending KK applications take priority over approved and draft profiles.
+   if(state==='all'&&a.status!==b.status){
+    if(a.status==='pending')return -1;
+    if(b.status==='pending')return 1;
+   }
    if(chosen==='name')return initials(a).localeCompare(initials(b))||String(a.id).localeCompare(String(b.id));
    const delta=createdKey(a)-createdKey(b);
    return (chosen==='old'?delta:-delta)||String(a.id).localeCompare(String(b.id));
@@ -294,27 +307,49 @@
    '<p class="kk-muted">Walang KK records na tumutugma sa filter.</p>';
   renderMemberDetail();
  };
- async function refresh(){
-  if(loading)return;loading=true;status('Loading KK Profiling records…');
+ const memberSignature=rows=>rows.map(m=>[
+  m.id,m.status,m.updated_at,m.submitted_at,m.reviewed_at,m.kk_id,
+  m.profile?.updated_at,m.profile?.photo_status,m.points
+ ].map(x=>String(x??'')).join(':')).join('|');
+ const canBackgroundRefresh=()=>{
+  const panel=$('#panel-kk-profiling');
+  if(!panel||panel.hidden||document.hidden||loading||actionInProgress||
+     editingSection!==null||pendingDeleteMemberId!==null||
+     panel.querySelector('dialog[open]'))return false;
+  const focused=document.activeElement;
+  return !(focused&&panel.contains(focused)&&focused.closest('input,textarea,select,[contenteditable="true"]'));
+ };
+ async function refresh(background=false){
+  if(loading||background&&!canBackgroundRefresh())return;
+  loading=true;
+  if(!background)status('Loading KK Profiling records…');
   try{
-   // Separate calls avoid falsely claiming that the KK schema is missing
-   // when a different, optional endpoint fails.
-   const [result,sitioResult,catalog]=await Promise.all([request(''),request('sitios'),request('catalog')]);
-   if(!Array.isArray(result?.members)||!Array.isArray(sitioResult?.sitios))
-    throw Error('Invalid KK staff response.');
-   members=result.members;sitios=sitioResult.sitios;
-   perks=Array.isArray(catalog?.perks)?catalog.perks:[];
+   const result=await request('');
+   if(!Array.isArray(result?.members))throw Error('Invalid KK staff response.');
+   const before=memberSignature(members),after=memberSignature(result.members);
+   if(background&&before===after)return;
+   let sitiosResponse=null,catalog=null;
+   if(!background)[sitiosResponse,catalog]=await Promise.all([request('sitios'),request('catalog')]);
+   const panel=$('#panel-kk-profiling');
+   if(background&&(editingSection!==null||pendingDeleteMemberId!==null||actionInProgress||panel?.querySelector('dialog[open]')))return;
+   if(!background){
+    if(!Array.isArray(sitiosResponse?.sitios))throw Error('Invalid KK sitios response.');
+    sitios=sitiosResponse.sitios;
+    perks=Array.isArray(catalog?.perks)?catalog.perks:[];
+   }
+   members=result.members;
    redemptions=Array.isArray(result?.redemptions)?result.redemptions:[];
    participation=Array.isArray(result?.participation)?result.participation:[];
    stats();displayMembers();displaySitios();displayParticipants();displayRewards();
    status('Updated · '+members.length+' KK members · '+sitios.length+' official sitios.');
   }catch(e){
-   status('Hindi ma-load ang KK records: '+e.message+' I-check ang staff session at kung sa tamang preview domain ka naka-login.',true);
+   if(!background)status('Hindi ma-load ang KK records: '+e.message+' I-check ang staff session at kung sa tamang preview domain ka naka-login.',true);
   }finally{loading=false;}
  }
+ window.refreshKKStaffIfIdle=()=>refresh(true);
  window.loadKKStaff=refresh;
  const bind=async(button,task)=>{
-  button.disabled=true;
+  actionInProgress=true;button.disabled=true;
   try{
    const result=await task();await refresh();
    if(result?.deletion)status(result.storage_cleanup_pending
@@ -328,7 +363,7 @@
    }
   }
   catch(e){status(e.message,true);}
-  finally{button.disabled=false;}
+  finally{button.disabled=false;actionInProgress=false;}
  };
  document.addEventListener('click',e=>{
   if(!e.target.closest('#panel-kk-profiling'))return;

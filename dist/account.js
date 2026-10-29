@@ -319,6 +319,42 @@ async function selectTab(name){if(name==='budget')name='monthly';const tabs=['ov
  document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','roster'].includes(name))await loadTransparencyEditor(name);if(name==='disclosure'&&window.loadDisclosureAdmin)await window.loadDisclosureAdmin();if(name==='sk-resolutions'&&window.loadSKResolutionsAdmin)await window.loadSKResolutionsAdmin();if(name==='duty-manage')await loadDutyManagement();if(name==='current-projects'&&window.loadCurrentProjectAdmin)await window.loadCurrentProjectAdmin();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts();if(name==='kk-profiling'&&window.loadKKStaff){window.kkStaffRole=user?.role||null;await window.loadKKStaff()};if(name==='kk-participants'&&window.loadKKEventStaff)await window.loadKKEventStaff();
       if(name==='kk-rewards'&&window.loadKKRewardsStaff)await window.loadKKRewardsStaff();if(name==='kk-ids'&&window.loadKKIDStaff)await window.loadKKIDStaff();if(name==='kk-services'&&window.loadKKServiceStaff)await window.loadKKServiceStaff()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
+
+/* Automatic live staff updates without a page reload.
+   Only the active module is polled; editing, modals and background tabs are skipped. */
+let staffAutoRefreshRunning=false,lastStaffAutoCheck=0;
+const staffAutoLoaders={
+ 'kk-profiling':()=>window.refreshKKStaffIfIdle?.(),
+ 'kk-services':()=>window.loadKKServiceStaff?.(),
+ 'kk-rewards':()=>window.loadKKRewardsStaff?.(),
+ 'kk-participants':()=>window.refreshKKEventStaffIfIdle?.(),
+ 'duty-manage':()=>loadDutyManagement(),
+ 'disclosure':()=>window.loadDisclosureAdmin?.(),
+ 'sk-resolutions':()=>window.loadSKResolutionsAdmin?.(),
+ 'projects':()=>loadProjects(),
+ 'awards':()=>loadAwards()
+};
+async function refreshVisibleStaffTab(force=false){
+ if(!user||user.mustChange||document.hidden||staffAutoRefreshRunning)return;
+ const tab=activeStaffTab,load=staffAutoLoaders[tab],panel=$('#panel-'+tab);
+ if(!load||!panel||panel.hidden)return;
+ if(tab==='kk-profiling'&&!(user.role==='chairman'||user.role==='sk'&&user.position==='secretary'))return;
+ if(tab==='duty-manage'&&user.role!=='chairman')return;
+ if(document.querySelector('dialog[open]'))return;
+ const focus=document.activeElement;
+ if(focus&&panel.contains(focus)&&focus.closest('input,textarea,select,[contenteditable="true"]'))return;
+ const now=Date.now();
+ if(!force&&now-lastStaffAutoCheck<22000)return;
+ lastStaffAutoCheck=now;staffAutoRefreshRunning=true;
+ try{await load()}catch(e){/* Active module handles a failed request itself. */}
+ finally{staffAutoRefreshRunning=false;}
+}
+const staffAutoRefreshInterval=setInterval(()=>{refreshVisibleStaffTab()},30000);
+window.addEventListener('focus',()=>refreshVisibleStaffTab());
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleStaffTab()});
+window.addEventListener('pageshow',e=>{if(e.persisted)refreshVisibleStaffTab(true)});
+window.addEventListener('pagehide',()=>clearInterval(staffAutoRefreshInterval),{once:true});
+
 // Top-right QR quick scan: open camera child; only navigate once a valid QR is decoded.
 $('#staff-quick-scanner').onclick=()=>{
  if(!user||!['sk','chairman'].includes(user.role))return;
