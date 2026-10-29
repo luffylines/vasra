@@ -70,3 +70,43 @@ html[data-theme="dark"] body.portal-refresh .duty-contact-detail a:hover{color:#
 html[data-theme="dark"] body.portal-refresh .duty-contact-heading h2{color:#eef7ff}
 html[data-theme="dark"] body.portal-refresh .duty-contact-heading p{color:#b8d0ec}
 html[data-theme="dark"] body.portal-refresh .duty-contact-empty{background:#243e5d;border-color:#58789d;color:#d3e5fa}
+
+/* SK Duty contact details: plain text rows, NO stray strokes/underlines.
+   Scoped to published contact cards; maintain keyboard focus indicators. */
+body.portal-refresh .duty-contact-card .duty-contact-details,
+body.portal-refresh .duty-contact-card .duty-contact-detail{
+ border:0!important;border-top:0!important;border-bottom:0!important;
+ outline:0;box-shadow:none!important;background-image:none!important;
+ text-decoration:none!important;
+}
+body.portal-refresh .duty-contact-card .duty-contact-detail :is(span,a){
+ border:0!important;border-bottom:0!important;box-shadow:none!important;
+ background-image:none!important;text-decoration:none!important;
+ -webkit-text-decoration:none!important;
+}
+body.portal-refresh .duty-contact-card .duty-contact-detail a:is(:link,:visited,:hover,:active){
+ text-decoration:none!important;text-decoration-line:none!important;
+ border:0!important;border-bottom:0!important;
+ box-shadow:none!important;background-image:none!important;
+}
+body.portal-refresh .duty-contact-card .duty-contact-detail :is(a,span)::before,
+body.portal-refresh .duty-contact-card .duty-contact-detail :is(a,span)::after{
+ content:none!important;display:none!important;
+}
+html[data-theme="dark"] body.portal-refresh .duty-contact-card .duty-contact-detail{
+ background-color:transparent!important;color:#d2e4fa!important;
+}
+html[data-theme="dark"] body.portal-refresh .duty-contact-card .duty-contact-detail a{
+ color:#c9e3ff!important;background-color:transparent!important;
+ text-decoration:none!important;
+}
+body.portal-refresh .duty-contact-card .duty-contact-detail a:focus-visible{
+ outline:2px solid #86bafc!important;outline-offset:3px;
+}
+@media(max-width:600px){
+ body.portal-refresh .duty-contact-card .duty-contact-details{min-width:0}
+ body.portal-refresh .duty-contact-card .duty-contact-detail{min-width:0;gap:10px;align-items:flex-start}
+ body.portal-refresh .duty-contact-card .duty-contact-detail :is(a,span){
+  min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:normal;
+ }
+}

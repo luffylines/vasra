@@ -816,3 +816,46 @@ html[data-theme="dark"] body.kk-body .kk-preview-card{
 }
 html[data-theme="dark"] body.kk-body .kk-preview-card :is(dt,dd){color:#d6e8fb}
 html[data-theme="dark"] body.kk-body .kk-toolbar-logout svg{stroke:currentColor}
+
+/* Cross-device dropdowns use the same dark palette for public SK and KK member pages.
+   Native Android/iOS option sheets remain OS-controlled, but inherit dark color-scheme. */
+html[data-theme="dark"] body:is(.kk-body,.portal-refresh){
+ color-scheme:dark;
+}
+html[data-theme="dark"] body:is(.kk-body,.portal-refresh) select{
+ color-scheme:dark;
+ background-color:#162c49!important;
+ color:#edf5ff!important;
+ border-color:#506f96!important;
+ -webkit-text-fill-color:#edf5ff;
+}
+html[data-theme="dark"] body:is(.kk-body,.portal-refresh) :is(select option,select optgroup){
+ color-scheme:dark;
+ background-color:#172b46!important;
+ color:#e9f4ff!important;
+ -webkit-text-fill-color:#e9f4ff;
+}
+html[data-theme="dark"] body:is(.kk-body,.portal-refresh) :is(select option:checked,select option[selected]){
+ background-color:#335c92!important;color:#fff!important;
+ -webkit-text-fill-color:#fff;
+}
+html[data-theme="dark"] body:is(.kk-body,.portal-refresh) :is(select:disabled,input:disabled,textarea:disabled){
+ opacity:.74;
+}
+html[data-theme="dark"] body.kk-body :is(.kk-school-list,.kk-address-list,.kk-school-picker,[role="listbox"]){
+ background-color:#192f4b;color:#eaf4ff;border-color:#4a688e;
+}
+html[data-theme="dark"] body.kk-body :is(.kk-school-list,.kk-address-list,[role="listbox"]) :is(button,[role="option"]){
+ color:#e9f4ff;
+}
+html[data-theme="dark"] body.kk-body :is(.kk-school-list,.kk-address-list,[role="listbox"]) :is(button,[role="option"]):hover{
+ background-color:#294b74;color:#fff;
+}
+html[data-theme="dark"] body.kk-body :is(.kk-school-list,.kk-address-list,[role="listbox"]) [aria-selected="true"]{
+ background-color:#315d90;color:#fff;
+}
+@media(hover:none) and (pointer:coarse){
+ body:is(.kk-body,.portal-refresh) select{
+  min-height:44px;font-size:16px!important;max-width:100%;
+ }
+}

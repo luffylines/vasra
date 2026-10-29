@@ -40,3 +40,48 @@ body.account-workspace .kk-service-admin-filters label{min-width:0}
  body.account-workspace .kk-id-staff-search{align-items:stretch;flex-wrap:wrap}
  body.account-workspace .kk-id-staff-search>select{width:100%}
 }
+
+/* Dark-mode native dropdown consistency across ALL staff tabs (desktop / Android / iOS).
+   CSS color-scheme also lets OS-managed menus follow the current theme. */
+body.account-workspace[data-theme="dark"]{
+ color-scheme:dark;
+}
+body.account-workspace[data-theme="dark"] #staff-content select,
+body.account-workspace[data-theme="dark"] #dashboard select,
+body.account-workspace[data-theme="dark"] .settings-card select,
+body.account-workspace[data-theme="dark"] .kk-service-admin-filters select,
+body.account-workspace[data-theme="dark"] .kk-id-staff-search select{
+ color-scheme:dark!important;
+ background-color:#162b48!important;
+ color:#eaf3ff!important;
+ border-color:#506d91!important;
+ -webkit-text-fill-color:#eaf3ff;
+}
+body.account-workspace[data-theme="dark"] :is(select option,select optgroup){
+ color-scheme:dark;
+ color:#edf6ff!important;
+ background-color:#172b47!important;
+ -webkit-text-fill-color:#edf6ff;
+}
+body.account-workspace[data-theme="dark"] :is(select option:checked,select option[selected]){
+ background-color:#315b93!important;color:#ffffff!important;
+ -webkit-text-fill-color:#ffffff;
+}
+body.account-workspace[data-theme="dark"] #staff-content select:disabled,
+body.account-workspace[data-theme="dark"] #dashboard select:disabled{
+ color:#a4bad5!important;background-color:#263750!important;
+ border-color:#405878!important;opacity:.72;
+ -webkit-text-fill-color:#a4bad5;
+}
+body.account-workspace[data-theme="dark"] :is(select,button[aria-haspopup="listbox"],button[aria-haspopup="menu"]):focus-visible{
+ outline:2px solid #86b7fa;outline-offset:2px;
+}
+body.account-workspace[data-theme="dark"] :is(.kk-service-admin-filters,.kk-id-staff-search,.kk-event-select-label) label{
+ color:#d6e7fc;
+}
+@media(hover:none) and (pointer:coarse){
+ body.account-workspace select:not([multiple]):not([size]){
+  font-size:16px!important;min-height:44px;max-width:100%;
+  touch-action:manipulation;
+ }
+}
