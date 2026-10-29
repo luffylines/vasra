@@ -1,5 +1,5 @@
 /* Projects-only visual enhancement. Preserve original hero footprint/content.
-   High-resolution Quezon Memorial Circle photograph already used on homepage. */
+   Same locally hosted Barangay Vasra Hall photograph as the homepage. */
 .portal-refresh.projects-page .project-hero{
   isolation:isolate;
   background:#102d54;
@@ -13,11 +13,11 @@
   width:100%;
   height:100%;
   z-index:0;
-  background-image:url("./home-memorial-circle.webp");
+  background-image:url("./vasra-hall-hero.webp");
   background-color:#173d69;
-  background-size:cover;
+  background-size:auto 125%;
   background-repeat:no-repeat;
-  background-position:center 36%;
+  background-position:right 40%;
   border:none;
   pointer-events:none;
 }
@@ -124,7 +124,7 @@
  .portal-refresh.projects-page .hero-mark-logo{width:60px;height:60px;border-radius:14px}
  .portal-refresh.projects-page .hero-mark b{font-size:15px}
  .portal-refresh.projects-page .hero-mark small{font-size:6px}
- .portal-refresh.projects-page .project-hero::before{background-position:59% center}
+ .portal-refresh.projects-page .project-hero::before{background-size:auto 118%;background-position:right center}
 }
 @media(min-width:761px) and (max-width:950px){
  .portal-refresh.projects-page .project-hero>div:first-child{
@@ -132,7 +132,7 @@
  }
 }
 @media(max-width:760px){
- .portal-refresh.projects-page .project-hero::before{background-position:67% 32%}
+ .portal-refresh.projects-page .project-hero::before{background-size:auto 100%;background-position:right center}
  .portal-refresh.projects-page .project-hero::after{
   background:linear-gradient(90deg,rgba(7,27,56,.94),rgba(10,38,75,.72) 70%,rgba(10,38,75,.52)),
              linear-gradient(0deg,rgba(9,33,68,.56),transparent);
@@ -140,6 +140,17 @@
  /* Avoid a logo floating over the heading or duty button at narrow widths. */
  .portal-refresh.projects-page .project-hero > .hero-mark{display:none}
  .portal-refresh.projects-page .project-hero>div:first-child{max-width:100%}
+}
+@media(max-width:400px){
+ /* Preserve image on the right and text contrast on very narrow phones. */
+ .portal-refresh.projects-page .project-hero::before{
+  background-size:auto 100%;
+  background-position:right center;
+ }
+ .portal-refresh.projects-page .project-hero::after{
+  background:linear-gradient(90deg,rgba(7,27,56,.96),rgba(9,34,66,.82) 50%,rgba(9,34,66,.48)),
+             linear-gradient(0deg,rgba(7,27,54,.50),transparent 75%);
+ }
 }
 @media(prefers-reduced-motion:reduce){
  .portal-refresh.projects-page .hero-link{transition:none}

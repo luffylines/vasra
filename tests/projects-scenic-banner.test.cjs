@@ -12,13 +12,21 @@ test('projects hero retains original content, CTA and background size with SK lo
   assert(page.includes(t),t);
  assert.match(page,/href="\.\/duty" class="hero-link/);
  assert.match(page,/class="hero-mark-logo" src="\.\/sk%20logo.jpg"/);
- assert.match(page,/project-hero-scenic\.css\?v=20261027-v2/);
+ assert.match(page,/project-hero-scenic\.css\?v=vasra-hall-20261029-v1/);
  assert.equal((page.match(/<section class="project-hero">/g)||[]).length,1);
- assert.match(css,/background-image:url\("\.\/home-memorial-circle\.webp"\)/);
+ assert.match(css,/background-image:url\("\.\/vasra-hall-hero\.webp"\)/);
+ assert.doesNotMatch(css,/home-memorial-circle/);
+ assert.match(css,/background-size:auto 125%/);
+ assert.match(css,/background-size:auto 118%/);
+ assert.match(css,/background-size:auto 100%/);
+ assert.match(css,/@media\(max-width:400px\)/);
  assert.match(css,/@media\(max-width:760px\)/);
  assert(!/min-height\s*:\s*\d+px/.test(css),'do not change hero height');
  assert(!/padding\s*:\s*\d+px/.test(css.match(/\.portal-refresh\.projects-page \.project-hero\{[^}]+/)[0]),'preserve hero padding');
- assert(fs.existsSync(path.join(root,'home-memorial-circle.webp')));
+ assert(fs.existsSync(path.join(root,'vasra-hall-hero.webp')));
+ const hall=fs.readFileSync(path.join(root,'vasra-hall-hero.webp'));
+ assert(hall.length>5000,'Missing local Vasra Hall photo');
+ assert.equal(hall.toString('ascii',0,4),'RIFF');
  assert(fs.existsSync(path.join(root,'sk logo.jpg')));
 });
 
@@ -28,5 +36,5 @@ test('SK VASRA logo badge hugs the right side without consuming hero flex space'
  assert.match(css,/transform:translateY\(-50%\)/);
  assert.match(css,/\.project-hero \.hero-year\{[\s\S]*?position:absolute/);
  assert.match(css,/@media\(max-width:760px\)\{/);
- assert.match(page,/project-hero-scenic\.css\?v=20261027-v2/);
+ assert.match(page,/project-hero-scenic\.css\?v=vasra-hall-20261029-v1/);
 });
