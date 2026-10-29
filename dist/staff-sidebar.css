@@ -1,0 +1,161 @@
+/* SK VASRA — independently scrolling, responsive staff navigation.
+   Scope intentionally limited to authenticated SK staff workspace. */
+body.account-workspace[data-staff-mode="staff"] .site-header{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  height:100vh;
+  height:100dvh;
+  max-height:100dvh;
+  min-height:0;
+  box-sizing:border-box;
+  overflow:hidden;
+  padding-bottom:17px;
+  background:linear-gradient(180deg,#142b51 0%,#0e2141 100%);
+}
+body.account-workspace[data-staff-mode="staff"] .site-header>.brand{
+  flex:0 0 auto;
+  min-height:52px;
+  padding:4px 2px 16px;
+  border-bottom:1px solid rgba(194,217,255,.13);
+}
+body.account-workspace[data-staff-mode="staff"] .site-header>.brand .sk-logo{
+  flex:0 0 44px;
+  width:44px;height:44px;
+  border-radius:12px;
+  box-shadow:0 5px 14px rgba(2,13,35,.22);
+}
+body.account-workspace[data-staff-mode="staff"] .site-header #staff-nav{
+  flex:1 1 0%;
+  display:block;
+  min-width:0;
+  min-height:0;
+  max-height:none;
+  margin:14px -10px 0 0;
+  padding:2px 10px 19px 0;
+  border:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:#6487bc transparent;
+}
+body.account-workspace[data-staff-mode="staff"] .site-header #staff-nav::-webkit-scrollbar{width:5px}
+body.account-workspace[data-staff-mode="staff"] .site-header #staff-nav::-webkit-scrollbar-thumb{
+  border-radius:999px;background:#6487bc;
+}
+body.account-workspace[data-staff-mode="staff"] .site-header #staff-nav::-webkit-scrollbar-track{
+  background:transparent;
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav>.nav-label{
+  position:sticky;
+  top:0;
+  z-index:2;
+  margin:0 0 9px;
+  padding:11px 11px 12px;
+  border-bottom:1px solid rgba(185,211,251,.14);
+  background:#142b51;
+  color:#a3bfe8;
+  font-size:9px;
+  font-weight:750;
+  letter-spacing:1.65px;
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav .staff-nav-section-title{
+  margin:15px 11px 7px;
+  padding:13px 0 0;
+  border-top:1px solid rgba(194,217,255,.13);
+  font:750 9px/1.4 'DM Sans',system-ui,sans-serif;
+  letter-spacing:1.55px;
+  color:#91acce;
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav button[data-tab]{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:43px;
+  width:100%;
+  padding:10px 12px;
+  margin:3px 0;
+  border:1px solid transparent;
+  border-radius:11px;
+  color:#b9cbe7;
+  background:transparent;
+  font:650 12px/1.35 'DM Sans',system-ui,sans-serif;
+  text-align:left;
+  box-shadow:none;
+  transition:background-color .18s,color .18s,border-color .18s,box-shadow .18s;
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav button[data-tab]:is(:hover,:focus-visible){
+  background:rgba(93,142,207,.17);
+  border-color:rgba(160,194,241,.17);
+  color:#fff;
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav button[data-tab].selected,
+body.account-workspace[data-staff-mode="staff"] #staff-nav button[data-tab][aria-current="page"]{
+  background:linear-gradient(110deg,#335e9c,#294c80);
+  border-color:rgba(168,206,255,.22);
+  color:#fff;
+  box-shadow:inset 3px 0 #a6caff,0 5px 15px rgba(2,14,34,.13);
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav button[data-tab]:focus-visible{
+  outline:2px solid #d0e6ff;outline-offset:1px;
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav button[data-tab] :is(.staff-icon,.staff-action-icon){
+  width:19px;height:19px;
+  flex:0 0 19px;
+  stroke:currentColor;
+}
+body.account-workspace[data-staff-mode="staff"] #staff-nav[hidden],
+body.account-workspace[data-staff-mode="staff"] #staff-nav button[hidden]{
+  display:none!important;
+}
+body.account-workspace[data-staff-mode="staff"] .site-header #staff-sidebar-footer:not([hidden]){
+  display:block;
+  flex:0 0 auto;
+  min-width:0;
+  margin:9px 0 0;
+  padding:14px 12px 3px;
+  border-top:1px solid rgba(194,217,255,.17);
+  color:#aec5e5;
+}
+body.account-workspace[data-staff-mode="staff"] .site-header #staff-sidebar-footer strong{
+  color:#fff;font-size:12px;line-height:1.35;
+}
+/* On touch/mobile the whole off-canvas drawer scrolls (no nested scrolling). */
+@media(max-width:850px){
+  body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header{
+    height:100vh;height:100dvh;max-height:100dvh;min-height:0;
+    overflow-y:auto;overflow-x:hidden;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:max(20px,env(safe-area-inset-bottom));
+  }
+  body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header #staff-nav{
+    flex:0 0 auto;
+    min-height:auto;
+    max-height:none;
+    margin:20px 0 0;
+    padding:0 0 8px;
+    overflow:visible;
+    overscroll-behavior:auto;
+  }
+  body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] #staff-nav>.nav-label{
+    position:static;
+    margin:0 0 10px;
+    padding:12px 11px;
+  }
+  body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] .site-header #staff-sidebar-footer:not([hidden]){
+    flex:0 0 auto;
+    margin:12px 0 0;
+    padding:17px 12px 8px;
+  }
+  body.mobile-menu-ready.account-workspace[data-staff-mode="staff"] #staff-nav button[data-tab]{
+    min-height:46px;
+    padding:12px 13px;
+    font-size:13px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  body.account-workspace #staff-nav button[data-tab]{transition:none}
+}
