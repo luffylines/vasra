@@ -14,6 +14,19 @@
  const load=async()=>{const data=await api('/api/current-projects');return defaults.map(d=>({...d,...(data.projects||[]).find(x=>x.slug===d.slug)}));};
  const note=(message,kind='success')=>window.showVasraToast?.(message,kind);
  const format=x=>String(x).replace(/\s+/g,' ').trim();
+ // JavaScript .slice() counts UTF-16 units, and can split a bold/emoji character in half.
+ // Segment by complete graphemes so Facebook-style characters never turn into �.
+ const teaser=(raw,max=150)=>{
+  const summary=format(raw);
+  const graphemes=typeof Intl!=='undefined' && typeof Intl.Segmenter==='function'
+   ? Array.from(new Intl.Segmenter('fil',{granularity:'grapheme'}).segment(summary),part=>part.segment)
+   : Array.from(summary);
+  if(graphemes.length<=max)return summary;
+  const cropped=graphemes.slice(0,max).join('');
+  const lastSpace=cropped.lastIndexOf(' ');
+  const end=lastSpace>=max*.65?cropped.slice(0,lastSpace):cropped;
+  return end.trimEnd()+'…';
+ };
  // A nested child URL displays over the existing homepage, never as a standalone page.
  let latest=defaults;
  const projectRoute=()=>{const match=location.pathname.match(/^\/current-project\/(printing|computer|retabox)\/?$/);return match?.[1]||null;};
@@ -23,33 +36,44 @@
   const detail=document.getElementById('current-project-detail');
   if(!host||!dialog||!detail)return;
   let lastFocus=null,active=null;
-  const posterPreview=document.getElementById('current-project-poster-preview');
-  const posterImage=posterPreview?.querySelector('#current-project-poster-full-image');
-  if(posterPreview&&posterImage){
-   const closePoster=()=>{if(posterPreview.open)posterPreview.close();};
+  // Keep the full poster INSIDE the already-open detail dialog.
+  // A second nested native dialog can fail to open on iPhone Safari.
+  const zoom=dialog.querySelector('#current-project-poster-zoom');
+  const zoomImage=dialog.querySelector('#current-project-poster-full-image');
+  const zoomClose=dialog.querySelector('#current-project-poster-close');
+  const closeZoom=()=>{
+   if(!zoom||zoom.hidden)return;
+   zoom.hidden=true;
+   zoom.setAttribute('aria-hidden','true');
+   dialog.querySelector('.current-project-poster-open')?.focus({preventScroll:true});
+  };
+  if(zoom&&zoomImage&&zoomClose){
    dialog.addEventListener('click',event=>{
-    const button=event.target.closest('.current-project-poster-open');
-    if(!button)return;
-    const img=button.querySelector('img');
+    const target=event.target;
+    if(!(target instanceof Element))return;
+    const posterButton=target.closest('.current-project-poster-open');
+    if(!posterButton)return;
+    const img=posterButton.querySelector('img');
     if(!img)return;
-    posterImage.src=img.src;
-    posterImage.alt=img.alt||'Full SK VASRA poster';
-    if(!posterPreview.open)posterPreview.showModal();
+    zoomImage.src=img.currentSrc||img.src;
+    zoomImage.alt=img.alt||'Full SK VASRA poster';
+    zoom.hidden=false;
+    zoom.setAttribute('aria-hidden','false');
+    zoomClose.focus({preventScroll:true});
    });
-   posterPreview.querySelector('#current-project-poster-close').addEventListener('click',closePoster);
-   posterPreview.addEventListener('click',event=>{
-    if(event.target===posterPreview)closePoster();
-   });
+   zoomClose.addEventListener('click',event=>{event.stopPropagation();closeZoom()});
+   zoom.addEventListener('click',event=>{if(event.target===zoom)closeZoom()});
   }
   const homeTitle='Home — SK Vasra';
   const draw=items=>{
    host.innerHTML=items.map(x=>'<a class="current-project-card" href="/current-project/'+x.slug+'" aria-label="View '+safe(x.title)+' details">'+
     '<span class="current-project-cover"><img src="'+photo(x)+'" alt="'+safe(x.title)+'" loading="lazy">'+
     '<span class="current-project-image-tag">KK SERVICE</span></span>'+
-    '<span class="current-project-card-body"><strong>'+safe(x.title)+'</strong><span>'+safe(format(x.summary).slice(0,185))+'</span>'+
+    '<span class="current-project-card-body"><strong>'+safe(x.title)+'</strong><span>'+safe(teaser(x.summary))+'</span>'+
     '<span class="current-project-open">View details <span aria-hidden="true">→</span></span></span></a>').join('');
   };
   const render=x=>{
+   closeZoom();
    detail.innerHTML='<div class="current-project-detail-image"><button class="current-project-poster-open" type="button" aria-label="Tap to view full poster of '+safe(x.title)+'"><img src="'+photo(x)+'" alt="'+safe(x.title)+'"></button><span class="current-project-poster-hint" aria-hidden="true">Tap to view full poster</span></div>'+
     '<div class="current-project-detail-copy"><span class="current-project-eyebrow">SANGGUNIANG KABATAAN · BARANGAY VASRA</span>'+
     '<h1 id="current-project-dialog-title">'+safe(x.title)+'</h1><h2>About this service</h2>'+
@@ -78,7 +102,7 @@
    dialog.querySelector('#current-project-close')?.focus({preventScroll:true});
   };
   const hide=()=>{
-   if(posterPreview?.open)posterPreview.close();
+   closeZoom();
    active=null;
    if(dialog.open)dialog.close();
    document.body.classList.remove('current-project-modal-open');
@@ -106,8 +130,8 @@
    show(slug);
   });
   dialog.querySelector('#current-project-close').addEventListener('click',navigateClose);
-  dialog.addEventListener('cancel',e=>{e.preventDefault();navigateClose();});
-  dialog.addEventListener('click',e=>{if(e.target===dialog)navigateClose();});
+  dialog.addEventListener('cancel',e=>{e.preventDefault();if(zoom&&!zoom.hidden)closeZoom();else navigateClose();});
+  dialog.addEventListener('click',e=>{if(e.target===dialog){if(zoom&&!zoom.hidden)closeZoom();else navigateClose();}});
   window.addEventListener('popstate',sync);
   // Safari can restore a cached page after navigating back from KK login.
   window.addEventListener('pageshow',event=>{if(event.persisted)sync();});
