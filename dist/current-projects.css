@@ -52,3 +52,122 @@ body[data-theme="dark"] .current-project-card-body>span:nth-child(2),body[data-t
 @media(max-width:1050px){.current-project-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.current-project-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.current-project-detail{grid-template-columns:1fr}.current-project-detail-image,.current-project-detail-image img{min-height:0;max-height:390px;aspect-ratio:16/9}}
 @media(max-width:650px){.current-project-section{padding:14px}.current-project-cards,.current-project-admin-grid{grid-template-columns:1fr}.current-project-detail-copy{padding:22px}.current-project-detail-copy h1{font-size:29px}.current-project-cover{aspect-ratio:16/9}.current-project-heading h2{font-size:18px}}
+
+
+/* 2026-10-29: Open a child view OVER the homepage (not a separate fullscreen page).
+   Keep the page behind it softly blurred; preserve complete vertical service posters. */
+.current-project-modal{
+ position:fixed;inset:0;box-sizing:border-box;
+ width:min(1140px,calc(100vw - 44px));max-width:none;max-height:min(91dvh,880px);
+ margin:auto;padding:0;border:0;border-radius:22px;background:transparent;
+ box-shadow:0 28px 80px rgba(4,15,34,.36);overflow:visible;
+}
+.current-project-modal::backdrop,.current-project-preview-dialog::backdrop{
+ background:rgba(8,24,47,.57);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+}
+body.current-project-modal-open{overflow:hidden}
+.current-project-modal-shell{position:relative;width:100%;max-height:min(91dvh,880px)}
+.current-project-modal .current-project-detail{
+ display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1fr);
+ max-height:min(91dvh,880px);min-height:0;overflow:auto;overscroll-behavior:contain;
+ border-radius:21px;background:#fff;align-items:start;
+}
+.current-project-modal-close{
+ position:absolute;z-index:5;top:13px;right:13px;display:grid;place-items:center;
+ width:40px;height:40px;padding:0;border:1px solid #d3e0f1;border-radius:50%;
+ background:rgba(255,255,255,.98);color:#173965;box-shadow:0 3px 12px #14305028;
+ cursor:pointer;font:400 27px/1 Arial,sans-serif;
+}
+.current-project-modal-close:hover,.current-project-modal-close:focus-visible{background:#eaf3ff;outline:2px solid #3174ce;outline-offset:2px}
+.current-project-modal .current-project-detail-image{
+ align-self:stretch;display:grid;place-items:center;position:sticky;top:0;
+ min-height:0;height:min(86dvh,820px);padding:12px;box-sizing:border-box;
+ background:#e9f1fc;overflow:hidden;
+}
+.current-project-modal .current-project-detail-image img{
+ display:block;width:100%;height:100%;min-height:0;max-height:none;
+ object-fit:contain;object-position:center;border-radius:10px;
+}
+.current-project-modal .current-project-detail-copy{
+ min-width:0;align-self:start;box-sizing:border-box;
+ padding:clamp(24px,3vw,40px);padding-right:clamp(28px,4vw,54px);
+}
+.current-project-modal .current-project-detail-copy h1{font-size:clamp(24px,2.6vw,38px);margin-bottom:24px;padding-right:28px}
+.current-project-modal .current-project-long-summary{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.75}
+.current-project-modal .current-project-service-cta{margin-top:12px}
+
+/* Posters are portrait originals: never crop dates, captions, branding or QR codes. */
+.current-project-cover{aspect-ratio:4/3;background:#edf3fc}
+.current-project-cover img{object-fit:contain;object-position:center}
+.current-project-admin-image{aspect-ratio:auto;height:clamp(300px,27vw,430px);background:#eef3fa}
+.current-project-image-preview{
+ position:relative;display:block;width:100%;height:100%;padding:8px;border:0;
+ border-radius:0;overflow:hidden;background:transparent;cursor:zoom-in;
+}
+.current-project-image-preview img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.current-project-image-preview>span{
+ position:absolute;bottom:9px;left:50%;transform:translateX(-50%);
+ white-space:nowrap;background:rgba(9,34,67,.88);color:#fff;
+ border-radius:6px;font:700 10px Arial,sans-serif;padding:6px 10px;
+}
+.current-project-char-count{display:block;text-align:right;font-size:11px;color:#61799a}
+.current-project-admin-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+ align-items:stretch;width:100%;
+}
+.current-project-admin-actions>button,
+.current-project-admin-actions>.current-project-upload,
+.current-project-admin-actions>a{
+ box-sizing:border-box;width:100%;min-width:0;min-height:45px;
+ padding:9px 11px;margin:0;display:flex;align-items:center;justify-content:center;
+ text-align:center;line-height:1.35;font:700 11.5px/1.35 Arial,sans-serif;
+ border-radius:9px;white-space:normal;
+}
+.current-project-admin-actions>a{
+ grid-column:1/-1;background:#f1f6ff;color:#1555a5;text-decoration:none;
+ border:1px solid #c3d6ef;
+}
+.current-project-admin-actions>a:hover{background:#e3efff}
+.current-project-upload{position:relative}
+.current-project-preview-dialog{
+ position:fixed;inset:0;width:min(760px,calc(100vw - 32px));max-width:none;
+ max-height:92dvh;box-sizing:border-box;margin:auto;padding:12px;
+ border:1px solid #ccd9ef;border-radius:16px;background:#f1f6fd;
+ box-shadow:0 22px 70px #04152a75;overflow:visible;
+}
+.current-project-preview-inner{position:relative;display:grid;place-items:center;max-height:calc(92dvh - 26px)}
+.current-project-preview-inner>img{max-height:calc(92dvh - 28px);max-width:100%;height:auto;width:auto;object-fit:contain}
+.current-project-preview-dialog .current-project-modal-close{right:8px;top:8px}
+body[data-theme="dark"] .current-project-modal .current-project-detail,
+body[data-theme="dark"] .current-project-preview-dialog{background:#182e4a;border-color:#385779}
+body[data-theme="dark"] .current-project-modal .current-project-detail-image,
+body[data-theme="dark"] .current-project-admin-image{background:#213d60}
+body[data-theme="dark"] .current-project-service-cta{background:#213b5f;border-color:#3c5e8a}
+body[data-theme="dark"] .current-project-service-cta strong,
+body[data-theme="dark"] .current-project-service-cta>span{color:#d9e9ff}
+body[data-theme="dark"] .current-project-char-count{color:#bed4f0}
+body[data-theme="dark"] .current-project-admin-actions>a{background:#25476c;color:#e5f2ff;border-color:#456890}
+@media(max-width:800px){
+ .current-project-modal{width:min(690px,calc(100vw - 24px));max-height:94dvh;border-radius:17px}
+ .current-project-modal-shell{max-height:94dvh}
+ .current-project-modal .current-project-detail{grid-template-columns:1fr;max-height:94dvh;border-radius:17px}
+ .current-project-modal .current-project-detail-image{position:relative;height:auto;max-height:53dvh;padding:10px}
+ .current-project-modal .current-project-detail-image img{height:auto;max-height:calc(53dvh - 20px);object-fit:contain}
+ .current-project-modal .current-project-detail-copy{padding:22px}
+ .current-project-modal .current-project-detail-copy h1{font-size:clamp(22px,5vw,31px)}
+}
+@media(max-width:480px){
+ .current-project-modal{width:calc(100vw - 14px);max-height:96dvh}
+ .current-project-modal-shell{max-height:96dvh}
+ .current-project-modal .current-project-detail{max-height:96dvh}
+ .current-project-modal .current-project-detail-image{max-height:48dvh}
+ .current-project-modal .current-project-detail-image img{max-height:calc(48dvh - 18px)}
+ .current-project-modal-close{top:8px;right:8px;width:37px;height:37px}
+ .current-project-modal .current-project-detail-copy{padding:18px}
+ .current-project-admin-image{height:380px}
+ .current-project-admin-actions{gap:7px}
+ .current-project-admin-actions>button,.current-project-admin-actions>.current-project-upload,.current-project-admin-actions>a{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ .current-project-card{transition:none}
+}
