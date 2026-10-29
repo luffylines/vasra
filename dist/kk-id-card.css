@@ -580,3 +580,44 @@ body[data-theme="dark"] .kk-id-email-state{color:#c3d6f1}
 @media(prefers-reduced-motion:reduce) {
  #panel-kk-ids .kk-id-staff-actions button {transition:none}
 }
+
+
+/* Uniform KK ID toolbar: PDF download and Refresh List align at all widths. */
+#panel-kk-ids .kk-id-staff-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+#panel-kk-ids .kk-id-staff-heading>div:first-child{flex:1 1 360px;min-width:0}
+#panel-kk-ids .kk-id-toolbar-actions{
+ box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);
+ gap:10px;align-items:stretch;justify-items:stretch;
+ flex:0 1 auto;width:min(410px,100%);min-width:0;margin-left:auto;
+}
+#panel-kk-ids .kk-id-toolbar-actions>button,
+#panel-kk-ids .kk-id-toolbar-actions>button.primary,
+#panel-kk-ids .kk-id-toolbar-actions>button.secondary{
+ box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+ width:100%;min-width:0;min-height:46px;height:46px;max-height:none;
+ padding:8px 11px;margin:0;border-radius:10px;
+ font:750 11.5px/1.35 'DM Sans',sans-serif;
+ text-align:center;white-space:normal;overflow-wrap:anywhere;
+ vertical-align:middle;box-shadow:none;touch-action:manipulation;
+}
+#panel-kk-ids .kk-id-toolbar-actions>button:focus-visible{
+ outline:3px solid #72a4ef;outline-offset:2px;
+}
+@media(max-width:850px){
+ #panel-kk-ids .kk-id-toolbar-actions{
+  flex:1 1 100%;width:100%;max-width:100%;
+  margin-left:0;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);
+ }
+}
+@media(max-width:430px){
+ #panel-kk-ids .kk-id-toolbar-actions{
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+ }
+ #panel-kk-ids .kk-id-toolbar-actions>button{
+  height:auto;min-height:50px;padding:9px 8px;font-size:11px;
+ }
+}
+@media(max-width:350px){
+ #panel-kk-ids .kk-id-toolbar-actions{grid-template-columns:minmax(0,1fr)}
+ #panel-kk-ids .kk-id-toolbar-actions>button{min-height:46px}
+}
