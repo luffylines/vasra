@@ -77,7 +77,11 @@ function selectDay(index){
   $('#day-kicker').textContent=index===6?'LINGGO / SK COUNCIL ON DUTY':d.day.toUpperCase()+' / OFFICER'+(d.names.length>1?'S':'')+' OF THE DAY';
   const displayOfficerName=name=>String(name||'').normalize('NFKC').trim().replace(/\s+/g,' ')
    .toLocaleLowerCase('en-PH').replace(/(^|[\s'-])([a-z])/g,(_,prefix,letter)=>prefix+letter.toUpperCase());
-  $('#officer-name').innerHTML=d.names.map((name,i)=>`<span>${esc(displayOfficerName(name))}<small>${esc(d.roles[i])}</small></span>`).join('')||(index===6?'SK Council · Sunday attendance to be confirmed':'Walang naka-assign');
+  // Sunday may include the entire SK Council: keep the information column compact.
+  // Individual names and uploaded portraits remain visible in the photo roster.
+  $('#officer-name').innerHTML=index===6&&d.names.length>2
+   ?'<span>'+d.names.length+' SK Council members<small>Confirmed to report on Sunday</small></span>'
+   :d.names.map((name,i)=>`<span>${esc(displayOfficerName(name))}<small>${esc(d.roles[i])}</small></span>`).join('')||(index===6?'SK Council · Sunday attendance to be confirmed':'Walang naka-assign');
   const times=publishedDutyHours?.find(h=>h.weekday===index+1);
   const fmt=clock=>{const [h,m]=String(clock).split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h<12?' AM':' PM');};
   $('#officer-role').textContent='Office hours · '+fmt(index===6?'09:00':times?.open_time||'09:00')+'–'+fmt(index===6?'18:00':times?.close_time||'18:00')+' (PHT)';
