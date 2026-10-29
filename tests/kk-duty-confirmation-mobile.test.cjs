@@ -54,7 +54,7 @@ test('Public duty portraits retain published duty photo ID and reflect confirmed
  assert.match(publicDuty,/p\.duty_photo_id\?'<img class="duty-photo-primary" src="\.\/api\/duty-images\//);
  assert.match(publicDuty,/p\.duty_days\.includes\(index\+1\)/);
  assert.match(staff,/duty_photo_id:uploadedId/);
- assert.match(staff,/officer\.duty_days=payload\.duty_day\?\[payload\.duty_day\]:\[\]/);
+ assert.match(staff,/officer\.duty_days=response\.duty_days/);
  assert.match(read('dist/staff-duty-ui.css'),/\.duty-save-confirm::backdrop/);
  assert.match(read('dist/staff-duty-ui.css'),/@media\(max-width:390px\)/);
 });

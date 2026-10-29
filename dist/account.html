@@ -195,7 +195,7 @@
  <div class="panel-heading"><div><span class="eyebrow">CHAIRMAN WORKSPACE</span><h2>SK Duty Management</h2><p>Piliin ang SK Council officer, i-preview ang larawan, at i-confirm ang mga pagbabago bago i-save.</p></div><a class="secondary" href="./duty.html" target="_blank" rel="noopener">View public SK Duty <svg class="ui-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2v-4"/></svg></a></div>
  <div id="duty-manage-status" class="duty-manager-status" role="status" aria-live="polite">Loading SK Council…</div>
  <section class="duty-manager-single" aria-labelledby="duty-manage-form-title">
-  <div class="duty-manager-single-heading"><div><span class="eyebrow">SK DUTY ASSIGNMENT</span><h3 id="duty-manage-form-title">Duty officer</h3></div><span class="duty-manager-help">One duty day per officer</span></div>
+  <div class="duty-manager-single-heading"><div><span class="eyebrow">SK DUTY ASSIGNMENT</span><h3 id="duty-manage-form-title">Duty officer</h3></div><span class="duty-manager-help">One regular weekday + optional Sunday</span></div>
   <label class="duty-manager-pick-label" for="duty-officer-select">Piliin ang SK officer mula sa SK Council Management</label>
   <select id="duty-officer-select" aria-describedby="duty-officer-source"><option value="">Select an SK officer</option></select>
   <p class="duty-manager-source" id="duty-officer-source">Ang pangalan at posisyon ay mula sa existing SK Council directory; hindi gagawa ng duplicate record.</p>
@@ -208,7 +208,8 @@
     <button type="button" class="secondary duty-manager-photo-remove" id="duty-photo-remove">Remove duty photo</button>
    </div>
   </div>
-  <fieldset class="duty-manager-single-week" id="duty-manage-day-fieldset" disabled><legend>Duty day</legend><p>Isang araw lang ang puwedeng piliin. Piliin ang araw. Hihingin muna ang confirmation bago i-save at lumabas sa public SK Duty.</p><div id="duty-manage-day-choices" class="duty-manager-day-choices"></div></fieldset>
+  <fieldset class="duty-manager-single-week" id="duty-manage-day-fieldset" disabled><legend>SK Duty schedule</legend><p>Monday–Saturday: isa o dalawang naka-duty kada araw. Pumili ng regular weekday ng officer; may confirmation bago i-save.</p><div id="duty-manage-day-choices" class="duty-manager-day-choices"></div><label class="duty-manager-sunday-check"><input type="checkbox" id="duty-manage-sunday"><span><strong>Sunday · Papasok sa SK Office</strong><small>Lahat ng SK Council ay maaaring mag-duty sa Linggo. I-check lamang ang mga kumpirmadong papasok. Open ang opisina 9 AM–6 PM.</small></span></label></fieldset>
+ <section class="duty-manager-week-summary" aria-labelledby="duty-week-summary-heading"><h3 id="duty-week-summary-heading">Weekly duty assignments</h3><p>Makikita sa public SK Duty ang mga naka-assign at mga kumpirmadong papasok tuwing Linggo.</p><div id="duty-manage-week-roster" class="duty-manager-roster-grid" aria-live="polite"></div></section>
   <div id="duty-manage-selection-message" class="duty-manager-selection-message" role="status" aria-live="polite">Pumili muna ng SK officer.</div><div id="duty-upload-progress" class="duty-upload-progress" role="status" aria-live="polite" hidden>
  <div class="duty-upload-progress-header"><span class="duty-upload-spinner" aria-hidden="true"></span><strong id="duty-upload-label">Preparing SK Duty photo upload…</strong><span id="duty-upload-percent">0%</span></div>
  <progress id="duty-upload-meter" max="100" value="0" aria-label="SK Duty photo upload progress"></progress>

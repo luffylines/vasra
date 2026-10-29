@@ -280,3 +280,27 @@ body.account-workspace[data-theme="dark"] .duty-manager-panel .duty-manager-priv
 body.account-workspace[data-theme="dark"] .duty-upload-progress{background:#193454;border-color:#4779b2;color:#e9f4ff}
 body.account-workspace[data-theme="dark"] .duty-upload-progress p{color:#bdd8f6}
 @media(max-width:520px){.duty-save-confirm-inner{padding:18px}.duty-save-confirm .duty-confirm-actions{gap:8px}.duty-save-confirm .duty-confirm-actions button{min-height:46px;padding:10px 7px;font-size:12px}.duty-upload-progress{bottom:8px;padding:12px}}
+
+/* One/two weekday officers and confirmed Sunday photo roster. */
+.duty-manager-sunday-check{display:flex;align-items:flex-start;gap:12px;margin-top:15px;padding:14px;border:1px solid #b8d2ee;border-radius:12px;background:#f0f7ff;color:#173d6d;cursor:pointer}
+.duty-manager-sunday-check input{flex:0 0 auto;width:20px;height:20px;margin:3px 0 0;accent-color:#236ac1}
+.duty-manager-sunday-check span{display:grid;gap:5px;min-width:0}
+.duty-manager-sunday-check strong{font-size:13px}
+.duty-manager-sunday-check small{font-size:11px;line-height:1.6}
+.duty-manager-week-summary{margin-top:18px;padding:19px;border:1px solid #d6e2f2;border-radius:15px;background:#f8fbff}
+.duty-manager-week-summary h3{font:800 17px Manrope,sans-serif;margin:0 0 5px;color:#173c69}
+.duty-manager-week-summary>p{margin:0 0 15px;color:#607a9b;font-size:12px}
+.duty-manager-roster-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:11px}
+.duty-manager-roster-day{border:1px solid #dae6f3;background:#fff;border-radius:11px;padding:12px;min-width:0}
+.duty-manager-roster-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.duty-manager-roster-heading strong{font-size:13px;color:#173b68}
+.duty-manager-roster-heading small{font-size:10px;color:#5277a2;text-align:right}
+.duty-manager-roster-people{display:grid;gap:6px}
+.duty-manager-roster-person{display:flex;gap:8px;align-items:center;min-width:0;font-size:11px;font-weight:700;color:#234871}
+.duty-manager-roster-person img,.duty-manager-roster-person>span:first-child{width:36px;height:38px;flex:none;object-fit:cover;border-radius:8px;background:#dceafe;display:grid;place-items:center}
+.duty-manager-roster-person>span:last-child{min-width:0;overflow-wrap:anywhere}
+.duty-manager-roster-people em{font-style:normal;font-size:11px;line-height:1.5;color:#6b82a1}
+body.account-workspace[data-theme="dark"] .duty-manager-sunday-check,body.account-workspace[data-theme="dark"] .duty-manager-week-summary,body.account-workspace[data-theme="dark"] .duty-manager-roster-day{background:#183352;border-color:#3c5c81;color:#e9f2ff}
+body.account-workspace[data-theme="dark"] .duty-manager-week-summary h3,body.account-workspace[data-theme="dark"] .duty-manager-roster-heading strong,body.account-workspace[data-theme="dark"] .duty-manager-roster-person{color:#edf5ff}
+@media(max-width:600px){.duty-manager-week-summary{padding:12px}.duty-manager-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.duty-manager-roster-day{padding:9px}.duty-manager-roster-heading{flex-direction:column;gap:2px}}
+@media(max-width:400px){.duty-manager-roster-grid{grid-template-columns:minmax(0,1fr)}}
