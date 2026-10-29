@@ -8,14 +8,22 @@
  ];
  const keys=new Set(defaults.map(x=>x.slug));
  const safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
- const photo=(x,always=false)=>x.has_image||always&&x.has_image?
+ const photo=x=>x.has_image?
    '/api/current-projects/'+x.slug+'/image?v='+encodeURIComponent(x.updated_at||'latest'):
    '/current-project-'+x.slug+'.svg';
  const load=async()=>{const data=await api('/api/current-projects');return defaults.map(d=>({...d,...(data.projects||[]).find(x=>x.slug===d.slug)}));};
  const note=(message,kind='success')=>window.showVasraToast?.(message,kind);
  const format=x=>String(x).replace(/\s+/g,' ').trim();
+ // A nested child URL displays over the existing homepage, never as a standalone page.
+ let latest=defaults;
+ const projectRoute=()=>{const match=location.pathname.match(/^\/current-project\/(printing|computer|retabox)\/?$/);return match?.[1]||null;};
  function home(){
-  const host=document.getElementById('current-project-cards');if(!host)return;
+  const host=document.getElementById('current-project-cards');
+  const dialog=document.getElementById('current-project-modal');
+  const detail=document.getElementById('current-project-detail');
+  if(!host||!dialog||!detail)return;
+  let lastFocus=null,active=null;
+  const homeTitle='Home — SK Vasra';
   const draw=items=>{
    host.innerHTML=items.map(x=>'<a class="current-project-card" href="/current-project/'+x.slug+'" aria-label="View '+safe(x.title)+' details">'+
     '<span class="current-project-cover"><img src="'+photo(x)+'" alt="'+safe(x.title)+'" loading="lazy">'+
@@ -23,32 +31,82 @@
     '<span class="current-project-card-body"><strong>'+safe(x.title)+'</strong><span>'+safe(format(x.summary).slice(0,185))+'</span>'+
     '<span class="current-project-open">View details <span aria-hidden="true">→</span></span></span></a>').join('');
   };
-  draw(defaults);load().then(draw).catch(()=>{document.getElementById('current-project-update-note').textContent='Showing service information. Latest edits are temporarily unavailable.';});
- }
- function details(){
-  const host=document.getElementById('current-project-detail');if(!host)return;
-  const slug=location.pathname.split('/').filter(Boolean).at(-1);
-  const found=defaults.find(x=>x.slug===slug);
-  if(!found){host.innerHTML='<p class="current-project-notfound">Hindi makita ang serbisyong ito. <a href="/">Bumalik sa Home.</a></p>';return;}
   const render=x=>{
-   document.title=x.title+' — SK VASRA';
-   const crumb=document.getElementById('current-project-breadcrumb');if(crumb)crumb.textContent=x.title;
-   host.innerHTML='<div class="current-project-detail-image"><img src="'+photo(x)+'" alt="'+safe(x.title)+'"></div>'+
+   detail.innerHTML='<div class="current-project-detail-image"><img src="'+photo(x)+'" alt="'+safe(x.title)+'"></div>'+
     '<div class="current-project-detail-copy"><span class="current-project-eyebrow">SANGGUNIANG KABATAAN · BARANGAY VASRA</span>'+
-    '<h1>'+safe(x.title)+'</h1><h2>About this service</h2><p>'+safe(x.summary)+'</p>'+
-    '<div class="current-project-service-cta"><strong>Para sa verified KK members</strong><span>Mag-login sa KK account upang makapag-request ng serbisyo. Kung hindi pa verified, kumpletuhin muna ang iyong KK profile.</span>'+
-    '<a id="current-project-request" class="current-project-cta-link" href="/kk-login?service='+x.slug+'">Mag-login para mag-request <span aria-hidden="true">→</span></a></div>'+
-    '<a class="current-project-return" href="/">← Bumalik sa Home</a></div>';
+    '<h1 id="current-project-dialog-title">'+safe(x.title)+'</h1><h2>About this service</h2>'+
+    '<p class="current-project-long-summary">'+safe(x.summary)+'</p>'+
+    '<div class="current-project-service-cta"><strong>Para sa verified KK members</strong>'+
+    '<span>Mag-login sa KK account para makapag-request ng serbisyo. Kung hindi pa verified, kumpletuhin muna ang iyong KK profile.</span>'+
+    '<a id="current-project-request" class="current-project-cta-link" href="/kk-login?service='+x.slug+'">Mag-login para mag-request <span aria-hidden="true">→</span></a></div></div>';
+   dialog.setAttribute('aria-labelledby','current-project-dialog-title');
+   document.title=x.title+' — SK VASRA';
+   const requested=x.slug;
    api('/api/kk/me').then(res=>{
+    if(active!==requested||!dialog.open)return;
     if(res?.member?.id&&res.profile?.status==='verified'){
-     const link=document.getElementById('current-project-request');
-     if(link){link.href='/kk-dashboard#'+x.slug;link.innerHTML='Buksan ang KK service <span aria-hidden="true">→</span>';}
+     const link=dialog.querySelector('#current-project-request');
+     if(link){link.href='/kk-dashboard#'+requested;link.innerHTML='Buksan ang KK service <span aria-hidden="true">→</span>';}
     }
    }).catch(()=>{});
   };
-  render(found);
-  load().then(items=>render(items.find(x=>x.slug===slug)||found))
-   .catch(()=>{const el=document.getElementById('current-project-detail-status');if(el)el.textContent='Live service details temporarily unavailable.';});
+  const show=slug=>{
+   const x=latest.find(p=>p.slug===slug);
+   if(!x)return;
+   if(!dialog.open){lastFocus=document.activeElement;dialog.showModal();}
+   active=slug;
+   document.body.classList.add('current-project-modal-open');
+   render(x);
+   dialog.querySelector('#current-project-close')?.focus({preventScroll:true});
+  };
+  const hide=()=>{
+   active=null;
+   if(dialog.open)dialog.close();
+   document.body.classList.remove('current-project-modal-open');
+   document.title=homeTitle;
+   if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});
+   lastFocus=null;
+  };
+  const navigateClose=()=>{
+   if(history.state?.currentProjectOverlay){history.back();return;}
+   // Direct-link visits have no homepage history entry; close in place instead.
+   history.replaceState(null,'','/#current-projects');hide();
+  };
+  const sync=()=>{
+   const slug=projectRoute();
+   if(slug)show(slug);
+   else hide();
+  };
+  host.addEventListener('click',event=>{
+   const anchor=event.target.closest('a.current-project-card');
+   if(!anchor||event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+   const slug=anchor.getAttribute('href')?.split('/').at(-1);
+   if(!keys.has(slug))return;
+   event.preventDefault();
+   history.pushState({currentProjectOverlay:true},'','/current-project/'+slug);
+   show(slug);
+  });
+  dialog.querySelector('#current-project-close').addEventListener('click',navigateClose);
+  dialog.addEventListener('cancel',e=>{e.preventDefault();navigateClose();});
+  dialog.addEventListener('click',e=>{if(e.target===dialog)navigateClose();});
+  window.addEventListener('popstate',sync);
+  draw(defaults);
+  sync();
+  load().then(items=>{
+   latest=items;draw(items);
+   const slug=projectRoute();
+   if(slug&&active===slug)render(items.find(x=>x.slug===slug)||defaults.find(x=>x.slug===slug));
+  }).catch(()=>{
+   const note=document.getElementById('current-project-update-note');
+   if(note)note.textContent='Showing service information. Latest edits are temporarily unavailable.';
+  });
+ }
+ function details(){
+  // Legacy standalone-page renderer remains only for older cached /current-project.html visitors.
+  const host=document.getElementById('current-project-detail');
+  if(!host||document.getElementById('current-project-modal'))return;
+  const slug=projectRoute(),entry=defaults.find(x=>x.slug===slug);
+  if(entry)location.replace('/current-project/'+slug);
  }
  function staff(){
   const host=document.getElementById('current-project-admin');if(!host)return;
@@ -60,17 +118,37 @@
    state.items=(result.projects||[]).filter(x=>keys.has(x.slug));
    if(state.items.length!==3)throw Error('Incomplete services directory. Check the migration.');
    host.innerHTML=state.items.map(x=>'<article class="current-project-admin-card" data-service="'+x.slug+'">'+
-    '<div class="current-project-admin-image"><img alt="'+safe(x.title)+'" src="'+photo(x)+'"></div>'+
+    '<div class="current-project-admin-image"><button type="button" class="current-project-image-preview" data-service-preview="'+x.slug+'" aria-label="View full-size poster for '+safe(x.title)+'"><img alt="'+safe(x.title)+'" src="'+photo(x)+'" loading="lazy"><span>Click to view full poster</span></button></div>'+
     '<form data-service-summary="'+x.slug+'"><h3>'+safe(x.title)+'</h3>'+
     '<label for="current-summary-'+x.slug+'">Service summary</label>'+
-    '<textarea id="current-summary-'+x.slug+'" name="summary" maxlength="1800" minlength="20" required rows="5">'+safe(x.summary)+'</textarea>'+
+    '<textarea id="current-summary-'+x.slug+'" name="summary" maxlength="12000" minlength="20" required rows="7">'+safe(x.summary)+'</textarea><span class="current-project-char-count" data-summary-count="'+x.slug+'">'+String(x.summary.length)+' / 12,000 characters · supports line breaks</span>'+
     '<div class="current-project-admin-actions"><button class="primary" type="submit">Save Summary</button>'+
     '<label class="current-project-upload">Upload / Replace Image<input type="file" accept="image/jpeg,image/png,image/webp" data-service-image="'+x.slug+'" aria-label="Upload image for '+safe(x.title)+'"></label>'+
-    '<a href="/current-project/'+x.slug+'" target="_blank" rel="noopener">Public page ↗</a></div>'+
-    '<small>JPG, PNG or WebP · maximum 2 MB. Photo changes appear automatically on the homepage.</small></form></article>').join('');
+    '<a href="/current-project/'+x.slug+'" target="_blank" rel="noopener">View on Homepage ↗</a></div>'+
+    '<small>Full portrait posters will be shown without cropping. JPG, PNG or WebP · maximum 2 MB.</small></form></article>').join('');
    status.textContent='Only these three KK services can be edited. Changes are saved to the database.';
   };
   window.loadCurrentProjectAdmin=async()=>{try{await refresh()}catch(error){host.replaceChildren();status.textContent=error.message;}};
+  host.addEventListener('input',e=>{
+   const field=e.target.closest('textarea[name="summary"]');if(!field)return;
+   const slug=field.closest('form')?.dataset.serviceSummary;
+   const counter=slug&&host.querySelector('[data-summary-count="'+slug+'"]');
+   if(counter)counter.textContent=field.value.length.toLocaleString('en-PH')+' / 12,000 characters · supports line breaks';
+  });
+  const preview=document.getElementById('current-project-preview');
+  if(preview){
+   host.addEventListener('click',e=>{
+    const button=e.target.closest('button[data-service-preview]');
+    if(!button)return;
+    const img=button.querySelector('img');
+    const zoom=preview.querySelector('#current-project-preview-img');
+    if(!img||!zoom)return;
+    zoom.src=img.src;zoom.alt=img.alt;
+    if(!preview.open)preview.showModal();
+   });
+   preview.querySelector('#current-project-preview-close').addEventListener('click',()=>preview.close());
+   preview.addEventListener('click',e=>{if(e.target===preview)preview.close()});
+  }
   host.addEventListener('submit',async e=>{
    const form=e.target.closest('form[data-service-summary]');if(!form)return;
    e.preventDefault();const slug=form.dataset.serviceSummary;
