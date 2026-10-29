@@ -23,6 +23,24 @@
   const detail=document.getElementById('current-project-detail');
   if(!host||!dialog||!detail)return;
   let lastFocus=null,active=null;
+  const posterPreview=document.getElementById('current-project-poster-preview');
+  const posterImage=posterPreview?.querySelector('#current-project-poster-full-image');
+  if(posterPreview&&posterImage){
+   const closePoster=()=>{if(posterPreview.open)posterPreview.close();};
+   dialog.addEventListener('click',event=>{
+    const button=event.target.closest('.current-project-poster-open');
+    if(!button)return;
+    const img=button.querySelector('img');
+    if(!img)return;
+    posterImage.src=img.src;
+    posterImage.alt=img.alt||'Full SK VASRA poster';
+    if(!posterPreview.open)posterPreview.showModal();
+   });
+   posterPreview.querySelector('#current-project-poster-close').addEventListener('click',closePoster);
+   posterPreview.addEventListener('click',event=>{
+    if(event.target===posterPreview)closePoster();
+   });
+  }
   const homeTitle='Home — SK Vasra';
   const draw=items=>{
    host.innerHTML=items.map(x=>'<a class="current-project-card" href="/current-project/'+x.slug+'" aria-label="View '+safe(x.title)+' details">'+
@@ -32,7 +50,7 @@
     '<span class="current-project-open">View details <span aria-hidden="true">→</span></span></span></a>').join('');
   };
   const render=x=>{
-   detail.innerHTML='<div class="current-project-detail-image"><img src="'+photo(x)+'" alt="'+safe(x.title)+'"></div>'+
+   detail.innerHTML='<div class="current-project-detail-image"><button class="current-project-poster-open" type="button" aria-label="Tap to view full poster of '+safe(x.title)+'"><img src="'+photo(x)+'" alt="'+safe(x.title)+'"></button><span class="current-project-poster-hint" aria-hidden="true">Tap to view full poster</span></div>'+
     '<div class="current-project-detail-copy"><span class="current-project-eyebrow">SANGGUNIANG KABATAAN · BARANGAY VASRA</span>'+
     '<h1 id="current-project-dialog-title">'+safe(x.title)+'</h1><h2>About this service</h2>'+
     '<p class="current-project-long-summary">'+safe(x.summary)+'</p>'+
@@ -60,6 +78,7 @@
    dialog.querySelector('#current-project-close')?.focus({preventScroll:true});
   };
   const hide=()=>{
+   if(posterPreview?.open)posterPreview.close();
    active=null;
    if(dialog.open)dialog.close();
    document.body.classList.remove('current-project-modal-open');
@@ -90,6 +109,8 @@
   dialog.addEventListener('cancel',e=>{e.preventDefault();navigateClose();});
   dialog.addEventListener('click',e=>{if(e.target===dialog)navigateClose();});
   window.addEventListener('popstate',sync);
+  // Safari can restore a cached page after navigating back from KK login.
+  window.addEventListener('pageshow',event=>{if(event.persisted)sync();});
   draw(defaults);
   sync();
   load().then(items=>{
