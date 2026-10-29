@@ -249,3 +249,14 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
   linear-gradient(90deg,rgba(7,28,57,.25),transparent 80%);
  }
 }
+
+/* Restore the exact Vasra Barangay Hall shown in the approved homepage preview.
+   This small, same-origin asset is a photo-only crop from the supplied screenshot;
+   only the hero image changes. Navigation, layout, overlays and copy remain intact. */
+.home-memorial-hero::before{
+  background-image:url("./vasra-hall-hero.webp");
+  background-size:auto 100%;
+  background-position:right center;
+  background-repeat:no-repeat;
+  background-color:#102d54;
+}
