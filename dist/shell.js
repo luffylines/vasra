@@ -174,7 +174,7 @@ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch
 
 // Appearance controls for public pages, separate from the staff workspace.
 if(!document.body.classList.contains('account-workspace')){
- const appearance=document.createElement('script');appearance.src='./theme.js';
+ const appearance=document.createElement('script');appearance.src='./theme.js?v=20261029-dark-controls-v2';
  document.head.append(appearance);
 }
 
