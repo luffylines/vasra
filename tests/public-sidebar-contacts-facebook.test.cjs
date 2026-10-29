@@ -24,7 +24,7 @@ test('Every public sidebar footer has agreed labels and Facebook icon BEFORE lin
   const foot=s.match(/<div class="sidebar-bottom">([\s\S]*?)<\/div>/);
   assert.ok(foot,page+' sidebar footer exists');
   // motto nested div: inspect the full footer through its facebook link rather than first closing div.
-  assert.match(s,/class="sidebar-motto"[^>]*><span class="sidebar-dot"[^>]*><\/span><strong>Arang Kada-Kabataang Vasra<\/strong>/);
+  assert.match(s,/class="sidebar-motto"[^>]*><span class="sidebar-dot"[^>]*><\/span><strong>Arangkada, Kabataang VASRA!<\/strong>/);
   assert.match(s,/<small>Brgy Vasra Quezon City<\/small>/);
   assert.match(s,/<a class="social-footer-link"[^>]*href="https:\/\/www.facebook.com\/skbrgyvasra"[^>]*><svg class="sidebar-facebook-icon"[\s\S]*?<\/svg><span>Facebook page<\/span><\/a>/);
   assert.doesNotMatch(s,/Para sa kabataang Vasra<small>/);

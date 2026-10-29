@@ -32,7 +32,7 @@ test('Contacts displays four SK-specific methods, real form, embedded map and re
  for(const token of ['contacts-overview','contacts-connect','contacts-form-panel','contacts-location-panel',
   'id="sk-contact-form"','name="name"','name="email"','name="topic"','name="message"','name="consent"',
   'name="website"','id="contact-form-feedback"','contacts-page.js',
-  'maps?q=40%20Forestry%20St','Arang Kada-Kabataang Vasra'])
+  'maps?q=40%20Forestry%20St','Arangkada, Kabataang VASRA!'])
   assert.ok(html.includes(token),'Missing '+token);
  assert.match(html,/mailto:skbrgyvasraqc@gmail.com/);
  assert.match(html,/facebook.com\/skbrgyvasra/);

@@ -6,10 +6,10 @@ const html=read('dist/account.html'),duty=read('dist/duty.html'),front=read('dis
 const client=read('dist/account.js'),handler=read('lib/handler.cjs');
 const backend=read('lib/supabase.cjs');
 const sql=read('supabase/migrations/20261024210000_officer_public_contact_settings.sql');
-test('All public portal footers consistently use Arang Kada-Kabataang Vasra',()=>{
+test('All public portal footers consistently use #ArangkadaKabataangVasra',()=>{
  for(const p of pages){
   const source=read('dist/'+p+'.html');
-  assert.match(source,/<footer class="portal-footer">[^]*?<span>Arang Kada-Kabataang Vasra<\/span>/);
+  assert.match(source,/<footer class="portal-footer">[^]*?<span>#ArangkadaKabataangVasra<\/span>/);
  }
 });
 test('SK Duty replaces historical resolution with dynamic SK Details',()=>{
