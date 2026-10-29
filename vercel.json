@@ -9,7 +9,7 @@
     },
     {
       "source": "/current-project/:service",
-      "destination": "/current-project.html"
+      "destination": "/index.html"
     },
     {
       "source": "/account",
