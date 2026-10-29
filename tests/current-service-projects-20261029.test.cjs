@@ -15,8 +15,15 @@ test('Homepage retains existing stats and shows exactly three Current Project se
 test('Each child page renders safe summary and official KK login CTA',()=>{
  const page=read('dist/current-project.html'),js=read('dist/current-projects.js');
  const config=JSON.parse(read('vercel.json'));
- assert(config.rewrites.some(r=>r.source==='/current-project/:service'&&r.destination==='/current-project.html'));
+ assert(config.rewrites.some(r=>r.source==='/current-project/:service'&&r.destination==='/index.html'));
  assert.match(page,/id="current-project-detail"/);
+ const home=read('dist/index.html');
+ assert.match(home,/<base href="\/">/);
+ assert.match(home,/id="current-project-modal"/);
+ assert.match(home,/id="current-project-close"/);
+ assert.match(js,/history\.pushState/);
+ assert.match(js,/window\.addEventListener\('popstate',sync\)/);
+ assert.match(js,/dialog\.showModal\(\)/);
  assert.match(page,/<base href="\/">/);
  assert.match(js,/\/kk-login\?service=/);
  assert.match(js,/\/kk-dashboard#/);
@@ -50,4 +57,31 @@ test('KK service deep links survive password/Google login and still require veri
  assert.match(dashboard,/location\.hash\.slice\(1\)/);
  for(const file of ['dist/current-projects.js','dist/kk.js','dist/kk-dashboard.js','dist/account.js','lib/handler.cjs','lib/supabase.cjs'])
   assert.doesNotThrow(()=>new (require('node:vm').Script)(read(file),{filename:file}));
+});
+test('Facebook-style multiline summaries are accepted and safely displayed as text',()=>{
+ const server=read('lib/handler.cjs'),frontend=read('dist/current-projects.js');
+ const migration=read('supabase/migrations/20261029224500_current_project_multiline_summary.sql');
+ assert.match(migration,/current_service_projects_summary_check/);
+ assert.match(migration,/between 20 and 12000/);
+ assert.doesNotMatch(migration,/new_summary ~ '\[<>\[:cntrl:\]\]'/);
+ assert.match(server,/summary\.length>12000/);
+ assert.match(server,/summary\.includes\('\\u0000'\)/);
+ assert.match(frontend,/maxlength="12000"/);
+ assert.match(frontend,/current-project-char-count/);
+ assert.match(frontend,/safe\(x\.summary\)/);
+ assert.match(frontend,/current-project-long-summary/);
+});
+test('Portrait posters are entirely visible in homepage overlay, admin preview and mobile layouts',()=>{
+ const css=read('dist/current-projects.css'),home=read('dist/index.html');
+ const admin=read('dist/account.html'),script=read('dist/current-projects.js');
+ assert.match(css,/\.current-project-modal::backdrop/);
+ assert.match(css,/backdrop-filter:blur\(9px\)/);
+ assert.match(css,/\.current-project-modal \.current-project-detail-image img\{/);
+ assert.match(css,/object-fit:contain/);
+ assert.match(css,/\.current-project-admin-actions\{[\s\S]*?grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(css,/@media\(max-width:480px\)/);
+ assert.match(home,/id="current-project-modal"/);
+ assert.match(admin,/id="current-project-preview"/);
+ assert.match(script,/data-service-preview/);
+ assert.match(script,/preview\.showModal\(\)/);
 });
