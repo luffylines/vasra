@@ -12,7 +12,7 @@ function officerPortrait(name,position,photoId=null,managed=false){
  const fallback='<span class="officer-portrait-fallback" aria-hidden="true">'+esc(initials||'?')+'</span>';
  if(photoId&&/^[0-9a-f-]{36}$/i.test(String(photoId))){
   return '<span class="officer-portrait portrait-profile-photo">'+fallback+
-   '<img src="./api/images/'+encodeURIComponent(photoId)+'" alt="Larawan ni '+esc(safeName)+'" loading="eager" decoding="async"></span>';
+   '<img src="./api/public-images/'+encodeURIComponent(photoId)+'" alt="Larawan ni '+esc(safeName)+'" loading="eager" decoding="async"></span>';
  }
  // Never show the predecessor's static duty poster for a managed roster entry.
  // When a new official has no portrait yet, show initials until Chairman uploads one.

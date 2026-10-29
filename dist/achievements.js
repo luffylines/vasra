@@ -2,7 +2,7 @@
 let publicAwards=[],awardGalleryImages=[],awardGalleryIndex=0;
 const awardsDate=d=>new Intl.DateTimeFormat('fil-PH',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Manila'}).format(new Date(d+'T12:00:00Z'));
 const awardCover=a=>Array.isArray(a.image_ids)&&a.image_ids.length?a.image_ids[0]:a.image_id;
-const awardPhoto=id=>'./api/images/'+encodeURIComponent(id);
+const awardPhoto=id=>'./api/public-images/'+encodeURIComponent(id);
 function renderAwards(){
  const grid=document.querySelector('#awards-public-grid');
  document.querySelector('#awards-public-total').textContent=publicAwards.length+' award'+(publicAwards.length===1?'':'s');

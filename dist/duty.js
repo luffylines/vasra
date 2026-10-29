@@ -94,8 +94,8 @@ function selectDay(index){
    photos.dataset.photoState=list.length===1&&!list[0].duty_photo_id?'missing':'ready';
    photos.innerHTML=list.length?list.map(p=>{
     const initials=String(p.name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
-    const picture=p.duty_photo_id?'<img class="duty-photo-primary" src="./api/duty-images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager">'+
-     '<img class="duty-photo-backdrop" src="./api/duty-images/'+encodeURIComponent(p.duty_photo_id)+'" alt="" aria-hidden="true" loading="eager">':'';
+    const picture=p.duty_photo_id?'<img class="duty-photo-primary" src="./api/duty-images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager" decoding="async" fetchpriority="high">'+
+     '<img class="duty-photo-backdrop" src="./api/duty-images/'+encodeURIComponent(p.duty_photo_id)+'" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low">':'';
     const photoNotice='<span class="duty-photo-notice"'+(p.duty_photo_id?' hidden':'')+'>'+(p.duty_photo_id?'Hindi ma-load ang SK Duty photo.':'Wala pang naka-upload na SK Duty photo.')+'</span>';
     return '<article class="duty-profile"><span class="duty-profile-frame">'+
      '<span class="duty-profile-fallback" aria-hidden="true">'+esc(initials||'SK')+'</span>'+picture+

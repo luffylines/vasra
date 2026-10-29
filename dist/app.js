@@ -103,7 +103,7 @@ function publishedCardDate(iso){
  return '<time datetime="'+esc(parsed.toISOString())+'" title="Na-publish: '+esc(date+' · '+time)+'"><span class="project-card-date-day">'+esc(date)+'</span><span class="project-card-date-separator" aria-hidden="true">·</span><span class="project-card-date-time">'+esc(time)+'</span></time>';
 }
 const galleryIds=p=>Array.isArray(p.image_ids)&&p.image_ids.length?p.image_ids:(p.image_id?[p.image_id]:[]);
-const galleryUrl=id=>'./api/images/'+encodeURIComponent(id);
+const galleryUrl=id=>'./api/public-images/'+encodeURIComponent(id);
 function projectGallery(p){
  const ids=galleryIds(p);if(!ids.length)return '';
  return '<section class="project-detail-gallery" aria-label="Project photos">'+
