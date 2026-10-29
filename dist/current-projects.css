@@ -1,0 +1,54 @@
+/* SK VASRA Current Project: three linked service cards and responsive child page. */
+.current-project-section{margin:0 0 20px;padding:22px;background:#fff;border:1px solid #e3eaf5;border-radius:18px}
+.current-project-section .current-project-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:17px}
+.current-project-heading h2{font:800 20px/1.3 Manrope,sans-serif;color:#16355f;margin:0 0 5px}
+.current-project-heading p{margin:0;color:#617b9c;font-size:12px;line-height:1.55}
+.current-project-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.current-project-card{display:flex;flex-direction:column;overflow:hidden;min-width:0;border:1px solid #dce6f4;border-radius:15px;text-decoration:none;background:#fff;transition:transform .18s,border-color .18s,box-shadow .18s}
+.current-project-card:hover,.current-project-card:focus-visible{transform:translateY(-2px);border-color:#7baced;box-shadow:0 10px 25px #122c5020;outline-offset:2px}
+.current-project-cover{position:relative;display:block;aspect-ratio:16/9;background:#173f6f;overflow:hidden}
+.current-project-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.current-project-image-tag{position:absolute;bottom:12px;left:12px;background:#082e5cde;color:white;padding:6px 9px;border-radius:6px;font:800 10px Arial,sans-serif;letter-spacing:.09em}
+.current-project-card-body{display:flex;flex:1;flex-direction:column;padding:16px;gap:9px}
+.current-project-card-body>strong{font:800 15px/1.4 Manrope,sans-serif;color:#143461;overflow-wrap:anywhere}
+.current-project-card-body>span:nth-child(2){font-size:12px;line-height:1.6;color:#627897}
+.current-project-open{margin-top:auto;color:#075dca;font:800 12px/1.5 Arial,sans-serif;padding-top:8px}
+.current-project-open span{margin-left:4px}
+.current-project-detail-wrap{padding:0 0 20px}
+.current-project-detail{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);background:#fff;border:1px solid #dce8f5;overflow:hidden;border-radius:20px;min-height:430px}
+.current-project-detail-image{background:#143965;min-width:0;min-height:360px}
+.current-project-detail-image img{width:100%;height:100%;max-height:620px;min-height:360px;display:block;object-fit:cover}
+.current-project-detail-copy{padding:clamp(21px,3vw,42px);min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.current-project-eyebrow{font:700 10px Arial,sans-serif;color:#3970b6;letter-spacing:.13em}
+.current-project-detail-copy h1{font:800 clamp(27px,3vw,45px)/1.18 Manrope,sans-serif;color:#12335b;margin:14px 0 25px;overflow-wrap:anywhere}
+.current-project-detail-copy h2{font:800 17px Manrope,sans-serif;color:#143d6c;margin:0 0 10px}
+.current-project-detail-copy>p{white-space:pre-wrap;color:#4b6484;font-size:14px;line-height:1.9;margin:0 0 22px}
+.current-project-service-cta{background:#f2f7ff;border:1px solid #d4e3f5;padding:18px;border-radius:14px;display:grid;gap:10px;width:100%;box-sizing:border-box}
+.current-project-service-cta strong{font-size:13px;color:#183f70}
+.current-project-service-cta>span{font-size:12px;color:#516b89;line-height:1.7}
+.current-project-cta-link{display:flex;justify-content:space-between;align-items:center;background:#235cb2;color:#fff;text-decoration:none;border-radius:10px;padding:13px 16px;font:800 12px Arial,sans-serif}
+.current-project-cta-link:hover{background:#154a9d}
+.current-project-return{margin-top:18px;font-size:12px;font-weight:700;color:#1a61bc}
+.current-project-notfound{padding:36px;background:#fff;border-radius:14px}
+.current-project-admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:15px}
+.current-project-admin-card{overflow:hidden;border-radius:14px;background:#fff;border:1px solid #d5e2f2;min-width:0}
+.current-project-admin-image{aspect-ratio:16/9;background:#143e70}
+.current-project-admin-image img{width:100%;height:100%;object-fit:cover;display:block}
+.current-project-admin-card form{padding:17px;display:flex;flex-direction:column;gap:11px}
+.current-project-admin-card h3{font:800 14px/1.4 Manrope,sans-serif;color:#15365e;margin:0}
+.current-project-admin-card label:not(.current-project-upload){font-size:12px;color:#315881;font-weight:700}
+.current-project-admin-card textarea{box-sizing:border-box;resize:vertical;width:100%;min-height:125px;padding:10px;border:1px solid #aec5e4;border-radius:9px;color:#162d50;background:#fff;font:12px/1.6 Arial,sans-serif}
+.current-project-admin-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.current-project-admin-actions button,.current-project-upload{display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:10px 13px;border-radius:9px;font-size:12px;cursor:pointer}
+.current-project-upload{background:#e9f2ff;border:1px solid #acc5e8;color:#164d94;font-weight:750}
+.current-project-upload input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.current-project-admin-actions>a{color:#1b5aae;font-size:12px;font-weight:700}
+.current-project-admin-card small{font-size:11px;color:#68809b;line-height:1.6}
+#current-project-admin-status{color:#3b5d84;font-size:12px;margin:8px 0}
+body[data-theme="dark"] .current-project-admin-card,body[data-theme="dark"] .current-project-section,body[data-theme="dark"] .current-project-card,body[data-theme="dark"] .current-project-detail{background:#162a46;border-color:#365270}
+body[data-theme="dark"] .current-project-admin-card h3,body[data-theme="dark"] .current-project-card-body>strong,body[data-theme="dark"] .current-project-heading h2,body[data-theme="dark"] .current-project-detail-copy h1,body[data-theme="dark"] .current-project-detail-copy h2{color:#e5f0ff}
+body[data-theme="dark"] .current-project-admin-card textarea{background:#102039;border-color:#456b94;color:#fff}
+body[data-theme="dark"] .current-project-card-body>span:nth-child(2),body[data-theme="dark"] .current-project-detail-copy>p{color:#c5d7ef}
+@media(max-width:1050px){.current-project-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.current-project-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.current-project-detail{grid-template-columns:1fr}.current-project-detail-image,.current-project-detail-image img{min-height:0;max-height:390px;aspect-ratio:16/9}}
+@media(max-width:650px){.current-project-section{padding:14px}.current-project-cards,.current-project-admin-grid{grid-template-columns:1fr}.current-project-detail-copy{padding:22px}.current-project-detail-copy h1{font-size:29px}.current-project-cover{aspect-ratio:16/9}.current-project-heading h2{font-size:18px}}
