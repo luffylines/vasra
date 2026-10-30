@@ -1,0 +1,150 @@
+/* SK VASRA multiple-day duty scheduling and public profile cards — 2026-10-30.
+   Mobile-first: photo first, officer name and published public contact details below. */
+#panel-duty-manage .duty-manager-day-choices{
+ display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;
+}
+#panel-duty-manage .duty-manager-day-chip{
+ position:relative;display:block;min-width:0;margin:0;cursor:pointer;
+}
+#panel-duty-manage .duty-manager-day-chip input{
+ position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer;
+}
+#panel-duty-manage .duty-manager-day-chip span{
+ display:flex;align-items:center;justify-content:center;min-height:46px;
+ border:1px solid #b8cde5;border-radius:11px;background:#f2f7fe;
+ color:#254c7b;font:800 12px/1.3 'DM Sans',sans-serif;
+}
+#panel-duty-manage .duty-manager-day-chip input:checked+span{
+ background:#245db4;border-color:#2d69c4;color:#fff;
+ box-shadow:inset 0 0 0 1px #ffffff35;
+}
+#panel-duty-manage .duty-manager-day-chip input:focus-visible+span{
+ outline:3px solid #7eb1f4;outline-offset:2px;
+}
+#panel-duty-manage .duty-manager-save-row{
+ display:flex;align-items:center;flex-wrap:wrap;gap:13px;margin:15px 0 11px;
+}
+#panel-duty-manage .duty-manager-save-row button{
+ min-height:45px;min-width:185px;border-radius:10px;
+ padding:10px 17px;margin:0!important;font:800 12px 'DM Sans',sans-serif;
+}
+#panel-duty-manage .duty-manager-save-row small{
+ color:#5a7397;font:500 11px/1.6 'DM Sans',sans-serif;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-manager-day-chip span{
+ color:#dcecff;background:#163150;border-color:#54749a;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-manager-day-chip input:checked+span{
+ color:#fff;background:#2d66b8;border-color:#8eb8ef;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-manager-save-row small{
+ color:#c1d8f5;
+}
+/* Public duty view: exactly two portraits side-by-side when two are on duty.
+   Each card contains name, role and the officer's explicitly published contact details. */
+.portal-refresh .duty-officer-portraits{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;
+ align-items:stretch;min-width:0;padding:16px;
+ background:linear-gradient(140deg,#eaf3ff,#f5f9ff);
+ border-radius:18px;border:1px solid #d4e3f6;
+}
+.portal-refresh .duty-officer-portraits[data-layout="single"]{
+ grid-template-columns:minmax(0,1fr);
+}
+.portal-refresh .duty-officer-portraits[data-layout="single"] .duty-profile{
+ width:min(100%,390px);justify-self:center;
+}
+.portal-refresh .duty-officer-portraits[data-layout="empty"]{
+ display:flex;justify-content:center;align-items:center;
+}
+.portal-refresh .duty-profile{
+ display:flex;flex-direction:column;align-items:stretch;
+ padding:13px;min-width:0;min-height:0;
+ border:1px solid #d4e4f5;border-radius:15px;
+ background:#fff;color:#244b79;
+ box-shadow:0 8px 23px #173b6410;text-align:center;
+}
+.portal-refresh .duty-profile-frame{
+ position:relative;display:grid;place-items:center;
+ width:min(100%,220px);aspect-ratio:4/5;
+ margin:0 auto;border-radius:12px;overflow:hidden;
+ background:#dfeafa;border:1px solid #d2e1f1;
+}
+.portal-refresh .duty-profile-frame .duty-photo-primary{
+ display:block;position:absolute;inset:0;
+ width:100%;height:100%;object-fit:cover;object-position:center;
+}
+.portal-refresh .duty-profile strong{
+ display:block;margin:12px 0 4px;font:800 clamp(13px,1.1vw,16px)/1.35 Manrope,sans-serif;
+ color:#193d6d;overflow-wrap:anywhere;
+}
+.portal-refresh .duty-profile>small{
+ display:block;font-size:11px;line-height:1.4;color:#57779d;font-weight:700;
+}
+.portal-refresh .duty-profile-contact{
+ display:grid;gap:8px;min-width:0;
+ border-top:1px solid #e2eaf5;margin-top:12px;padding-top:12px;
+ text-align:left;
+}
+.portal-refresh .duty-profile-contact-row{
+ display:flex;align-items:flex-start;gap:9px;min-width:0;
+ font-size:11px;line-height:1.55;color:#476486;overflow-wrap:anywhere;
+}
+.portal-refresh .duty-profile-contact-row svg{
+ width:15px;height:15px;flex:none;margin-top:1px;
+ fill:none;stroke:#467ab7;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+.portal-refresh .duty-profile-contact-row span{
+ min-width:0;overflow-wrap:anywhere;word-break:normal;
+}
+.portal-refresh .duty-profile-contact-row a{
+ color:#245c9e!important;font-size:inherit;font-weight:700;
+ border:0!important;text-decoration:none!important;overflow-wrap:anywhere;
+}
+.portal-refresh .duty-profile-contact-row a:hover{text-decoration:underline!important}
+.portal-refresh .duty-profile-contact-row a:focus-visible{outline:2px solid #6599e6;outline-offset:3px}
+.portal-refresh .duty-profile-contact-empty{
+ margin:0;font-size:11px;line-height:1.55;color:#7084a0;
+}
+.portal-refresh #duty-contacts[hidden]{display:none!important}
+/* Sunday can contain more than two confirmed participants. */
+.portal-refresh .duty-officer-portraits[data-layout="group"]:has(.duty-profile:nth-child(3)){
+ grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+}
+html[data-theme="dark"] body.portal-refresh .duty-officer-portraits{
+ background:linear-gradient(150deg,#17314f,#14273f);border-color:#416082;
+}
+html[data-theme="dark"] body.portal-refresh .duty-profile{
+ background:#1b3655;color:#e7f3ff;border-color:#4b6b92;box-shadow:none;
+}
+html[data-theme="dark"] body.portal-refresh .duty-profile-frame{
+ background:#254366;border-color:#577aa1;
+}
+html[data-theme="dark"] body.portal-refresh .duty-profile strong{color:#edf6ff}
+html[data-theme="dark"] body.portal-refresh .duty-profile>small{color:#bdd6f2}
+html[data-theme="dark"] body.portal-refresh .duty-profile-contact{border-color:#466488}
+html[data-theme="dark"] body.portal-refresh .duty-profile-contact-row,
+html[data-theme="dark"] body.portal-refresh .duty-profile-contact-empty{color:#d1e4fb}
+html[data-theme="dark"] body.portal-refresh .duty-profile-contact-row a{color:#afcff9!important}
+html[data-theme="dark"] body.portal-refresh .duty-profile-contact-row svg{stroke:#a7cafd}
+@media(max-width:1050px){
+ .portal-refresh .duty-stage{grid-template-columns:minmax(0,1fr)!important}
+ .portal-refresh .duty-officer-portraits{width:100%}
+}
+@media(max-width:700px){
+ #panel-duty-manage .duty-manager-day-choices{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .portal-refresh .duty-officer-portraits{gap:9px;padding:10px}
+ .portal-refresh .duty-profile{padding:9px}
+ .portal-refresh .duty-profile-frame{max-width:140px}
+ .portal-refresh .duty-profile strong{font-size:13px}
+ .portal-refresh .duty-profile-contact-row{font-size:10px;gap:5px}
+ .portal-refresh .duty-profile-contact-row svg{width:13px;height:13px}
+}
+@media(max-width:380px){
+ .portal-refresh .duty-officer-portraits{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-refresh .duty-profile{padding:7px}
+ .portal-refresh .duty-profile-frame{max-width:115px}
+ .portal-refresh .duty-profile-contact{padding-top:8px;gap:6px}
+ .portal-refresh .duty-profile-contact-row{font-size:9px}
+ #panel-duty-manage .duty-manager-save-row button{width:100%;min-width:0}
+}
