@@ -1,0 +1,257 @@
+/* SK VASRA — unified dark-mode surface repair, 2026-10-30.
+   Scoped to the public Current Project, SK Duty form, and KK member overview.
+   Light mode and other dashboard modules are intentionally untouched. */
+
+/* PUBLIC HOMEPAGE — Current Project must use the HTML theme state.
+   Previous rules targeted body[data-theme] and missed html[data-theme="dark"]. */
+html[data-theme="dark"] body.portal-refresh .current-project-section,
+html[data-theme="dark"] body.portal-refresh .current-project-card{
+  background:#182c49!important;
+  border-color:#3c587c!important;
+  color:#eaf3ff!important;
+  box-shadow:none;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-section .current-project-heading h2,
+html[data-theme="dark"] body.portal-refresh .current-project-card-body>strong{
+  color:#f0f7ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-section .current-project-heading p,
+html[data-theme="dark"] body.portal-refresh .current-project-card-body>span:nth-child(2),
+html[data-theme="dark"] body.portal-refresh #current-project-update-note{
+  color:#c4d9f3!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-cover{
+  background:#213b59!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-open{
+  color:#abd2ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-card:where(:hover,:focus-visible){
+  border-color:#8bb8f3!important;background:#213b5d!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal,
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-detail{
+  background:#152943!important;
+  border-color:#3d5c80!important;
+  color:#eaf3ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-detail-image{
+  background:#203956!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-detail-copy h1,
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-detail-copy h2{
+  color:#f0f7ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-eyebrow{
+  color:#9cc8ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-long-summary,
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-detail-copy>p{
+  color:#d1e2f8!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-service-cta{
+  background:#233f61!important;
+  border-color:#54749e!important;
+  color:#eaf4ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal .current-project-service-cta :is(strong,span){
+  color:#e4f0ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal-close{
+  background:#203c61!important;
+  color:#f0f7ff!important;
+  border-color:#5a82ae!important;
+}
+html[data-theme="dark"] body.portal-refresh .current-project-modal-close:hover{
+  background:#2b507d!important;
+}
+
+/* CHAIRMAN — officer picker: ONE independent chevron, no repeated SVG tiles.
+   A wrapper owns the decoration; the native select owns all focus/touch behavior. */
+body.account-workspace #panel-duty-manage .duty-officer-select-shell{
+  position:relative;isolation:isolate;width:100%;min-width:0;
+}
+body.account-workspace #panel-duty-manage .duty-officer-select-shell::after{
+  content:"";position:absolute;right:19px;top:50%;
+  width:9px;height:9px;
+  border-right:2px solid #2c5d92;border-bottom:2px solid #2c5d92;
+  transform:translateY(-70%) rotate(45deg);
+  pointer-events:none;z-index:2;
+}
+body.account-workspace #panel-duty-manage .duty-officer-select-shell #duty-officer-select{
+  display:block;width:100%;max-width:100%;min-width:0;
+  min-height:48px;height:auto;margin:0;
+  padding:11px 48px 11px 14px!important;
+  background-image:none!important;
+  background-repeat:no-repeat!important;
+  background-size:0 0!important;
+  appearance:none!important;-webkit-appearance:none!important;
+  white-space:nowrap;text-overflow:ellipsis;overflow:hidden;
+}
+body.account-workspace #panel-duty-manage .duty-officer-select-shell:focus-within{
+  border-radius:10px;outline:2px solid #88b9fa;outline-offset:3px;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-officer-select-shell #duty-officer-select{
+  background-color:#132840!important;
+  border:1px solid #6682a6!important;
+  color:#f2f7ff!important;
+  -webkit-text-fill-color:#f2f7ff!important;
+  color-scheme:dark;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-officer-select-shell::after{
+  border-color:#c3dfff;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-officer-select-shell #duty-officer-select option{
+  background-color:#152c48!important;color:#f2f7ff!important;
+}
+/* Duty assignment badges and roster should not have grey/light islands in dark mode. */
+body.account-workspace[data-theme="dark"] #panel-duty-manage :is(
+  .duty-manager-single,.duty-manager-week-summary,.duty-manager-roster-day,
+  .duty-manager-sunday-check,.duty-manager-selected,.duty-manager-help
+){
+  background:#1b324f!important;
+  color:#e6f1ff!important;
+  border-color:#43658b!important;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage :is(
+  .duty-manager-pick-label,.duty-manager-source,.duty-manager-selected-detail,
+  .duty-manager-single-week legend,.duty-manager-sunday-check small,
+  .duty-manager-week-summary p
+){
+  color:#c6dbf4!important;
+}
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-manager-roster-day :is(strong,small,span),
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-manager-sunday-check :is(strong,span),
+body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-manager-single h3{
+  color:#edf5ff!important;
+}
+
+/* CHAIRMAN Current Project — retained dark cards, consistent form labels and status. */
+body.account-workspace[data-theme="dark"] #panel-current-projects :is(
+  .current-project-admin-card,.current-project-admin-card form
+){
+  background:#192f4c!important;color:#eaf4ff!important;
+  border-color:#48698f!important;
+}
+body.account-workspace[data-theme="dark"] #panel-current-projects :is(
+  .current-project-admin-card h3,.current-project-admin-card label,
+  .current-project-admin-card small,#current-project-admin-status,.current-project-char-count
+){
+  color:#d6e8fc!important;
+}
+body.account-workspace[data-theme="dark"] #panel-current-projects .current-project-admin-image{
+  background:#203e61!important;
+}
+body.account-workspace[data-theme="dark"] #panel-current-projects textarea{
+  color:#f0f7ff!important;background:#11253e!important;
+  border-color:#5c7ca5!important;
+}
+body.account-workspace[data-theme="dark"] #panel-current-projects .current-project-admin-actions>a{
+  background:#26466d!important;color:#e5f1ff!important;border-color:#52739c!important;
+}
+
+/* KK DASHBOARD — the theme sits on <html>, not <body>.
+   Remove the grey boxed side gutters and nested overview outline in dark mode. */
+html[data-theme="dark"] body.kk-body.kk-member-dashboard,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-content,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-content .kk-main{
+  background:#0d1c32!important;
+  color:#e7f1ff!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-content .kk-dashboard,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-dashboard-panel.kk-overview-panel{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-dashboard-panel.kk-overview-panel{
+  padding:0!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-dashboard-head :is(h1,p),
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-panel>h2,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-panel>p{
+  color:#e7f2ff!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-reward-spotlight,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-participation-history{
+  background:#192f4c!important;
+  border:1px solid #3f6087!important;
+  box-shadow:none!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-featured-reward,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-attended-event,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-rewards-preview-empty{
+  background:#203957!important;
+  border-color:#4b6d94!important;
+  color:#eaf3ff!important;
+  box-shadow:none!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-reward-spotlight :is(
+  .kk-reward-spotlight-head h3,.kk-featured-body h4,
+  .kk-participation-heading h3,.kk-attended-event strong
+){
+  color:#f0f7ff!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard :is(
+ .kk-reward-spotlight-head p,.kk-featured-body p,
+ .kk-participation-heading p,.kk-attended-event small,
+ .kk-rewards-preview-empty,.kk-featured-facts
+){
+  color:#cedff4!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-spotlight-eyebrow,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-featured-label{
+  color:#aad0ff!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-reward-spotlight-balance{
+  background:#29486c!important;color:#dfecff!important;border:1px solid #456a93;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-reward-spotlight-balance :is(span,strong,small){
+  color:#edf5ff!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-participation-count{
+  background:#2b4b71!important;color:#e0eeff!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-note{
+  background:transparent!important;border-color:transparent!important;
+  color:#bcd2ec!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-featured-image,
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-reward-preview-no-photo{
+  background:#254367!important;color:#d1e4fc!important;
+}
+/* Keep other content dark too: service forms, reward entries and ID panels. */
+html[data-theme="dark"] body.kk-body.kk-member-dashboard :is(
+  .kk-dashboard-panel:not(.kk-overview-panel),.kk-activity-card,.kk-member-reward,
+  .kk-redemption-entry,.kk-settings-card,.kk-id-reference-card
+){
+  background:#1b314e!important;color:#e9f3ff!important;
+  border-color:#46678c!important;
+}
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-redemption-entry :is(strong,small,p),
+html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-member-reward-details :is(h3,p){
+  color:#dfedff!important;
+}
+@media(max-width:900px){
+  html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-content,
+  html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-workspace-content .kk-main{
+    min-width:0;width:100%;max-width:100%;box-sizing:border-box;
+  }
+  body.account-workspace #panel-duty-manage .duty-officer-select-shell #duty-officer-select{
+    min-height:48px;font-size:16px!important;
+  }
+}
+@media(max-width:650px){
+  html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-overview-cards,
+  html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-featured-rewards{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-reward-spotlight,
+  html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-participation-history{
+    padding:14px!important;min-width:0;
+  }
+  html[data-theme="dark"] body.portal-refresh .current-project-cards{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
