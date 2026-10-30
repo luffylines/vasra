@@ -22,14 +22,18 @@
  outline:3px solid #7eb1f4;outline-offset:2px;
 }
 #panel-duty-manage .duty-manager-save-row{
- display:flex;align-items:center;flex-wrap:wrap;gap:13px;margin:15px 0 11px;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ flex-wrap:nowrap;gap:8px;width:100%;margin:18px 0 14px;
+ text-align:center;
 }
 #panel-duty-manage .duty-manager-save-row button{
- min-height:45px;min-width:185px;border-radius:10px;
+ display:inline-flex;align-items:center;justify-content:center;
+ width:min(100%,240px);min-height:45px;min-width:0;border-radius:10px;
  padding:10px 17px;margin:0!important;font:800 12px 'DM Sans',sans-serif;
 }
 #panel-duty-manage .duty-manager-save-row small{
  color:#5a7397;font:500 11px/1.6 'DM Sans',sans-serif;
+ max-width:100%;overflow-wrap:anywhere;text-align:center;
 }
 body.account-workspace[data-theme="dark"] #panel-duty-manage .duty-manager-day-chip span{
  color:#dcecff;background:#163150;border-color:#54749a;

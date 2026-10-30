@@ -111,7 +111,7 @@ function selectDay(index){
   // Sunday may include the entire SK Council: keep the information column compact.
   // Individual names and uploaded portraits remain visible in the photo roster.
   $('#officer-name').innerHTML=managedDutyDays
-   ?'<span>'+(d.names.length?d.names.length+' SK officer'+(d.names.length===1?'':'s')+' on duty':
+   ?'<span>'+(d.names.length?(d.names.length===1?'SK officer on duty':d.names.length+' SK officers on duty'):
       index===6?'Sunday attendance to be confirmed':'No officers assigned')+'</span>'
    :index===6&&d.names.length>2
    ?'<span>'+d.names.length+' SK Council members<small>Confirmed to report on Sunday</small></span>'
