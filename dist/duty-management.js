@@ -91,17 +91,19 @@ function dutyManageRenderSelected(){
   'Saved SK Duty picture. Hiwalay ito sa Organizational Structure image.':
   legacy?'Current photo from the original SK Duty poster (reference only). Upload a duty photo to replace it.':
   'Wala pang duty photo. Upload JPG, PNG o WebP, maximum 5 MB.';
- const chosen=officer.duty_days?.find(d=>d!==7)||0;
+ const chosen=officer.duty_days?.filter(d=>d>=1&&d<=6)||[];
  $('#duty-manage-day-choices').innerHTML=dutyManageWeekdays.slice(0,6).map((day,i)=>{
   const weekday=i+1;
-  return '<label class="duty-manager-day-chip"><input type="radio" name="sk-duty-day" value="'+weekday+'"'+(chosen===weekday?' checked':'')+'><span>'+dutyManageShort[i]+'</span></label>';
- }).join('')+'<label class="duty-manager-day-chip duty-manager-day-clear"><input type="radio" name="sk-duty-day" value="0"'+(chosen===0?' checked':'')+'><span>None</span></label>';
+  return '<label class="duty-manager-day-chip"><input type="checkbox" name="sk-duty-weekday" value="'+weekday+'"'+(chosen.includes(weekday)?' checked':'')+'><span>'+dutyManageShort[i]+'</span></label>';
+ }).join('');
+ const saveDays=$('#duty-manage-save-weekdays');
+ if(saveDays)saveDays.disabled=!canUpdate;
  const sunday=$('#duty-manage-sunday');
  if(sunday)sunday.checked=officer.duty_days?.includes(7)===true;
  $('#duty-manage-selection-message').textContent=!dutyManagerReady?
   'Preview lamang. Hindi pa active ang duty-photo database migration, kaya disabled ang saving.':
   !officer.canSave?'Reference name pa lamang ito. I-save at i-publish muna ang officer sa SK Officials bago ma-enable ang duty photo at duty day.':
-  'Piliin ang duty day o bagong larawan. I-review at kumpirmahin muna ang pagbabago bago i-save.';
+  'Pumili ng isa o maraming weekdays at pindutin ang Save Assignments. Maximum dalawang officer kada araw.';
 }
 function dutyManageRenderRoster(){
  const host=$('#duty-manage-week-roster');if(!host)return;
@@ -147,7 +149,7 @@ async function loadDutyManagement(){
  dutyManagerReady=dutyManageHours.length===7&&Array.isArray(r?.profiles);
  dutyManageOfficers=dutyManageCollect(r,d);
  status.textContent=dutyManagerReady?
-  'Pumili ng officer. Ang duty day at larawan ay mase-save nang hiwalay sa Organizational Structure.':
+  'Pumili ng officer. Multiple weekdays at duty photo ay mase-save nang hiwalay sa SK Council portraits.':
   'Hindi pa available ang saving. Kailangang i-apply ang officer-photo at office-hours migrations sa Supabase database.';
  dutyManageRenderOptions();dutyManageRenderHours();dutyManageRenderRoster();
  dutyManagerLoading=false;
@@ -167,9 +169,12 @@ async function dutyManageConfirm(title,details){
   dialog.showModal();
  });
 }
-function dutyManageRestoreDay(value){
- const old=$('#duty-manage-day-choices input[name="sk-duty-day"][value="'+value+'"]');
- if(old)old.checked=true;
+function dutyManageRestoreDay(){
+ const officer=dutyManageOfficer();
+ const old=officer?.duty_days||[];
+ document.querySelectorAll('#duty-manage-day-choices input[name="sk-duty-weekday"]').forEach(x=>{
+  x.checked=old.includes(Number(x.value));
+ });
 }
 async function dutyManageSave(payload,control){
  const officer=dutyManageOfficer();
@@ -182,8 +187,11 @@ async function dutyManageSave(payload,control){
   if(!Array.isArray(response.duty_days))throw Error('Incomplete duty response.');
   if(Object.hasOwn(payload,'duty_sunday') && response.duty_days.includes(7)!==payload.duty_sunday)
    throw Error('Sunday attendance requires the new Supabase duty migration.');
-  if(Object.hasOwn(payload,'duty_day') && (response.duty_days.find(d=>d!==7)||null)!==(payload.duty_day||null))
-   throw Error('Weekday schedule was not saved.');
+  if(Object.hasOwn(payload,'duty_weekdays')){
+   const saved=response.duty_days.filter(d=>d>=1&&d<=6).sort((a,b)=>a-b);
+   const expected=payload.duty_weekdays.slice().sort((a,b)=>a-b);
+   if(JSON.stringify(saved)!==JSON.stringify(expected))throw Error('Weekday schedule was not saved.');
+  }
   officer.duty_days=response.duty_days;
   if(Object.hasOwn(payload,'duty_photo_id'))officer.duty_photo_id=payload.duty_photo_id;
   dutyManageRenderRoster();
@@ -198,23 +206,53 @@ async function dutyManageSave(payload,control){
 $('#duty-officer-select').addEventListener('change',e=>{
  dutyManageSelectedId=e.target.value;dutyManageRenderSelected();
 });
-$('#duty-manage-day-choices').addEventListener('change',async e=>{
- const input=e.target.closest('input[name="sk-duty-day"]');if(!input)return;
- const officer=dutyManageOfficer(),before=officer?.duty_days?.find(d=>d!==7)||0;
- const proposed=Number(input.value)||0;
- if(!officer?.canSave||!dutyManagerReady||dutyManagerSaving||dutyManagerUploadBusy){dutyManageRestoreDay(before);return;}
- if(proposed===before)return;
- if(proposed>0&&dutyManageOfficers.filter(o=>o.key!==officer.key&&o.canSave&&o.duty_days?.includes(proposed)).length>=2){
-  message('May dalawa nang SK officer sa araw na ito. Pumili ng ibang araw.',true);
-  dutyManageRestoreDay(before);return;
+$('#duty-manage-day-choices').addEventListener('change',e=>{
+ const field=e.target.closest('input[name="sk-duty-weekday"]');
+ if(!field)return;
+ const officer=dutyManageOfficer();
+ if(!officer?.canSave||!dutyManagerReady||dutyManagerSaving||dutyManagerUploadBusy){
+  dutyManageRestoreDay();return;
  }
- const label=proposed?dutyManageWeekdays[proposed-1]:'No assigned day';
+ const days=[...document.querySelectorAll('#duty-manage-day-choices input[name="sk-duty-weekday"]:checked')]
+   .map(x=>Number(x.value));
+ const busyDay=days.find(day=>dutyManageOfficers.filter(o=>
+  o.id!==officer.id&&o.canSave&&o.duty_days?.includes(day)).length>=2);
+ if(busyDay){
+  message('Dalawa na ang assigned officers sa '+dutyManageWeekdays[busyDay-1]+'. Pumili ng ibang araw.',true);
+  field.checked=false;
+  return;
+ }
+ const save=$('#duty-manage-save-weekdays');
+ if(save)save.disabled=false;
+ $('#duty-manage-selection-message').textContent='May pending changes sa weekdays. Pindutin ang Save Assignments para ma-publish.';
+});
+$('#duty-manage-save-weekdays').addEventListener('click',async e=>{
+ const control=e.currentTarget,officer=dutyManageOfficer();
+ if(!officer?.canSave||!dutyManagerReady||dutyManagerSaving||dutyManagerUploadBusy)return;
+ const desired=[...document.querySelectorAll('#duty-manage-day-choices input[name="sk-duty-weekday"]:checked')]
+   .map(x=>Number(x.value)).sort((a,b)=>a-b);
+ const saved=(officer.duty_days||[]).filter(d=>d!==7).sort((a,b)=>a-b);
+ if(JSON.stringify(desired)===JSON.stringify(saved)){
+  message('Walang pagbabago sa weekday assignments.');
+  return;
+ }
+ const conflict=desired.find(day=>dutyManageOfficers.filter(o=>
+  o.id!==officer.id&&o.canSave&&o.duty_days?.includes(day)).length>=2);
+ if(conflict){
+  message('Full na ang '+dutyManageWeekdays[conflict-1]+' (maximum 2 officers).',true);
+  dutyManageRestoreDay();return;
+ }
+ const description=desired.length
+  ? desired.map(day=>dutyManageWeekdays[day-1]).join(', ')
+  : 'No regular weekday assignment';
  try{
-  const confirmed=await dutyManageConfirm('Confirm duty day assignment',
-   'Officer: '+officer.name+' ('+(dutyManageRole[officer.position]||'SK Officer')+'). New assignment: '+label+'. This will appear on the public SK Duty schedule.');
-  if(!confirmed){dutyManageRestoreDay(before);return;}
-  await dutyManageSave({duty_day:proposed||null},input);
- }catch{dutyManageRestoreDay(before);}
+  const confirmed=await dutyManageConfirm('Confirm weekly SK Duty assignments',
+   'Officer: '+officer.name+' ('+(dutyManageRole[officer.position]||'SK Officer')+').\n\nSaved schedule: '+
+   (saved.length?saved.map(d=>dutyManageWeekdays[d-1]).join(', '):'None')+
+   '\nNew schedule: '+description+'\n\nPublic SK Duty will update after a successful save.');
+  if(!confirmed){dutyManageRestoreDay();return;}
+  await dutyManageSave({duty_weekdays:desired},control);
+ }catch{dutyManageRestoreDay();}
 });
 $('#duty-manage-sunday').addEventListener('change',async e=>{
  const input=e.target,officer=dutyManageOfficer(),before=officer?.duty_days?.includes(7)===true;
