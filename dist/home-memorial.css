@@ -260,3 +260,40 @@ html[data-theme="dark"] body.portal-refresh .home-summary-card .home-card-svg{
   background-repeat:no-repeat;
   background-color:#102d54;
 }
+
+
+/* Dark mode vector icon contrast correction 2026-10-30.
+   The earlier .home-summary-card :is(small,strong,span) dark rule also colors
+   .home-summary-icon (a span), turning currentColor SVG lines nearly white on
+   the pastel circle. Scope explicit icon foreground/background to these four
+   homepage cards only; leave light mode, layout and SVG markup unchanged. */
+html[data-theme="dark"] body.portal-refresh .home-summary-cards .home-summary-card.projects > .home-summary-icon{
+  background-color:#1b426e!important;
+  color:#acd6ff!important;
+}
+html[data-theme="dark"] body.portal-refresh .home-summary-cards .home-summary-card.leaders > .home-summary-icon{
+  background-color:#194b3e!important;
+  color:#91efbc!important;
+}
+html[data-theme="dark"] body.portal-refresh .home-summary-cards .home-summary-card.duty > .home-summary-icon{
+  background-color:#552e42!important;
+  color:#ffabc5!important;
+}
+html[data-theme="dark"] body.portal-refresh .home-summary-cards .home-summary-card.awards > .home-summary-icon{
+  background-color:#55451e!important;
+  color:#ffdf80!important;
+}
+/* SVG uses stroke=currentColor; inherit the restored icon hue, not card text. */
+html[data-theme="dark"] body.portal-refresh .home-summary-cards .home-summary-card > .home-summary-icon > svg.home-card-svg{
+  display:block!important;
+  color:inherit!important;
+  stroke:currentColor!important;
+  opacity:1!important;
+  visibility:visible!important;
+  fill:none;
+}
+/* Keep each small navigation chevron visible against navy card surfaces. */
+html[data-theme="dark"] body.portal-refresh .home-summary-card.projects > .home-summary-chevron{color:#a4cdff}
+html[data-theme="dark"] body.portal-refresh .home-summary-card.leaders > .home-summary-chevron{color:#8fe9b2}
+html[data-theme="dark"] body.portal-refresh .home-summary-card.duty > .home-summary-chevron{color:#ff9ebc}
+html[data-theme="dark"] body.portal-refresh .home-summary-card.awards > .home-summary-chevron{color:#ffdc78}
