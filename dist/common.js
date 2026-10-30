@@ -1,3 +1,14 @@
+/* SK VASRA universal touch policy. No double-tap zoom; keep pinch zoom,
+ * native scrolling and intentional poster enlargement. Every page uses common.js.
+ */
+(()=>{
+ if(document.getElementById('vasra-mobile-touch-zoom-policy'))return;
+ const style=document.createElement('style');
+ style.id='vasra-mobile-touch-zoom-policy';
+ style.textContent="html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}\nbody :where(main,nav,header,footer,section,article,aside,form,fieldset,figure,\na,button,label,summary,input,select,textarea,[role=\"button\"],[role=\"tab\"],\n[role=\"link\"],[role=\"menuitem\"],[role=\"option\"],[role=\"checkbox\"],\n.sidebar,.portal-main,.portal-content,.account-main,.kk-workspace,.kk-main,\n.kk-dashboard,.current-project-card,.current-project-modal,.duty-profile,\n.duty-stage,.kk-dashboard-panel){touch-action:manipulation}\n@media (hover:none) and (pointer:coarse){\nbody :is(input:not([type=\"checkbox\"]):not([type=\"radio\"]):not([type=\"range\"])\n:not([type=\"file\"]):not([type=\"hidden\"]):not([type=\"button\"])\n:not([type=\"submit\"]):not([type=\"reset\"]):not([type=\"image\"])\n:not([type=\"color\"]),select,textarea,[contenteditable=\"true\"]){\nfont-size:16px!important;touch-action:manipulation}\n}\n@media screen and (max-width:820px){\nbody :is(input:not([type=\"checkbox\"]):not([type=\"radio\"]):not([type=\"range\"])\n:not([type=\"hidden\"]):not([type=\"file\"]):not([type=\"submit\"])\n:not([type=\"button\"]):not([type=\"reset\"]):not([type=\"color\"]),\nselect,textarea,[contenteditable=\"true\"]){font-size:16px!important}\n}";
+ document.head.appendChild(style);
+})();
+
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(url,options={}){let r;try{r=await fetch(url,{...options,headers:{'Content-Type':'application/json',...options.headers}})}catch{throw Error('Hindi makonekta ang server. Buksan gamit ang lokal na server o online website.')}let b;try{b=await r.json()}catch{throw Error('Hindi available ang account server. Patakbuhin ang node server.cjs.')}if(!r.ok)throw Error(b.error||'Hindi natuloy ang request.');return b;}
