@@ -23,6 +23,9 @@ function dutyContactPosition(role){
 function dutyContactRows(){
  const host=$('#duty-contact-list');
  if(!host||selected<0)return;
+ const separate=$('#duty-contacts');
+ if(managedDutyDays){if(separate)separate.hidden=true;dutyInlineContacts();return;}
+ if(separate)separate.hidden=false;
  if(!publicDutyContactsAvailable){
   host.innerHTML='<p class="duty-contact-empty">Hindi pa available ang public officer contact details. Maaari pa ring makipag-ugnay sa SK Vasra Office.</p>';
   return;
@@ -70,6 +73,34 @@ async function loadPublicDutyContacts(){
  }
  dutyContactRows();
 }
+// Public contact details are matched by published officer UUID, never by name alone.
+function dutyInlineContacts(){
+ if(!managedDutyDays)return;
+ const icons={
+  address:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  email:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3H4a2 2 0 0 0-2 2c0 9.4 7.6 17 17 17a2 2 0 0 0 2-2v-3l-6-2-2 3a16 16 0 0 1-7-7l3-2-2-6Z"/></svg>',
+  facebook:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4h7v7m0-7-9 9"/><path d="M20 13v6H4V4h6"/></svg>'
+ };
+ const row=(kind,body)=>'<div class="duty-profile-contact-row">'+icons[kind]+'<span>'+body+'</span></div>';
+ document.querySelectorAll('#duty-officer-portraits .duty-profile[data-officer-id]').forEach(card=>{
+  const target=card.querySelector('.duty-profile-contact');if(!target)return;
+  const p=managedDutyProfiles.find(o=>o.id===card.dataset.officerId);
+  const c=p&&publicDutyContacts.find(o=>o.official_id===p.id&&o.position===p.position);
+  if(!c){target.innerHTML='<p class="duty-profile-contact-empty">Makipag-ugnay sa SK Vasra Office para sa assistance.</p>';return;}
+  const list=[];
+  if(c.address)list.push(row('address',esc(c.address)));
+  if(c.email)list.push(row('email','<a href="mailto:'+encodeURIComponent(c.email)+'">'+esc(c.email)+'</a>'));
+  if(c.phone)list.push(row('phone','<a href="tel:'+esc(String(c.phone).replace(/[^+0-9]/g,''))+'">'+esc(c.phone)+'</a>'));
+  if(c.facebook_url){
+   try{const url=new URL(c.facebook_url);
+    if(url.protocol==='https:'&&['facebook.com','www.facebook.com','m.facebook.com'].includes(url.hostname)&&!url.username&&!url.password)
+     list.push(row('facebook','<a href="'+esc(url.href)+'" target="_blank" rel="noopener noreferrer">Facebook profile / page ↗</a>'));
+   }catch{}
+  }
+  target.innerHTML=list.length?list.join(''):'<p class="duty-profile-contact-empty">SK Vasra Office ang contact para sa officer na ito.</p>';
+ });
+}
 function selectDay(index){
   selected=index;
   const d=managedDutyDays?managedDutyDays[index]:days[index];
@@ -79,7 +110,10 @@ function selectDay(index){
    .toLocaleLowerCase('en-PH').replace(/(^|[\s'-])([a-z])/g,(_,prefix,letter)=>prefix+letter.toUpperCase());
   // Sunday may include the entire SK Council: keep the information column compact.
   // Individual names and uploaded portraits remain visible in the photo roster.
-  $('#officer-name').innerHTML=index===6&&d.names.length>2
+  $('#officer-name').innerHTML=managedDutyDays
+   ?'<span>'+(d.names.length?d.names.length+' SK officer'+(d.names.length===1?'':'s')+' on duty':
+      index===6?'Sunday attendance to be confirmed':'No officers assigned')+'</span>'
+   :index===6&&d.names.length>2
    ?'<span>'+d.names.length+' SK Council members<small>Confirmed to report on Sunday</small></span>'
    :d.names.map((name,i)=>`<span>${esc(displayOfficerName(name))}<small>${esc(d.roles[i])}</small></span>`).join('')||(index===6?'SK Council · Sunday attendance to be confirmed':'Walang naka-assign');
   const times=publishedDutyHours?.find(h=>h.weekday===index+1);
@@ -94,15 +128,15 @@ function selectDay(index){
    photos.dataset.photoState=list.length===1&&!list[0].duty_photo_id?'missing':'ready';
    photos.innerHTML=list.length?list.map(p=>{
     const initials=String(p.name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
-    const picture=p.duty_photo_id?'<img class="duty-photo-primary" src="./api/duty-images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager" decoding="async" fetchpriority="high">'+
-     '<img class="duty-photo-backdrop" src="./api/duty-images/'+encodeURIComponent(p.duty_photo_id)+'" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low">':'';
+    const picture=p.duty_photo_id?'<img class="duty-photo-primary" src="./api/duty-images/'+encodeURIComponent(p.duty_photo_id)+'" alt="SK Duty photo ni '+esc(p.name)+'" loading="eager" decoding="async" fetchpriority="high">':'';
     const photoNotice='<span class="duty-photo-notice"'+(p.duty_photo_id?' hidden':'')+'>'+(p.duty_photo_id?'Hindi ma-load ang SK Duty photo.':'Wala pang naka-upload na SK Duty photo.')+'</span>';
-    return '<article class="duty-profile"><span class="duty-profile-frame">'+
+    return '<article class="duty-profile" data-officer-id="'+esc(p.id)+'"><span class="duty-profile-frame">'+
      '<span class="duty-profile-fallback" aria-hidden="true">'+esc(initials||'SK')+'</span>'+picture+
      '</span><strong>'+esc(p.name)+'</strong><small>'+esc(({
       chairman:'SK Chairperson',kagawad:'SK Kagawad',secretary:'SK Secretary',treasurer:'SK Treasurer'
-     })[p.position]||'SK Officer')+'</small>'+photoNotice+'</article>';
+     })[p.position]||'SK Officer')+'</small>'+photoNotice+'<div class="duty-profile-contact" aria-label="Public contact details of '+esc(p.name)+'"></div></article>';
    }).join(''):'<p class="duty-profile-empty">'+(index===6?'Lahat ng SK Council ay maaaring mag-duty tuwing Linggo. Wala pang kumpirmadong papasok. Bukas pa rin ang opisina 9 AM–6 PM.':'Walang naka-assign na officer sa araw na ito. Makipag-ugnay sa SK Office.')+'</p>';
+   dutyInlineContacts();
    photos.querySelectorAll('img').forEach(img=>{
     img.addEventListener('error',()=>{
      img.hidden=true;
