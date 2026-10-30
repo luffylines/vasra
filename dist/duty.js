@@ -195,6 +195,10 @@ async function loadManagedDutyRoster(){
   if(result?.managed!==true||!Array.isArray(result.profiles))return;
   const valid=result.profiles.filter(p=>p&&Array.isArray(p.duty_days)&&
     p.duty_days.every(v=>Number.isInteger(v)&&v>=1&&v<=7));
+  const fingerprint=profiles=>JSON.stringify(profiles.map(p=>[
+   p.id,p.name,p.position,p.duty_photo_id,Array.isArray(p.duty_days)?p.duty_days.slice().sort((a,b)=>a-b):[]
+  ]));
+  if(managedDutyDays!==null&&fingerprint(valid)===fingerprint(managedDutyProfiles))return;
   managedDutyProfiles=valid;
   managedDutyDays=days.map((d,i)=>{
     const assigned=valid.filter(p=>p.duty_days.includes(i+1));
