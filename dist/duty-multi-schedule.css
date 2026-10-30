@@ -152,3 +152,41 @@ html[data-theme="dark"] body.portal-refresh .duty-profile-contact-row svg{stroke
  .portal-refresh .duty-profile-contact-row{font-size:9px}
  #panel-duty-manage .duty-manager-save-row button{width:100%;min-width:0}
 }
+
+/* 2026-10-30: SK Duty service chips are accessible links to the corresponding
+   KK services. KK login handles verification and return-to-service routing. */
+.portal-refresh .duty-info .duty-service-links{
+ display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;
+}
+.portal-refresh .duty-info .duty-service-links>a{
+ box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;
+ gap:6px;min-height:38px;margin:0;padding:9px 11px;
+ border:1px solid #c9daf0;border-radius:8px;
+ background:#edf4ff;color:#234e82;text-decoration:none;
+ font-size:11px;font-weight:700;line-height:1.3;
+ white-space:normal;overflow-wrap:anywhere;
+ cursor:pointer;touch-action:manipulation;
+ transition:background-color .15s,border-color .15s;
+}
+.portal-refresh .duty-info .duty-service-links>a>.ui-action-icon{
+ width:15px;height:15px;min-width:15px;flex:none;
+}
+.portal-refresh .duty-info .duty-service-links>a:hover{
+ background:#deebff;color:#154987;border-color:#7eafe7;
+}
+.portal-refresh .duty-info .duty-service-links>a:focus-visible{
+ outline:3px solid #74a9ef;outline-offset:2px;
+}
+html[data-theme="dark"] body.portal-refresh .duty-info .duty-service-links>a{
+ background:#1d3858;color:#d9eaff;border-color:#4e7097;
+}
+html[data-theme="dark"] body.portal-refresh .duty-info .duty-service-links>a:hover{
+ background:#294e79;color:#fff;border-color:#9bc3f4;
+}
+@media(max-width:650px){
+ .portal-refresh .duty-info .duty-service-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-refresh .duty-info .duty-service-links>a{min-height:44px;padding:10px 9px;text-align:center;font-size:11px}
+}
+@media(max-width:380px){
+ .portal-refresh .duty-info .duty-service-links{grid-template-columns:minmax(0,1fr)}
+}
