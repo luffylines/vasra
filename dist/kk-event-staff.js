@@ -121,8 +121,11 @@
    await loadRoster(selected,seq);
   }catch(e){
    if(seq!==revision)return;
-   setStatus(e.message,true);
-   toast(e.message,true);
+   const duplicate=/already.checked.in|already.*attend|duplicate|409/i.test(e.message);
+   const feedback=duplicate?'Already checked in for this event. No additional 10 points were awarded.':e.message;
+   setStatus(feedback,true);
+   toast(feedback,true);
+   if(duplicate)await loadRoster(selected,seq).catch(()=>{});
    if(/not currently|not open|Isinasagawa/i.test(e.message))await refresh();
   }finally{busy=false;}
  };
