@@ -45,10 +45,9 @@
   background-position:center,right center!important;
  }
 }
-/* Projects: when a custom image is uploaded, never stack the existing
-   circular SK logo on top of another branded background. The default
-   no-upload hero keeps the original circle unchanged. */
-.portal-refresh.projects-page .project-hero.hero-media-active > .hero-mark{
+/* Projects: square/portrait branded artwork must not stack behind the SK badge.
+   Landscape photos and the original no-upload banner keep that badge. */
+.portal-refresh.projects-page .project-hero.hero-media-active.hero-media-compact > .hero-mark{
  display:none!important;
 }
 /* For square/portrait logo art, scale it to a restrained illustration instead
@@ -59,7 +58,7 @@
   background-size:auto 70%!important;
   background-position:90% center!important;
  }
- .portal-refresh.projects-page .project-hero.hero-media-active > div:first-child{
+ .portal-refresh.projects-page .project-hero.hero-media-active.hero-media-compact > div:first-child{
   max-width:min(600px,60%)!important;
  }
 }
