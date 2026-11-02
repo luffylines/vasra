@@ -18,25 +18,162 @@
 }
 .hero-media-active :is(h1,h2,p,.eyebrow,.hero-label){text-shadow:0 2px 9px rgba(0,0,0,.29)}
 .hero-media-active .schedule-pill{position:relative;z-index:1}
-.hero-admin-intro{color:#b9d0eb;margin:0 0 19px;line-height:1.6}
-.hero-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.hero-admin-card{background:#1c3453;border:1px solid #527196;border-radius:16px;padding:17px;min-width:0}
-.hero-admin-card h3{color:#f1f7ff;font-size:16px;margin:0 0 10px}
-.hero-admin-card p,.hero-admin-card small{color:#c9dbee;font-size:12px;line-height:1.5}
-.hero-admin-preview{border:1px solid #55759a;border-radius:11px;overflow:hidden;aspect-ratio:16/8;background:linear-gradient(115deg,#25486e,#10233e);display:grid;place-items:center;margin:0 0 12px}
-.hero-admin-preview img{width:100%;height:100%;display:block;object-fit:cover}
-.hero-admin-preview span{padding:15px;color:#c5d9f4;text-align:center}
-.hero-admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.hero-admin-card .hero-upload-label{grid-column:1/-1;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;min-height:46px;border-radius:10px;background:#315c91;border:1px solid #81a6d9;color:#fff!important;font:800 12px/1.4 Arial,sans-serif;cursor:pointer}
-.hero-admin-card .hero-upload-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
-.hero-admin-card .hero-upload-label:focus-within{outline:3px solid #9bc7ff;outline-offset:2px}
-.hero-admin-card .hero-action{min-height:44px;border-radius:9px;border:1px solid #7f9fc6;padding:10px;color:#edf5ff;background:#2b517f;cursor:pointer;font-weight:750}
-.hero-admin-card .hero-action.primary{background:#2957bc;border-color:#557cf0;color:#fff}
-.hero-admin-card .hero-action:disabled{opacity:.55;cursor:not-allowed}
-.hero-admin-card .hero-action:not(:disabled):hover,.hero-admin-card .hero-upload-label:hover{filter:brightness(1.15)}
-#hero-admin-status{color:#d0e6ff;min-height:1.5em;margin:10px 0 18px}
-#hero-admin-status[data-error="true"]{color:#ffbdc1}
-@media(max-width:770px){.hero-admin-grid{grid-template-columns:1fr}}
+/* The single editor is deliberately scoped to the Chairman panel, not public heroes. */
+#panel-hero-backgrounds .hero-admin-intro{
+ margin:0 0 14px!important;color:#3c5679!important;
+ font-size:14px;line-height:1.7;
+}
+#panel-hero-backgrounds #hero-admin-status{
+ display:block;min-height:20px;margin:0 0 16px!important;
+ color:#194f95!important;font-size:13px;line-height:1.6;font-weight:650;
+}
+#panel-hero-backgrounds #hero-admin-status[data-error="true"],
+#panel-hero-backgrounds #hero-selection-message[data-error="true"]{color:#ac263a!important}
+#panel-hero-backgrounds .hero-editor-shell{
+ box-sizing:border-box;width:100%;max-width:100%;min-width:0;
+ padding:clamp(15px,2.4vw,24px);display:flex;flex-direction:column;gap:14px;
+ background:#f7faff;border:1px solid #d3e0f1;border-radius:18px;
+ box-shadow:0 10px 24px rgba(17,48,85,.07);color:#1d3b60;
+}
+#panel-hero-backgrounds .hero-editor-field{
+ display:flex;flex-direction:column;gap:8px;min-width:0;
+ font-size:13px;font-weight:800;color:#25466d!important;
+}
+#panel-hero-backgrounds .hero-editor-field span{color:#25466d!important}
+#panel-hero-backgrounds .hero-editor-field select{
+ box-sizing:border-box;display:block;width:100%;min-height:48px;
+ padding:0 42px 0 15px;border-radius:11px;
+ border:1px solid #a7c1df;background:#fff;color:#163e6c;
+ font:700 14px/1.4 'DM Sans',Arial,sans-serif;cursor:pointer;
+}
+#panel-hero-backgrounds .hero-editor-field select:focus-visible{
+ outline:3px solid #86b7f0;outline-offset:2px;
+}
+#panel-hero-backgrounds .hero-editor-preview{
+ box-sizing:border-box;display:grid;place-items:center;
+ width:100%;max-height:370px;aspect-ratio:16/7;
+ overflow:hidden;border-radius:14px;border:1px solid #9ab7da;
+ background:linear-gradient(120deg,#27496f,#132a49);
+}
+#panel-hero-backgrounds .hero-editor-preview img{
+ display:block;width:100%;height:100%;object-fit:cover;object-position:center;
+}
+#panel-hero-backgrounds .hero-editor-preview span{
+ padding:20px;color:#e8f2ff!important;text-align:center;font-size:14px;
+ line-height:1.5;
+}
+#panel-hero-backgrounds .hero-editor-copy{
+ margin:0!important;color:#395879!important;font-size:13px;line-height:1.6;
+}
+#panel-hero-backgrounds .hero-editor-actions{
+ display:grid;grid-template-columns:minmax(0,1.35fr) repeat(2,minmax(0,1fr));
+ align-items:stretch;gap:10px;width:100%;
+}
+#panel-hero-backgrounds .hero-editor-upload,
+#panel-hero-backgrounds .hero-editor-button{
+ position:relative;box-sizing:border-box;display:flex;align-items:center;
+ justify-content:center;min-width:0;width:100%;height:48px;min-height:48px;
+ margin:0!important;padding:9px 13px;line-height:1.4;text-align:center;
+ border-radius:10px;border:1px solid #6c9bd1;
+ font:800 13px/1.4 'DM Sans',Arial,sans-serif;white-space:normal;
+ transition:background-color .15s ease,border-color .15s ease;
+}
+#panel-hero-backgrounds .hero-editor-upload{
+ background:#285d9b;color:#fff!important;cursor:pointer;overflow:hidden;
+}
+#panel-hero-backgrounds .hero-editor-upload span{color:#fff!important;pointer-events:none}
+#panel-hero-backgrounds .hero-editor-upload input[type="file"]{
+ position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;
+ cursor:pointer;z-index:1;font-size:16px;
+}
+#panel-hero-backgrounds .hero-editor-upload:focus-within{
+ outline:3px solid #91b9f1;outline-offset:2px;
+}
+#panel-hero-backgrounds .hero-editor-save{
+ background:#2557be;color:#fff;border-color:#2557be;cursor:pointer;
+}
+#panel-hero-backgrounds .hero-editor-restore{
+ background:#e6effa;color:#173d70;border-color:#a3bedf;cursor:pointer;
+}
+#panel-hero-backgrounds .hero-editor-upload:not(.is-disabled):hover{background:#326caf}
+#panel-hero-backgrounds .hero-editor-save:not(:disabled):hover{background:#346bd6}
+#panel-hero-backgrounds .hero-editor-restore:not(:disabled):hover{background:#d8e8fc}
+#panel-hero-backgrounds .hero-editor-button:focus-visible{
+ outline:3px solid #91b9f1;outline-offset:2px;
+}
+#panel-hero-backgrounds .hero-editor-button:disabled,
+#panel-hero-backgrounds .hero-editor-upload.is-disabled{
+ opacity:.65!important;cursor:not-allowed!important;
+}
+#panel-hero-backgrounds .hero-editor-upload input:disabled{
+ cursor:not-allowed;pointer-events:none;
+}
+#panel-hero-backgrounds .hero-selection-message{
+ min-height:18px;margin:0!important;
+ font-size:13px;line-height:1.5;color:#315b88!important;
+}
+#panel-hero-backgrounds .hero-editor-note{
+ color:#476788!important;line-height:1.6;font-size:12px;
+}
+/* Both the real html[data-theme] switch and legacy body theme are supported. */
+html[data-theme="dark"] #panel-hero-backgrounds .hero-admin-intro,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-admin-intro{
+ color:#d0e2f9!important;
+}
+html[data-theme="dark"] #panel-hero-backgrounds #hero-admin-status,
+body[data-theme="dark"] #panel-hero-backgrounds #hero-admin-status{
+ color:#bbd8ff!important;
+}
+html[data-theme="dark"] #panel-hero-backgrounds #hero-admin-status[data-error="true"],
+html[data-theme="dark"] #panel-hero-backgrounds #hero-selection-message[data-error="true"]{
+ color:#ffb4bf!important;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-shell,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-editor-shell{
+ background:#19314f;color:#ebf4ff;border-color:#496d98;box-shadow:none;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-field,
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-field span,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-editor-field{
+ color:#eaf4ff!important;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-field select,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-editor-field select{
+ background:#0e233c;color:#f0f7ff;border-color:#668ab7;color-scheme:dark;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-preview{
+ border-color:#5378a3;background:linear-gradient(120deg,#233f63,#101f36);
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-copy,
+html[data-theme="dark"] #panel-hero-backgrounds .hero-selection-message,
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-note,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-editor-copy,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-selection-message,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-editor-note{
+ color:#d1e2f7!important;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-upload,
+body[data-theme="dark"] #panel-hero-backgrounds .hero-editor-upload{
+ background:#315e96;color:#fff;border-color:#8ab0de;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-save{
+ background:#3c70db;color:#fff;border-color:#6798fb;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-restore{
+ background:#29476a;color:#f3f8ff;border-color:#688bb8;
+}
+html[data-theme="dark"] #panel-hero-backgrounds .hero-editor-restore:not(:disabled):hover{
+ background:#355980;
+}
+@media(max-width:850px){
+ #panel-hero-backgrounds .hero-editor-actions{grid-template-columns:1fr 1fr}
+ #panel-hero-backgrounds .hero-editor-upload{grid-column:1/-1}
+}
+@media(max-width:520px){
+ #panel-hero-backgrounds .hero-editor-actions{grid-template-columns:minmax(0,1fr)}
+ #panel-hero-backgrounds .hero-editor-upload{grid-column:auto}
+ #panel-hero-backgrounds .hero-editor-preview{aspect-ratio:16/9}
+}
 /* Current Project upload labels must remain legible even in dark mode.
    Keep the real file input clickable; don't visually enable disabled controls. */
 #panel-current-projects .current-project-admin-actions .current-project-upload{
