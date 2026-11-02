@@ -45,6 +45,25 @@ test('Database persists allowlisted image paths without giving browsers direct w
  assert.match(sql,/IF action='reset'/);
  for(const key of Object.keys(targets))assert(sql.includes("'"+key+"'"));
 });
+test('One hero editor has a page selector, image preview, and equal action controls',()=>{
+ const html=read('dist/account.html');
+ const js=read('dist/hero-backgrounds-admin.js');
+ const css=read('dist/hero-backgrounds.css');
+ for(const id of ['hero-target-select','hero-editor-preview','hero-editor-file','hero-save-btn',
+   'hero-reset-btn','hero-selection-message'])assert(html.includes('id="'+id+'"'),id);
+ assert.equal((html.match(/id="hero-target-select"/g)||[]).length,1);
+ assert(!html.includes('id="hero-admin-grid"'),'old five-card grid must be removed');
+ for(const key of Object.keys(targets))assert(html.includes('value="'+key+'"'),key);
+ assert.match(js,/select\.addEventListener\('change'/);
+ assert.match(js,/resetSelection\(\)/);
+ assert.match(js,/pendingFile=null/);
+ assert.match(js,/api\('\\/api\\/hero-backgrounds\\/upload'/);
+ assert.match(css,/#panel-hero-backgrounds \.hero-editor-actions/);
+ assert.match(css,/grid-template-columns:minmax\(0,1\.35fr\)/);
+ assert.match(css,/html\[data-theme="dark"\]/);
+ assert.match(css,/#panel-hero-backgrounds \.hero-admin-intro/);
+});
+
 test('Hero scripts and touched handlers parse as JavaScript',()=>{
  for(const file of ['dist/hero-backgrounds-admin.js','dist/hero-backgrounds-public.js',
   'dist/account.js','lib/handler.cjs','lib/supabase.cjs'])
