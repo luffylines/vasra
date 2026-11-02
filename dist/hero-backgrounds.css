@@ -45,6 +45,24 @@
   background-position:center,right center!important;
  }
 }
+/* Projects: when a custom image is uploaded, never stack the existing
+   circular SK logo on top of another branded background. The default
+   no-upload hero keeps the original circle unchanged. */
+.portal-refresh.projects-page .project-hero.hero-media-active > .hero-mark{
+ display:none!important;
+}
+/* For square/portrait logo art, scale it to a restrained illustration instead
+   of filling the height of the very wide Projects banner. */
+@media (min-width:761px){
+ .portal-refresh.projects-page .project-hero.hero-media-active.hero-media-compact::before{
+  width:44%!important;
+  background-size:auto 70%!important;
+  background-position:90% center!important;
+ }
+ .portal-refresh.projects-page .project-hero.hero-media-active > div:first-child{
+  max-width:min(600px,60%)!important;
+ }
+}
 /* On phones preserve the existing full-bleed, vertically framed background. */
 /* The single editor is deliberately scoped to the Chairman panel, not public heroes. */
 #panel-hero-backgrounds .hero-admin-intro{
