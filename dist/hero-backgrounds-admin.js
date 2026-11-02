@@ -1,115 +1,182 @@
 'use strict';
+/* One Chairman editor controls five independently saved public hero backgrounds. */
 (()=>{
- const host=document.getElementById('hero-admin-grid');
+ const panel=document.getElementById('panel-hero-backgrounds');
+ if(!panel)return;
+ const select=document.getElementById('hero-target-select');
+ const preview=document.getElementById('hero-editor-preview');
+ const input=document.getElementById('hero-editor-file');
+ const saveButton=document.getElementById('hero-save-btn');
+ const resetButton=document.getElementById('hero-reset-btn');
  const status=document.getElementById('hero-admin-status');
- if(!host||!status)return;
- const entries=[
-  ['home','Homepage Hero','Homepage'],
-  ['projects','Projects Hero','Projects'],
-  ['duty','SK Duty Hero','SK Duty'],
-  ['transparency','Transparency Hero','Transparency'],
-  ['contacts','Contacts Hero','Contacts']
- ];
- const pending=new Map(),previews=new Map();
- let saved=[];
- const statusMessage=(message,error=false)=>{
-  status.textContent=message;status.dataset.error=String(error);
+ const message=document.getElementById('hero-selection-message');
+ const uploadLabel=panel.querySelector('.hero-editor-upload');
+ const labels={
+  home:'Homepage Hero',projects:'Projects Hero',duty:'SK Duty Hero',
+  transparency:'Transparency Hero',contacts:'Contacts Hero'
  };
- const notify=(message,error=false)=>{
-  statusMessage(message,error);window.showVasraToast?.(message,error?'error':'success');
+ if(!select||!preview||!input||!saveButton||!resetButton||!status||!message||!uploadLabel)return;
+ let saved=[],pendingFile=null,objectUrl='',busy=false,revision=0,loaded=false;
+ const key=()=>Object.hasOwn(labels,select.value)?select.value:'home';
+ const find=which=>saved.find(item=>item.key===which);
+ const hasImage=which=>find(which)?.has_image===true;
+ const currentUrl=which=>{
+  const record=find(which);
+  return record?.has_image===true?
+   '/api/hero-backgrounds/'+which+'/image?v='+encodeURIComponent(record.updated_at||'latest'):'';
  };
- const getImage=key=>{
-  const row=saved.find(item=>item.key===key);
-  return row?.has_image?'/api/hero-backgrounds/'+key+'/image?v='+encodeURIComponent(row.updated_at||'latest'):'';
+ const setStatus=(text,error=false)=>{
+  status.textContent=text;
+  status.dataset.error=String(error);
  };
- const render=()=>{
-  host.innerHTML=entries.map(([key,title,site])=>{
-   const image=getImage(key);
-   return '<article class="hero-admin-card" data-hero-card="'+key+'">'+
-    '<h3>'+title+'</h3>'+
-    '<div class="hero-admin-preview" data-preview="'+key+'">'+
-      (image?'<img src="'+image+'" alt="Current '+site+' hero background">':
-        '<span>Default site background · No custom image</span>')+'</div>'+
-    '<p>Only the background changes. The original hero text, elements, spacing and height remain.</p>'+
-    '<div class="hero-admin-actions">'+
-     '<label class="hero-upload-label">Choose Background Image'+
-      '<input type="file" data-hero-file="'+key+'" accept="image/jpeg,image/png,image/webp" aria-label="Choose '+site+' hero background image"></label>'+
-     '<button type="button" class="hero-action primary" data-hero-save="'+key+'" disabled>Save Background</button>'+
-     '<button type="button" class="hero-action" data-hero-reset="'+key+'"'+(image?'':' disabled')+'>Restore Default</button>'+
-    '</div>'+
-    '<small>JPG, PNG or WebP · max 2MB · landscape 1600×900 recommended.</small>'+
-    '<p class="hero-selection-status" data-hero-message="'+key+'" role="status" aria-live="polite"></p>'+
-    '</article>';
-  }).join('');
+ const setMessage=(text,error=false)=>{
+  message.textContent=text;
+  message.dataset.error=String(error);
  };
- const load=async()=>{
-  const data=await api('/api/hero-backgrounds/manage');
-  saved=Array.isArray(data.items)?data.items:[];
-  for(const src of previews.values())URL.revokeObjectURL(src);
-  previews.clear();pending.clear();render();
-  statusMessage('Select one of the five backgrounds to update. Changes appear on public pages after saving.');
+ const clearPreviewUrl=()=>{
+  if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl='';}
  };
- const asBase64=file=>new Promise((resolve,reject)=>{
+ const renderPreview=()=>{
+  const activeKey=key();
+  const src=(pendingFile&&objectUrl)||currentUrl(activeKey);
+  const hint=src?null:document.createElement('span');
+  preview.replaceChildren();
+  if(src){
+   const picture=document.createElement('img');
+   picture.src=src;
+   picture.alt=labels[activeKey]+' background preview';
+   picture.onerror=()=>{
+    if(preview.contains(picture)){
+     const fallback=document.createElement('span');
+     fallback.textContent='Preview unavailable. Reopen Hero Backgrounds to refresh.';
+     preview.replaceChildren(fallback);
+    }
+   };
+   preview.appendChild(picture);
+  }else{
+   hint.textContent='No custom background uploaded. Original hero design is active.';
+   preview.appendChild(hint);
+  }
+ };
+ const updateButtons=()=>{
+  const locked=busy||!loaded;
+  select.disabled=locked;
+  input.disabled=locked;
+  uploadLabel.classList.toggle('is-disabled',locked);
+  saveButton.disabled=locked||!pendingFile;
+  resetButton.disabled=locked||!hasImage(key());
+ };
+ const resetSelection=()=>{
+  revision++;
+  clearPreviewUrl();
+  pendingFile=null;
+  input.value='';
+  setMessage('');
+  renderPreview();
+  updateButtons();
+ };
+ const fetchSaved=async()=>{
+  const response=await api('/api/hero-backgrounds/manage');
+  if(!Array.isArray(response.items))throw Error('Unable to load hero backgrounds.');
+  saved=response.items;
+  loaded=true;
+ };
+ const fileBase64=file=>new Promise((resolve,reject)=>{
   const reader=new FileReader();
-  reader.onerror=()=>reject(Error('Could not read image.'));
+  reader.onerror=()=>reject(Error('Could not read selected image.'));
   reader.onload=()=>resolve(String(reader.result||'').split(',')[1]||'');
   reader.readAsDataURL(file);
  });
  const inspectImage=file=>new Promise((resolve,reject)=>{
-  const img=new Image(),url=URL.createObjectURL(file);
-  img.onload=()=>{const size={width:img.naturalWidth,height:img.naturalHeight};URL.revokeObjectURL(url);resolve(size)};
-  img.onerror=()=>{URL.revokeObjectURL(url);reject(Error('Invalid image content.'))};
-  img.src=url;
+  const local=URL.createObjectURL(file);
+  const picture=new Image();
+  picture.onload=()=>{
+   const dimensions={width:picture.naturalWidth,height:picture.naturalHeight};
+   URL.revokeObjectURL(local);
+   dimensions.width>0&&dimensions.height>0?resolve(dimensions):reject(Error('Invalid image.'));
+  };
+  picture.onerror=()=>{URL.revokeObjectURL(local);reject(Error('Invalid image.'))};
+  picture.src=local;
  });
  window.loadHeroBackgroundAdmin=async()=>{
-  try{await load()}catch(error){statusMessage(error.message||'Hero media unavailable. Apply the database migration first.',true)}
+  if(busy)return;
+  busy=true;updateButtons();setStatus('Loading hero backgrounds…');
+  try{
+   await fetchSaved();
+   resetSelection();
+   setStatus('Select a page, choose an image, then save. Each page keeps its own background.');
+  }catch(error){
+   loaded=false;resetSelection();
+   setStatus(error.message||'Could not load hero backgrounds.',true);
+  }finally{busy=false;updateButtons();}
  };
- host.addEventListener('change',async event=>{
-  const input=event.target.closest('input[data-hero-file]');if(!input)return;
-  const key=input.dataset.heroFile,file=input.files?.[0];if(!file)return;
-  const message=host.querySelector('[data-hero-message="'+key+'"]');
-  if(file.size<100||file.size>2000000||!['image/jpeg','image/png','image/webp'].includes(file.type)){
-   message.textContent='Choose a JPG, PNG or WebP image under 2MB.';input.value='';return;
+ select.addEventListener('change',()=>{
+  if(busy)return;
+  resetSelection();
+  setStatus('Editing '+labels[key()]+'.');
+ });
+ input.addEventListener('change',async()=>{
+  if(busy)return;
+  const file=input.files?.[0];if(!file)return;
+  const activeRevision=++revision;
+  const activeKey=key();
+  if(file.size<100||file.size>2000000||
+   !['image/jpeg','image/png','image/webp'].includes(file.type)){
+   input.value='';
+   setMessage('Select a valid JPG, PNG or WebP image (maximum 2 MB).',true);
+   return;
   }
+  setMessage('Checking image…');
   try{
    const dimensions=await inspectImage(file);
-   pending.set(key,file);
-   const old=previews.get(key);if(old)URL.revokeObjectURL(old);
-   const url=URL.createObjectURL(file);previews.set(key,url);
-   const preview=host.querySelector('[data-preview="'+key+'"]');
-   preview.innerHTML='';
-   const img=document.createElement('img');img.src=url;img.alt='New background preview';
-   preview.appendChild(img);
-   const save=host.querySelector('[data-hero-save="'+key+'"]');save.disabled=false;
-   message.textContent=dimensions.width+' × '+dimensions.height+
-    (dimensions.width<1200||dimensions.width/dimensions.height<1.4?
-      ' · Landscape image recommended to prevent cropping.':' · Ready to save.');
-  }catch(error){message.textContent=error.message;input.value='';}
- });
- host.addEventListener('click',async event=>{
-  const save=event.target.closest('[data-hero-save]');
-  const reset=event.target.closest('[data-hero-reset]');
-  if(!save&&!reset)return;
-  const key=(save||reset).dataset[save?'heroSave':'heroReset'];
-  const card=host.querySelector('[data-hero-card="'+key+'"]');
-  const buttons=card.querySelectorAll('button');
-  if(save&&!pending.has(key))return;
-  if(reset&&!window.confirm('Restore the original '+key+' hero background?'))return;
-  buttons.forEach(b=>b.disabled=true);
-  statusMessage(save?'Uploading and publishing '+key+' background…':'Restoring default '+key+' background…');
-  try{
-   if(save){
-    const file=pending.get(key),data=await asBase64(file);
-    await api('/api/hero-backgrounds/upload',{method:'POST',
-      body:JSON.stringify({key,mime:file.type,data})});
-   }else{
-    await api('/api/hero-backgrounds/reset',{method:'POST',body:JSON.stringify({key})});
-   }
-   await load();
-   notify(save?'Hero background saved successfully.':'Default hero background restored.');
+   if(activeRevision!==revision||activeKey!==key())return;
+   clearPreviewUrl();
+   pendingFile=file;
+   objectUrl=URL.createObjectURL(file);
+   renderPreview();
+   updateButtons();
+   const warning=dimensions.width<1200||dimensions.width/dimensions.height<1.4?
+    ' Landscape 1600 × 900 is recommended to avoid cropping.':' Ready to save.';
+   setMessage(dimensions.width+' × '+dimensions.height+' selected.'+warning);
   }catch(error){
-   buttons.forEach(b=>b.disabled=false);
-   statusMessage(error.message||'Could not save background.',true);
+   if(activeRevision!==revision)return;
+   input.value='';
+   setMessage(error.message||'Could not preview image.',true);
   }
  });
+ const action=async type=>{
+  if(busy||!loaded)return;
+  const selected=key();
+  const file=pendingFile;
+  if(type==='save'&&!file)return;
+  if(type==='reset'&&!hasImage(selected))return;
+  if(type==='reset'&&!window.confirm('Restore the original background for '+labels[selected]+'?'))return;
+  busy=true;updateButtons();
+  setStatus((type==='save'?'Uploading ':'Restoring original background for ')+labels[selected]+'…');
+  let succeeded=false;
+  try{
+   if(type==='save'){
+    const data=await fileBase64(file);
+    await api('/api/hero-backgrounds/upload',{method:'POST',
+     body:JSON.stringify({key:selected,mime:file.type,data})});
+   }else{
+    await api('/api/hero-backgrounds/reset',{method:'POST',
+     body:JSON.stringify({key:selected})});
+   }
+   succeeded=true;
+   await fetchSaved();
+   resetSelection();
+   setStatus(labels[selected]+(type==='save'?' background saved successfully.':' default background restored.'));
+   window.showVasraToast?.('Hero background updated.','success');
+  }catch(error){
+   setStatus(succeeded?'Saved, but preview refresh failed. Reopen Hero Backgrounds.':
+    (error.message||'Could not update hero background.'),true);
+  }finally{
+   busy=false;
+   updateButtons();
+  }
+ };
+ saveButton.addEventListener('click',()=>action('save'));
+ resetButton.addEventListener('click',()=>action('reset'));
+ window.addEventListener('pagehide',clearPreviewUrl);
 })();
