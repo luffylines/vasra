@@ -79,10 +79,24 @@ test('Square uploaded hero logos fit the desktop right side while mobile keeps c
  for(const file of Object.values(targets)){
   const page=read('dist/'+file);
   assert(page.includes('hero-backgrounds-public.js?v=20261102-desktop-fit-v3'),file);
-  assert(page.includes('hero-backgrounds.css?v=20261102-desktop-fit-v3'),file);
+  assert(page.includes('hero-backgrounds.css?v=20261102-project-logo-v4'),file);
  }
 });
 
+test('Projects custom compact image has a single nonoverlapping logo while landscape retains badge',()=>{
+ const css=read('dist/hero-backgrounds.css');
+ const scenic=read('dist/project-hero-scenic.css');
+ const projects=read('dist/projects.html');
+ assert.match(css,/\.project-hero\.hero-media-active\.hero-media-compact > \.hero-mark\{/);
+ assert.match(css,/display:none!important/);
+ assert.match(css,/\.project-hero\.hero-media-active\.hero-media-compact::before\{/);
+ assert.match(css,/background-size:auto 70%!important/);
+ assert.match(css,/background-position:90% center!important/);
+ assert(!css.includes('.project-hero.hero-media-active > .hero-mark{'),
+   'landscape uploads must preserve the official mark');
+ assert.match(scenic,/\.project-hero > \.hero-mark/);
+ assert.match(projects,/data-hero-media-key="projects"/);
+});
 test('Hero scripts and touched handlers parse as JavaScript',()=>{
  for(const file of ['dist/hero-backgrounds-admin.js','dist/hero-backgrounds-public.js',
   'dist/account.js','lib/handler.cjs','lib/supabase.cjs'])
