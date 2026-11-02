@@ -57,7 +57,7 @@ test('One hero editor has a page selector, image preview, and equal action contr
  assert.match(js,/select\.addEventListener\('change'/);
  assert.match(js,/resetSelection\(\)/);
  assert.match(js,/pendingFile=null/);
- assert.match(js,/api\('\\/api\\/hero-backgrounds\\/upload'/);
+ assert(js.includes("api('/api/hero-backgrounds/upload'"));
  assert.match(css,/#panel-hero-backgrounds \.hero-editor-actions/);
  assert.match(css,/grid-template-columns:minmax\(0,1\.35fr\)/);
  assert.match(css,/html\[data-theme="dark"\]/);
