@@ -215,7 +215,7 @@
       provider_or_storage_error:'An email provider or storage error occurred.'
     };
     const message=accepted?'SK ID review email accepted by provider.':
-      'KK ID email still pending. '+(hints[code]||(/^provider_not_accepted_\\d{3}$/.test(code)?
+      'KK ID email still pending. '+(hints[code]||(/^provider_not_accepted_\d{3}$/.test(code)?
       'Resend rejected the request (HTTP '+code.slice(-3)+').': 'Reason unavailable. Check backend logs.'))+
       (code?' ['+code+']':'');
     report(message,!accepted,accepted);
