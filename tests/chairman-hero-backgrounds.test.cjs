@@ -64,6 +64,25 @@ test('One hero editor has a page selector, image preview, and equal action contr
  assert.match(css,/#panel-hero-backgrounds \.hero-admin-intro/);
 });
 
+test('Square uploaded hero logos fit the desktop right side while mobile keeps cover',()=>{
+ const js=read('dist/hero-backgrounds-public.js');
+ const css=read('dist/hero-backgrounds.css');
+ assert.match(js,/photo\.naturalWidth\/photo\.naturalHeight<1\.45/);
+ assert.match(js,/hero\.classList\.toggle\('hero-media-compact',compact\)/);
+ assert.match(js,/photo\.onerror/);
+ assert.match(css,/@media \(min-width:761px\)/);
+ assert.match(css,/home-memorial-hero\.hero-media-active\.hero-media-compact::before/);
+ assert.match(css,/project-hero\.hero-media-active\.hero-media-compact::before/);
+ assert.match(css,/background-size:contain!important/);
+ const desktopBlock=css.slice(css.indexOf('/* Desktop image-fit safeguard'),css.indexOf('/* The single editor'));
+ assert(!/min-height\s*:|padding\s*:/.test(desktopBlock),'desktop fit must preserve hero dimensions');
+ for(const file of Object.values(targets)){
+  const page=read('dist/'+file);
+  assert(page.includes('hero-backgrounds-public.js?v=20261102-desktop-fit-v3'),file);
+  assert(page.includes('hero-backgrounds.css?v=20261102-desktop-fit-v3'),file);
+ }
+});
+
 test('Hero scripts and touched handlers parse as JavaScript',()=>{
  for(const file of ['dist/hero-backgrounds-admin.js','dist/hero-backgrounds-public.js',
   'dist/account.js','lib/handler.cjs','lib/supabase.cjs'])
