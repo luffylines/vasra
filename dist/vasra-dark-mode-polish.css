@@ -255,3 +255,71 @@ html[data-theme="dark"] body.kk-body.kk-member-dashboard .kk-member-reward-detai
     grid-template-columns:minmax(0,1fr)!important;
   }
 }
+
+
+/* 2026-11-02: Scoped staff dark-mode contrast and control alignment fixes. */
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-section{
+ background:#1a304e!important;border-color:#45658a!important;color:#eaf3ff!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-section :is(h3,strong,.kk-sitio-label,.kk-sitio-totals,.kk-sitio-toolbar label){
+ color:#f1f7ff!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-section :is(p,small,.kk-sitio-item small,.kk-sitio-toolbar label span){
+ color:#c4d8f2!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-item{
+ background:#172b45!important;border-color:#405d80!important;color:#f3f8ff!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-counts span{
+ background:#2a4568!important;border:1px solid #536f95!important;color:#e1edff!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-counts b{color:#fff!important}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-buttons button{
+ background:#29496e!important;border-color:#6685ab!important;color:#f0f7ff!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-section :is(input,select),
+html[data-theme="dark"] body.account-workspace #kk-sitio-editor{
+ background:#12253d!important;border-color:#537396!important;color:#f2f7ff!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-kk-profiling .kk-sitio-section input::placeholder{color:#a6c0df!important;opacity:1}
+html[data-theme="dark"] body.account-workspace .kk-id-print-guide{
+ background:#1a304e!important;border:1px solid #4e6c91!important;color:#eaf3ff!important;
+}
+html[data-theme="dark"] body.account-workspace .kk-id-print-guide strong{color:#f4f8ff!important}
+html[data-theme="dark"] body.account-workspace .kk-id-print-guide p{color:#d0e0f5!important}
+/* Preserve native file picker hit area while making its label legible. */
+body.account-workspace #panel-current-projects .current-project-admin-actions .current-project-upload{
+ background:#e4efff!important;border:1px solid #a6c6f3!important;color:#143d75!important;
+ opacity:1!important;box-shadow:0 3px 9px rgba(4,21,45,.13);font-weight:800!important;
+}
+html[data-theme="dark"] body.account-workspace #panel-current-projects .current-project-admin-actions .current-project-upload{
+ background:#294f80!important;border-color:#739bd1!important;color:#fff!important;
+}
+body.account-workspace #panel-current-projects .current-project-upload input[type="file"]{
+ position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;pointer-events:auto;
+}
+body.account-workspace #panel-current-projects .current-project-upload:focus-within{outline:3px solid #92bdff;outline-offset:3px}
+body.account-workspace .settings-card-contact .contact-sharing{
+ display:grid!important;grid-template-columns:21px minmax(0,1fr)!important;align-items:start!important;
+ column-gap:12px!important;padding:16px 18px!important;
+}
+body.account-workspace .settings-card-contact .contact-sharing input[type="checkbox"]{
+ grid-column:1!important;grid-row:1!important;position:static!important;appearance:auto!important;
+ display:block!important;width:19px!important;height:19px!important;margin:2px 0 0!important;
+}
+body.account-workspace .settings-card-contact .contact-sharing span{
+ grid-column:2!important;grid-row:1!important;display:block!important;font-weight:750!important;
+ color:#1c3b63!important;line-height:1.5!important;
+}
+body.account-workspace .settings-card-contact .contact-sharing small{
+ display:block!important;color:#536d8d!important;line-height:1.5!important;margin-top:5px!important;
+}
+html[data-theme="dark"] body.account-workspace .settings-card-contact .contact-sharing{
+ background:#1a3352!important;border:1px solid #56789f!important;
+}
+html[data-theme="dark"] body.account-workspace .settings-card-contact .contact-sharing span{color:#f0f7ff!important}
+html[data-theme="dark"] body.account-workspace .settings-card-contact .contact-sharing small{color:#c8dcf5!important}
+@media(max-width:600px){
+ body.account-workspace .settings-card-contact .contact-sharing{padding:13px!important}
+ body.account-workspace #panel-current-projects .current-project-admin-actions .current-project-upload{width:100%;box-sizing:border-box}
+}
