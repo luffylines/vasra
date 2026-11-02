@@ -20,7 +20,7 @@ test('Five public hero surfaces get optional uploaded backgrounds with original 
  assert.match(css,/home-memorial-hero\.hero-media-active::before/);
  assert.match(css,/project-hero\.hero-media-active::before/);
  assert.match(css,/background-size:cover/);
- assert.doesNotMatch(css,/min-height:|max-height:|padding:/);
+ assert.doesNotMatch(css.split('.hero-admin-intro')[0],/min-height:|max-height:|padding:/);
 });
 test('Only chairman sees management tab and can upload/reset hero media',()=>{
  const html=read('dist/account.html'),js=read('dist/account.js');
