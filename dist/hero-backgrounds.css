@@ -18,6 +18,34 @@
 }
 .hero-media-active :is(h1,h2,p,.eyebrow,.hero-label){text-shadow:0 2px 9px rgba(0,0,0,.29)}
 .hero-media-active .schedule-pill{position:relative;z-index:1}
+/* Desktop image-fit safeguard for portrait/square uploads. A large logo is
+   positioned on the RIGHT with its full silhouette visible rather than blown
+   up across the entire 3:1 banner. No hero heights, padding or DOM change. */
+@media (min-width:761px){
+ .home-memorial-hero.hero-media-active.hero-media-compact::before{
+  left:auto!important;right:0!important;top:0;bottom:0;
+  width:54%!important;height:100%!important;
+  background-color:transparent!important;
+  background-size:contain!important;
+  background-position:center right!important;
+  background-repeat:no-repeat!important;
+ }
+ .portal-refresh.projects-page .project-hero.hero-media-active.hero-media-compact::before{
+  left:auto!important;right:0!important;top:0;bottom:0;
+  width:54%!important;height:100%!important;
+  background-color:transparent!important;
+  background-size:contain!important;
+  background-position:center right!important;
+  background-repeat:no-repeat!important;
+ }
+ .page-heading.hero-media-active.hero-media-compact,
+ .trans-hero.hero-media-active.hero-media-compact{
+  background-color:#102d54!important;
+  background-size:cover,contain!important;
+  background-position:center,right center!important;
+ }
+}
+/* On phones preserve the existing full-bleed, vertically framed background. */
 /* The single editor is deliberately scoped to the Chairman panel, not public heroes. */
 #panel-hero-backgrounds .hero-admin-intro{
  margin:0 0 14px!important;color:#3c5679!important;
