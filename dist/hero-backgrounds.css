@@ -1,0 +1,51 @@
+/* Uploaded media overrides visuals only; never change hero height, padding, radius or content. */
+.home-memorial-hero.hero-media-active::before{
+ background-image:var(--hero-upload-url)!important;
+ background-size:cover!important;background-position:center!important;
+ background-repeat:no-repeat!important;
+}
+.portal-refresh.projects-page .project-hero.hero-media-active::before{
+ background-image:var(--hero-upload-url)!important;
+ background-size:cover!important;background-position:center!important;
+ background-repeat:no-repeat!important;
+}
+/* Duty, Transparency and Contacts do not have photo pseudos. Layer a dark
+   gradient over the uploaded image on the existing hero background. */
+.page-heading.hero-media-active,
+.trans-hero.hero-media-active{
+ background-image:linear-gradient(110deg,rgba(7,23,48,.87),rgba(12,33,60,.64)),var(--hero-upload-url)!important;
+ background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;
+}
+.hero-media-active :is(h1,h2,p,.eyebrow,.hero-label){text-shadow:0 2px 9px rgba(0,0,0,.29)}
+.hero-media-active .schedule-pill{position:relative;z-index:1}
+.hero-admin-intro{color:#b9d0eb;margin:0 0 19px;line-height:1.6}
+.hero-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.hero-admin-card{background:#1c3453;border:1px solid #527196;border-radius:16px;padding:17px;min-width:0}
+.hero-admin-card h3{color:#f1f7ff;font-size:16px;margin:0 0 10px}
+.hero-admin-card p,.hero-admin-card small{color:#c9dbee;font-size:12px;line-height:1.5}
+.hero-admin-preview{border:1px solid #55759a;border-radius:11px;overflow:hidden;aspect-ratio:16/8;background:linear-gradient(115deg,#25486e,#10233e);display:grid;place-items:center;margin:0 0 12px}
+.hero-admin-preview img{width:100%;height:100%;display:block;object-fit:cover}
+.hero-admin-preview span{padding:15px;color:#c5d9f4;text-align:center}
+.hero-admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hero-admin-card .hero-upload-label{grid-column:1/-1;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;min-height:46px;border-radius:10px;background:#315c91;border:1px solid #81a6d9;color:#fff!important;font:800 12px/1.4 Arial,sans-serif;cursor:pointer}
+.hero-admin-card .hero-upload-label input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.hero-admin-card .hero-upload-label:focus-within{outline:3px solid #9bc7ff;outline-offset:2px}
+.hero-admin-card .hero-action{min-height:44px;border-radius:9px;border:1px solid #7f9fc6;padding:10px;color:#edf5ff;background:#2b517f;cursor:pointer;font-weight:750}
+.hero-admin-card .hero-action.primary{background:#2957bc;border-color:#557cf0;color:#fff}
+.hero-admin-card .hero-action:disabled{opacity:.55;cursor:not-allowed}
+.hero-admin-card .hero-action:not(:disabled):hover,.hero-admin-card .hero-upload-label:hover{filter:brightness(1.15)}
+#hero-admin-status{color:#d0e6ff;min-height:1.5em;margin:10px 0 18px}
+#hero-admin-status[data-error="true"]{color:#ffbdc1}
+@media(max-width:770px){.hero-admin-grid{grid-template-columns:1fr}}
+/* Current Project upload labels must remain legible even in dark mode.
+   Keep the real file input clickable; don't visually enable disabled controls. */
+#panel-current-projects .current-project-admin-actions .current-project-upload{
+ background:#2d5a91!important;color:#fff!important;border:1px solid #83afe6!important;
+ font-weight:800!important;opacity:1;box-shadow:0 3px 9px rgba(0,0,0,.17);
+}
+#panel-current-projects .current-project-admin-actions .current-project-upload:has(input:disabled){
+ opacity:.65!important;cursor:not-allowed!important;
+}
+#panel-current-projects .current-project-admin-actions .current-project-upload input:disabled{
+ cursor:not-allowed!important;pointer-events:none!important;
+}
