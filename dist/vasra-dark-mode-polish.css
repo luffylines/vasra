@@ -323,3 +323,54 @@ html[data-theme="dark"] body.account-workspace .settings-card-contact .contact-s
  body.account-workspace .settings-card-contact .contact-sharing{padding:13px!important}
  body.account-workspace #panel-current-projects .current-project-admin-actions .current-project-upload{width:100%;box-sizing:border-box}
 }
+
+/* v3: Theme is stored on <html> in production. Do not depend on account body class.
+   Apply these overrides after older component/theme styles. */
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-section,
+body[data-theme="dark"] #panel-kk-profiling .kk-sitio-section{
+ background:#182d49!important;border:1px solid #48688f!important;color:#edf6ff!important;
+ box-shadow:0 8px 22px rgba(0,0,0,.12)!important;
+}
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-section :is(.kk-sitio-head h3,.kk-sitio-head p,.kk-sitio-toolbar label,.kk-sitio-toolbar span,.kk-sitio-totals,.kk-sitio-label strong,.kk-sitio-label small){
+ color:#eaf4ff!important;
+}
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-list{
+ background:#172a45!important;border:1px solid #48668d!important;border-radius:12px!important;
+}
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-item{
+ background:#172a45!important;border-color:#445f83!important;color:#f0f7ff!important;
+}
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-counts span,
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-buttons button{
+ background:#2a466c!important;color:#eff7ff!important;border-color:#6584ab!important;
+}
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-counts :is(b,small),
+html[data-theme="dark"] #panel-kk-profiling .kk-sitio-buttons button{color:#fff!important}
+html[data-theme="dark"] #panel-kk-profiling #kk-sitio-search,
+html[data-theme="dark"] #panel-kk-profiling #kk-sitio-editor,
+html[data-theme="dark"] #panel-kk-profiling #kk-sitio-editor input{
+ background:#10243d!important;border-color:#6380a5!important;color:#fff!important;
+}
+html[data-theme="dark"] #panel-kk-profiling #kk-sitio-search::placeholder{color:#b4cde9!important;opacity:1}
+html[data-theme="dark"] .kk-id-print-guide{
+ background:#182e4c!important;border-color:#516f96!important;color:#f1f7ff!important;
+}
+html[data-theme="dark"] .kk-id-print-guide :is(strong,p){color:#eaf4ff!important}
+/* Keep enabled and disabled upload states readable; never simulate enabled functionality. */
+#panel-current-projects .current-project-admin-actions .current-project-upload{
+ color:#16457d!important;font-weight:800!important;background:#e5f0ff!important;
+ border:1px solid #a2c2eb!important;
+}
+html[data-theme="dark"] #panel-current-projects .current-project-admin-actions .current-project-upload{
+ color:#f5faff!important;background:#305682!important;border-color:#7398c8!important;
+}
+#panel-current-projects .current-project-admin-actions .current-project-upload:has(input:disabled){
+ opacity:.75!important;cursor:not-allowed!important;
+}
+#panel-current-projects .current-project-admin-actions .current-project-upload:has(input:disabled) input{
+ pointer-events:none!important;cursor:not-allowed!important;
+}
+html[data-theme="dark"] .settings-card-contact .contact-sharing{
+ background:#1b3250!important;border-color:#577ba2!important;
+}
+html[data-theme="dark"] .settings-card-contact .contact-sharing :is(span,small){color:#e6f2ff!important}
