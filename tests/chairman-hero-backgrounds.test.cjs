@@ -32,7 +32,7 @@ test('Only chairman sees management tab and can upload/reset hero media',()=>{
  for(const endpoint of ['/api/hero-backgrounds/upload','/api/hero-backgrounds/reset','/api/hero-backgrounds/manage'])
   assert(api.includes(endpoint));
  assert.match(api,/await user\(\['chairman'\]\)/);
- assert.match(api,/hero-backgrounds\/\+'\//);
+ assert(api.includes("const storage='hero-backgrounds/'+key+'/"));
  assert.match(rpc,/vasra_site_hero_media/);
 });
 test('Database persists allowlisted image paths without giving browsers direct writes',()=>{
