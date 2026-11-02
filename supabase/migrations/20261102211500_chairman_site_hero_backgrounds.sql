@@ -35,8 +35,6 @@ BEGIN
      WHEN 'duty' THEN 3 WHEN 'transparency' THEN 4 ELSE 5 END)
    FROM vasra.site_hero_media h),'[]'::jsonb));
  END IF;
- IF selected_key NOT IN ('home','projects','duty','transparency','contacts')
- THEN RETURN jsonb_build_object('error',400,'reason','invalid_key'); END IF;
  IF action='image' THEN
   RETURN coalesce((SELECT jsonb_build_object('path',h.image_path,'mime',h.image_mime)
     FROM vasra.site_hero_media h WHERE h.hero_key=selected_key AND h.image_path IS NOT NULL),
@@ -56,6 +54,8 @@ BEGIN
      WHEN 'duty' THEN 3 WHEN 'transparency' THEN 4 ELSE 5 END)
    FROM vasra.site_hero_media h),'[]'::jsonb));
  END IF;
+ IF selected_key NOT IN ('home','projects','duty','transparency','contacts')
+ THEN RETURN jsonb_build_object('error',400,'reason','invalid_key'); END IF;
  IF action='save' THEN
   IF incoming_path !~ ('^hero-backgrounds/'||selected_key||'/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[.](jpg|png|webp)$')
     OR incoming_mime NOT IN ('image/jpeg','image/png','image/webp')
