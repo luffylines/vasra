@@ -108,9 +108,6 @@ begin
   end if;
   if account is null then return jsonb_build_object('error',401); end if;
   if action='status' then return jsonb_build_object('enabled',enabled); end if;
-  if action='prepare_enable' and current_credential is null then
-   return jsonb_build_object('error',409,'reason','password_required');
-  end if;
   if (action='prepare_enable' and enabled) or (action='prepare_disable' and not enabled)
    then return jsonb_build_object('error',409); end if;
   purpose_name:=case when action='prepare_enable' then 'enable' else 'disable' end;
