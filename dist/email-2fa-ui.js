@@ -16,11 +16,15 @@
    cache: 'no-store'
   });
   const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(
-   typeof result.error === 'string' ? result.error :
-   typeof result.message === 'string' ? result.message :
-   'Verification failed. Please try again.'
-  );
+  if (!response.ok) {
+   const error = new Error(
+    typeof result.error === 'string' ? result.error :
+    typeof result.message === 'string' ? result.message :
+    'Verification failed. Please try again.'
+   );
+   error.status = response.status;
+   throw error;
+  }
   return result;
  }
 
@@ -221,16 +225,25 @@
   async function refresh() {
    try {
     const state = await request(prefix + '/status');
+    if (typeof state.enabled !== 'boolean') throw new Error('Security status is not yet ready.');
     displayEnabled(state.enabled);
     control.disabled = !state.available;
-    feedback(status, state.available ?
-     (enabled ? 'Your account is protected with email verification.' : 'Email verification is off. Turn it on to secure your sign-ins.') :
-     'Email 2FA is unavailable until the email service is configured.', state.available ? 'info' : 'error');
-   } catch {
+    if (!state.available) {
+     badge.textContent = 'Setup required';
+     badge.dataset.state = 'loading';
+     feedback(status, 'Email verification is being configured by SK VASRA. Your current login is still active; please try again later.', 'info');
+    } else {
+     feedback(status, enabled ?
+      'Your account is protected. New sign-ins require an email code.' :
+      'Email verification is off. You may enable it whenever you are ready.', 'info');
+    }
+   } catch (error) {
     control.disabled = true;
     badge.dataset.state = 'loading';
-    badge.textContent = 'Unavailable';
-    feedback(status, 'Unable to load your security settings. Please sign in again.', 'error');
+    badge.textContent = error.status === 401 ? 'Sign in required' : 'Service unavailable';
+    feedback(status, error.status === 401 ?
+     'Your session has expired. Sign in again to manage security settings.' :
+     'The email verification service could not be reached. Your account is unchanged. Try refreshing this page.', 'error');
    }
   }
 
