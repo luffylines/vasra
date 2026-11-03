@@ -1,6 +1,6 @@
 # SK VASRA — Optional Email Two-Factor Authentication (2FA)
 
-**Status: draft implementation; not deployed.** Applies to SK Staff and KK Members (including Google OAuth, using the email challenge following OAuth).
+**Status (2026-11-03): preview deployed; database migration applied to the connected SK VASRA Supabase project; encrypted `MFA_CODE_SECRET` configured for Vercel preview and production. Full email delivery and end-to-end login have not yet been verified. Production website has not been switched to this feature branch.** Applies to SK Staff and KK Members (including Google OAuth, using the email challenge following OAuth).
 
 ## How members use 2FA
 1. Log in and open **Account Settings**.
@@ -17,7 +17,7 @@ The frontend does not store OTPs or passwords in localStorage/sessionStorage. Pa
 ## Required setup before release
 1. Verify the production sender domain in Resend. Set `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (or `MAIL_FROM_ADDRESS`) and optional `MAIL_FROM_NAME` in **Vercel server-side environment variables**. Do not expose secrets in the browser or GitHub.
 2. Generate a new independent cryptographically random 32-byte-or-longer secret for `MFA_CODE_SECRET`. Example on a trusted computer: `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`. Store only in Vercel server environment variables. Never share the actual secret or paste it into support chats.
-3. Apply and review `supabase/migrations/20261103195000_optional_email_2fa.sql` to the **correct SK VASRA Supabase project** through the normal migration/review workflow. It creates private challenges and session-enforcing triggers. Do NOT run on production until a staging test succeeds.
+3. The migration in `supabase/migrations/20261103195000_optional_email_2fa.sql` has been applied to the connected project. Its RPC, columns, private challenge table, triggers, and restricted permissions were verified. All existing accounts retained 2FA OFF. **Important:** Vercel Preview and Production share that database. Enabling 2FA in preview for an actual account before production runs this code can prevent login on the old production deployment. Avoid enabling it on real production accounts until release.
 4. Deploy the branch to a Vercel **preview** and configure its variables and matching `PUBLIC_ORIGIN`.
 5. Test the scenarios below using dummy SK/KK accounts and a real inbox on a test domain.
 6. Only after database compatibility, 2FA send/delivery, Google OAuth, session gates, and account recovery have been validated should the PR be merged and production migrated.
