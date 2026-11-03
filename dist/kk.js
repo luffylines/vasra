@@ -67,7 +67,21 @@
     'Google OAuth is not yet configured for this domain. You can still use email/password.';
   }catch{note.textContent='Hindi ma-check ang Google Sign-In ngayon. Gamitin muna ang email/password.';}
   const query=new URLSearchParams(location.search);
-  if(query.get('google_error'))feedback(query.get('google_error')==='link_required'?'May existing password account sa email na ito. Mag-login gamit ang password; hindi awtomatikong ili-link ang Google.':'Hindi natuloy ang Google Sign-In.','error');
+  const googleError=query.get('google_error');
+  if(googleError){
+   const messages={
+    no_account:'Wala pang rehistradong KK account ang Gmail na ito. Mag-register muna sa KK Registration bago gamitin ang Sign in with Google.',
+    account_mismatch:'Ang Gmail na ito ay naka-link na sa ibang Google identity. Gamitin ang tamang Google account o makipag-ugnayan sa SK administrator.',
+    link_required:'Hindi pa maaaring i-link ang Gmail sa KK account. Mag-login muna gamit ang iyong existing password.',
+    unavailable:'Hindi natuloy ang Google Sign-In. Subukan muli o gamitin ang iyong KK email at password.'
+   };
+   const message=messages[googleError]||messages.unavailable;
+   const banner=$('#kk-google-signin-error');
+   if(banner){banner.textContent=message;banner.hidden=false;}
+   else feedback(message,'error');
+   // Keep the chosen KK service without retaining stale OAuth error parameters.
+   history.replaceState(null,'',location.pathname+(nextService?'?service='+encodeURIComponent(nextService):''));
+  }
   if(nextService){
    const intro=document.querySelector('.kk-auth-card .kk-sub');
    if(intro)intro.textContent='Mag-login muna sa verified KK account para makapag-request ng '+
