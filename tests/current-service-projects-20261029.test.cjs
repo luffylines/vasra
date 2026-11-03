@@ -35,7 +35,7 @@ test('Chairperson and Secretary can edit the three records with restricted serve
  const account=read('dist/account.html'),app=read('dist/account.js');
  for(const action of ['/api/current-projects/manage','/api/current-projects/save','/api/current-projects/image'])
   assert(server.includes(action));
- assert.match(server,/await user\(\['chairman'\]\)/);
+ assert.match(server,/async function homepageContentEditor\(\)/);
  assert.match(server,/image\/jpeg/);
  assert.match(sql,/current_service_image_pair/);
  assert.match(sql,/security invoker/);
