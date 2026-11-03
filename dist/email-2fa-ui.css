@@ -1,1 +1,134 @@
-.vasra-mfa-panel{box-sizing:border-box;min-width:0}.vasra-mfa-panel[hidden],.vasra-mfa-panel form[hidden]{display:none!important}.vasra-mfa-panel p{line-height:1.55}.vasra-mfa-panel input:not([type=checkbox]){display:block;width:100%;max-width:290px;box-sizing:border-box;margin:.55rem 0;padding:.72rem .85rem;border-radius:.65rem;border:1px solid var(--border,#9caac0);background:var(--surface,#fff);color:var(--text,#172235);font:inherit}.vasra-mfa-panel button{padding:.68rem 1.1rem;border:0;border-radius:.65rem;background:#234f98;color:#fff;font:inherit;font-weight:650;cursor:pointer;margin:.25rem .3rem .25rem 0}.vasra-mfa-panel button:disabled{opacity:.6;cursor:wait}.vasra-mfa-panel .vasra-mfa-secondary{border:1px solid #7e91b1;background:transparent;color:inherit}.vasra-mfa-toggle{display:flex;align-items:center;gap:.6rem;font-weight:600;cursor:pointer}.vasra-mfa-toggle input{width:18px;height:18px;accent-color:#2769ca}.vasra-mfa-panel [role=status]{font-size:.9rem;overflow-wrap:anywhere}#email-mfa-login-challenge{padding:1.2rem;border-radius:1rem;border:1px solid #8b9fba;margin:1rem 0}body.dark .vasra-mfa-panel input:not([type=checkbox]),[data-theme=dark] .vasra-mfa-panel input:not([type=checkbox]){background:#182a48;color:#fff;border-color:#526688}
+
+/* SK VASRA 2FA UI: shared staff/KK, compact on mobile, true high-contrast feedback. */
+.vasra-mfa-panel {
+ --mfa-bg:#ffffff;--mfa-fg:#182a48;--mfa-muted:#667891;--mfa-border:#dbe5f1;
+ --mfa-soft:#f2f6fd;--mfa-blue:#2858a5;--mfa-blue-hover:#214c91;
+ --mfa-blue-glow:rgba(37,99,184,.15);--mfa-danger:#bb3445;
+ --mfa-danger-bg:#fff0f2;--mfa-danger-border:#f2acb5;
+ --mfa-success:#147b55;--mfa-success-bg:#e8f7ee;--mfa-success-border:#a4dfc2;
+ --mfa-shadow:0 16px 40px rgba(17,42,85,.06);
+ box-sizing:border-box;min-width:0;max-width:100%;font-family:inherit;
+ color:var(--mfa-fg);
+}
+.vasra-mfa-panel *, .vasra-mfa-panel *::before, .vasra-mfa-panel *::after{box-sizing:border-box}
+.vasra-mfa-panel[hidden],.vasra-mfa-panel form[hidden],.vasra-mfa-feedback[hidden]{display:none!important}
+.vasra-mfa-panel h3{font:inherit;font-size:1.3rem;font-weight:800;letter-spacing:-.035em;line-height:1.3;color:var(--mfa-fg);margin:0 0 7px}
+.vasra-mfa-panel p{font-size:.91rem;line-height:1.58;margin:0;color:var(--mfa-muted)}
+.vasra-mfa-panel .vasra-mfa-eyebrow{font-weight:800;font-size:.66rem;letter-spacing:.14em;color:var(--mfa-blue)}
+.vasra-mfa-icon,.vasra-mfa-setting-icon{display:flex;align-items:center;justify-content:center;flex:none;border-radius:16px;background:linear-gradient(145deg,#eaf2ff,#dceaff);color:#2253a0}
+.vasra-mfa-icon{width:60px;height:60px;margin:0 auto 16px;border:1px solid #d1e2f9;box-shadow:0 9px 18px rgba(24,77,156,.10)}
+.vasra-mfa-icon svg{width:29px;height:29px}
+.vasra-mfa-setting-icon{width:48px;height:48px;border-radius:13px;border:1px solid #d7e5f8}
+.vasra-mfa-setting-icon svg{width:24px;height:24px}
+.vasra-mfa-login{max-width:440px;width:100%;margin:16px auto 0;border:1px solid var(--mfa-border);border-radius:21px;background:var(--mfa-bg);box-shadow:var(--mfa-shadow);padding:25px 23px 20px;text-align:center}
+.vasra-mfa-login h3{margin-top:6px;font-size:1.6rem}
+.vasra-mfa-login .vasra-mfa-intro{max-width:335px;margin:9px auto 13px}
+.vasra-mfa-expiry{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:.76rem;font-weight:500;color:var(--mfa-muted);padding:7px 12px;background:var(--mfa-soft);border-radius:30px;margin:0 auto 20px}
+.vasra-mfa-expiry strong{color:var(--mfa-fg);font-weight:750}
+.vasra-mfa-clock{font-size:1.1rem;line-height:1}
+.vasra-mfa-form{text-align:left;max-width:100%;min-width:0}
+.vasra-mfa-code-field{width:100%;min-width:0}
+.vasra-mfa-panel .vasra-mfa-field-label{display:block;font-size:.82rem;line-height:1.4;font-weight:750;color:var(--mfa-fg);margin-bottom:10px}
+.vasra-mfa-code-group{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;width:100%;max-width:100%;align-items:center;cursor:text;isolation:isolate}
+.vasra-mfa-digit{display:flex;align-items:center;justify-content:center;min-width:0;width:100%;height:56px;border:1.5px solid #cbd8e9;border-radius:12px;background:var(--mfa-bg);color:var(--mfa-fg);font:800 1.5rem/1 inherit;font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(18,40,79,.03);transition:border-color .17s ease,background .17s ease,box-shadow .17s ease}
+.vasra-mfa-code-group:focus-within .vasra-mfa-digit.is-current{border-color:var(--mfa-blue);box-shadow:0 0 0 3px var(--mfa-blue-glow);background:var(--mfa-soft)}
+.vasra-mfa-code-group .vasra-mfa-digit.is-filled{border-color:#a7bddd;background:var(--mfa-soft)}
+/* One accessible input handles paste/iOS OTP autofill; six slots remain visual only. */
+.vasra-mfa-panel .vasra-mfa-code-input,
+.vasra-mfa-panel input.vasra-mfa-code-input:not([type=checkbox]){
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;color:transparent!important;opacity:.015!important;
+ z-index:3!important;font-size:16px!important;letter-spacing:0!important;cursor:text!important;
+ caret-color:transparent!important;box-shadow:none!important;outline:0!important
+}
+.vasra-mfa-code-group[data-state="checking"] .vasra-mfa-digit{border-color:#7b9dca;background:var(--mfa-soft)}
+.vasra-mfa-code-group[data-state="error"] .vasra-mfa-digit{border-color:var(--mfa-danger-border)!important;background:var(--mfa-danger-bg)!important;color:var(--mfa-danger)!important;box-shadow:none!important}
+.vasra-mfa-code-group[data-state="success"] .vasra-mfa-digit{border-color:var(--mfa-success-border)!important;background:var(--mfa-success-bg)!important;color:var(--mfa-success)!important;box-shadow:none!important}
+.vasra-mfa-panel .vasra-mfa-input-hint{display:block;font-size:.74rem;text-align:center;color:var(--mfa-muted);margin-top:9px;line-height:1.4}
+.vasra-mfa-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:10px;margin-top:20px;width:100%}
+.vasra-mfa-panel button.vasra-mfa-button{appearance:none;display:inline-flex;align-items:center;justify-content:center;text-align:center;width:100%;min-width:0;min-height:47px;height:100%;padding:11px 12px;margin:0!important;border-radius:11px;border:1px solid transparent;font:inherit;font-size:.84rem;font-weight:750;line-height:1.3;white-space:normal;cursor:pointer;transition:background .16s ease,box-shadow .16s ease,border-color .16s ease;box-shadow:none}
+.vasra-mfa-panel button.vasra-mfa-primary{background:linear-gradient(135deg,#1f54a2,#2c66b9);color:#fff;border-color:#2359aa;box-shadow:0 7px 14px rgba(30,84,169,.17)}
+.vasra-mfa-panel button.vasra-mfa-primary:hover:not(:disabled){background:linear-gradient(135deg,#194789,#255ba8)}
+.vasra-mfa-panel button.vasra-mfa-secondary{background:var(--mfa-soft);color:var(--mfa-fg);border:1px solid var(--mfa-border)}
+.vasra-mfa-panel button.vasra-mfa-secondary:hover:not(:disabled){background:#e4edf9;border-color:#aac0dd}
+.vasra-mfa-panel button.vasra-mfa-button:focus-visible{outline:3px solid #75a5ec;outline-offset:2px}
+.vasra-mfa-panel button.vasra-mfa-button:disabled{opacity:.6;cursor:wait}
+.vasra-mfa-feedback{display:flex;align-items:flex-start;gap:9px;margin-top:13px!important;padding:10px 12px;border:1px solid var(--mfa-border);border-radius:10px;background:var(--mfa-soft);color:var(--mfa-fg)!important;font-size:.8rem!important;font-weight:600;line-height:1.5!important;overflow-wrap:anywhere;text-align:left}
+.vasra-mfa-feedback::before{content:"i";display:flex;align-items:center;justify-content:center;width:17px;height:17px;flex:0 0 17px;border:1.5px solid currentColor;border-radius:50%;font:bold 11px/1 Arial,sans-serif;margin-top:1px}
+.vasra-mfa-feedback[data-state="error"]{color:var(--mfa-danger)!important;border-color:var(--mfa-danger-border);background:var(--mfa-danger-bg)}
+.vasra-mfa-feedback[data-state="error"]::before{content:"!"}
+.vasra-mfa-feedback[data-state="success"]{color:var(--mfa-success)!important;border-color:var(--mfa-success-border);background:var(--mfa-success-bg)}
+.vasra-mfa-feedback[data-state="success"]::before{content:"✓";font-size:11px}
+.vasra-mfa-privacy{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:19px!important;padding-top:14px;border-top:1px solid var(--mfa-border);font-size:.74rem!important;text-align:left}
+.vasra-mfa-privacy svg{width:16px;height:16px;flex:none;color:var(--mfa-blue)}
+/* Settings card */
+.vasra-mfa-settings{padding:22px!important;border:1px solid var(--mfa-border)!important;border-radius:17px!important;background:var(--mfa-bg)!important;box-shadow:var(--mfa-shadow);height:auto!important;min-width:0}
+.vasra-mfa-setting-header{display:flex;align-items:flex-start;gap:13px;margin-bottom:21px;position:relative;padding-right:0}
+.vasra-mfa-heading{min-width:0;flex:1}
+.vasra-mfa-heading h3{margin-top:5px;margin-bottom:5px;font-size:1.08rem}
+.vasra-mfa-heading p{font-size:.81rem}
+.vasra-mfa-badge{position:absolute;right:0;top:-4px;display:inline-flex;padding:5px 9px;border-radius:20px;font-size:.67rem;font-weight:800;white-space:nowrap;border:1px solid var(--mfa-border);background:var(--mfa-soft);color:var(--mfa-muted)}
+.vasra-mfa-badge[data-state="on"]{background:var(--mfa-success-bg);color:var(--mfa-success);border-color:var(--mfa-success-border)}
+.vasra-mfa-badge[data-state="off"]{background:var(--mfa-soft);color:var(--mfa-muted)}
+.vasra-mfa-setting-header .vasra-mfa-heading{padding-top:25px}
+.vasra-mfa-toggle-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--mfa-border);border-radius:13px;background:var(--mfa-soft);padding:15px}
+.vasra-mfa-toggle-label{display:flex;flex-direction:column;gap:4px;color:var(--mfa-fg);font-size:.84rem;line-height:1.3}
+.vasra-mfa-toggle-label strong{font-weight:800}
+.vasra-mfa-toggle-label small{font-size:.73rem;color:var(--mfa-muted);font-weight:400}
+.vasra-mfa-switch-wrap{display:inline-flex;align-items:center;position:relative;flex:0 0 48px;width:48px;height:27px;margin:0;cursor:pointer}
+.vasra-mfa-switch-wrap input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:2}
+.vasra-mfa-track{position:relative;display:block;width:48px;height:27px;border-radius:20px;background:#aab8cb;transition:background .2s}
+.vasra-mfa-track::after{content:"";position:absolute;top:3px;left:3px;background:#fff;width:21px;height:21px;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.12);transition:transform .2s}
+.vasra-mfa-switch-wrap input:checked+.vasra-mfa-track{background:#2465b3}
+.vasra-mfa-switch-wrap input:checked+.vasra-mfa-track::after{transform:translateX(21px)}
+.vasra-mfa-switch-wrap input:focus-visible+.vasra-mfa-track{outline:3px solid #8fb7f4;outline-offset:3px}
+.vasra-mfa-switch-wrap input:disabled+.vasra-mfa-track{opacity:.52}
+.vasra-mfa-confirm{border-top:1px solid var(--mfa-border);margin-top:19px;padding-top:19px}
+.vasra-mfa-confirm-head{display:flex;gap:10px;align-items:center;background:var(--mfa-soft);padding:12px;border-radius:12px;margin-bottom:17px;color:var(--mfa-fg)}
+.vasra-mfa-confirm-icon{display:flex;align-items:center;justify-content:center;border-radius:10px;background:#e1edff;color:#26579e;width:40px;height:40px;flex:none}
+.vasra-mfa-confirm-icon svg{width:21px;height:21px}
+.vasra-mfa-confirm-head strong{display:block;font-size:.85rem;line-height:1.4}
+.vasra-mfa-confirm-head small{display:block;color:var(--mfa-muted);font-size:.75rem;line-height:1.5;margin-top:3px}
+.vasra-mfa-settings .vasra-mfa-code-group{max-width:360px}
+.vasra-mfa-settings .vasra-mfa-digit{height:49px;font-size:1.25rem}
+.vasra-mfa-settings .vasra-mfa-actions{max-width:360px}
+/* Theme variants used by SK workspace and KK portal. */
+html[data-theme="dark"] .vasra-mfa-panel,
+body[data-theme="dark"] .vasra-mfa-panel,
+body.dark .vasra-mfa-panel{
+ --mfa-bg:#172941;--mfa-fg:#f1f6ff;--mfa-muted:#b7c6db;--mfa-border:#3c536f;
+ --mfa-soft:#213750;--mfa-blue:#91bdfb;--mfa-blue-glow:rgba(140,182,245,.18);
+ --mfa-danger:#ff9eaa;--mfa-danger-bg:#462630;--mfa-danger-border:#89505d;
+ --mfa-success:#9ce7c2;--mfa-success-bg:#173e36;--mfa-success-border:#3e9274;
+ --mfa-shadow:0 12px 38px rgba(0,0,0,.14)
+}
+html[data-theme="dark"] .vasra-mfa-panel .vasra-mfa-icon,
+body[data-theme="dark"] .vasra-mfa-panel .vasra-mfa-icon,
+html[data-theme="dark"] .vasra-mfa-panel .vasra-mfa-setting-icon,
+body[data-theme="dark"] .vasra-mfa-panel .vasra-mfa-setting-icon{background:#284665;border-color:#44668a;color:#acd0ff}
+html[data-theme="dark"] .vasra-mfa-panel button.vasra-mfa-primary,body[data-theme="dark"] .vasra-mfa-panel button.vasra-mfa-primary{color:#fff}
+html[data-theme="dark"] .vasra-mfa-panel button.vasra-mfa-secondary:hover:not(:disabled),body[data-theme="dark"] .vasra-mfa-panel button.vasra-mfa-secondary:hover:not(:disabled){background:#2b4767;border-color:#5378a3}
+html[data-theme="dark"] .vasra-mfa-confirm-icon,body[data-theme="dark"] .vasra-mfa-confirm-icon{background:#294968;color:#c5deff}
+@media(max-width:540px){
+ .vasra-mfa-login{margin:12px auto 0;padding:21px 15px 17px;border-radius:17px}
+ .vasra-mfa-login h3{font-size:1.4rem}
+ .vasra-mfa-icon{width:54px;height:54px;margin-bottom:12px}
+ .vasra-mfa-code-group{gap:6px}
+ .vasra-mfa-digit{height:52px;border-radius:10px;font-size:1.35rem}
+ .vasra-mfa-settings{padding:17px!important}
+ .vasra-mfa-setting-header{gap:10px}
+ .vasra-mfa-setting-icon{height:43px;width:43px}
+ .vasra-mfa-settings .vasra-mfa-digit{height:46px}
+ .vasra-mfa-actions{gap:8px}
+ .vasra-mfa-panel button.vasra-mfa-button{font-size:.79rem;padding:10px 8px;min-height:46px}
+}
+@media(max-width:350px){
+ .vasra-mfa-code-group{gap:4px}
+ .vasra-mfa-digit{height:45px;font-size:1.22rem;border-radius:8px}
+ .vasra-mfa-settings .vasra-mfa-digit{height:41px}
+ .vasra-mfa-actions{grid-template-columns:1fr}
+ .vasra-mfa-panel button.vasra-mfa-button{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){
+ .vasra-mfa-panel *, .vasra-mfa-panel *::before, .vasra-mfa-panel *::after{transition:none!important;animation:none!important}
+}
