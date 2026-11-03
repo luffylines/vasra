@@ -10,6 +10,7 @@ create table if not exists vasra.email_2fa_challenges (
  purpose text not null check (purpose in ('enable','disable','login')),
  code_hash text not null,
  credential_hash text,
+ identity_sub text,
  expires_at timestamptz not null,
  attempts integer not null default 0,
  created_at timestamptz not null default clock_timestamp()
@@ -77,6 +78,16 @@ begin
    values(staff_account.id,staff_account.name,'password_changed',staff_account.id::text,'{}'::jsonb);
   return to_jsonb(staff_account)-'password';
  end if;
+ if action='google_enabled' then
+  if kind='staff' then
+   select email_2fa_enabled into enabled from vasra.users
+    where email=lower(btrim(payload->>'email')) and role in ('sk','chairman');
+  else
+   select email_2fa_enabled into enabled from vasra.kk_members
+    where email=lower(btrim(payload->>'email')) and google_sub=payload->>'sub';
+  end if;
+  return jsonb_build_object('enabled',coalesce(enabled,false));
+ end if;
  if action='login_enabled' then
   if kind='staff' then
    select email_2fa_enabled into enabled from vasra.users where id=nullif(payload->>'account_id','')::uuid;
@@ -115,6 +126,182 @@ begin
   end if;
   if not coalesce(enabled,false) or current_credential is distinct from payload->>'expected_credential'
    then return jsonb_build_object('error',401); end if;
+  purpose_name:='login';
+ elsif action='prepare_google' then
+  if coalesce(payload->>'email','') !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+[.][A-Z]{2,}
+  select * into challenge from vasra.email_2fa_challenges
+   where id=nullif(payload->>'id','')::uuid and account_kind=kind for update;
+  if not found then return jsonb_build_object('error',401); end if;
+  if challenge.expires_at<=now_at or challenge.attempts>=5 then
+   delete from vasra.email_2fa_challenges where id=challenge.id;
+   return jsonb_build_object('error',401);
+  end if;
+  if challenge.purpose<>'login' then
+   if kind='staff' then
+    select u.id into account from vasra.users u join vasra.sessions s on s.user_id=u.id
+     where s.token=session_hash and s.expires>now_at;
+   else
+    select u.id into account from vasra.kk_members u join vasra.kk_sessions s on s.member_id=u.id
+     where s.token_hash=session_hash and s.expires>now_at;
+   end if;
+   if account is distinct from challenge.account_id then return jsonb_build_object('error',403); end if;
+  end if;
+  update vasra.email_2fa_challenges set attempts=attempts+1 where id=challenge.id;
+  if challenge.code_hash is distinct from payload->>'code_hash' then
+   return jsonb_build_object('error',401,'remaining',4-challenge.attempts);
+  end if;
+  if challenge.purpose='login' then
+   if token_value is null or length(token_value)<40 then return jsonb_build_object('error',400); end if;
+   if kind='staff' then
+    if not exists(select 1 from vasra.users where id=challenge.account_id and
+     role in ('sk','chairman') and email_2fa_enabled and password=challenge.credential_hash
+     and (challenge.identity_sub is null or google_sub is null or google_sub=challenge.identity_sub))
+     then return jsonb_build_object('error',401); end if;
+    if challenge.identity_sub is not null then
+      update vasra.users set google_sub=challenge.identity_sub
+       where id=challenge.account_id and google_sub is null;
+    end if;
+    perform set_config('vasra.verified_2fa','staff:'||challenge.account_id::text,true);
+    insert into vasra.sessions(token,user_id,expires)
+      values(token_value,challenge.account_id,now_at+interval '7 days');
+   else
+    if not exists(select 1 from vasra.kk_members where id=challenge.account_id and
+     email_2fa_enabled and password_hash=challenge.credential_hash)
+     then return jsonb_build_object('error',401); end if;
+    perform set_config('vasra.verified_2fa','kk:'||challenge.account_id::text,true);
+    insert into vasra.kk_sessions(token_hash,member_id,expires)
+      values(token_value,challenge.account_id,now_at+interval '7 days');
+   end if;
+  else
+   if kind='staff' then
+    update vasra.users set email_2fa_enabled=(challenge.purpose='enable')
+     where id=challenge.account_id;
+    if challenge.purpose in ('enable','disable') then
+     delete from vasra.sessions where user_id=challenge.account_id and token<>session_hash;
+    end if;
+   else
+    update vasra.kk_members set email_2fa_enabled=(challenge.purpose='enable')
+     where id=challenge.account_id;
+    if challenge.purpose in ('enable','disable') then
+     delete from vasra.kk_sessions where member_id=challenge.account_id and token_hash<>session_hash;
+    end if;
+   end if;
+  end if;
+  delete from vasra.email_2fa_challenges where id=challenge.id;
+  return jsonb_build_object('ok',true,'enabled',challenge.purpose='enable',
+     'login',challenge.purpose='login');
+ elsif action='abort' then
+  delete from vasra.email_2fa_challenges
+   where id=nullif(payload->>'id','')::uuid and account_kind=kind;
+  return jsonb_build_object('ok',true);
+ else return jsonb_build_object('error',400);
+ end if;
+ if coalesce(payload->>'id','') !~ '^[0-9a-f-]{36}$'
+   or coalesce(payload->>'code_hash','') !~ '^[0-9a-f]{64}$'
+   then return jsonb_build_object('error',400); end if;
+ delete from vasra.email_2fa_challenges where expires_at<now_at;
+ delete from vasra.email_2fa_challenges where account_kind=kind and account_id=account;
+ insert into vasra.email_2fa_challenges(id,account_kind,account_id,purpose,code_hash,credential_hash,identity_sub,expires_at)
+ values((payload->>'id')::uuid,kind,account,purpose_name,payload->>'code_hash',
+   case when purpose_name='login' then current_credential else null end,
+   case when action='prepare_google' then payload->>'sub' else null end,
+   now_at+interval '5 minutes');
+ return jsonb_build_object('ok',true,'delivery_email',addr);
+end $$;
+revoke all on function public.vasra_email_2fa(text,jsonb,text) from public,anon,authenticated;
+grant execute on function public.vasra_email_2fa(text,jsonb,text) to service_role;
+commit;
+
+   or coalesce(payload->>'sub','') !~ '^[0-9]{5,40}
+  select * into challenge from vasra.email_2fa_challenges
+   where id=nullif(payload->>'id','')::uuid and account_kind=kind for update;
+  if not found then return jsonb_build_object('error',401); end if;
+  if challenge.expires_at<=now_at or challenge.attempts>=5 then
+   delete from vasra.email_2fa_challenges where id=challenge.id;
+   return jsonb_build_object('error',401);
+  end if;
+  if challenge.purpose<>'login' then
+   if kind='staff' then
+    select u.id into account from vasra.users u join vasra.sessions s on s.user_id=u.id
+     where s.token=session_hash and s.expires>now_at;
+   else
+    select u.id into account from vasra.kk_members u join vasra.kk_sessions s on s.member_id=u.id
+     where s.token_hash=session_hash and s.expires>now_at;
+   end if;
+   if account is distinct from challenge.account_id then return jsonb_build_object('error',403); end if;
+  end if;
+  update vasra.email_2fa_challenges set attempts=attempts+1 where id=challenge.id;
+  if challenge.code_hash is distinct from payload->>'code_hash' then
+   return jsonb_build_object('error',401,'remaining',4-challenge.attempts);
+  end if;
+  if challenge.purpose='login' then
+   if token_value is null or length(token_value)<40 then return jsonb_build_object('error',400); end if;
+   if kind='staff' then
+    if not exists(select 1 from vasra.users where id=challenge.account_id and
+     role in ('sk','chairman') and email_2fa_enabled and password=challenge.credential_hash)
+     then return jsonb_build_object('error',401); end if;
+    perform set_config('vasra.verified_2fa','staff:'||challenge.account_id::text,true);
+    insert into vasra.sessions(token,user_id,expires)
+      values(token_value,challenge.account_id,now_at+interval '7 days');
+   else
+    if not exists(select 1 from vasra.kk_members where id=challenge.account_id and
+     email_2fa_enabled and password_hash=challenge.credential_hash)
+     then return jsonb_build_object('error',401); end if;
+    perform set_config('vasra.verified_2fa','kk:'||challenge.account_id::text,true);
+    insert into vasra.kk_sessions(token_hash,member_id,expires)
+      values(token_value,challenge.account_id,now_at+interval '7 days');
+   end if;
+  else
+   if kind='staff' then
+    update vasra.users set email_2fa_enabled=(challenge.purpose='enable')
+     where id=challenge.account_id;
+    if challenge.purpose in ('enable','disable') then
+     delete from vasra.sessions where user_id=challenge.account_id and token<>session_hash;
+    end if;
+   else
+    update vasra.kk_members set email_2fa_enabled=(challenge.purpose='enable')
+     where id=challenge.account_id;
+    if challenge.purpose in ('enable','disable') then
+     delete from vasra.kk_sessions where member_id=challenge.account_id and token_hash<>session_hash;
+    end if;
+   end if;
+  end if;
+  delete from vasra.email_2fa_challenges where id=challenge.id;
+  return jsonb_build_object('ok',true,'enabled',challenge.purpose='enable',
+     'login',challenge.purpose='login');
+ elsif action='abort' then
+  delete from vasra.email_2fa_challenges
+   where id=nullif(payload->>'id','')::uuid and account_kind=kind;
+  return jsonb_build_object('ok',true);
+ else return jsonb_build_object('error',400);
+ end if;
+ if coalesce(payload->>'id','') !~ '^[0-9a-f-]{36}$'
+   or coalesce(payload->>'code_hash','') !~ '^[0-9a-f]{64}$'
+   then return jsonb_build_object('error',400); end if;
+ delete from vasra.email_2fa_challenges where expires_at<now_at;
+ delete from vasra.email_2fa_challenges where account_kind=kind and account_id=account;
+ insert into vasra.email_2fa_challenges(id,account_kind,account_id,purpose,code_hash,credential_hash,expires_at)
+ values((payload->>'id')::uuid,kind,account,purpose_name,payload->>'code_hash',
+   case when purpose_name='login' then current_credential else null end,now_at+interval '5 minutes');
+ return jsonb_build_object('ok',true,'delivery_email',addr);
+end $$;
+revoke all on function public.vasra_email_2fa(text,jsonb,text) from public,anon,authenticated;
+grant execute on function public.vasra_email_2fa(text,jsonb,text) to service_role;
+commit;
+
+   then return jsonb_build_object('error',400); end if;
+  if kind='staff' then
+   select id,email,email_2fa_enabled,password into account,addr,enabled,current_credential
+    from vasra.users where email=lower(btrim(payload->>'email'))
+     and role in ('sk','chairman') and not must_change
+     and (google_sub is null or google_sub=payload->>'sub');
+  else
+   select id,email,email_2fa_enabled,password_hash into account,addr,enabled,current_credential
+    from vasra.kk_members where email=lower(btrim(payload->>'email'))
+     and google_sub=payload->>'sub';
+  end if;
+  if account is null or not coalesce(enabled,false) then
+   return jsonb_build_object('error',401); end if;
   purpose_name:='login';
  elsif action='verify' then
   select * into challenge from vasra.email_2fa_challenges
