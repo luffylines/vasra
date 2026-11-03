@@ -74,3 +74,15 @@ test('another Vercel domain is not trusted merely because it ends in vercel.app'
 test('request without Origin is rejected on production and preview', async () => {
   assert.equal((await post(branch,null,previewConfig())).status,403);
 });
+
+
+test('local-only HTTP developer requests continue to pass with no PUBLIC_ORIGIN', async () => {
+  const handle = createHandler({
+    config:{origin:null,allowedOrigins:[],secure:false},
+    backend:{rpc:async () => { throw new Error('unexpected DB access'); }}
+  });
+  const response = await handle(new Request('http://localhost:3000/api/origin-regression-test', {
+    method:'POST',headers:{'Origin':'http://localhost:3000','Content-Type':'application/json'},body:'{}'
+  }),{local:true});
+  assert.equal(response.status,404);
+});
