@@ -1,0 +1,42 @@
+/* Clear inline Google account errors directly above the KK login fields. */
+.kk-auth-page .kk-auth-card #kk-google-signin-error{
+ display:flex;
+ align-items:flex-start;
+ gap:10px;
+ max-width:100%;
+ margin:16px 0 18px;
+ padding:13px 15px;
+ border-radius:12px;
+ border:1px solid #edb6bf;
+ border-left:4px solid #be344c;
+ background:#fff0f2;
+ color:#972b40;
+ font-size:13px;
+ font-weight:650;
+ line-height:1.55;
+ box-shadow:0 5px 15px rgba(117,29,50,.045);
+ overflow-wrap:anywhere;
+}
+.kk-auth-page .kk-auth-card #kk-google-signin-error::before{
+ content:"!";
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ flex:0 0 19px;
+ width:19px;
+ height:19px;
+ margin-top:1px;
+ border:1.6px solid currentColor;
+ border-radius:50%;
+ font-size:12px;
+ font-weight:850;
+ line-height:1;
+}
+.kk-auth-page .kk-auth-card #kk-google-signin-error[hidden]{display:none!important}
+html[data-theme="dark"] .kk-auth-page .kk-auth-card #kk-google-signin-error{
+ border-color:#944e5b;
+ border-left-color:#ff9fac;
+ background:#3e2433;
+ color:#ffd3dc;
+ box-shadow:none;
+}
