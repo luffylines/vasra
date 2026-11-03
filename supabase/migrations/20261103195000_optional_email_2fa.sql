@@ -55,6 +55,14 @@ declare
  token_value text:=payload->>'token_hash'; result jsonb;
 begin
  if kind not in ('staff','kk') then return jsonb_build_object('error',400); end if;
+ if action='login_enabled' then
+  if kind='staff' then
+   select email_2fa_enabled into enabled from vasra.users where id=nullif(payload->>'account_id','')::uuid;
+  else
+   select email_2fa_enabled into enabled from vasra.kk_members where id=nullif(payload->>'account_id','')::uuid;
+  end if;
+  return jsonb_build_object('enabled',coalesce(enabled,false));
+ end if;
  if action in ('status','prepare_enable','prepare_disable') then
   if kind='staff' then
    select u.id,u.email,u.email_2fa_enabled,u.password into account,addr,enabled,current_credential
@@ -67,6 +75,9 @@ begin
   end if;
   if account is null then return jsonb_build_object('error',401); end if;
   if action='status' then return jsonb_build_object('enabled',enabled); end if;
+  if action='prepare_enable' and current_credential is null then
+   return jsonb_build_object('error',409,'reason','password_required');
+  end if;
   if (action='prepare_enable' and enabled) or (action='prepare_disable' and not enabled)
    then return jsonb_build_object('error',409); end if;
   purpose_name:=case when action='prepare_enable' then 'enable' else 'disable' end;
