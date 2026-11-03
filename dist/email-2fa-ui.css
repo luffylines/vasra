@@ -30,7 +30,7 @@
 .vasra-mfa-code-field{width:100%;min-width:0}
 .vasra-mfa-panel .vasra-mfa-field-label{display:block;font-size:.82rem;line-height:1.4;font-weight:750;color:var(--mfa-fg);margin-bottom:10px}
 .vasra-mfa-code-group{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;width:100%;max-width:100%;align-items:center;cursor:text;isolation:isolate}
-.vasra-mfa-digit{display:flex;align-items:center;justify-content:center;min-width:0;width:100%;height:56px;border:1.5px solid #cbd8e9;border-radius:12px;background:var(--mfa-bg);color:var(--mfa-fg);font:800 1.5rem/1 inherit;font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(18,40,79,.03);transition:border-color .17s ease,background .17s ease,box-shadow .17s ease}
+.vasra-mfa-digit{display:flex;align-items:center;justify-content:center;min-width:0;width:100%;height:56px;border:1.5px solid #cbd8e9;border-radius:12px;background:var(--mfa-bg);color:var(--mfa-fg);font-family:inherit;font-weight:800;font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(18,40,79,.03);transition:border-color .17s ease,background .17s ease,box-shadow .17s ease}
 .vasra-mfa-code-group:focus-within .vasra-mfa-digit.is-current{border-color:var(--mfa-blue);box-shadow:0 0 0 3px var(--mfa-blue-glow);background:var(--mfa-soft)}
 .vasra-mfa-code-group .vasra-mfa-digit.is-filled{border-color:#a7bddd;background:var(--mfa-soft)}
 /* One accessible input handles paste/iOS OTP autofill; six slots remain visual only. */
