@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fil">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="theme-color" content="#163e7c">
+ <meta name="referrer" content="no-referrer">
+ <meta http-equiv="Cache-Control" content="no-store">
+ <meta name="robots" content="noindex,nofollow">
+ <meta name="description" content="Secure sign-in verification for SK VASRA">
+ <title>Verify Your Email — SK VASRA</title>
+ <link rel="icon" type="image/jpeg" href="./sk%20logo.jpg">
+ <link rel="stylesheet" href="./email-2fa-ui.css?v=20261103-ui-v2">
+ <link rel="stylesheet" href="./verify-login.css?v=20261103-standalone-v1">
+ <script src="./verify-login.js?v=20261103-standalone-v1" defer></script>
+</head>
+<body class="vasra-mfa-route">
+ <div class="verify-background" aria-hidden="true"><div></div><div></div></div>
+ <main class="verify-shell">
+  <header class="verify-header">
+   <a class="verify-brand" href="./" aria-label="SK VASRA Home">
+    <img src="./sk%20logo.jpg" alt="SK Vasra logo" width="43" height="43">
+    <span><strong>SK VASRA</strong><small>SECURE ACCOUNT ACCESS</small></span>
+   </a>
+   <button type="button" class="verify-theme" id="verify-theme" aria-label="Switch color theme" title="Switch theme">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/></svg>
+   </button>
+  </header>
+  <section class="verify-card vasra-mfa-panel" aria-labelledby="verify-title">
+   <div class="verify-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+   </div>
+   <span class="verify-eyebrow">ACCOUNT SECURITY</span>
+   <h1 id="verify-title">Check your email</h1>
+   <p class="verify-description">We sent a six-digit verification code to your registered email address. Enter it below to finish signing in.</p>
+   <div class="verify-expiry" id="verify-expiry">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <span>Code expires in <strong>5 minutes</strong></span>
+   </div>
+   <form id="verify-login-form" class="verify-form" autocomplete="off">
+    <label class="verify-field-label" for="verify-login-code">6-digit verification code</label>
+    <div class="verify-otp-group" id="verify-otp-group" data-state="idle">
+     <input type="text" id="verify-login-code" name="code" inputmode="numeric" autocomplete="one-time-code"
+      pattern="[0-9]{6}" maxlength="6" minlength="6" enterkeyhint="done" required
+      aria-label="Six-digit email verification code" aria-describedby="verify-code-hint">
+     <span class="verify-otp-digit" aria-hidden="true"></span><span class="verify-otp-digit" aria-hidden="true"></span><span class="verify-otp-digit" aria-hidden="true"></span><span class="verify-otp-digit" aria-hidden="true"></span><span class="verify-otp-digit" aria-hidden="true"></span><span class="verify-otp-digit" aria-hidden="true"></span>
+    </div>
+    <p class="verify-hint" id="verify-code-hint">Enter all 6 numbers from your email</p>
+    <p class="verify-feedback" id="verify-feedback" role="status" aria-live="polite" hidden></p>
+    <div class="verify-actions">
+     <button type="submit" id="verify-submit" class="verify-primary">Verify &amp; Sign In</button>
+     <a href="./kk-login" id="verify-back" class="verify-secondary">Back to login</a>
+    </div>
+   </form>
+   <div class="verify-privacy">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4.5 5v6c0 5.1 3 8.6 7.5 11 4.5-2.4 7.5-5.9 7.5-11V5L12 2Z"/><path d="m9.3 12 1.8 1.8 3.6-4"/></svg>
+    <span>For your security, never share this code with anyone.</span>
+   </div>
+  </section>
+  <footer class="verify-footer">
+   <span>© 2026 SK VASRA · Quezon City</span>
+   <span>Protected account verification</span>
+  </footer>
+ </main>
+</body>
+</html>
