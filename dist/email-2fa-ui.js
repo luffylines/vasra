@@ -48,6 +48,18 @@
    };
   }
  };
+ function resumeGoogleChallenge(){
+  const challenge=new URLSearchParams(location.search).get('mfa_challenge');
+  if(!challenge||!$((isKK?'#kk-login-form':'#auth-form'))||!/^[a-f0-9-]{36}$/i.test(challenge))return;
+  history.replaceState(null,'',location.pathname);
+  window.VasraEmail2FA.beginLogin(kind,{challenge_id:challenge},async receipt=>{
+   if(isKK){
+    location.replace('./kk-profile');
+   }else{
+    location.replace('./account');
+   }
+  });
+ }
  function attachSettings(){
   const target=$(isKK?'[data-section="settings"] .kk-settings-grid':'#panel-settings .settings-layout');
   if(!target)return;
@@ -106,6 +118,7 @@
    }
   }
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attachSettings);
- else attachSettings();
+ function initialize(){attachSettings();resumeGoogleChallenge();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize);
+ else initialize();
 })();
