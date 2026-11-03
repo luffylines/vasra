@@ -31,7 +31,7 @@ test('Chairperson and Secretary see hero editor while other staff remain restric
  assert.match(js,/loadHeroBackgroundAdmin/);
  for(const endpoint of ['/api/hero-backgrounds/upload','/api/hero-backgrounds/reset','/api/hero-backgrounds/manage'])
   assert(api.includes(endpoint));
- assert.match(api,/await user\(\['chairman'\]\)/);
+ assert.match(api,/async function homepageContentEditor\(\)/);
  assert(api.includes("const storage='hero-backgrounds/'+key+'/"));
  assert.match(rpc,/vasra_site_hero_media/);
 });
