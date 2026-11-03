@@ -87,95 +87,28 @@
   form.querySelectorAll('button').forEach(button => {button.disabled = Boolean(busy);});
  }
 
- function loginPanel() {
-  const original = $(isKK ? '#kk-login-form' : '#auth-form');
-  if (!original) return null;
-  let panel = $('#email-mfa-login-challenge');
-  if (!panel) {
-   panel = document.createElement('section');
-   panel.id = 'email-mfa-login-challenge';
-   panel.className = 'vasra-mfa-panel vasra-mfa-login';
-   panel.setAttribute('aria-labelledby', 'vasra-mfa-login-heading');
-   panel.innerHTML =
-    '<div class="vasra-mfa-icon">' + mail + '</div>' +
-    '<span class="vasra-mfa-eyebrow">ACCOUNT SECURITY</span>' +
-    '<h3 id="vasra-mfa-login-heading">Check your email</h3>' +
-    '<p class="vasra-mfa-intro">We sent a six-digit verification code to your registered email address.</p>' +
-    '<div class="vasra-mfa-expiry"><span class="vasra-mfa-clock" aria-hidden="true">◷</span> Code expires in <strong>5 minutes</strong></div>' +
-    '<form id="email-mfa-login-form" class="vasra-mfa-form">' +
-    codeMarkup('email-mfa-login-code') +
-    '<div class="vasra-mfa-actions">' +
-    '<button class="vasra-mfa-button vasra-mfa-primary" type="submit">Verify &amp; Sign In</button>' +
-    '<button class="vasra-mfa-button vasra-mfa-secondary" id="email-mfa-back" type="button">Back to login</button>' +
-    '</div></form>' +
-    '<p class="vasra-mfa-feedback" id="email-mfa-login-status" role="status" aria-live="polite" hidden></p>' +
-    '<p class="vasra-mfa-privacy">' + shield + '<span>For your security, never share this code with anyone.</span></p>';
-   original.after(panel);
-  }
-  return {original,panel};
+ // A login challenge is not a session. Never display the OTP form alongside
+ // the password or Google login screen. Keep only the random challenge ID in
+ // the destination URL; no credentials/OTPs enter browser storage.
+ function redirectToVerification(type, challenge, requestedService) {
+  if(type!==kind || !/^[a-f0-9-]{36}$/i.test(String(challenge?.challenge_id||'')))return false;
+  const params=new URLSearchParams({kind:type,challenge:challenge.challenge_id});
+  if(type==='kk' && ['printing','computer','retabox'].includes(requestedService))
+   params.set('service',requestedService);
+  location.replace('./verify-login?'+params.toString());
+  return true;
  }
-
- window.VasraEmail2FA = {
-  beginLogin(type, challenge, after) {
-   if (type !== kind || typeof challenge?.challenge_id !== 'string') return;
-   const ui = loginPanel();
-   if (!ui) return;
-   const {original,panel} = ui;
-   original.hidden = true;
-   panel.hidden = false;
-   const form = $('#email-mfa-login-form');
-   const input = $('#email-mfa-login-code');
-   const status = $('#email-mfa-login-status');
-   const draw = input._vasraMfaDraw || initCodeField(input, status);
-   input._vasraMfaDraw = draw;
-   input.value = '';
-   draw('idle');
-   feedback(status, '', 'info');
-   setBusy(form, false);
-   input.focus();
-
-   $('#email-mfa-back').onclick = () => {
-    panel.hidden = true;
-    original.hidden = false;
-    original.reset();
-    feedback(status, '', 'info');
-   };
-
-   form.onsubmit = async event => {
-    event.preventDefault();
-    if (form.dataset.busy === 'true') return;
-    if (!input.reportValidity()) return;
-    setBusy(form, true);
-    draw('checking');
-    feedback(status, 'Checking your verification code…', 'info');
-    try {
-     const receipt = await request(prefix + '/login/verify', {
-      challenge_id: challenge.challenge_id,
-      code: input.value
-     });
-     draw('success');
-     feedback(status, 'Code verified! Signing you in securely…', 'success');
-     await new Promise(resolve => setTimeout(resolve, 450));
-     await after(receipt);
-    } catch (error) {
-     draw('error');
-     feedback(status, error.message || 'Incorrect or expired code. Please try again.', 'error');
-     input.focus();
-     input.select();
-    } finally {
-     setBusy(form, false);
-    }
-   };
-  }
- };
+ window.VasraEmail2FA={beginLogin:redirectToVerification};
 
  function resumeGoogleChallenge() {
-  const challenge = new URLSearchParams(location.search).get('mfa_challenge');
-  if (!challenge || !$(isKK ? '#kk-login-form' : '#auth-form') || !/^[a-f0-9-]{36}$/i.test(challenge)) return;
-  history.replaceState(null, '', location.pathname);
-  window.VasraEmail2FA.beginLogin(kind, {challenge_id:challenge}, async () => {
-   location.replace(isKK ? './kk-profile' : './account');
-  });
+  const challenge=new URLSearchParams(location.search).get('mfa_challenge');
+  if(!challenge || !$(isKK?'#kk-login-form':'#auth-form'))return;
+  if(!/^[a-f0-9-]{36}$/i.test(challenge)){
+   history.replaceState(null,'',location.pathname);
+   return;
+  }
+  const service=isKK?new URLSearchParams(location.search).get('service'):null;
+  redirectToVerification(kind,{challenge_id:challenge},service);
  }
 
  function attachSettings() {
