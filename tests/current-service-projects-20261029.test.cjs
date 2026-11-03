@@ -29,22 +29,23 @@ test('Each child page renders safe summary and official KK login CTA',()=>{
  assert.match(js,/\/kk-dashboard#/);
  for(const slug of ['printing','computer','retabox'])assert(fs.existsSync(path.join(__dirname,'../dist/current-project-'+slug+'.svg')));
 });
-test('Only chairman can edit exactly three records; no public Storage keys or arbitrary URLs',()=>{
+test('Chairperson and Secretary can edit the three records with restricted server/storage access',()=>{
  const server=read('lib/handler.cjs'),rpc=read('lib/supabase.cjs');
  const sql=read('supabase/migrations/20261029223000_current_service_project_cards.sql');
  const account=read('dist/account.html'),app=read('dist/account.js');
  for(const action of ['/api/current-projects/manage','/api/current-projects/save','/api/current-projects/image'])
   assert(server.includes(action));
- assert.match(server,/await user\(\['chairman'\]\)/);
+ assert.match(server,/async function homepageContentEditor\(\)/);
  assert.match(server,/image\/jpeg/);
  assert.match(sql,/current_service_image_pair/);
  assert.match(sql,/security invoker/);
  assert.match(sql,/revoke all on function public\.vasra_current_service_project/);
  assert.match(sql,/u\.role='chairman'/);
  assert.match(rpc,/vasra_current_service_project/);
- assert.match(account,/data-tab="current-projects" class="chair-only" hidden/);
+ assert.match(account,/data-tab="current-projects" class="content-editor-only" hidden/);
  assert.match(account,/id="panel-current-projects"/);
- assert.match(app,/\['roster','duty-manage','users','audit','current-projects'\]/);
+ assert.match(app,/\['roster','duty-manage','users','audit'\]/);
+ assert.match(app,/\['current-projects','hero-backgrounds'\]\.includes\(name\)&&!canEditHomepageContent\(\)/);
  assert.match(sql,/slug in \('printing','computer','retabox'\)/);
 });
 test('KK service deep links survive password/Google login and still require verified KK profile',()=>{

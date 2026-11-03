@@ -22,16 +22,16 @@ test('Five public hero surfaces get optional uploaded backgrounds with original 
  assert.match(css,/background-size:cover/);
  assert.doesNotMatch(css.split('.hero-admin-intro')[0],/min-height:|max-height:|padding:/);
 });
-test('Only chairman sees management tab and can upload/reset hero media',()=>{
+test('Chairperson and Secretary see hero editor while other staff remain restricted',()=>{
  const html=read('dist/account.html'),js=read('dist/account.js');
  const api=read('lib/handler.cjs'),rpc=read('lib/supabase.cjs');
- assert.match(html,/data-tab="hero-backgrounds" class="chair-only" hidden/);
+ assert.match(html,/data-tab="hero-backgrounds" class="content-editor-only" hidden/);
  assert.match(html,/id="panel-hero-backgrounds" hidden/);
- assert.match(js,/name==='hero-backgrounds'&&user\?\.role!=='chairman'/);
+ assert.match(js,/\['current-projects','hero-backgrounds'\]\.includes\(name\)&&!canEditHomepageContent\(\)/);
  assert.match(js,/loadHeroBackgroundAdmin/);
  for(const endpoint of ['/api/hero-backgrounds/upload','/api/hero-backgrounds/reset','/api/hero-backgrounds/manage'])
   assert(api.includes(endpoint));
- assert.match(api,/await user\(\['chairman'\]\)/);
+ assert.match(api,/async function homepageContentEditor\(\)/);
  assert(api.includes("const storage='hero-backgrounds/'+key+'/"));
  assert.match(rpc,/vasra_site_hero_media/);
 });
