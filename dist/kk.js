@@ -79,11 +79,7 @@
    busy(form,true);feedback('Verifying your KK account…');
    try{
     const b=await send('login',{email:form.email.value.trim(),password:form.password.value});
-    if(b.requires_2fa){window.VasraEmail2FA.beginLogin('kk',b,async()=>{
-      let next='./kk-profile';
-      try{const active=await getApi('me');if(active?.profile?.status==='verified')next='./kk-dashboard'+(nextService?'#'+nextService:'');}catch{}
-      location.replace(next);
-     });return;}
+    if(b.requires_2fa){window.VasraEmail2FA.beginLogin('kk',b,nextService);return;}
     if(b.ok){
      // Go directly to the verified dashboard; incomplete/rejected users resume profiling.
      let next='./kk-profile';
