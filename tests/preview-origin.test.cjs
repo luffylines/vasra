@@ -86,3 +86,25 @@ test('local-only HTTP developer requests continue to pass with no PUBLIC_ORIGIN'
   }),{local:true});
   assert.equal(response.status,404);
 });
+
+
+test('known 2FA preview Git ref works without VERCEL_BRANCH_URL', () => {
+  const config = getConfig({
+    SUPABASE_URL:'https://xetghdlwtqfnrdhdijfy.supabase.co',
+    SUPABASE_SECRET_KEY:'sb_secret_test_placeholder_do_not_use',
+    VERCEL:'1', VERCEL_ENV:'preview',
+    VERCEL_URL:'vasra-preview-vasra.vercel.app',
+    VERCEL_GIT_COMMIT_REF:'feat/email-two-factor-auth-20261103'
+  });
+  assert.equal(config.allowedOrigins.includes(branch),true);
+});
+test('unrelated Git ref never receives the 2FA branch alias', () => {
+  const config = getConfig({
+    SUPABASE_URL:'https://xetghdlwtqfnrdhdijfy.supabase.co',
+    SUPABASE_SECRET_KEY:'sb_secret_test_placeholder_do_not_use',
+    VERCEL:'1', VERCEL_ENV:'preview',
+    VERCEL_URL:'vasra-preview-vasra.vercel.app',
+    VERCEL_GIT_COMMIT_REF:'some-other-branch'
+  });
+  assert.equal(config.allowedOrigins.includes(branch),false);
+});
