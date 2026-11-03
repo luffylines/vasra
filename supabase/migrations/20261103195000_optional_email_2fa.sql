@@ -53,8 +53,30 @@ declare
  current_credential text; challenge vasra.email_2fa_challenges;
  now_at timestamptz:=clock_timestamp(); purpose_name text;
  token_value text:=payload->>'token_hash'; result jsonb;
+ staff_account vasra.users;
 begin
  if kind not in ('staff','kk') then return jsonb_build_object('error',400); end if;
+ if action='password_change' then
+  if kind<>'staff' or token_value is null or length(token_value)<40 then
+   return jsonb_build_object('error',400); end if;
+  select u.* into staff_account
+   from vasra.users u join vasra.sessions se on se.user_id=u.id
+   where se.token=session_hash and se.expires>now_at and u.role in ('sk','chairman')
+   for update of u;
+  if not staff_account.email_2fa_enabled or
+    staff_account.password is distinct from payload->>'expected_credential' or
+    length(coalesce(payload->>'new_hash',''))<40
+   then return jsonb_build_object('error',403); end if;
+  update vasra.users set password=payload->>'new_hash',must_change=false
+   where id=staff_account.id returning * into staff_account;
+  delete from vasra.sessions where user_id=staff_account.id;
+  perform set_config('vasra.verified_2fa','staff:'||staff_account.id::text,true);
+  insert into vasra.sessions(token,user_id,expires)
+   values(token_value,staff_account.id,now_at+interval '7 days');
+  insert into vasra.audit(actor_id,actor_name,action,entity,details)
+   values(staff_account.id,staff_account.name,'password_changed',staff_account.id::text,'{}'::jsonb);
+  return to_jsonb(staff_account)-'password';
+ end if;
  if action='login_enabled' then
   if kind='staff' then
    select email_2fa_enabled into enabled from vasra.users where id=nullif(payload->>'account_id','')::uuid;
@@ -137,13 +159,13 @@ begin
    if kind='staff' then
     update vasra.users set email_2fa_enabled=(challenge.purpose='enable')
      where id=challenge.account_id;
-    if challenge.purpose='disable' then
+    if challenge.purpose in ('enable','disable') then
      delete from vasra.sessions where user_id=challenge.account_id and token<>session_hash;
     end if;
    else
     update vasra.kk_members set email_2fa_enabled=(challenge.purpose='enable')
      where id=challenge.account_id;
-    if challenge.purpose='disable' then
+    if challenge.purpose in ('enable','disable') then
      delete from vasra.kk_sessions where member_id=challenge.account_id and token_hash<>session_hash;
     end if;
    end if;
