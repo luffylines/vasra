@@ -25,10 +25,14 @@ test('SK Services management includes stats, search, date, approvals and all-dat
  }
  for(const word of ['Today (PHT)','Custom date','Free Printing','Computer Use','RetaBox Donations','Completed'])
   assert.ok(html.includes(word),word);
- for(const fragment of ['approved_details','data-action="approve"','data-action="reject"','data-action="complete"',
+ for(const fragment of ['approved_details','data-action="approve"','data-action="reject"',
     'name="pages"','name="copies"','name="hours"','name="paper_size"','name="verified_grams"',
     'Asia/Manila','period','kk-service-history-body','kk-service-export'])
   assert.ok(staff.includes(fragment),fragment);
+ assert.doesNotMatch(staff,/data-action="complete"|Mark Completed/);
+ const autoSql=file('supabase/migrations/20261106144500_kk_service_auto_complete_duty_email.sql');
+ assert.match(autoSql,/NEW\.status='completed'/);
+ assert.match(autoSql,/NEW\.completed_by=NEW\.reviewer_id/);
  assert.match(css,/\.kk-service-stats article/);
  assert.match(css,/@media\(max-width:450px\)/);
  assert.match(css,/body\.account-workspace\[data-theme="dark"\]/);

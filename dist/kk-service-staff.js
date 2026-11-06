@@ -83,8 +83,7 @@
    '<div class="kk-service-card-actions">'+
     (pending?'<button type="button" class="kk-service-review-trigger" data-action="open-review" data-id="'+esc(r.id)+'" aria-expanded="'+String(selected)+'" aria-controls="kk-service-active-review">'+
        (selected?'Close review':'Review request')+'</button>':
-     '<span class="kk-service-reviewed-meta">'+esc(r.reviewed_by||'Reviewed by SK')+'</span>'+
-      (r.status==='approved'?'<button type="button" class="kk-service-complete-button" data-action="complete" data-id="'+esc(r.id)+'">Mark Completed</button>':''))+
+     '<span class="kk-service-reviewed-meta">'+esc(r.reviewed_by||'Reviewed by SK')+'</span>')+
    '</div></article>';
  };
  const reviewPanel=r=>{
@@ -263,7 +262,7 @@
    if(result?.ok!==true)throw Error('Cannot update request. Refresh and retry.');
    reviewingId=null;
    await refresh();
-   info('Request '+(decision==='complete'?'completed':decision==='approve'?'approved':'rejected')+' successfully.',false,true);
+   info('Request '+(decision==='complete'||decision==='approve'?'completed':'rejected')+' successfully.',false,true);
   }catch(error){info(error.message,true);button.disabled=false;}
  });
  $('#kk-retabox-rate-form')?.addEventListener('submit',async event=>{
