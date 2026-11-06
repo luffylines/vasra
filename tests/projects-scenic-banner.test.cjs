@@ -13,7 +13,7 @@ test('projects hero retains original content, CTA and background size with SK lo
  assert.match(page,/href="\.\/duty" class="hero-link/);
  assert.match(page,/class="hero-mark-logo" src="\.\/sk%20logo.jpg"/);
  assert.match(page,/project-hero-scenic\.css\?v=vasra-hall-20261029-v1/);
- assert.equal((page.match(/<section class="project-hero">/g)||[]).length,1);
+ assert.equal((page.match(/<section class="project-hero"(?:\s+[^>]*)?>/g)||[]).length,1);
  assert.match(css,/background-image:url\("\.\/vasra-hall-hero\.webp"\)/);
  assert.doesNotMatch(css,/home-memorial-circle/);
  assert.match(css,/background-size:auto 125%/);

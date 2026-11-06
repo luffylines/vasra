@@ -16,6 +16,10 @@
       "destination": "/account.html"
     },
     {
+      "source": "/verify-login",
+      "destination": "/verify-login.html"
+    },
+    {
       "source": "/duty",
       "destination": "/duty.html"
     },
@@ -68,6 +72,11 @@
     {
       "source": "/account.html",
       "destination": "/account",
+      "permanent": true
+    },
+    {
+      "source": "/verify-login.html",
+      "destination": "/verify-login",
       "permanent": true
     },
     {

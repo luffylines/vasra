@@ -142,13 +142,13 @@
    binary+=String.fromCharCode(...bytes.subarray(i,i+32768));
   const result=await request('/notify',{action:'attach_and_send',id:member.member_id,pdf_data:btoa(binary)});
   if(!result?.ok)throw Error('The SK server did not accept the PDF attachment.');
-  return result.email_notification?.status||'pending';
+  return result.email_notification||{status:'pending'};
  };
  const notifyMember=async member=>{
   if(member.status==='approved'&&!member.email_pdf_ready)
    return emailApproved(member);
   const res=await request('/notify',{action:'retry',id:member.member_id});
-  return res.email_notification?.status||'pending';
+  return res.email_notification||{status:'pending'};
  };
  const all=async()=>{
   const items=rows.filter(approved);
@@ -200,9 +200,25 @@
    try{
     const status=await notifyMember(member);
     await load();
-    report(status==='provider_accepted'?'SK ID review email accepted by provider.':
-     'The email is still pending. Verify the Resend settings or retry later.',
-     status!=='provider_accepted',status==='provider_accepted');
+    const accepted=status.status==='provider_accepted'||status.status==='accepted';
+    const code=String(status.reason||'').replace(/[^a-z0-9_]/gi,'').slice(0,80);
+    const hints={
+      mailer_unconfigured:'Resend sender or API key is not configured.',
+      recipient_unavailable:'Member email address is missing or invalid.',
+      attachment_missing:'The private KK ID PDF attachment is missing.',
+      pdf_storage_unavailable:'The private KK ID PDF could not be read.',
+      provider_timeout:'Resend did not respond in time. Check provider history before retrying.',
+      provider_receipt_missing:'Resend returned no message receipt. Check provider history before retrying.',
+      receipt_not_recorded:'Provider may have accepted the message, but confirmation was not saved. Check Resend first.',
+      queue_claim_failed:'The email queue could not be accessed.',
+      queue_claim_rejected:'The email queue rejected the claim.',
+      provider_or_storage_error:'An email provider or storage error occurred.'
+    };
+    const message=accepted?'SK ID review email accepted by provider.':
+      'KK ID email still pending. '+(hints[code]||(/^provider_not_accepted_\d{3}$/.test(code)?
+      'Resend rejected the request (HTTP '+code.slice(-3)+').': 'Reason unavailable. Check backend logs.'))+
+      (code?' ['+code+']':'');
+    report(message,!accepted,accepted);
    }catch(e){report('Email send failed: '+e.message,true);}
    finally{target.disabled=false;}
    return;
