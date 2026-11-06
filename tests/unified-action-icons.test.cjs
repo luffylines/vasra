@@ -66,5 +66,5 @@ test('icons keep consistent 24px viewbox, touch/hover focus, and reduced-motion 
  assert.match(iconCss,/@media\(max-width:600px\)/);
  assert.match(iconCss,/@media\(prefers-reduced-motion:reduce\)/);
  assert.match(iconCss,/\.ui-icon-link:focus-visible/);
- assert.match(read('projects.html'),/id="install" class="secondary">I-install ang app <svg/);
+ assert.doesNotMatch(read('projects.html'),/id="install"|install-strip|I-install ang app/);
 });

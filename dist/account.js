@@ -309,7 +309,7 @@ async function showDashboard(){syncWorkspaceMode();const forced=user?.mustChange
  // Do not expose resident profiling in the navigation to unauthorized SK officers.
  const canManageKKProfiles=user.role==='chairman'||(user.role==='sk'&&user.position==='secretary');
  document.querySelectorAll('#staff-nav [data-tab="kk-profiling"]').forEach(el=>{el.hidden=!canManageKKProfiles;el.style.display=canManageKKProfiles?'':'none';});
- if(!canManageKKProfiles)$('#panel-kk-profiling').hidden=true;document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: Monthly Project Updates ang official financial-entry workspace. I-base lang sa mga official financial document.':user.position==='secretary'?'Secretary workspace: i-review ang project records at monthly reports. Ang hiwalay na minutes/attendance registry ay hindi pa enabled.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
+ if(!canManageKKProfiles)$('#panel-kk-profiling').hidden=true;document.querySelectorAll('.finance-only').forEach(x=>x.hidden=!(user.role==='chairman'||user.position==='treasurer'));const info=$('#position-info');info.hidden=user.role==='chairman'||user.position==='secretary';if(!info.hidden)info.textContent=user.position==='treasurer'?'Treasurer workspace: Monthly Project Updates ang official financial-entry workspace. I-base lang sa mga official financial document.':'Kagawad workspace: manage project updates.';await selectTab('overview');}
 let activeStaffTab='overview';
 async function selectTab(name){if(name==='budget')name='monthly';const tabs=['overview','projects','current-projects','hero-backgrounds','awards','monthly','disclosure','sk-resolutions','roster','duty-manage','users','audit','settings','kk-profiling','kk-participants','kk-rewards','kk-ids','kk-services'];if(!tabs.includes(name))return;if(['roster','duty-manage','users','audit'].includes(name)&&user?.role!=='chairman')return;if(['current-projects','hero-backgrounds'].includes(name)&&!(user?.role==='chairman'||(user?.role==='sk'&&user?.position==='secretary')))return;if(name==='kk-profiling'&&!(user?.role==='chairman'||(user?.role==='sk'&&user?.position==='secretary')))return;if(name!=='kk-services')window.closeKKScan?.();activeStaffTab=name;$('#duty-controls').hidden=true;dutyReadSequence++;for(const n of tabs){if(n!=='overview')$('#panel-'+n).hidden=n!==name;}$('#chairman-overview').hidden=!(name==='overview'&&user?.role==='chairman');const secretaryDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='secretary';
  const treasurerDashboard=name==='overview'&&user?.role==='sk'&&user?.position==='treasurer';
@@ -321,7 +321,7 @@ async function selectTab(name){if(name==='budget')name='monthly';const tabs=['ov
  $('#account-breadcrumb').textContent=tabLabels[name];
  $('#header-settings').classList.toggle('active',name==='settings');
  $('#header-settings').setAttribute('aria-current',name==='settings'?'page':'false');
- document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'||name==='projects')await loadProjects();if(name==='overview')await loadRoleOverview();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','roster'].includes(name))await loadTransparencyEditor(name);if(name==='disclosure'&&window.loadDisclosureAdmin)await window.loadDisclosureAdmin();if(name==='sk-resolutions'&&window.loadSKResolutionsAdmin)await window.loadSKResolutionsAdmin();if(name==='duty-manage')await loadDutyManagement();if(name==='current-projects'&&window.loadCurrentProjectAdmin)await window.loadCurrentProjectAdmin();if(name==='hero-backgrounds'&&window.loadHeroBackgroundAdmin)await window.loadHeroBackgroundAdmin();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts();if(name==='kk-profiling'&&window.loadKKStaff){window.kkStaffRole=user?.role||null;await window.loadKKStaff()};if(name==='kk-participants'&&window.loadKKEventStaff)await window.loadKKEventStaff();
+ document.querySelectorAll('#staff-nav [data-tab]').forEach(b=>{b.classList.toggle('selected',b.dataset.tab===name);b.setAttribute('aria-current',b.dataset.tab===name?'page':'false')});try{if(name==='overview'){const projectsReady=loadProjects();await Promise.all([projectsReady,loadRoleOverview(projectsReady)]);}else if(name==='projects')await loadProjects();if(name==='users')await loadUsers();if(name==='audit'){auditOffset=0;await loadAudit()}if(['monthly','roster'].includes(name))await loadTransparencyEditor(name);if(name==='disclosure'&&window.loadDisclosureAdmin)await window.loadDisclosureAdmin();if(name==='sk-resolutions'&&window.loadSKResolutionsAdmin)await window.loadSKResolutionsAdmin();if(name==='duty-manage')await loadDutyManagement();if(name==='current-projects'&&window.loadCurrentProjectAdmin)await window.loadCurrentProjectAdmin();if(name==='hero-backgrounds'&&window.loadHeroBackgroundAdmin)await window.loadHeroBackgroundAdmin();if(name==='awards')await loadAwards();if(name==='settings')await loadOfficerContacts();if(name==='kk-profiling'&&window.loadKKStaff){window.kkStaffRole=user?.role||null;await window.loadKKStaff()};if(name==='kk-participants'&&window.loadKKEventStaff)await window.loadKKEventStaff();
       if(name==='kk-rewards'&&window.loadKKRewardsStaff)await window.loadKKRewardsStaff();if(name==='kk-ids'&&window.loadKKIDStaff)await window.loadKKIDStaff();if(name==='kk-services'&&window.loadKKServiceStaff)await window.loadKKServiceStaff()}catch(e){message(e.message,true)}if(name==='overview')await updateDutyControls();}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
 
@@ -436,11 +436,12 @@ function renderRoleRecords(records,role){
    esc(String(item.summary||'').slice(0,100))+'</small></div>'+amount+'</div>';
  }).join('');
 }
-async function loadRoleOverview(){
+async function loadRoleOverview(projectsReady=Promise.resolve()){
  const role=user?.role==='sk'?user.position:null;
  if(role!=='secretary'&&role!=='treasurer')return;
  const ticket=++roleDashboardRequest,year=transYearNow(),idPrefix=role;
- const data=await api('./api/transparency/manage?year='+year);
+ const dataPromise=api('./api/transparency/manage?year='+year);
+ const [,data]=await Promise.all([projectsReady,dataPromise]);
  if(ticket!==roleDashboardRequest||activeStaffTab!=='overview'||user?.position!==role)return;
  if(data?.error)throw Error('Hindi ma-load ang report records para sa '+year+'.');
  const reports=Array.isArray(data?.updates)?data.updates:[];
@@ -1351,7 +1352,7 @@ const emailVerifyToken=pendingHash.get('verify_email'),passwordResetToken=pendin
 if(emailVerifyToken||passwordResetToken)history.replaceState(null,'',location.pathname+location.search);
 checkRecoveryAvailability();
 if(passwordResetToken)showRecovery('reset',passwordResetToken);
-api('./api/me').then(async b=>{
+(window.__vasraEarlySession ? window.__vasraEarlySession.then(result=>{if(!result.ok)throw Error(result.error);return result.value;}) : api('./api/me')).then(async b=>{
  user=b.user;
  if(passwordResetToken){user=null;syncWorkspaceMode();return;}
  await showDashboard();
