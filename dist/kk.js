@@ -38,15 +38,39 @@
  };
  const getApi=async path=>api('./api/kk/'+path);
  const send=async(path,data)=>api('./api/kk/'+path,{method:'POST',body:JSON.stringify(data)});
+ const getFunRunState=()=>{
+  try{const value=sessionStorage.getItem('vasra-funrun-bridge-state')||'';
+   return /^[A-Za-z0-9_-]{20,100}$/.test(value)?value:null;}catch{return null;}
+ };
+ const bridgeDestination=()=>{
+  const state=getFunRunState();
+  return state?'./api/kk/funrun/authorize?state='+encodeURIComponent(state):null;
+ };
+ if(view==='profile'&&getFunRunState()){
+  getApi('me').then(active=>{
+   if(active?.member?.id&&['pending','verified'].includes(active.profile?.status)){
+    const destination=bridgeDestination();
+    if(destination){sessionStorage.removeItem('vasra-funrun-bridge-state');location.replace(destination);}
+   }
+  }).catch(()=>{});
+ }
  if(view==='login'){
   // Only three known tabs are accepted. No arbitrary redirect URLs.
   const requestedService=new URLSearchParams(location.search).get('service');
   const nextService=['printing','computer','retabox'].includes(requestedService)?requestedService:null;
+  const inboundFunRunState=new URLSearchParams(location.search).get('funrun_state');
+  if(inboundFunRunState&&/^[A-Za-z0-9_-]{20,100}$/.test(inboundFunRunState)){
+   try{sessionStorage.setItem('vasra-funrun-bridge-state',inboundFunRunState);}catch{}
+  }
   if(nextService){try{sessionStorage.setItem('vasra-kk-requested-service',nextService)}catch{}}
   // A valid cookie survives navigation back to the public homepage. Skip the
   // login form entirely when the server confirms a current KK session.
   getApi('me').then(active=>{
-   if(active?.member?.id)location.replace(active.profile?.status==='verified'?'./kk-dashboard'+(nextService?'#'+nextService:''):'./kk-profile');
+   if(active?.member?.id){
+    const destination=['pending','verified'].includes(active.profile?.status)?bridgeDestination():null;
+    if(destination){sessionStorage.removeItem('vasra-funrun-bridge-state');location.replace(destination);}
+    else location.replace(active.profile?.status==='verified'?'./kk-dashboard'+(nextService?'#'+nextService:''):'./kk-profile');
+   }
   }).catch(()=>{/* Keep login available when service is temporarily unavailable. */});
   const google=$('#kk-google-login'),note=$('#kk-google-note');
   // Password visibility for KK youth only; independent of the SK staff login.
@@ -99,7 +123,9 @@
      let next='./kk-profile';
      try{const active=await getApi('me');if(active?.profile?.status==='verified')next='./kk-dashboard'+(nextService?'#'+nextService:'');}catch{}
      window.queueVasraToast?.('Successfully signed in to your KK account.','success');
-     location.replace(next);
+     const destination=next!=='./kk-profile'?bridgeDestination():null;
+     if(destination){sessionStorage.removeItem('vasra-funrun-bridge-state');location.replace(destination);}
+     else location.replace(next);
     }
    }catch(err){feedback(err.message,'error');}finally{busy(form,false);}
   });
