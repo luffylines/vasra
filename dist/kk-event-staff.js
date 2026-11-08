@@ -18,7 +18,7 @@
    canvas=$('#kk-event-canvas'),result=$('#kk-event-scan-result');
  if(!page||!video||!canvas)return;
  let events=[],finished=[],officer='',currentEvent='',roster=[],stream=null,active=false,
-   detector=null,timer=null,busy=false,fetching=false,decoderPromise=null,lastCode='',lostFrames=0,revision=0;
+   detector=null,timer=null,busy=false,fetching=false,decoderPromise=null,lastCode='',lostFrames=0,revision=0,decoding=false,frames=0,scanContext=null;
  const setStatus=(message,error=false)=>{
    result.textContent=message;result.dataset.kind=error?'error':'info';
  };
@@ -31,7 +31,7 @@
   $('#kk-event-camera-start').hidden=false;
   $('#kk-event-camera-stop').hidden=true;
   $('#kk-event-camera-hint').hidden=false;
-  lastCode='';lostFrames=0;
+  lastCode='';lostFrames=0;frames=0;
  };
  const drawRoster=()=>{
   $('#kk-event-participants-count').textContent=String(roster.length);
@@ -130,7 +130,7 @@
   if(typeof window.jsQR==='function')return Promise.resolve();
   if(decoderPromise)return decoderPromise;
   decoderPromise=new Promise((resolve,reject)=>{
-   const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
+   const s=document.createElement('script');s.src='./vendor-jsqr.js?v=20261026-local-qr-v1';
    s.async=true;s.crossOrigin='anonymous';
    s.onload=()=>typeof window.jsQR==='function'?resolve():reject(Error('QR decoding unavailable. Use manual entry.'));
    s.onerror=()=>reject(Error('QR library unavailable. Use manual KK ID.'));
@@ -139,23 +139,37 @@
   return decoderPromise;
  };
  const scanFrame=async()=>{
-  if(!active||busy||!stream||page.hidden||!currentEvent||video.readyState<2)return;
+  if(!active||busy||decoding||!stream||page.hidden||!currentEvent||video.readyState<2)return;
+  decoding=true;const seq=revision;
   try{
    let value=null;
-   if(detector){const symbols=await detector.detect(video);value=symbols.find(x=>x.rawValue)?.rawValue||null;}
-   else if(window.jsQR&&video.videoWidth){
-     const w=Math.min(720,video.videoWidth),h=Math.round(w*video.videoHeight/video.videoWidth);
-     if(h>0){canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});
-       ctx.drawImage(video,0,0,w,h);
-       const pix=ctx.getImageData(0,0,w,h);value=window.jsQR(pix.data,w,h)?.data||null;}
+   const attempt=++frames;
+   if(detector){
+    try{const symbols=await detector.detect(video);value=symbols.find(x=>x.rawValue)?.rawValue||null;}
+    catch{detector=null;}
    }
+   if(!value&&typeof window.jsQR==='function'&&video.videoWidth&&(!detector||attempt%4===0)){
+    const w=Math.min(attempt%5===0?960:720,video.videoWidth);
+    const h=Math.round(w*video.videoHeight/video.videoWidth);
+    if(w&&h){
+     if(canvas.width!==w)canvas.width=w;
+     if(canvas.height!==h)canvas.height=h;
+     scanContext ||=canvas.getContext('2d',{willReadFrequently:true});
+     scanContext.drawImage(video,0,0,w,h);
+     value=window.jsQR(scanContext.getImageData(0,0,w,h).data,w,h,{
+      inversionAttempts:attempt%7===0?'attemptBoth':'dontInvert'
+     })?.data||null;
+    }
+   }
+   if(seq!==revision||!active)return;
    if(!value){lostFrames++;if(lostFrames>=5)lastCode='';return;}
    lostFrames=0;
    const normalized=String(value).trim().toUpperCase();
    if(lastCode===normalized)return;
    lastCode=normalized;
    await checkin(normalized,true);
-  }catch(e){setStatus('Camera scan error: '+e.message,true);}
+  }catch(e){if(seq===revision)setStatus('Camera scan error: '+e.message,true);}
+  finally{decoding=false;}
  };
  const startCamera=async()=>{
   if(active||!currentEvent)return;
@@ -165,13 +179,19 @@
     try{detector=new window.BarcodeDetector({formats:['qr_code']});}catch{detector=null;}
    }
    if(!detector)await loadDecoder();
-   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1024}},audio:false});
+   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},frameRate:{ideal:30}},audio:false});
    video.srcObject=stream;video.hidden=false;
    await video.play();active=true;
+   try{
+    const track=stream.getVideoTracks()[0],cap=track?.getCapabilities?.();
+    if(cap?.focusMode?.includes('continuous'))
+     void track.applyConstraints({advanced:[{focusMode:'continuous'}]}).catch(()=>{});
+   }catch{}
    $('#kk-event-camera-hint').hidden=true;
    $('#kk-event-camera-start').hidden=true;$('#kk-event-camera-stop').hidden=false;
-   setStatus('Scanning the back of the KK ID for '+events.find(x=>x.id===currentEvent)?.title+'.');
-   timer=setInterval(scanFrame,250);
+   setStatus('Scanning KK ID for '+events.find(x=>x.id===currentEvent)?.title+'.');
+   void scanFrame();
+   timer=setInterval(scanFrame,140);
   }catch(e){stopCamera();setStatus('Unable to start camera. Allow permission or use manual ID: '+e.message,true);}
  };
  const download=async(button,id)=>{

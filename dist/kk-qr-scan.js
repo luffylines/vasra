@@ -5,7 +5,7 @@
  const types={printing:'Free Printing',computer:'Free Computer Use',retabox:'RetaBox Donations'};
  const video=$('#kk-scan-video'),canvas=$('#kk-scan-canvas');
  if(!video||!canvas)return;
- let stream=null,active=false,processing=false,decoding=false,detector=null,timer=null,revision=0,member=null,pending=[],entryKey=null,jsQRLoading=null,entryMode='manual';
+ let stream=null,active=false,processing=false,decoding=false,detector=null,timer=null,revision=0,member=null,pending=[],entryKey=null,jsQRLoading=null,entryMode='manual',frames=0,scanContext=null;
  const status=(msg,error=false)=>{const el=$('#kk-scan-status');el.textContent=msg;el.dataset.kind=error?'error':'info';};
  const detailFields=(type,d={})=>{
   if(type==='printing')return '<div class="kk-scan-fields"><label>Paper size<select name="paper_size"><option value="short"'+(d.paper_size==='short'?' selected':'')+'>Short</option><option value="long"'+(d.paper_size==='long'?' selected':'')+'>Long</option></select></label>'+
@@ -84,7 +84,7 @@
   finally{processing=false;}
  };
  const stopCamera=()=>{
-  active=false;
+  active=false;frames=0;
   if(timer){clearTimeout(timer);timer=null;}
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
   video.pause?.();video.srcObject=null;video.hidden=true;
@@ -97,12 +97,23 @@
   decoding=true;
   try{
    let value=null;
-   if(detector){try{const codes=await detector.detect(video);value=codes.find(c=>c.rawValue)?.rawValue||null;}
-    catch(error){detector=null; if(typeof window.jsQR!=='function')throw error;}}
-   else if(window.jsQR){
-    const w=Math.min(720,video.videoWidth),h=Math.round(w*video.videoHeight/video.videoWidth);
-    if(w>0&&h>0){canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d',{willReadFrequently:true});
-     ctx.drawImage(video,0,0,w,h);const pixels=ctx.getImageData(0,0,w,h);value=window.jsQR(pixels.data,w,h,{inversionAttempts:'attemptBoth'})?.data||null;}
+   const attempt=++frames;
+   if(detector){
+    try{const codes=await detector.detect(video);value=codes.find(c=>c.rawValue)?.rawValue||null;}
+    catch{detector=null;}
+   }
+   if(!value&&typeof window.jsQR==='function'&&video.videoWidth&&(!detector||attempt%4===0)){
+    const w=Math.min(attempt%5===0?960:720,video.videoWidth);
+    const h=Math.round(w*video.videoHeight/video.videoWidth);
+    if(w&&h){
+     if(canvas.width!==w)canvas.width=w;
+     if(canvas.height!==h)canvas.height=h;
+     scanContext ||=canvas.getContext('2d',{willReadFrequently:true});
+     scanContext.drawImage(video,0,0,w,h);
+     value=window.jsQR(scanContext.getImageData(0,0,w,h).data,w,h,{
+      inversionAttempts:attempt%7===0?'attemptBoth':'dontInvert'
+     })?.data||null;
+    }
    }
    if(value){await lookup(value,'qr');return;}
   }catch(error){status('Camera QR reader error: '+error.message,true);}
@@ -129,14 +140,20 @@
     try{detector=new window.BarcodeDetector({formats:['qr_code']});}catch{detector=null;}
    }
    if(!detector)await fallback();
-   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1024}},audio:false});
+   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},frameRate:{ideal:30}},audio:false});
    video.srcObject=stream;
    video.hidden=false;
    await video.play();
-   active=true;$('#kk-scan-placeholder').hidden=true;
+   active=true;
+   try{
+    const track=stream.getVideoTracks()[0],cap=track?.getCapabilities?.();
+    if(cap?.focusMode?.includes('continuous'))
+     void track.applyConstraints({advanced:[{focusMode:'continuous'}]}).catch(()=>{});
+   }catch{}$('#kk-scan-placeholder').hidden=true;
    $('#kk-scan-start').hidden=true;$('#kk-scan-stop').hidden=false;
-   status('Point camera at the QR on the back of the KK ID.');
-   timer=setInterval(decodeFrame,230);
+   status('Camera ready. Point at the KK ID QR; scanning starts immediately.');
+   void decodeFrame();
+   timer=setInterval(decodeFrame,140);
   }catch(e){stopCamera();status('Cannot start camera: '+(e.name==='NotAllowedError'?'Please allow camera access in browser settings.':e.message),true);}
  };
  window.openKKScan=async({kkId=null,mode='manual',autoStart=false}={})=>{

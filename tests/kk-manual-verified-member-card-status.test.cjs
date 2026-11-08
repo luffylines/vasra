@@ -70,8 +70,8 @@ test('Card notices are responsive and honor dark theme; scripts parse',()=>{
  assert.match(css,/\.kk-scan-card-notice\.is-unverified/);
  assert.match(css,/body\[data-theme="dark"\]/);
  const html=read('dist/account.html');
- assert.match(html,/kk-quick-scan\.js\?v=20261027-manual-card-v1/);
- assert.match(html,/kk-event-staff\.js\?v=20261027-manual-card-v1/);
+ assert.match(html,/kk-quick-scan\.js\?v=20261108-fast-qr-v1/);
+ assert.match(html,/kk-event-staff\.js\?v=20261108-fast-qr-v1/);
  for(const p of ['lib/supabase.cjs','lib/handler.cjs','dist/kk-qr-scan.js',
   'dist/kk-quick-scan.js','dist/kk-event-staff.js','dist/account.js'])
   assert.doesNotThrow(()=>new vm.Script(read(p),{filename:p}));
