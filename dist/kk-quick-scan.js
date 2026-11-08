@@ -5,7 +5,7 @@
  if(!overlay||!video||!canvas)return;
  const statusEl=$('#kk-quick-status'),manual=$('#kk-quick-manual-id');
  const frame=overlay.querySelector('.kk-quick-camera-frame'),hint=$('#kk-quick-camera-hint');
- let stream=null,timer=null,active=false,reading=false,busy=false,barcode=null,previousFocus=null,revision=0,notice='';
+ let stream=null,timer=null,active=false,reading=false,busy=false,barcode=null,previousFocus=null,revision=0,notice='',frames=0,scanContext=null;
  const cameraState=(value,hintText)=>{
    overlay.dataset.camera=value;
    if(hintText)hint.textContent=hintText;
@@ -22,7 +22,7 @@
   video.srcObject=null;video.hidden=true;
   $('#kk-quick-camera-hint').hidden=false;
   $('#kk-quick-start').hidden=false;$('#kk-quick-stop').hidden=true;
-  reading=false;
+  reading=false;frames=0;
   if(overlay.dataset.camera!=='unavailable')cameraState('idle','Camera is off. Start Camera or enter the KK ID.');
  };
  const close=()=>{
@@ -35,10 +35,10 @@
   if(busy||overlay.hidden)return;
   const raw=String(value||'').trim().toUpperCase();
   if(!/^VASRA-KK-[0-9]{1,10}$/.test(raw)){
-   if(notice!==raw){notice=raw;message('This QR is not a VASRA KK ID. Scan the QR on the back of the approved card.',true);}
+   if(notice!==raw){notice=raw;message('This QR is not a VASRA KK ID. Scan the QR on the back of a KK ID.',true);}
    return;
   }
-  busy=true;message('Checking verified KK membership and card status…');
+  busy=true;message('QR detected. Verifying KK membership…');
   try{
    // Do not close the QR modal before the server validates the approved card.
    // Manual entry is available for verified members without a card.
@@ -58,16 +58,23 @@
   reading=true;const seq=revision;
   try{
    let raw=null;
+   const attempt=++frames;
    if(barcode){
-    const codes=await barcode.detect(video);
-    raw=codes.find(x=>x.rawValue)?.rawValue||null;
-   }else if(typeof window.jsQR==='function'&&video.videoWidth){
-    const w=Math.min(800,video.videoWidth),h=Math.round(w*video.videoHeight/video.videoWidth);
+    try{const codes=await barcode.detect(video);raw=codes.find(x=>x.rawValue)?.rawValue||null;}
+    catch{barcode=null;}
+   }
+   // A periodic local fallback also covers browsers whose native detector misses small QR codes.
+   if(!raw&&typeof window.jsQR==='function'&&video.videoWidth&&(!barcode||attempt%4===0)){
+    const w=Math.min(attempt%5===0?960:720,video.videoWidth);
+    const h=Math.round(w*video.videoHeight/video.videoWidth);
     if(w&&h){
-     canvas.width=w;canvas.height=h;
-     const ctx=canvas.getContext('2d',{willReadFrequently:true});
-     ctx.drawImage(video,0,0,w,h);
-     raw=window.jsQR(ctx.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'attemptBoth'})?.data||null;
+     if(canvas.width!==w)canvas.width=w;
+     if(canvas.height!==h)canvas.height=h;
+     scanContext ||=canvas.getContext('2d',{willReadFrequently:true});
+     scanContext.drawImage(video,0,0,w,h);
+     raw=window.jsQR(scanContext.getImageData(0,0,w,h).data,w,h,{
+      inversionAttempts:attempt%7===0?'attemptBoth':'dontInvert'
+     })?.data||null;
     }
    }
    if(raw&&seq===revision)await recognized(raw);
@@ -106,11 +113,17 @@
    if(overlay.hidden){media.getTracks().forEach(track=>track.stop());return;}
    stream=media;video.srcObject=media;video.hidden=false;
    await video.play();active=true;
+   try{
+    const track=media.getVideoTracks()[0],cap=track?.getCapabilities?.();
+    if(cap?.focusMode?.includes('continuous'))
+     void track.applyConstraints({advanced:[{focusMode:'continuous'}]}).catch(()=>{});
+   }catch{}
    cameraState('live');
    $('#kk-quick-camera-hint').hidden=true;
    $('#kk-quick-start').hidden=true;$('#kk-quick-stop').hidden=false;
-   message('Camera scanning. Hold the QR steady inside the preview.');
-   timer=setInterval(scan,230);
+   message('Camera ready. Point at the KK ID QR; scanning starts immediately.');
+   void scan();
+   timer=setInterval(scan,140);
   }catch(error){
    stop();
    const code=error?.name||'';
