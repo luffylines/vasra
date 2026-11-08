@@ -31,11 +31,11 @@
 .kk-member-dashboard .kk-sidebar-nav svg,
 .kk-member-dashboard .kk-sidebar-bottom svg{width:19px;height:19px;flex:none}
 .kk-member-dashboard .kk-sidebar-bottom{margin-top:auto;padding-top:22px;border-top:1px solid #ffffff23}
-.kk-member-dashboard .kk-sidebar-person{display:flex;align-items:center;gap:10px;padding:0 8px 17px;min-width:0}
-.kk-member-dashboard .kk-sidebar-avatar{width:37px;height:37px;display:grid;place-items:center;background:#254e8e;border-radius:50%;flex:none;font:800 13px Manrope;color:white}
-.kk-member-dashboard .kk-sidebar-person>span:last-child{min-width:0}
-.kk-member-dashboard .kk-sidebar-person strong{display:block;color:#fff;font-size:11px;overflow-wrap:anywhere}
-.kk-member-dashboard .kk-sidebar-person small{display:block;color:#a9c0df;font-size:9px;line-height:1.4}
+.kk-member-dashboard .kk-sidebar-person{display:flex;align-items:center;gap:12px;padding:3px 5px 18px;min-width:0}
+.kk-member-dashboard .kk-sidebar-avatar{width:48px;height:48px;display:grid;place-items:center;background:linear-gradient(145deg,#3672c1,#1e4e93);border:1px solid #8db5ef;border-radius:50%;flex:none;font:800 15px/1 Manrope,sans-serif;color:#fff;box-shadow:0 2px 8px #06193544}
+.kk-member-dashboard .kk-sidebar-person>span:last-child{min-width:0;flex:1}
+.kk-member-dashboard .kk-sidebar-person strong{display:block;color:#fff;font:800 13px/1.4 'DM Sans',Manrope,sans-serif;letter-spacing:0;overflow-wrap:break-word}
+.kk-member-dashboard .kk-sidebar-person small{display:block;color:#e1eeff;font:600 11px/1.45 'DM Sans',Manrope,sans-serif;overflow-wrap:break-word;margin-top:3px}
 .kk-member-dashboard .kk-workspace-content{margin-left:244px;min-width:0;min-height:100dvh}
 .kk-member-dashboard .kk-workspace-topbar{
  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;
@@ -303,7 +303,8 @@ body.kk-member-dashboard[data-theme="dark"] .kk-redemption-info :is(strong,small
 /* The member's own private KK portrait, with a real-photo-only fallback. */
 .kk-member-dashboard .kk-sidebar-avatar{overflow:hidden;position:relative}
 .kk-member-dashboard .kk-sidebar-avatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
-.kk-member-dashboard .kk-sidebar-avatar img[hidden]{display:none}
+.kk-member-dashboard .kk-sidebar-avatar img[hidden],.kk-member-dashboard .kk-sidebar-avatar #kk-sidebar-avatar-fallback[hidden]{display:none}
+.kk-member-dashboard .kk-sidebar-avatar #kk-sidebar-avatar-fallback{font:800 15px/1 Manrope,sans-serif;letter-spacing:.4px}
 .kk-member-dashboard .kk-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:18px}
 .kk-member-dashboard .kk-dashboard-head>div{min-width:0;flex:1}
 .kk-member-dashboard .kk-dashboard-portrait{flex:none;width:76px;height:76px;border-radius:16px;object-fit:cover;

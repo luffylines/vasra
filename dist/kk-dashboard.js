@@ -271,6 +271,10 @@
   $('#kk-dash-points').textContent=String(data.points||0);
   $('#kk-current-email').textContent=data.member.email||'—';
   $('#kk-sidebar-name').textContent=[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')||'Verified KK Member';
+  // Default to readable initials until the signed-in member's private KK portrait loads.
+  const initials=[data.member.first_name,data.member.last_name].filter(Boolean)
+   .map(part=>String(part).trim().charAt(0).toUpperCase()).join('').slice(0,2)||'KK';
+  $('#kk-sidebar-avatar-fallback').textContent=initials;
   void refreshMemberPortrait();
   await refreshRewards();
   await refreshParticipation();
