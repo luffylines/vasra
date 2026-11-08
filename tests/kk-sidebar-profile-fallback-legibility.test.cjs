@@ -30,5 +30,5 @@ test('member name and role have readable sizes and a larger crisp circular portr
 
 test('member dashboard loads updated CSS and JS after refresh',()=>{
  assert.match(html,/kk-dashboard\.css\?v=20261108-readable-sidebar-v2/);
- assert.match(html,/kk-dashboard\.js\?v=20261108-readable-sidebar-v2/);
+ assert.match(html,/kk-dashboard\.js\?v=20261108-live-status-v1/);
 });

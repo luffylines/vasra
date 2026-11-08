@@ -28,8 +28,8 @@ test('KK dashboard shows own uploaded portrait while respecting private endpoint
 
 test('browser and installed portal load the updated member and staff assets',()=>{
  const memberPage=r('dist/kk-dashboard.html'),staffPage=r('dist/account.html'),sw=r('dist/sw.js');
- assert.match(memberPage,/kk-dashboard\.js\?v=20261108-readable-sidebar-v2/);
- assert.match(memberPage,/kk-id-member\.js\?v=20261108-photo-scan-v1/);
+ assert.match(memberPage,/kk-dashboard\.js\?v=20261108-live-status-v1/);
+ assert.match(memberPage,/kk-id-member\.js\?v=20261108-live-status-v1/);
  assert.match(staffPage,/kk-id-staff\.js\?v=20261108-email-state-v1/);
  assert.match(sw,/const CACHE='vasra-v70-kk-photo-scan-20261108'/);
 });

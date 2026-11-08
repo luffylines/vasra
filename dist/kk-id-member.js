@@ -6,7 +6,7 @@
   submission=$('#kk-id-photo-submission'),uploadCard=$('#kk-id-upload-card'),
   approvedPhoto=$('#kk-id-approved-photo'),
   approvedPortrait=$('#kk-id-approved-portrait'),download=$('#kk-id-member-download');
- let selectedPhotoUrl=null,memberApproval='not_uploaded',exportReady=false,downloading=false;
+ let selectedPhotoUrl=null,memberApproval='not_uploaded',exportReady=false,downloading=false,lastCardState=null,cardStatusPolling=false;
  const approvalView=(approved,picture)=>{
   // The entire upload article disappears after approval — no empty bordered strip.
   uploadCard.hidden=approved;
@@ -46,6 +46,7 @@
    const response=await api('./api/kk/id-card');
    if(response?.ok!==true)throw Error('Unable to load KK ID details.');
    const state=response.status||'not_uploaded',found=!!response.photo_exists&&state!=='rejected';
+   lastCardState=JSON.stringify([state,!!response.photo_exists,response.uploaded_at,response.printed_at,response.reviewed_at]);
    memberApproval=state;
    if(version!==revision)return;
    approvalView(found&&state==='approved',found?'./api/kk/id-card/photo?t='+Date.now():null);
@@ -132,4 +133,17 @@
   }finally{downloading=false;download.disabled=!exportReady;}
  });
  window.loadKKIDCard=load;
+ window.refreshKKIDCardIfChanged=async()=>{
+  if(cardStatusPolling||downloading||upload.querySelector('button[type=submit]')?.disabled||
+     chooser.files?.length)return;
+  cardStatusPolling=true;
+  try{
+   const current=await api('./api/kk/id-card',{cache:'no-store'});
+   if(current?.ok!==true)return;
+   const snapshot=JSON.stringify([current.status||'not_uploaded',!!current.photo_exists,
+    current.uploaded_at,current.printed_at,current.reviewed_at]);
+   if(lastCardState!==null&&snapshot!==lastCardState)await load();
+  }catch{/* A transient request error must not erase a previously rendered ID. */}
+  finally{cardStatusPolling=false;}
+ };
 })();

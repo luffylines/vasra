@@ -7,7 +7,7 @@
   if(node){node.textContent='';node.hidden=true;}
   if(message)window.showVasraToast(message,error?'error':'success');
  };
- let loading=false;
+ let loading=false,lastRenderedSignature=null,lastStatuses=null;
  const formatDetails=record=>{
   const d=record.effective_details||record.details||{};
   if(record.service_type==='printing')return [d.paper_size==='long'?'Long':'Short','bond paper',d.color==='colored'?'Colored':'Black & White',
@@ -43,20 +43,29 @@
     '<div class="kk-dash-empty">Wala pang '+(type==='printing'?'printing':type==='computer'?'computer use':'RetaBox')+' requests.</div>';
   }
  };
- window.loadKKServices=async()=>{
+ window.loadKKServices=async({quiet=false}={})=>{
   if(loading)return;
   loading=true;
   try{
-   const data=await api('./api/kk/services');
+   const data=await api('./api/kk/services',{cache:'no-store'});
    if(!Array.isArray(data?.requests))throw Error('Invalid SK services response.');
-   render(data.requests);
-   summary(data.requests);
+   const signature=JSON.stringify(data.requests);
+   if(signature!==lastRenderedSignature){
+    const statuses=new Map(data.requests.map(r=>[String(r.id),String(r.status)]));
+    const officerUpdate=quiet&&lastStatuses&&data.requests.some(r=>
+     lastStatuses.get(String(r.id))==='pending'&&['approved','completed','rejected'].includes(r.status));
+    render(data.requests);summary(data.requests);
+    lastRenderedSignature=signature;lastStatuses=statuses;
+    if(officerUpdate)window.showVasraToast('May bagong update ang SK sa iyong service request.','success');
+   }
   }catch(e){
-   summary(null);
-   window.showVasraToast('Hindi ma-load ang KK service requests: '+e.message,'error');
-   for(const type of ['printing','computer','retabox']){
-    const container=$('#kk-'+type+'-history');
-    if(container)container.textContent='Hindi ma-load ang service requests: '+e.message;
+   if(!quiet){
+    summary(null);
+    window.showVasraToast('Hindi ma-load ang KK service requests: '+e.message,'error');
+    for(const type of ['printing','computer','retabox']){
+     const container=$('#kk-'+type+'-history');
+     if(container)container.textContent='Hindi ma-load ang service requests: '+e.message;
+    }
    }
   }finally{loading=false;}
  };

@@ -349,12 +349,13 @@ async function refreshVisibleStaffTab(force=false){
  const focus=document.activeElement;
  if(focus&&panel.contains(focus)&&focus.closest('input,textarea,select,[contenteditable="true"]'))return;
  const now=Date.now();
- if(!force&&now-lastStaffAutoCheck<22000)return;
+ const minimumInterval=tab.startsWith('kk-')?12000:22000;
+ if(!force&&now-lastStaffAutoCheck<minimumInterval)return;
  lastStaffAutoCheck=now;staffAutoRefreshRunning=true;
  try{await load()}catch(e){/* Active module handles a failed request itself. */}
  finally{staffAutoRefreshRunning=false;}
 }
-const staffAutoRefreshInterval=setInterval(()=>{refreshVisibleStaffTab()},30000);
+const staffAutoRefreshInterval=setInterval(()=>{refreshVisibleStaffTab()},15000);
 window.addEventListener('focus',()=>refreshVisibleStaffTab());
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleStaffTab()});
 window.addEventListener('pageshow',e=>{if(e.persisted)refreshVisibleStaffTab(true)});

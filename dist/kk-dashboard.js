@@ -137,13 +137,13 @@
   $('#kk-dash-projects-count').textContent=String(projects.length);
   renderProjects();
  };
- const refreshProjects=async()=>{
+ const refreshProjects=async(quiet=false)=>{
   try{applyProjectResponse(await request('dashboard?updated='+Date.now()));}
-  catch(error){window.showVasraToast('Hindi ma-refresh ang upcoming projects: '+error.message,'error');}
+  catch(error){if(!quiet)window.showVasraToast('Hindi ma-refresh ang upcoming projects: '+error.message,'error');}
  };
  const phtAttendance=new Intl.DateTimeFormat('en-PH',{timeZone:'Asia/Manila',
   year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
- const refreshParticipation=async()=>{
+ const refreshParticipation=async(quiet=false)=>{
   const target=$('#kk-my-participation-history');if(!target)return;
   try{
    const data=await request('event-history');
@@ -165,7 +165,7 @@
     safe(phtAttendance.format(new Date(a.checked_in_at)))+' · Philippine Time</small></div>'+
     '<span>+'+Number(a.points||0)+' points</span></article>').join(''):
     '<p class="kk-dash-empty">Wala pang recorded event attendance. Kapag na-scan na ng SK Officer ang iyong KK ID sa event, dito makikita ang activity at points na nakuha mo.</p>';
-  }catch(error){target.innerHTML='<p class="kk-dash-empty">Unable to load event attendance right now. Please refresh your Dashboard.</p>';}
+  }catch(error){if(!quiet)target.innerHTML='<p class="kk-dash-empty">Unable to load event attendance right now. Please refresh your Dashboard.</p>';}
  };
  const renderRewardSpotlight=()=>{
   const root=$('#kk-featured-rewards');if(!root||!member)return;
@@ -240,18 +240,39 @@
   renderRewards();
   renderRewardSpotlight();
  };
- window.addEventListener('focus',()=>{
-  if(!member)return;
-  if(location.hash==='#projects')refreshProjects();
-  refreshParticipation();
-  refreshRewards();
- });
- document.addEventListener('visibilitychange',()=>{
-  if(document.hidden||!member)return;
-  if(location.hash==='#projects')refreshProjects();
-  refreshParticipation();
-  refreshRewards();
- });
+ // Keep the visible KK section synchronized with decisions made by SK on other devices.
+ // A hidden/offline tab does not poll; member inputs, navigation and form focus are preserved.
+ let memberLiveRunning=false;
+ const lastLiveCheck={services:0,rewards:0,projects:0,attendance:0,card:0};
+ const refreshLiveMemberData=async(force=false)=>{
+  if(!member||document.hidden||!navigator.onLine||memberLiveRunning)return;
+  const section=document.querySelector('.kk-sidebar-nav [data-tab][aria-current="page"]')?.dataset.tab||'overview';
+  const now=Date.now(),tasks=[];
+  const due=(key,interval)=>{
+   if(now-lastLiveCheck[key]<(force?4500:interval))return false;
+   lastLiveCheck[key]=now;return true;
+  };
+  if(['overview','printing','computer','retabox'].includes(section)&&
+      due('services',section==='overview'?20000:12000))
+    tasks.push(window.loadKKServices?.({quiet:true}));
+  if(['overview','rewards'].includes(section)&&due('rewards',30000))
+    tasks.push(refreshRewards());
+  if(['overview','projects'].includes(section)&&due('attendance',30000))
+    tasks.push(refreshParticipation(true));
+  if(section==='projects'&&due('projects',40000))
+    tasks.push(refreshProjects(true));
+  if(section==='kk-id'&&due('card',18000))
+    tasks.push(window.refreshKKIDCardIfChanged?.());
+  if(!tasks.length)return;
+  memberLiveRunning=true;
+  try{await Promise.allSettled(tasks);}
+  finally{memberLiveRunning=false;}
+ };
+ const memberLiveTimer=setInterval(()=>{void refreshLiveMemberData();},10000);
+ window.addEventListener('focus',()=>{void refreshLiveMemberData(true);});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshLiveMemberData(true);});
+ window.addEventListener('pageshow',e=>{if(e.persisted)void refreshLiveMemberData(true);});
+ window.addEventListener('pagehide',()=>clearInterval(memberLiveTimer),{once:true});
  async function reload(){
   const data=await request('me');
   if(!data?.member){

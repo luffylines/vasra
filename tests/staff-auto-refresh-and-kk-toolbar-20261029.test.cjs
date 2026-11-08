@@ -11,7 +11,7 @@ test('KK Profiling pending submissions appear first and update without full page
  assert.match(k,/pendingDeleteMemberId!==null/);
  assert.match(k,/cache:'no-store'/);
  assert.match(k,/kk-pending-badge/);
- assert.match(app,/setInterval\(\(\)=>\{refreshVisibleStaffTab\(\)\},30000\)/);
+ assert.match(app,/setInterval\(\(\)=>\{refreshVisibleStaffTab\(\)\},15000\)/);
  assert.match(app,/document\.addEventListener\('visibilitychange'/);
  assert.match(app,/window\.addEventListener\('focus'/);
  assert.doesNotMatch(app,/window\.location\.reload\(\)/);

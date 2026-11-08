@@ -190,6 +190,36 @@
  if(view!=='profile')return;
  const loading=$('#kk-loading'),content=$('#kk-content');
  let account=null,profile={},data={},current=1,sitios=[];
+ let profileStatusTimer=null,profileCheckRunning=false,lastProfileCheck=0;
+ const checkProfileReview=async(force=false)=>{
+  if(profile.status!=='pending'||document.hidden||!navigator.onLine||profileCheckRunning)return;
+  const now=Date.now();if(now-lastProfileCheck<(force?4000:7000))return;
+  lastProfileCheck=now;profileCheckRunning=true;
+  try{
+   const response=await getApi('me');
+   if(!response?.member){location.replace('./kk-login');return;}
+   const nextStatus=response.profile?.status||'draft';
+   if(nextStatus==='verified'){
+    clearInterval(profileStatusTimer);profileStatusTimer=null;
+    location.replace('./kk-dashboard');return;
+   }
+   if(nextStatus==='rejected'){
+    clearInterval(profileStatusTimer);profileStatusTimer=null;
+    await load();
+    feedback('Na-review na ng SK ang KK profile mo. Tingnan ang review note para sa kailangang itama.','info');
+   }
+  }catch{/* Transient network errors do not disrupt a pending profile. */}
+  finally{profileCheckRunning=false;}
+ };
+ const startProfileReviewWatch=()=>{
+  if(profileStatusTimer||profile.status!=='pending')return;
+  profileStatusTimer=setInterval(()=>{void checkProfileReview();},8000);
+ };
+ window.addEventListener('focus',()=>{void checkProfileReview(true);});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)void checkProfileReview(true);});
+ window.addEventListener('pageshow',e=>{if(e.persisted)void checkProfileReview(true);});
+ window.addEventListener('pagehide',()=>clearInterval(profileStatusTimer),{once:true});
+
  const titles=['Personal Information','Education','Additional Information','Emergency Contact','Review & Submit'];
  const subtitles=['Basic details and address','School and employment','Voter status and other details','Guardian information','Confirm all details'];
  let validID=null,idBusy=false;
@@ -494,6 +524,7 @@
 
   current=profile.status==='rejected'?1:Math.max(1,Math.min(5,Number(profile.step)||1));
   loading.hidden=true;content.hidden=false;render();
+  startProfileReviewWatch();
  }
  $('#kk-logout').onclick=async()=>{try{await send('logout',{});}finally{location.replace('./kk-login');}};
  $('#kk-back').onclick=()=>{if(current>1){savedFields($('#kk-step-form'));current--;feedback('');renderStep();}};
