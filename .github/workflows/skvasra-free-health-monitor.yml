@@ -1,0 +1,69 @@
+name: SKVASRA Free Health Monitor
+
+on:
+  # 08:17 AM and 08:17 PM Asia/Manila (UTC+8) every day.
+  # Off-the-hour scheduling reduces GitHub's documented cron congestion.
+  schedule:
+    - cron: '17 0,12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: skvasra-free-health-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    name: Check Vercel and Supabase
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Get monitoring code
+        uses: actions/checkout@v4
+
+      - name: Test the read-only monitor
+        run: python3 -m unittest discover -s tests -p 'test_skvasra_health_monitor.py' -v
+
+      - name: Check both Vercel domains and Supabase read
+        id: health
+        run: python3 scripts/check_skvasra_health.py
+
+      - name: Open one failure alert (no duplicate issues)
+        if: ${{ failure() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          issue="$(gh issue list --state open --limit 100 --json number,title \
+            --jq '.[] | select(.title == "[SKVASRA] Vercel / Supabase health check failed") | .number' \
+            | head -n 1)"
+          if [[ -z "$issue" ]]; then
+            gh issue create \
+              --title "[SKVASRA] Vercel / Supabase health check failed" \
+              --body "The scheduled read-only availability check failed. View the [workflow run](${RUN_URL}) for the failing endpoint and troubleshoot Vercel or Supabase. No secrets or resident records are included. This issue is closed automatically after the next healthy run."
+          else
+            echo "Alert issue #${issue} is already open; avoiding duplicate notifications."
+          fi
+
+      - name: Close old alert when monitoring recovers
+        if: ${{ success() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          issue="$(gh issue list --state open --limit 100 --json number,title \
+            --jq '.[] | select(.title == "[SKVASRA] Vercel / Supabase health check failed") | .number' \
+            | head -n 1)"
+          if [[ -n "$issue" ]]; then
+            gh issue close "$issue" \
+              --comment "Recovered: Vercel custom domain, Vercel legacy domain, and the Supabase-backed read-only query are healthy. [Successful workflow run](${RUN_URL})."
+          fi
