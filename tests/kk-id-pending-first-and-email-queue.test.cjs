@@ -40,7 +40,7 @@ test('Sorting is performed after searching and filtering, with summary showing p
    'data-card-mail','data-card-printed','data-card-preview'])
   assert(js.includes(a),'unchanged action: '+a);
  assert.doesNotThrow(()=>new vm.Script(js));
- assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261027-resubmit-pending-v1/);
+ assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261108-email-state-v1/);
 });
 test('Approved KK ID reviews can be queued even when issued before the email migration',()=>{
  const sql=read('supabase/migrations/20261027170000_kk_card_review_email_pdf_resubmit.sql');
@@ -49,5 +49,5 @@ test('Approved KK ID reviews can be queued even when issued before the email mig
  assert.match(sql,/ON CONFLICT\(member_id,card_path\) DO NOTHING/);
  assert.match(sql,/ALTER TABLE vasra\.kk_card_review_mail ENABLE ROW LEVEL SECURITY/);
  assert.match(sql,/GRANT EXECUTE ON FUNCTION public\.vasra_kk_card_mail.*TO service_role/s);
- assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
+ assert.match(read('dist/sw.js'),/vasra-v70-kk-photo-scan-20261108/);
 });

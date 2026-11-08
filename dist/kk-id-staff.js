@@ -200,7 +200,7 @@
    try{
     const status=await notifyMember(member);
     await load();
-    const accepted=status.status==='provider_accepted'||status.status==='accepted';
+    const accepted=status.status==='provider_accepted'||status.status==='accepted'||rows.find(r=>r.member_id===id)?.email_state==='accepted';
     const code=String(status.reason||'').replace(/[^a-z0-9_]/gi,'').slice(0,80);
     const hints={
       mailer_unconfigured:'Resend sender or API key is not configured.',
@@ -243,10 +243,11 @@
     try{
      const status=await emailApproved(current);
      await load();
-     report(status==='provider_accepted'?
+     const delivered=status==='provider_accepted'||status==='accepted'||rows.find(r=>r.member_id===id)?.email_state==='accepted';
+     report(delivered?
       'KK ID approved. The front/back PDF email was accepted by the provider.':
       'KK ID approved. The PDF email is pending; use Send / Retry ID PDF Email.',
-      status!=='provider_accepted',status==='provider_accepted');
+      !delivered,delivered);
     }catch(e){
      report('KK ID approved, but the PDF email is pending: '+e.message+
       '. Use Send / Retry ID PDF Email when ready.',true);

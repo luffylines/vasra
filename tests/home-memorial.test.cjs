@@ -29,7 +29,7 @@ test('homepage background is the official Barangay Vasra building, not the QC Me
  assert(!css.includes('url("./home-memorial-circle-mobile.webp")'));
  assert(css.includes('Quezon City Government, Jan 18 2025'));
  assert(html.includes('home-memorial.css?v=vasra-barangay-hall-20261029-v1'));
- assert(sw.includes("vasra-v69-homepage-barangay-hall-20261029"));
+ assert(sw.includes("vasra-v70-kk-photo-scan-20261108"));
  assert(!sw.includes("'./home-memorial-circle.webp'"));
  assert(!sw.includes("'./home-memorial-circle-mobile.webp'"));
 });

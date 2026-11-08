@@ -51,8 +51,8 @@ test('Updated files are valid scripts and HTML/PWA caches point at current versi
  for(const p of ['dist/kk-id-member.js','dist/kk-id-staff.js','dist/kk-rewards-staff.js'])
   assert.doesNotThrow(()=>new vm.Script(read(p),{filename:p}));
  const account=read('dist/account.html');
- assert.match(account,/kk-id-staff\.js\?v=20261027-resubmit-pending-v1/);
+ assert.match(account,/kk-id-staff\.js\?v=20261108-email-state-v1/);
  assert.match(account,/kk-rewards-staff\.js\?v=20261027-safe-reward-delete-v1/);
- assert.match(read('dist/kk-dashboard.html'),/kk-id-member\.js\?v=20261027-resubmit-pending-v1/);
- assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
+ assert.match(read('dist/kk-dashboard.html'),/kk-id-member\.js\?v=20261108-photo-scan-v1/);
+ assert.match(read('dist/sw.js'),/vasra-v70-kk-photo-scan-20261108/);
 });

@@ -6,6 +6,32 @@
  const message=(id,text,type='info')=>{const el=$(id);if(el){el.textContent='';el.hidden=true;}if(text)window.showVasraToast(text,type==='error'?'error':'success');};
  const loading=$('#kk-dash-loading'),content=$('#kk-dash-content');
  let member=null,projects=[],registrations=[];
+ // Load only this authenticated KK member's private portrait, including pending uploads.
+ // A missing photo stays an initial placeholder and never implies SK photo approval.
+ let portraitRequest=0;
+ const refreshMemberPortrait=async()=>{
+  const version=++portraitRequest,sidebar=$('#kk-sidebar-photo'),dashboard=$('#kk-dashboard-portrait');
+  if(!sidebar||!dashboard)return;
+  sidebar.hidden=true;dashboard.hidden=true;$('#kk-sidebar-avatar-fallback').hidden=false;
+  try{
+   const card=await request('id-card');
+   if(version!==portraitRequest||card?.ok!==true||!card.photo_exists)return;
+   const src='./api/kk/id-card/photo?v='+encodeURIComponent(card.uploaded_at||Date.now());
+   const image=new Image();
+   image.onload=()=>{
+    if(version!==portraitRequest)return;
+    sidebar.src=src;dashboard.src=src;
+    sidebar.hidden=false;dashboard.hidden=false;
+    $('#kk-sidebar-avatar-fallback').hidden=true;
+   };
+   image.onerror=()=>{if(version===portraitRequest){
+    sidebar.hidden=true;dashboard.hidden=true;$('#kk-sidebar-avatar-fallback').hidden=false;
+   }};
+   image.src=src;
+  }catch{/* An unavailable private photo does not block the member dashboard. */}
+ };
+ window.addEventListener('kk-id-photo-updated',refreshMemberPortrait);
+
  const sidebar=$('#kk-sidebar'),menuToggle=$('#kk-menu-toggle'),backdrop=$('#kk-sidebar-backdrop');
  const smallScreen=window.matchMedia('(max-width:900px)');
  let menuOpen=false;
@@ -245,6 +271,7 @@
   $('#kk-dash-points').textContent=String(data.points||0);
   $('#kk-current-email').textContent=data.member.email||'—';
   $('#kk-sidebar-name').textContent=[data.member.first_name,data.member.last_name].filter(Boolean).join(' ')||'Verified KK Member';
+  void refreshMemberPortrait();
   await refreshRewards();
   await refreshParticipation();
   window.loadKKServices?.(); // Also populate the overview counts immediately, not only inside service tabs.

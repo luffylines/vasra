@@ -56,5 +56,5 @@ test('Modified KK frontend JavaScript parses and safe navigation retained',()=>{
  assert.doesNotThrow(()=>new vm.Script(client,{filename:'dist/kk.js'}));
  assert.match(read('dist/kk-login.html'),/href="\.\/kk-register"/);
  assert.match(read('dist/kk-register.html'),/href="\.\/kk-login"/);
- assert.match(read('dist/sw.js'),/vasra-v69-homepage-barangay-hall-20261029/);
+ assert.match(read('dist/sw.js'),/vasra-v70-kk-photo-scan-20261108/);
 });

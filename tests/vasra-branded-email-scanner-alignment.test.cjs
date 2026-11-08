@@ -30,7 +30,7 @@ test('Email renders accessible SK logo header, VASRA colors, responsive and emai
   details:[{label:'Link validity',value:'30 minutes'}],
   notice:'Only you should use this link.'
  });
- assert.match(html,/https:\/\/vasra\.vercel\.app\/sk%20logo\.jpg/);
+ assert.match(html,/https:\/\/www\.skvasra\.app\/sk%20logo\.jpg/);
  assert.match(html,/alt="SK VASRA official logo"/);
  assert.match(html,/viewport/);
  assert.match(html,/role="presentation"/);

@@ -299,3 +299,14 @@ body.kk-member-dashboard[data-theme="dark"] .kk-redemption-entry.is-approved{bor
 body.kk-member-dashboard[data-theme="dark"] .kk-redemption-entry.is-rejected{border-left-color:#ff707c}
 body.kk-member-dashboard[data-theme="dark"] .kk-redemption-info :is(strong,small,p){color:#e1eefa}
 @media(max-width:550px){.kk-member-dashboard .kk-redemption-entry{padding:13px}.kk-member-dashboard .kk-redemption-status{min-width:74px;font-size:10px;padding:6px 9px}}
+
+/* The member's own private KK portrait, with a real-photo-only fallback. */
+.kk-member-dashboard .kk-sidebar-avatar{overflow:hidden;position:relative}
+.kk-member-dashboard .kk-sidebar-avatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.kk-member-dashboard .kk-sidebar-avatar img[hidden]{display:none}
+.kk-member-dashboard .kk-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.kk-member-dashboard .kk-dashboard-head>div{min-width:0;flex:1}
+.kk-member-dashboard .kk-dashboard-portrait{flex:none;width:76px;height:76px;border-radius:16px;object-fit:cover;
+ border:2px solid #d5e4f5;box-shadow:0 4px 16px rgba(20,48,82,.12);background:#edf4ff}
+.kk-member-dashboard .kk-dashboard-portrait[hidden]{display:none}
+@media(max-width:540px){.kk-member-dashboard .kk-dashboard-portrait{width:58px;height:58px;border-radius:12px}}

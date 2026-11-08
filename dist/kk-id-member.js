@@ -105,6 +105,7 @@
     'New portrait successfully submitted. Your previous rejection has been cleared. Waiting for SK approval.';
    upload.reset();clearPreview();
    tell('New photo received! Status changed to Pending for SK review.');
+   window.dispatchEvent(new Event('kk-id-photo-updated'));
    await load();
   }catch(err){tell('Hindi na-upload: '+err.message,true);}
   finally{button.disabled=false;}
