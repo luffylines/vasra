@@ -134,7 +134,7 @@ body.account-workspace[data-theme="dark"] #panel-current-projects :is(
   border-color:#48698f!important;
 }
 body.account-workspace[data-theme="dark"] #panel-current-projects :is(
-  .current-project-admin-card h3,.current-project-admin-card label,
+  .current-project-admin-card h3,.current-project-admin-card label:not(.current-project-upload),
   .current-project-admin-card small,#current-project-admin-status,.current-project-char-count
 ){
   color:#d6e8fc!important;
@@ -148,6 +148,49 @@ body.account-workspace[data-theme="dark"] #panel-current-projects textarea{
 }
 body.account-workspace[data-theme="dark"] #panel-current-projects .current-project-admin-actions>a{
   background:#26466d!important;color:#e5f1ff!important;border-color:#52739c!important;
+}
+
+/* Current Project image picker is a clickable <label>, not an ordinary form caption.
+   Previous label-wide !important light text landed on a pale button in iOS dark mode.
+   Pair foreground/background explicitly; applies at every mobile/desktop breakpoint. */
+body.account-workspace[data-theme="dark"] #panel-current-projects
+.current-project-admin-actions>.current-project-upload{
+  background:#234a79!important;
+  color:#f5f9ff!important;
+  border-color:#83aee5!important;
+  -webkit-text-fill-color:#f5f9ff;
+}
+body.account-workspace[data-theme="dark"] #panel-current-projects
+.current-project-admin-actions>.current-project-upload:hover{
+  background:#315e96!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff;
+}
+body.account-workspace[data-theme="dark"] #panel-current-projects
+.current-project-admin-actions>.current-project-upload:focus-within{
+  outline:3px solid #a6d0ff!important;
+  outline-offset:3px;
+}
+body.account-workspace[data-theme="dark"] #panel-current-projects
+.current-project-admin-actions>.current-project-upload:has(input:disabled){
+  background:#263d59!important;
+  color:#e1ebf8!important;
+  -webkit-text-fill-color:#e1ebf8;
+  border-color:#6f87a8!important;
+  cursor:wait;
+}
+/* Light mode keeps dark-blue lettering on a pale-blue background, including
+   iOS Safari's system color-scheme handling. */
+body.account-workspace[data-theme="light"] #panel-current-projects
+.current-project-admin-actions>.current-project-upload{
+  background:#e9f2ff!important;
+  color:#143f75!important;
+  border-color:#abc6e9!important;
+  -webkit-text-fill-color:#143f75;
+}
+body.account-workspace[data-theme="light"] #panel-current-projects
+.current-project-admin-actions>.current-project-upload:hover{
+  background:#d6e8ff!important;
 }
 
 /* KK DASHBOARD — the theme sits on <html>, not <body>.
