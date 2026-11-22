@@ -33,5 +33,5 @@ test('Master/detail applicant list remains compact with readable sections and au
 });
 test('Changes parse and PWA version is updated',()=>{
  new vm.Script(js,{filename:'dist/kk.js'});new vm.Script(staff,{filename:'dist/kk-staff.js'});
- assert.match(read('dist/sw.js'),/vasra-v70-kk-photo-scan-20261108/);
+ assert.match(read('dist/sw.js'),/vasra-v71-kk-capacity-20261122/);
 });

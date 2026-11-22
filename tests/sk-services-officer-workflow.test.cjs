@@ -42,7 +42,7 @@ test('Server checks and normalizes request edits before transactional approval',
  assert.match(server,/kkRpc\('service_workflow_complete'/);
  assert.match(server,/Number\.isInteger\(pages\)/);
  assert.match(server,/Number\.isInteger\(hours\)/);
- assert.match(server,/kk-service-review-ip/);
+ assert.match(server,/kk-service-review-session/);
  assert.match(sql,/FOR UPDATE/);
  assert.match(sql,/IF r\.status<>'pending'/);
  assert.match(sql,/IF r\.status<>'approved'/);

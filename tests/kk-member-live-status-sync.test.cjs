@@ -11,11 +11,11 @@ test('Pending KK profile automatically checks for SK verification or rejection',
  assert.match(s,/location\.replace\('\.\/kk-dashboard'\)/);
  assert.match(s,/if\(nextStatus==='rejected'\)/);
  assert.match(s,/await load\(\)/);
- assert.match(s,/profileStatusTimer=setInterval\(\(\)=>\{void checkProfileReview\(\);\},8000\)/);
+ assert.match(s,/profileStatusTimer=setInterval\(\(\)=>\{void checkProfileReview\(\);\},15000\)/);
  assert.match(s,/startProfileReviewWatch\(\);/);
  assert.match(s,/document\.addEventListener\('visibilitychange'/);
  assert.match(s,/window\.addEventListener\('focus'/);
- assert.match(read('kk-profile.html'),/kk\.js\?v=20261108-live-profile-v1/);
+ assert.match(read('kk-profile.html'),/kk\.js\?v=20261122-capacity-v1/);
  assert.doesNotMatch(s,/window\.location\.reload\(\)/);
 });
 
@@ -29,7 +29,7 @@ test('Only the active member sections poll status while tab is visible and onlin
  assert.match(s,/refreshProjects\(true\)/);
  assert.match(s,/window\.refreshKKIDCardIfChanged\?\.\(\)/);
  assert.match(s,/setInterval\(\(\)=>\{void refreshLiveMemberData\(\);\},10000\)/);
- assert.match(p,/kk-dashboard\.js\?v=20261108-live-status-v1/);
+ assert.match(p,/kk-dashboard\.js\?v=20261122-capacity-v1/);
  assert.match(p,/kk-services\.js\?v=20261108-live-status-v1/);
  assert.match(p,/kk-id-member\.js\?v=20261108-live-status-v1/);
  assert.match(staff,/const minimumInterval=tab\.startsWith\('kk-'\)\?12000:22000/);
