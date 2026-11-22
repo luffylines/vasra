@@ -40,7 +40,7 @@ test('Every SK staff officer can review but rate configuration remains chairman-
 test('Youth must have a KK session to submit requests; server validates service quantities',()=>{
  assert.match(backend,/if\(path==='\/api\/kk\/services'&&method==='POST'\)\{\s*if\(!kkSession\)S\.fail\(401/);
  assert.match(backend,/if\(path==='\/api\/kk\/services'&&method==='GET'\)\{\s*if\(!kkSession\)S\.fail\(401/);
- assert.match(backend,/await limit\('kk-service-submit-ip'/);
+ assert.match(backend,/await limit\('kk-service-submit-session'/);
  assert.match(backend,/!Number\.isInteger\(copies\)\|\|copies<1\|\|copies>100/);
  assert.match(backend,/!Number\.isInteger\(hours\)\|\|hours<1\|\|hours>8/);
  assert.match(backend,/!Number\.isInteger\(grams\)\|\|grams<1\|\|grams>100000/);
