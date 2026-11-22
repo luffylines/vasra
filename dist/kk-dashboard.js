@@ -244,8 +244,11 @@
  // A hidden/offline tab does not poll; member inputs, navigation and form focus are preserved.
  let memberLiveRunning=false;
  const lastLiveCheck={services:0,rewards:0,projects:0,attendance:0,card:0};
+ // Spread the first background refresh across clients arriving at the same event.
+ const firstLivePollAt=Date.now()+Math.floor(Math.random()*15000);
  const refreshLiveMemberData=async(force=false)=>{
   if(!member||document.hidden||!navigator.onLine||memberLiveRunning)return;
+  if(!force&&Date.now()<firstLivePollAt)return;
   const section=document.querySelector('.kk-sidebar-nav [data-tab][aria-current="page"]')?.dataset.tab||'overview';
   const now=Date.now(),tasks=[];
   const due=(key,interval)=>{
@@ -253,15 +256,15 @@
    lastLiveCheck[key]=now;return true;
   };
   if(['overview','printing','computer','retabox'].includes(section)&&
-      due('services',section==='overview'?20000:12000))
+      due('services',section==='overview'?60000:45000))
     tasks.push(window.loadKKServices?.({quiet:true}));
-  if(['overview','rewards'].includes(section)&&due('rewards',30000))
+  if(['overview','rewards'].includes(section)&&due('rewards',90000))
     tasks.push(refreshRewards());
-  if(['overview','projects'].includes(section)&&due('attendance',30000))
+  if(['overview','projects'].includes(section)&&due('attendance',90000))
     tasks.push(refreshParticipation(true));
-  if(section==='projects'&&due('projects',40000))
+  if(section==='projects'&&due('projects',120000))
     tasks.push(refreshProjects(true));
-  if(section==='kk-id'&&due('card',18000))
+  if(section==='kk-id'&&due('card',60000))
     tasks.push(window.refreshKKIDCardIfChanged?.());
   if(!tasks.length)return;
   memberLiveRunning=true;
