@@ -63,5 +63,5 @@ test('Scripts keep valid JavaScript syntax and preview assets refresh',()=>{
   assert.doesNotThrow(()=>new vm.Script(read(p),{filename:p}));
  assert.match(read('dist/kk-dashboard.html'),/kk-id-member\.js\?v=20261108-live-status-v1/);
  assert.match(read('dist/account.html'),/kk-id-staff\.js\?v=20261108-email-state-v1/);
- assert.match(read('dist/kk-profile.html'),/kk\.js\?v=20261108-live-profile-v1/);
+ assert.match(read('dist/kk-profile.html'),/kk\.js\?v=20261122-capacity-v1/);
 });
