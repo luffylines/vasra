@@ -32,7 +32,7 @@ test('Camera scanning uses QR from existing KK card and has Safari/manual fallba
 test('Scanner is staff-authenticated, validates real member and restricts read/write RPC',()=>{
  assert.match(api,/path==='\/api\/kk\/staff\/services\/scan'&&method==='POST'/);
  assert.match(api,/await user\(\['sk','chairman'\]\)/);
- assert.match(api,/kk-staff-scan-ip/);
+ assert.match(api,/kk-staff-scan-session/);
  assert.match(supabase,/\/rest\/v1\/rpc\/vasra_kk_service_scan/);
  assert.match(sql,/p\.status='verified'/);
  assert.match(sql,/u\.role IN \('sk','chairman'\)/);
