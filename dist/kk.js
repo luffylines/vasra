@@ -213,7 +213,7 @@
  };
  const startProfileReviewWatch=()=>{
   if(profileStatusTimer||profile.status!=='pending')return;
-  profileStatusTimer=setInterval(()=>{void checkProfileReview();},8000);
+  profileStatusTimer=setInterval(()=>{void checkProfileReview();},15000);
  };
  window.addEventListener('focus',()=>{void checkProfileReview(true);});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void checkProfileReview(true);});
