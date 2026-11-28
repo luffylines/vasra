@@ -837,6 +837,7 @@ let duplicateProjectCandidate=null;
 function findDuplicateProject(title,excludeId=null){
  const normalized=normalizeProjectTitle(title);
  if(!normalized)return null;
+ if(editing&&editing.id===excludeId&&normalizeProjectTitle(editing.title)===normalized)return null;
  return managed.find(p=>p.id!==excludeId&&normalizeProjectTitle(p.title)===normalized)||null;
 }
 function showDuplicateProject(project){
@@ -1155,11 +1156,14 @@ function startProjectSave(job){
    if($('#editor').open)$('#editor').close();
    try{await loadProjects()}catch{message('Saved to database; refresh the project list to see changes.',true)}
   }catch(error){
+   const duplicateError=/kapareho ng title|vasra_projects_title_normalized_unique/i.test(String(error?.message||''));
+   if(duplicateError){
+    try{await loadProjects();const duplicate=findDuplicateProject(job.body.title,job.record?.id||null);if(duplicate){projectUploadStatus('');showDuplicateProject(duplicate);}}
+    catch{/* retain safe error feedback below */}
+   }
    const detail=(error?.message||'Upload failed.')+
      (job.record?' Project saved; '+linked+' new photo(s) linked. Reopen to retry missing photos.':' No database save confirmed.');
-   projectUploadStatus('Upload/save incomplete · '+detail,'error');
-   if($('#editor').open)projectSaveFeedback(detail,true);
-   message(detail,true);
+   if(!duplicateError){projectUploadStatus('Upload/save incomplete · '+detail,'error');if($('#editor').open)projectSaveFeedback(detail,true);message(detail,true);}
   }finally{
    projectSaveJob=null;$('#save-project').disabled=false;
    if($('#editor').open)updatePublicationFields();
