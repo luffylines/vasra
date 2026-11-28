@@ -831,7 +831,7 @@ $('#delete-project-button').onclick=async()=>{
  }
 };
 function normalizeProjectTitle(value){
- return String(value||'').normalize('NFKC').trim().replace(/\\s+/g,' ').toLocaleLowerCase('en');
+ return String(value||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase('en');
 }
 let duplicateProjectCandidate=null;
 function findDuplicateProject(title,excludeId=null){
