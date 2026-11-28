@@ -48,3 +48,17 @@ test('concurrent database duplicate conflicts reopen the existing-project warnin
  assert.match(js,/await loadProjects\(\);const duplicate=findDuplicateProject/);
  assert.match(supabase,/action === 'save_project' \? 'May existing project na kapareho ng title/);
 });
+
+test('duplicate warning dialog is polished and responsive on phones, tablets, desktop, and landscape',()=>{
+ assert.match(css,/width:min\(540px,calc\(100vw - 32px\)\)/);
+ assert.match(css,/max-height:calc\(100dvh - 32px\)/);
+ assert.match(css,/overflow-y:auto/);
+ assert.match(css,/@media\(max-width:600px\)/);
+ assert.match(css,/@media\(max-width:360px\)/);
+ assert.match(css,/@media\(max-height:560px\) and \(orientation:landscape\)/);
+ assert.match(css,/prefers-reduced-motion:reduce/);
+ assert.match(css,/body\.account-workspace\[data-theme="dark"\] #duplicate-project-dialog/);
+ assert.match(css,/\.duplicate-project-actions #duplicate-project-edit\{[\s\S]*grid-row:1/);
+ assert.match(css,/\.duplicate-project-actions #duplicate-project-close\{grid-column:1;grid-row:2\}/);
+ assert.match(css,/\.duplicate-project-actions #duplicate-project-change\{grid-column:2;grid-row:2\}/);
+});
