@@ -830,6 +830,36 @@ $('#delete-project-button').onclick=async()=>{
   button.disabled=false;
  }
 };
+function normalizeProjectTitle(value){
+ return String(value||'').normalize('NFKC').trim().replace(/\\s+/g,' ').toLocaleLowerCase('en');
+}
+let duplicateProjectCandidate=null;
+function findDuplicateProject(title,excludeId=null){
+ const normalized=normalizeProjectTitle(title);
+ if(!normalized)return null;
+ return managed.find(p=>p.id!==excludeId&&normalizeProjectTitle(p.title)===normalized)||null;
+}
+function showDuplicateProject(project){
+ duplicateProjectCandidate=project;
+ $('#duplicate-project-title').textContent=project.title;
+ $('#duplicate-project-status').textContent=projectPublishStatus(project);
+ const ids=managedGalleryIds(project),photo=$('#duplicate-project-photo');
+ if(ids.length){photo.src=managedPhotoUrl(ids[0]);photo.hidden=false;}
+ else{photo.removeAttribute('src');photo.hidden=true;}
+ $('#duplicate-project-dialog').showModal();
+}
+$('#duplicate-project-edit').onclick=()=>{
+ const project=duplicateProjectCandidate;
+ $('#duplicate-project-dialog').close();
+ if(project)openEditor(project);
+};
+$('#duplicate-project-change').onclick=()=>{
+ $('#duplicate-project-dialog').close();
+ const title=$('#project-form').elements.title;
+ if(title){title.focus();title.select?.();}
+};
+$('#duplicate-project-close').onclick=()=>$('#duplicate-project-dialog').close();
+$('#duplicate-project-dialog').addEventListener('close',()=>{duplicateProjectCandidate=null;});
 function editorFormSignature(){
  const form=$('#project-form'),fields={};
  for(const k of ['title','category','description','scope','status','progress','publication_mode'])fields[k]=form.elements[k]?.value||'';
@@ -1139,8 +1169,11 @@ function startProjectSave(job){
 }
 $('#project-form').onsubmit=e=>{
  e.preventDefault();if(projectSaveJob)return;
- try{startProjectSave(captureProjectSave(false))}
- catch(error){projectSaveFeedback(error?.message||'Hindi na-save ang project.',true)}
+ try{
+  const duplicate=findDuplicateProject($('#project-form').elements.title.value,editing?.id||null);
+  if(duplicate){showDuplicateProject(duplicate);return;}
+  startProjectSave(captureProjectSave(false));
+ }catch(error){projectSaveFeedback(error?.message||'Hindi na-save ang project.',true)}
 };
 // A tab/browser exit cannot continue FileReader and fetch: warn the user.
 window.addEventListener('beforeunload',e=>{
