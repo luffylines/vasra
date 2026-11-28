@@ -11,6 +11,7 @@ DECLARE normalized_title text;
 BEGIN
  normalized_title := lower(regexp_replace(btrim(normalize(coalesce(NEW.title,''), NFKC)), E'\\s+', ' ', 'g'));
  IF normalized_title = '' THEN RETURN NEW; END IF;
+ IF TG_OP='UPDATE' AND normalized_title = lower(regexp_replace(btrim(normalize(coalesce(OLD.title,''), NFKC)), E'\\s+', ' ', 'g')) THEN RETURN NEW; END IF;
  PERFORM pg_advisory_xact_lock(hashtextextended(normalized_title, 0));
  IF EXISTS (
   SELECT 1 FROM vasra.projects p
