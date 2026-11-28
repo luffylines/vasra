@@ -633,6 +633,14 @@
 </div><!-- project-editor-scroll -->
 <div class="editor-footer"><span id="project-save-note">Draft lamang — sa SK accounts lang makikita.</span><p id="project-save-feedback" class="project-save-feedback" role="status" aria-live="polite" hidden></p><div class="editor-footer-actions"><button class="secondary" type="button" id="editor-cancel">Cancel</button><button class="primary" type="submit" id="save-project">Save as Draft <svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></div>
 </form></dialog>
+<dialog id="duplicate-project-dialog" class="duplicate-project-dialog" aria-labelledby="duplicate-project-heading" aria-describedby="duplicate-project-description">
+ <div class="duplicate-project-icon" aria-hidden="true">!</div>
+ <span class="duplicate-project-kicker">SK VASRA · PROJECT MANAGEMENT</span>
+ <h2 id="duplicate-project-heading">Project Already Exists!</h2>
+ <p id="duplicate-project-description">May existing project na kapareho ng title na ito. I-edit ang existing project o baguhin ang title bago mag-save.</p>
+ <div class="duplicate-project-record"><img id="duplicate-project-photo" alt="" hidden><div><strong id="duplicate-project-title"></strong><span id="duplicate-project-status"></span></div></div>
+ <div class="duplicate-project-actions"><button type="button" id="duplicate-project-close" class="secondary">Cancel</button><button type="button" id="duplicate-project-change" class="secondary">Change Title</button><button type="button" id="duplicate-project-edit" class="primary">Edit Existing Project</button></div>
+</dialog>
 <dialog id="publish-project-dialog" class="publish-project-dialog" aria-labelledby="publish-project-heading">
  <span class="publish-confirm-icon" aria-hidden="true"><svg class="ui-action-icon" data-direction="right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
  <span class="publish-confirm-kicker">SK VASRA · PROJECT PUBLICATION</span>
